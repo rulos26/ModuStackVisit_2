@@ -1,0 +1,26 @@
+{
+    "name": "miapp/php-structure",
+    "description": "Estructura base para aplicación PHP 8.3",
+    "type": "project",
+    "require": {
+        "php": "^8.3",
+        "ext-pdo": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Src\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "stable"
+} 
