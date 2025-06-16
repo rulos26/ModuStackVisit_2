@@ -51,10 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                    value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
                             <label for="username">Usuario</label>
                         </div>
-                        <div class="form-floating">
+                        <div class="form-floating position-relative">
                             <input type="password" class="form-control" id="password" name="password" 
                                    placeholder="Contraseña" required>
                             <label for="password">Contraseña</label>
+                            <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-3" id="togglePassword" style="cursor:pointer;"></i>
                         </div>
                         <div class="form-check text-start my-3">
                             <input class="form-check-input" type="checkbox" value="remember-me" id="rememberMe">
@@ -77,5 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
     <script src="public/js/theme.js"></script>
+    <script src="public/js/show-password.js"></script>
 </body>
 </html> 
