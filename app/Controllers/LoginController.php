@@ -30,10 +30,22 @@ class LoginController {
                     $passwordOk = password_verify($password, $hash);
                     echo "<b>Tipo de hash:</b> password_hash (bcrypt, Argon2, etc.)\n";
                     echo "<b>Resultado password_verify:</b> "; var_dump($passwordOk);
+
+                    // Prueba interna con contraseñas quemadas
+                    $test1 = password_verify('0382646740Ju*', $hash);
+                    $test2 = password_verify('0382646740ju*', $hash);
+                    echo "<b>Test password_verify('0382646740Ju*', hash):</b> "; var_dump($test1);
+                    echo "<b>Test password_verify('0382646740ju*', hash):</b> "; var_dump($test2);
                 } else {
                     $passwordOk = (md5($password) === $hash);
                     echo "<b>Tipo de hash:</b> md5\n";
                     echo "<b>Resultado md5:</b> "; var_dump($passwordOk);
+
+                    // Prueba interna con contraseñas quemadas
+                    $test1 = (md5('0382646740Ju*') === $hash);
+                    $test2 = (md5('0382646740ju*') === $hash);
+                    echo "<b>Test md5('0382646740Ju*') === hash:</b> "; var_dump($test1);
+                    echo "<b>Test md5('0382646740ju*') === hash:</b> "; var_dump($test2);
                 }
                 echo "<b>Rol detectado:</b> ".$user['rol']."\n";
                 if ($passwordOk) {
