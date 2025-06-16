@@ -8,20 +8,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $db = Database::getInstance()->getConnection();
     try {
         // Usuario admin
-        $nombre1 = 'Administrador';
+        $nombre1 = 'Administrador2';
         $cedula1 = '10000001';
         $rol1 = 1;
         $correo1 = 'admin@empresa.com';
-        $usuario1 = 'admin';
+        $usuario1 = 'admin2';
         $password1 = password_hash('123', PASSWORD_DEFAULT);
 
         // Usuario evaluador
-        $nombre2 = 'Evaluador';
+        $nombre2 = 'Evaluador2';
         $cedula2 = '20000002';
         $rol2 = 2;
         $correo2 = 'evaluador@empresa.com';
-        $usuario2 = 'evaluador';
-        $password2 = password_hash('0382646740ju*', PASSWORD_DEFAULT);
+        $usuario2 = 'evaluador2';
+        $password2 = password_hash('0382646740Ju*', PASSWORD_DEFAULT);
 
         $stmt = $db->prepare('INSERT INTO usuarios (nombre, cedula, rol, correo, usuario, password) VALUES (?, ?, ?, ?, ?, ?)');
         $stmt->execute([$nombre1, $cedula1, $rol1, $correo1, $usuario1, $password1]);
