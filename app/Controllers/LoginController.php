@@ -10,10 +10,20 @@ class LoginController {
     public static function login($usuario, $password) {
         $db = Database::getInstance()->getConnection();
         try {
-            $stmt = $db->prepare('SELECT * FROM usuarios WHERE usuario = :usuario LIMIT 1');
+            $sql = 'SELECT * FROM usuarios WHERE usuario = :usuario LIMIT 1';
+            $stmt = $db->prepare($sql);
             $stmt->bindParam(':usuario', $usuario);
             $stmt->execute();
             $user = $stmt->fetch();
+
+            // DEBUG: Mostrar SQL y resultado
+            echo '<pre style="background:#222;color:#fff;padding:10px;">';
+            echo "<b>SQL ejecutado:</b> " . $sql . "\n";
+            echo "<b>Parámetros:</b> "; var_dump(['usuario' => $usuario]);
+            echo "<b>Resultado:</b> "; var_dump($user);
+            echo '</pre>';
+            // Fin debug
+
             if ($user && password_verify($password, $user['password'])) {
                 // Autenticación exitosa
                 $_SESSION['user_id'] = $user['cedula'];
