@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="card shadow">
                 <div class="card-body">
                     <div class="login-header text-center">
-                        <img src="logo.jpg" alt="Logo" class="mb-3" style="max-width: 180px; width: 100%; height: auto;">
+                        <img src="public/images/logo.jpg" alt="Logo" class="mb-3" style="max-width: 180px; width: 100%; height: auto;">
                         <h1 class="h3 mb-3 fw-normal">Iniciar Sesión</h1>
                     </div>
                     <?php if (isset($error)): ?>
