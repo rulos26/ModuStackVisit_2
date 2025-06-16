@@ -40,49 +40,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="d-flex align-items-center py-4 bg-body-tertiary">
     <main class="form-signin w-100 m-auto">
         <div class="login-container">
-            <div class="login-header text-center">
-                <i class="bi bi-person-circle display-1"></i>
-                <h1 class="h3 mb-3 fw-normal">Iniciar Sesión</h1>
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="login-header text-center">
+                        <img src="logo.jpg" alt="Logo" class="mb-3" style="max-width: 180px; width: 100%; height: auto;">
+                        <h1 class="h3 mb-3 fw-normal">Iniciar Sesión</h1>
+                    </div>
+                    <?php if (isset($error)): ?>
+                        <div class="alert alert-danger" role="alert">
+                            <?php echo htmlspecialchars($error); ?>
+                        </div>
+                    <?php endif; ?>
+                    <form method="POST" action="">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   placeholder="Usuario" required 
+                                   value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
+                            <label for="username">Usuario</label>
+                        </div>
+                        <div class="form-floating">
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Contraseña" required>
+                            <label for="password">Contraseña</label>
+                        </div>
+                        <div class="form-check text-start my-3">
+                            <input class="form-check-input" type="checkbox" value="remember-me" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">
+                                Recordarme
+                            </label>
+                        </div>
+                        <button class="btn btn-primary w-100 py-2 btn-login" type="submit">
+                            Iniciar Sesión
+                        </button>
+                        <div class="forgot-password mt-3">
+                            <a href="#" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
+                        </div>
+                    </form>
+                </div>
             </div>
-            
-            <?php if (isset($error)): ?>
-                <div class="alert alert-danger" role="alert">
-                    <?php echo htmlspecialchars($error); ?>
-                </div>
-            <?php endif; ?>
-
-            <form method="POST" action="">
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="username" name="username" 
-                           placeholder="Usuario" required 
-                           value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
-                    <label for="username">Usuario</label>
-                </div>
-                
-                <div class="form-floating">
-                    <input type="password" class="form-control" id="password" name="password" 
-                           placeholder="Contraseña" required>
-                    <label for="password">Contraseña</label>
-                </div>
-
-                <div class="form-check text-start my-3">
-                    <input class="form-check-input" type="checkbox" value="remember-me" id="rememberMe">
-                    <label class="form-check-label" for="rememberMe">
-                        Recordarme
-                    </label>
-                </div>
-
-                <button class="btn btn-primary w-100 py-2 btn-login" type="submit">
-                    Iniciar Sesión
-                </button>
-
-                <div class="forgot-password mt-3">
-                    <a href="#" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
-                </div>
-            </form>
         </div>
     </main>
-
     <!-- Bootstrap 5.3 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
