@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+require_once __DIR__ . '/app/Controllers/LoginController.php';
+use App\Controllers\LoginController;
+
 // Verificar si ya hay una sesión activa
 if (isset($_SESSION['user_id'])) {
     header('Location: dashboard.php');
@@ -9,19 +12,9 @@ if (isset($_SESSION['user_id'])) {
 
 // Procesar el formulario cuando se envía
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
+    $usuario = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
-    
-    // Aquí iría la validación con la base de datos
-    // Por ahora, usaremos credenciales de prueba
-    if ($username === 'admin' && $password === 'admin123') {
-        $_SESSION['user_id'] = 1;
-        $_SESSION['username'] = $username;
-        header('Location: dashboard.php');
-        exit();
-    } else {
-        $error = 'Usuario o contraseña incorrectos';
-    }
+    $error = LoginController::login($usuario, $password);
 }
 ?>
 <!DOCTYPE html>
@@ -46,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <img src="public/images/logo.jpg" alt="Logo" class="mb-3" style="max-width: 180px; width: 100%; height: auto;">
                         <h1 class="h3 mb-3 fw-normal">Iniciar Sesión</h1>
                     </div>
-                    <?php if (isset($error)): ?>
+                    <?php if (isset($error) && $error): ?>
                         <div class="alert alert-danger" role="alert">
                             <?php echo htmlspecialchars($error); ?>
                         </div>
