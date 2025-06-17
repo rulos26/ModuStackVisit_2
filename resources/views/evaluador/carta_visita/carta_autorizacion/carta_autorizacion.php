@@ -55,6 +55,78 @@ ob_start();
 ?>
 <link rel="stylesheet" href="../../../../../public/css/styles.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+.steps-horizontal {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    width: 100%;
+    gap: 0.5rem;
+}
+.step-horizontal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+}
+.step-horizontal:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    width: 100%;
+    height: 4px;
+    background: #e0e0e0;
+    z-index: 0;
+    transform: translateX(50%);
+}
+.step-horizontal .step-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    color: #888;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    border: 2px solid #e0e0e0;
+    z-index: 1;
+    transition: all 0.3s;
+}
+.step-horizontal.active .step-icon {
+    background: #4361ee;
+    border-color: #4361ee;
+    color: #fff;
+    box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.2);
+}
+.step-horizontal.complete .step-icon {
+    background: #2ecc71;
+    border-color: #2ecc71;
+    color: #fff;
+}
+.step-horizontal .step-title {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+}
+.step-horizontal .step-description {
+    font-size: 0.85rem;
+    color: #888;
+    text-align: center;
+}
+.step-horizontal.active .step-title,
+.step-horizontal.active .step-description {
+    color: #4361ee;
+}
+.step-horizontal.complete .step-title,
+.step-horizontal.complete .step-description {
+    color: #2ecc71;
+}
+</style>
 
 <div class="container mt-4">
     <div class="card mt-5">
