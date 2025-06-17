@@ -12,5 +12,5 @@ ob_start();
 </div>
 <?php
 $contenido = ob_get_clean();
-include __DIR__ . '/../layout/dashboard.php';
+include dirname(__DIR__, 2) . '/layout/dashboard.php';
 ?>
