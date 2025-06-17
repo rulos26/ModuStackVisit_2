@@ -177,7 +177,7 @@ ob_start();
                         </div>
                     </div>
                 </div>
-                <input type="hidden" name="firma_digital" id="firmaDigitalInput">
+                <input type="hidden" name="firma_digital" id="firmaDigitalInput" required>
                 <div class="row">
                     <div class="col-12 text-center">
                         <button type="submit" class="btn btn-success mt-3">Finalizar</button>
@@ -230,6 +230,14 @@ document.getElementById('guardarFirmaBtn').addEventListener('click', function() 
     document.getElementById('firmaImg').style.display = 'block';
     var modal = bootstrap.Modal.getInstance(document.getElementById('modalFirma'));
     modal.hide();
+});
+// Validación para evitar enviar el formulario sin firma
+const firmaForm = document.getElementById('firmaForm');
+firmaForm.addEventListener('submit', function(e) {
+    if (!document.getElementById('firmaDigitalInput').value) {
+        alert('Por favor, firme antes de finalizar.');
+        e.preventDefault();
+    }
 });
 </script>
 
