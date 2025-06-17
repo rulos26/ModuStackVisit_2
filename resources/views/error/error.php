@@ -5,6 +5,8 @@ error_reporting(E_ALL);
 
 // Mensaje de error personalizado si existe
 $errorMsg = isset($_GET['msg']) ? htmlspecialchars($_GET['msg']) : 'Ha ocurrido un error inesperado.';
+$from = isset($_GET['from']) ? htmlspecialchars($_GET['from']) : null;
+$test = isset($_GET['test']) ? htmlspecialchars($_GET['test']) : null;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -25,6 +27,13 @@ $errorMsg = isset($_GET['msg']) ? htmlspecialchars($_GET['msg']) : 'Ha ocurrido 
                         <div class="alert alert-dark">
                             <strong>Mensaje:</strong> <?php echo $errorMsg; ?>
                         </div>
+                        <?php if ($from || $test): ?>
+                        <div class="alert alert-info mt-3">
+                            <strong>Debug:</strong><br>
+                            <?php if ($from): ?>Origen: <b><?php echo $from; ?></b><br><?php endif; ?>
+                            <?php if ($test): ?>Test: <b><?php echo $test; ?></b><?php endif; ?>
+                        </div>
+                        <?php endif; ?>
                         <?php if (isset($_SESSION['error_detail'])): ?>
                         <div class="alert alert-warning mt-3">
                             <strong>Detalle:</strong> <br>

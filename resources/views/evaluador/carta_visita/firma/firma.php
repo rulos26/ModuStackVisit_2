@@ -12,6 +12,11 @@ if (!isset($_SESSION['id_usuario'])) {
 include '../../../../../conn/conexion.php';
 // Verificar si el usuario ha iniciado sesión */
 
+if (!isset($_SESSION['id_usuario'])) {
+    // Redirigir a la página de error con un parámetro de prueba
+    header("Location: ../../../error/error.php?from=firma&test=123");
+    exit();
+}
 
 ?>
 <!DOCTYPE html>
