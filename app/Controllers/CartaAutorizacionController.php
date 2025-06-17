@@ -24,6 +24,7 @@ class CartaAutorizacionController {
             $stmt->bindParam(':correo', $correo);
             $stmt->execute();
             return true;
+            header('Location: /ModuStackVisit_2/resources/views/evaluador/carta_visita/firma/firma.php');
         } catch (PDOException $e) {
             return 'Error al guardar la autorización: ' . htmlspecialchars($e->getMessage());
         }
