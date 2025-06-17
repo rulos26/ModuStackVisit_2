@@ -54,6 +54,7 @@ try {
 ob_start();
 ?>
 <link rel="stylesheet" href="../../../../../public/css/styles.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
 <div class="container mt-4">
     <div class="card mt-5">
@@ -61,28 +62,41 @@ ob_start();
             <h5 class="card-title">Carta de Autorización</h5>
         </div>
         <div class="card-body">
-            <!-- Stepper Bootstrap moderno -->
-            <div class="container px-0">
-                <ul class="nav nav-pills nav-justified mb-4" id="steps">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">1. Datos Básicos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#">2. Información Personal</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#">3. Contacto</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#">4. Autorización</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#">5. Revisión</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#">6. Finalización</a>
-                    </li>
-                </ul>
+            <div class="steps-horizontal mb-4">
+                <div class="step-horizontal complete">
+                    <div class="step-icon"><i class="fas fa-user"></i></div>
+                    <div class="step-title">Paso 1</div>
+                    <div class="step-description">Datos Básicos</div>
+                </div>
+                <div class="step-horizontal">
+                    <div class="step-icon"><i class="fas fa-id-card"></i></div>
+                    <div class="step-title">Paso 2</div>
+                    <div class="step-description">Información Personal</div>
+                </div>
+                <div class="step-horizontal">
+                    <div class="step-icon"><i class="fas fa-phone"></i></div>
+                    <div class="step-title">Paso 3</div>
+                    <div class="step-description">Contacto</div>
+                </div>
+                <div class="step-horizontal">
+                    <div class="step-icon"><i class="fas fa-file-signature"></i></div>
+                    <div class="step-title">Paso 4</div>
+                    <div class="step-description">Autorización</div>
+                </div>
+                <div class="step-horizontal">
+                    <div class="step-icon"><i class="fas fa-search"></i></div>
+                    <div class="step-title">Paso 5</div>
+                    <div class="step-description">Revisión</div>
+                </div>
+                <div class="step-horizontal">
+                    <div class="step-icon"><i class="fas fa-flag-checkered"></i></div>
+                    <div class="step-title">Paso 6</div>
+                    <div class="step-description">Finalización</div>
+                </div>
+            </div>
+            <div class="controls text-center mb-4">
+                <button class="btn btn-secondary me-2" id="prevBtn" type="button">Anterior</button>
+                <button class="btn btn-primary" id="nextBtn" type="button">Siguiente</button>
             </div>
 
             <?php if (isset($_SESSION['error'])): ?>
@@ -225,6 +239,7 @@ ob_start();
 </div>
 
 <script src="../../../../../public/js/validacionCartaAutorizacion.js"></script>
+<script src="/public/js/stepper.js"></script>
 
 <?php
 $contenido = ob_get_clean();
