@@ -105,7 +105,7 @@ ob_start();
             <form class="form-section" action="" method="post" autocomplete="off" id="cartaAutorizacionForm">
                 <div class="row">
                     <div class="col-6">
-                        <img src="/public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 60%; height: auto;">
+                        <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 60%; height: auto;">
                     </div>
                     <div class="col-6"></div>
                 </div>
