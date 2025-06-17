@@ -37,7 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: /ModuStackVisit_2/resources/views/evaluador/carta_visita/firma/firma.php');
         exit();
     } else {
-        $_SESSION['error'] = $resultado;
+        //$_SESSION['error'] = $resultado;
+        header('Location: /ModuStackVisit_2/resources/views/evaluador/carta_visita/firma/firma.php');
     }
 }
 
