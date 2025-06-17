@@ -53,6 +53,7 @@ try {
 
 ob_start();
 ?>
+<link rel="stylesheet" href="../../../../../public/css/styles.css">
 
 <div class="container mt-4">
     <div class="card mt-5">
