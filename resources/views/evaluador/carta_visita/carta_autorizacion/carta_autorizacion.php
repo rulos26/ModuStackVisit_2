@@ -228,7 +228,7 @@ ob_start();
     </div>
 </div>
 
-<script src="/public/js/validacionCartaAutorizacion.js"></script>
+<script src="../../../../../public/js/validacionCartaAutorizacion.js"></script>
 
 <?php
 $contenido = ob_get_clean();
