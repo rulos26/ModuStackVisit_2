@@ -10,5 +10,4 @@ ob_start();
 <?php
 $contenido = ob_get_clean();
 include __DIR__ . '/../layout/dashboard.php';
-
-// Aquí puedes agregar contenido específico para la evaluación de visita si lo deseas 
+?>

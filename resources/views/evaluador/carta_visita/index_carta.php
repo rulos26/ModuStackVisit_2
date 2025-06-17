@@ -10,3 +10,4 @@ ob_start();
 <?php
 $contenido = ob_get_clean();
 include __DIR__ . '/../layout/dashboard.php';
+?>
