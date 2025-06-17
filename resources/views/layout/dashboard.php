@@ -33,7 +33,7 @@ $usuario = $_SESSION['username'] ?? 'Invitado';
                         <div class="card shadow">
                             <div class="card-body">
                                 <h3 class="card-title mb-4">Bienvenido, <?php echo htmlspecialchars($usuario); ?>!</h3>
-                                <!-- Aquí puedes incluir el contenido específico del dashboard -->
+                                <?php if (isset($contenido)) echo $contenido; ?>
                             </div>
                         </div>
                     </div>

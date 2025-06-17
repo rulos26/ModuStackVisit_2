@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . '/../layout/dashboard.php';
+ob_start();
 ?>
 <div class="container mt-4">
     <div class="alert alert-success">
@@ -7,5 +7,8 @@ include __DIR__ . '/../layout/dashboard.php';
         <p>Esta es la sección personalizada para la evaluación de la visita domiciliaria. Aquí puedes mostrar formularios, resultados o cualquier información relevante para este módulo.</p>
     </div>
 </div>
+<?php
+$contenido = ob_get_clean();
+include __DIR__ . '/../layout/dashboard.php';
 
 // Aquí puedes agregar contenido específico para la evaluación de visita si lo deseas 
