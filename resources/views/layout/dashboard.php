@@ -23,7 +23,7 @@ $usuario = $_SESSION['username'] ?? 'Invitado';
                     <a class="navbar-brand" href="#">Mi Dashboard</a>
                     <div class="d-flex align-items-center ms-auto">
                         <span class="text-white me-3"><i class="bi bi-person-circle"></i> <?php echo htmlspecialchars($usuario); ?></span>
-                        <a href="<?php echo dirname(__DIR__, 2) . '/app/Controllers/CerrarSesionController.php'; ?>" class="btn btn-outline-light">Cerrar sesión</a>
+                        <a href="/app/Controllers/CerrarSesionController.php" class="btn btn-outline-light">Cerrar sesión</a>
                     </div>
                 </div>
             </nav>
