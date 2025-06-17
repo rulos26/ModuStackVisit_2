@@ -60,31 +60,32 @@ ob_start();
             <h5 class="card-title">Carta de Autorización</h5>
         </div>
         <div class="card-body">
-            <!-- Stepper -->
-            <div class="stepper-wrapper mb-4">
-                <div class="stepper-item active">
-                    <div class="step-counter">1</div>
-                    <div class="step-name">Datos Básicos</div>
-                </div>
-                <div class="stepper-item">
-                    <div class="step-counter">2</div>
-                    <div class="step-name">Información Personal</div>
-                </div>
-                <div class="stepper-item">
-                    <div class="step-counter">3</div>
-                    <div class="step-name">Contacto</div>
-                </div>
-                <div class="stepper-item">
-                    <div class="step-counter">4</div>
-                    <div class="step-name">Autorización</div>
-                </div>
-                <div class="stepper-item">
-                    <div class="step-counter">5</div>
-                    <div class="step-name">Revisión</div>
-                </div>
-                <div class="stepper-item">
-                    <div class="step-counter">6</div>
-                    <div class="step-name">Finalización</div>
+            <div class="container px-0">
+                <div class="stepper-wrapper mb-4">
+                    <div class="stepper-item active">
+                        <div class="step-counter">1</div>
+                        <div class="step-name">Datos Básicos</div>
+                    </div>
+                    <div class="stepper-item">
+                        <div class="step-counter">2</div>
+                        <div class="step-name">Información Personal</div>
+                    </div>
+                    <div class="stepper-item">
+                        <div class="step-counter">3</div>
+                        <div class="step-name">Contacto</div>
+                    </div>
+                    <div class="stepper-item">
+                        <div class="step-counter">4</div>
+                        <div class="step-name">Autorización</div>
+                    </div>
+                    <div class="stepper-item">
+                        <div class="step-counter">5</div>
+                        <div class="step-name">Revisión</div>
+                    </div>
+                    <div class="stepper-item">
+                        <div class="step-counter">6</div>
+                        <div class="step-name">Finalización</div>
+                    </div>
                 </div>
             </div>
 
