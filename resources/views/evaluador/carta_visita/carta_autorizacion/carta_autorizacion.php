@@ -30,7 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($resultado === true) {
         $_SESSION['success'] = 'Autorización guardada exitosamente.';
-        header('Location: ../datos_basicos/datos_basicos.php');
+        $_SESSION['cedula_autorizacion'] = $_POST['cedula'];
+        header('Location: /ModuStackVisit_2/resources/views/evaluador/carta_visita/firma/firma.php');
         exit();
     } else {
         $_SESSION['error'] = $resultado;
