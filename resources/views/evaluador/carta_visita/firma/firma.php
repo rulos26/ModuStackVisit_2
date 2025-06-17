@@ -93,41 +93,8 @@ ob_start();
             <h5 class="card-title">Firma de Autorización</h5>
         </div>
         <div class="card-body">
-            <div class="steps-horizontal mb-4">
-                <div class="step-horizontal complete">
-                    <div class="step-icon"><i class="fas fa-user"></i></div>
-                    <div class="step-title">Paso 1</div>
-                    <div class="step-description">Datos Básicos</div>
-                </div>
-                <div class="step-horizontal complete">
-                    <div class="step-icon"><i class="fas fa-id-card"></i></div>
-                    <div class="step-title">Paso 2</div>
-                    <div class="step-description">Información Personal</div>
-                </div>
-                <div class="step-horizontal complete">
-                    <div class="step-icon"><i class="fas fa-phone"></i></div>
-                    <div class="step-title">Paso 3</div>
-                    <div class="step-description">Contacto</div>
-                </div>
-                <div class="step-horizontal complete">
-                    <div class="step-icon"><i class="fas fa-file-signature"></i></div>
-                    <div class="step-title">Paso 4</div>
-                    <div class="step-description">Autorización</div>
-                </div>
-                <div class="step-horizontal active">
-                    <div class="step-icon"><i class="fas fa-pen-nib"></i></div>
-                    <div class="step-title">Paso 5</div>
-                    <div class="step-description">Firma</div>
-                </div>
-                <div class="step-horizontal">
-                    <div class="step-icon"><i class="fas fa-flag-checkered"></i></div>
-                    <div class="step-title">Paso 6</div>
-                    <div class="step-description">Finalización</div>
-                </div>
-            </div>
             <div class="controls text-center mb-4">
-                <button class="btn btn-secondary me-2" id="prevBtn" type="button">Anterior</button>
-                <button class="btn btn-primary" id="nextBtn" type="button">Siguiente</button>
+                <!-- Botones de stepper eliminados para simplificar el flujo -->
             </div>
             <?php if (isset($_SESSION['error'])): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -230,6 +197,8 @@ document.getElementById('guardarFirmaBtn').addEventListener('click', function() 
     document.getElementById('firmaImg').style.display = 'block';
     var modal = bootstrap.Modal.getInstance(document.getElementById('modalFirma'));
     modal.hide();
+    // Desactivar el botón 'Firmar' después de guardar la firma
+    document.querySelector('button[data-bs-target="#modalFirma"]').disabled = true;
 });
 // Validación para evitar enviar el formulario sin firma
 const firmaForm = document.getElementById('firmaForm');
