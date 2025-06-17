@@ -61,33 +61,28 @@ ob_start();
             <h5 class="card-title">Carta de Autorización</h5>
         </div>
         <div class="card-body">
+            <!-- Stepper Bootstrap moderno -->
             <div class="container px-0">
-                <div class="stepper-wrapper mb-4">
-                    <div class="stepper-item active">
-                        <div class="step-counter">1</div>
-                        <div class="step-name">Datos Básicos</div>
-                    </div>
-                    <div class="stepper-item">
-                        <div class="step-counter">2</div>
-                        <div class="step-name">Información Personal</div>
-                    </div>
-                    <div class="stepper-item">
-                        <div class="step-counter">3</div>
-                        <div class="step-name">Contacto</div>
-                    </div>
-                    <div class="stepper-item">
-                        <div class="step-counter">4</div>
-                        <div class="step-name">Autorización</div>
-                    </div>
-                    <div class="stepper-item">
-                        <div class="step-counter">5</div>
-                        <div class="step-name">Revisión</div>
-                    </div>
-                    <div class="stepper-item">
-                        <div class="step-counter">6</div>
-                        <div class="step-name">Finalización</div>
-                    </div>
-                </div>
+                <ul class="nav nav-pills nav-justified mb-4" id="steps">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">1. Datos Básicos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">2. Información Personal</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">3. Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">4. Autorización</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">5. Revisión</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">6. Finalización</a>
+                    </li>
+                </ul>
             </div>
 
             <?php if (isset($_SESSION['error'])): ?>
