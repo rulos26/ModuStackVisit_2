@@ -5,13 +5,13 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
-            <a href="../evaluador/carta_visita/index_carta.php" class="nav-link link-dark">
+            <a href="/ModuStackVisit_2/resources/views/evaluador/carta_visita/index_carta.php" class="nav-link link-dark">
                 <i class="bi bi-file-earmark-text me-2"></i>
                 Carta de autorización
             </a>
         </li>
         <li>
-            <a href="../evaluador/evaluacion_visita/index_evaluacion.php" class="nav-link link-dark">
+            <a href="/ModuStackVisit_2/resources/views/evaluador/evaluacion_visita/index_evaluacion.php" class="nav-link link-dark">
                 <i class="bi bi-house-door me-2"></i>
                 Evaluación visita domiciliaria
             </a>
