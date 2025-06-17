@@ -60,6 +60,34 @@ ob_start();
             <h5 class="card-title">Carta de Autorización</h5>
         </div>
         <div class="card-body">
+            <!-- Stepper -->
+            <div class="stepper-wrapper mb-4">
+                <div class="stepper-item active">
+                    <div class="step-counter">1</div>
+                    <div class="step-name">Datos Básicos</div>
+                </div>
+                <div class="stepper-item">
+                    <div class="step-counter">2</div>
+                    <div class="step-name">Información Personal</div>
+                </div>
+                <div class="stepper-item">
+                    <div class="step-counter">3</div>
+                    <div class="step-name">Contacto</div>
+                </div>
+                <div class="stepper-item">
+                    <div class="step-counter">4</div>
+                    <div class="step-name">Autorización</div>
+                </div>
+                <div class="stepper-item">
+                    <div class="step-counter">5</div>
+                    <div class="step-name">Revisión</div>
+                </div>
+                <div class="stepper-item">
+                    <div class="step-counter">6</div>
+                    <div class="step-name">Finalización</div>
+                </div>
+            </div>
+
             <?php if (isset($_SESSION['error'])): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <?php echo htmlspecialchars($_SESSION['error']); ?>
@@ -77,7 +105,7 @@ ob_start();
             <form class="form-section" action="" method="post" autocomplete="off" id="cartaAutorizacionForm">
                 <div class="row">
                     <div class="col-6">
-                        <img src="../menu/logo.jpg" alt="Logotipo de la empresa" width="60%" height="50%">
+                        <img src="/public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 60%; height: auto;">
                     </div>
                     <div class="col-6"></div>
                 </div>

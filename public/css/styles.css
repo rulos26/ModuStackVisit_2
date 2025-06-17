@@ -49,4 +49,98 @@
     font-size: 0.9rem;
     margin-top: 0.5rem;
     text-align: center;
+}
+
+/* Stepper Styles */
+.stepper-wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.stepper-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.stepper-item::before {
+    position: absolute;
+    content: "";
+    border-bottom: 2px solid #e0e0e0;
+    width: 100%;
+    top: 20px;
+    left: -50%;
+    z-index: 2;
+}
+
+.stepper-item::after {
+    position: absolute;
+    content: "";
+    border-bottom: 2px solid #e0e0e0;
+    width: 100%;
+    top: 20px;
+    left: 50%;
+    z-index: 2;
+}
+
+.stepper-item .step-counter {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    margin-bottom: 6px;
+    color: #666;
+    font-weight: bold;
+}
+
+.stepper-item.active .step-counter {
+    background: #0d6efd;
+    color: white;
+}
+
+.stepper-item.completed .step-counter {
+    background: #198754;
+    color: white;
+}
+
+.stepper-item.completed::after {
+    position: absolute;
+    content: "";
+    border-bottom: 2px solid #198754;
+    width: 100%;
+    top: 20px;
+    left: 50%;
+    z-index: 3;
+}
+
+.stepper-item:first-child::before {
+    content: none;
+}
+
+.stepper-item:last-child::after {
+    content: none;
+}
+
+.stepper-item .step-name {
+    color: #666;
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.stepper-item.active .step-name {
+    color: #0d6efd;
+    font-weight: bold;
+}
+
+.stepper-item.completed .step-name {
+    color: #198754;
 } 
