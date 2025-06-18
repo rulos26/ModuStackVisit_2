@@ -95,7 +95,7 @@ class DemoPdfController {
         $html .= 'Nombre BD: ' . htmlspecialchars($row4['nombre'] ?? '(sin valor)') . '<br>';
         $html .= 'Ruta final: ' . htmlspecialchars($img_perfil) . '<br>';
         $html .= '<img src="../../' . $img_perfil . '" style="max-width:300px;max-height:200px;border:1px solid #333;">';
-        $html .= '<img src="../../public/images/ubicacion_autorizacion/1231211322/mapa_ubicacion_1750256576.jpg" style="max-width:300px;max-height:200px;border:1px solid #333;">';
+        $html .= '<img src="/ModuStackVisit_2/public/images/ubicacion_autorizacion/1231211322/mapa_ubicacion_1750256576.jpg" style="max-width:300px;max-height:200px;border:1px solid #333;">';
         $html .= '</li>';
         $html .= '</ul>';
         $dompdf->loadHtml($html);
