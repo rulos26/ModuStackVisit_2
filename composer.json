@@ -3,8 +3,9 @@
     "description": "Estructura base para aplicación PHP 8.3",
     "type": "project",
     "require": {
-        "php": "^8.3",
-        "ext-pdo": "*"
+        "php": "^8.2",
+        "ext-pdo": "*",
+        "dompdf/dompdf": "^3.1"
     },
     "autoload": {
         "psr-4": {
@@ -23,4 +24,4 @@
         "sort-packages": true
     },
     "minimum-stability": "stable"
-} 
+}

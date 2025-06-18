@@ -16,6 +16,12 @@
                 Evaluación visita domiciliaria
             </a>
         </li>
+        <li>
+            <a href="/ModuStackVisit_2/resources/views/demo_pdf.php" class="nav-link link-dark">
+                <i class="bi bi-file-earmark-pdf me-2"></i>
+                PDF de ejemplo
+            </a>
+        </li>
     </ul>
     <hr>
     <div class="text-muted small">&copy; <?php echo date('Y'); ?> Mi Sistema</div>
