@@ -3,167 +3,213 @@ session_start();
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-/* if (!isset($_SESSION['id_usuario'])) {
-    // Redirigir a la página de inicio de sesión si no ha iniciado sesión
-    header("Location: ../../../error/error.php");
+
+if (!isset($_SESSION['user_id']) && !isset($_SESSION['cedula_autorizacion'])) {
+    header('Location: /ModuStackVisit_2/resources/views/error/error.php?from=registro_fotografico&test=123');
     exit();
-} */
+}
+
+ob_start();
 ?>
+<link rel="stylesheet" href="../../../../../public/css/styles.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+.steps-horizontal {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    width: 100%;
+    gap: 0.5rem;
+}
+.step-horizontal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+}
+.step-horizontal:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    width: 100%;
+    height: 4px;
+    background: #e0e0e0;
+    z-index: 0;
+    transform: translateX(50%);
+}
+.step-horizontal .step-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    color: #888;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    border: 2px solid #e0e0e0;
+    z-index: 1;
+    transition: all 0.3s;
+}
+.step-horizontal.active .step-icon {
+    background: #4361ee;
+    border-color: #4361ee;
+    color: #fff;
+    box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.2);
+}
+.step-horizontal.complete .step-icon {
+    background: #2ecc71;
+    border-color: #2ecc71;
+    color: #fff;
+}
+.step-horizontal .step-title {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+}
+.step-horizontal .step-description {
+    font-size: 0.85rem;
+    color: #888;
+    text-align: center;
+}
+.step-horizontal.active .step-title,
+.step-horizontal.active .step-description {
+    color: #4361ee;
+}
+.step-horizontal.complete .step-title,
+.step-horizontal.complete .step-description {
+    color: #2ecc71;
+}
+</style>
 
-
-<!DOCTYPE html>
-<html lang="es">
-<a href="../error/error.php"></a>
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modulo Visitas</title>
-    <!-- Enlace al CSS de Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Enlace al archivo CSS de Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Enlace al archivo de Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
-    <!-- Estilos personalizados -->
-    <link href="../../../../../css/menu_style.css" rel="stylesheet">
-    <link href="../../../../../css/footer.css" rel="stylesheet">
-    <link href="../../../../../css/header.css" rel="stylesheet">
-    <style>
-
-    </style>
-
-</head>
-
-<body>
-
-    <!-- Menú Vertical -->
-    <?php include '../menu/menu.php'; ?>
-
-    <!-- Navbar -->
-    <?php include '../header/header.php'; ?>
-
-
-
-
-    <!-- Contenido de la página -->
-    <div style="margin-left: 250px; padding: 20px;">
-
-        <div class="container">
-
-            <div class="card mt-5">
-                <div class="card-header">
-                    <h5 class="card-title">Carta de Autorización </h5>
+<div class="container mt-4">
+    <div class="card mt-5">
+        <div class="card-header">
+            <h5 class="card-title">Registro Fotográfico</h5>
+        </div>
+        <div class="card-body">
+            <div class="steps-horizontal mb-4">
+                <div class="step-horizontal complete">
+                    <div class="step-icon"><i class="fas fa-user"></i></div>
+                    <div class="step-title">Paso 1</div>
+                    <div class="step-description">Datos Básicos</div>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-6">
-                            <img src="../../../../../img/empresa/logo.jpg" alt="Logotipo de la empresa" width="65%" height="55%">
-
-                        </div>
-                        <div class="col-6">
-
-                        </div>
-                        <div class="row">
-                            <div class="row">
-                                <div class="col-md-6 offset-md-3 text-center">
-                                    <!-- <h2>Capturar Fotografía</h2>
-                                    <video id="video" width="100%" height="auto" autoplay></video>
-                                    <button class="btn btn-primary mt-3" onclick="tomarFoto()">Tomar Foto</button>
-                                 -->
-                                    <button id="captureButton">Tomar Foto</button>
-                                    <canvas id="canvas" style="display: none;"></canvas>
-
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
+                <div class="step-horizontal complete">
+                    <div class="step-icon"><i class="fas fa-id-card"></i></div>
+                    <div class="step-title">Paso 2</div>
+                    <div class="step-description">Información Personal</div>
                 </div>
-                <div class="card-footer text-body-secondary">
-                    © 2024 V0.01
+                <div class="step-horizontal complete">
+                    <div class="step-icon"><i class="fas fa-phone"></i></div>
+                    <div class="step-title">Paso 3</div>
+                    <div class="step-description">Contacto</div>
+                </div>
+                <div class="step-horizontal complete">
+                    <div class="step-icon"><i class="fas fa-file-signature"></i></div>
+                    <div class="step-title">Paso 4</div>
+                    <div class="step-description">Autorización</div>
+                </div>
+                <div class="step-horizontal complete">
+                    <div class="step-icon"><i class="fas fa-pen-nib"></i></div>
+                    <div class="step-title">Paso 5</div>
+                    <div class="step-description">Firma</div>
+                </div>
+                <div class="step-horizontal active">
+                    <div class="step-icon"><i class="fas fa-camera"></i></div>
+                    <div class="step-title">Paso 6</div>
+                    <div class="step-description">Registro Fotográfico</div>
                 </div>
             </div>
+            <div class="controls text-center mb-4">
+                <!-- Aquí podrías poner botones de navegación si lo deseas -->
+            </div>
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?php echo htmlspecialchars($_SESSION['error']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
+            <?php if (isset($_SESSION['success'])): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?php echo htmlspecialchars($_SESSION['success']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['success']); ?>
+            <?php endif; ?>
+            <form id="fotoForm" method="POST" enctype="multipart/form-data" action="guardar_foto.php">
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 60%; height: auto;">
+                    </div>
+                    <div class="col-6 d-flex align-items-center justify-content-center">
+                        <button type="button" class="btn btn-primary" id="captureButton">
+                            <i class="fas fa-camera"></i> Tomar Foto
+                        </button>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12 text-center">
+                        <video id="video" width="400" height="300" autoplay style="display:none;"></video>
+                        <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
+                        <img id="fotoPreview" src="" alt="Foto tomada" style="max-width: 300px; display: none;">
+                    </div>
+                </div>
+                <input type="hidden" name="foto_digital" id="fotoDigitalInput" required>
+            </form>
         </div>
-        <?php include '../footer/footer.php'; ?>
+        <div class="card-footer text-body-secondary">
+            © 2024 V0.01
+        </div>
     </div>
-
-
-</body>
-
-<!-- Bootstrap Bundle con Popper -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
-
-
-<!-- <script src="registro_fotografico.js"></script>
- -->
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const captureButton = document.getElementById('captureButton');
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
+// Lógica para capturar la foto con la cámara y mostrarla
+const captureButton = document.getElementById('captureButton');
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const fotoPreview = document.getElementById('fotoPreview');
+const fotoDigitalInput = document.getElementById('fotoDigitalInput');
+const fotoForm = document.getElementById('fotoForm');
 
-        captureButton.addEventListener('click', function() {
-            // Acceder a la cámara y tomar la foto
-            navigator.mediaDevices.getUserMedia({
-                    video: true
-                })
-                .then(function(stream) {
-                    const video = document.createElement('video');
-                    document.body.appendChild(video);
-                    video.srcObject = stream;
-                    video.play();
+let stream = null;
 
-                    video.addEventListener('loadeddata', function() {
-                        canvas.width = video.videoWidth;
-                        canvas.height = video.videoHeight;
-                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-                        // Convertir la imagen del canvas a base64
-                        const imageData = canvas.toDataURL('image/png');
-
-                        // Enviar la foto al servidor (puedes utilizar AJAX para esto)
-                        fetch('guardar.php', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/x-www-form-urlencoded',
-                                },
-                                body: 'photo=' + encodeURIComponent(imageData)
-                            })
-                           /*  .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Error al enviar la imagen al servidor.');
-                                    window.location.href = '../carta_autorizacion/carta_autorizacion.php'; // Cambia 'nueva_pagina.html' por la URL que desees
-
-                                }
-                                return response.text();
-                            }) */
-                          /*   .then(message => {
-                                console.log(message); // Puedes manejar la respuesta del servidor aquí
-                                window.location.href = '../carta_autorizacion/carta_autorizacion.php'; // Cambia 'nueva_pagina.html' por la URL que desees
-
-                            }) */
-                           /*  .catch(error => {
-                                console.error('Error:', error);
-                            }); */
-
-                        // Detener la transmisión de la cámara
-                        stream.getTracks().forEach(track => track.stop());
-
-                        // Eliminar el elemento de video
-                        document.body.removeChild(video);
-                        window.location.href = '../carta_autorizacion/carta_autorizacion.php'; // Cambia 'nueva_pagina.html' por la URL que desees
-
-                        
-                    });
-                })
-                .catch(function(error) {
-                    console.error('Error al acceder a la cámara:', error);
-                });
+captureButton.addEventListener('click', function() {
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(s) {
+            stream = s;
+            video.srcObject = stream;
+            video.style.display = 'block';
+            video.play();
+            // Esperar a que el usuario haga clic en el video para tomar la foto
+            video.onclick = function() {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = canvas.toDataURL('image/png');
+                fotoDigitalInput.value = imageData;
+                fotoPreview.src = imageData;
+                fotoPreview.style.display = 'block';
+                video.style.display = 'none';
+                // Detener la cámara
+                stream.getTracks().forEach(track => track.stop());
+                // Enviar el formulario automáticamente
+                setTimeout(function() {
+                    fotoForm.submit();
+                }, 400);
+            };
+        })
+        .catch(function(error) {
+            alert('Error al acceder a la cámara: ' + error);
         });
-    });
+});
 </script>
-
-</html>
+<?php
+$contenido = ob_get_clean();
+include dirname(__DIR__, 3) . '/layout/dashboard.php';
+?>
