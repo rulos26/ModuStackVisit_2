@@ -74,6 +74,9 @@ class DemoPdfController {
         $img_firma_b64 = img_to_base64($img_firma_path);
         $img_perfil_b64 = img_to_base64($img_perfil_path);
 
+        $logo_path = __DIR__ . '/../../public/images/header.jpg';
+        $logo_b64 = img_to_base64($logo_path);
+
         // --- Renderizado usando plantilla externa ---
         $data = [
             'row1' => $row1,
@@ -85,7 +88,8 @@ class DemoPdfController {
             'row4' => $row4,
             'img_ubicacion_path' => $img_ubicacion_path,
             'img_firma_path' => $img_firma_path,
-            'img_perfil_path' => $img_perfil_path
+            'img_perfil_path' => $img_perfil_path,
+            'logo_b64' => $logo_b64
         ];
         extract($data);
         ob_start();
