@@ -3,254 +3,408 @@ namespace App\Controllers;
 
 require_once __DIR__ . '/../Database/Database.php';
 
-use Exception;
-use PDO;
 use App\Database\Database;
+use PDOException;
+use Exception;
 
 class InformacionPersonalController {
     private static $instance = null;
     private $db;
-
+    
     private function __construct() {
-        try {
-            $this->db = Database::getInstance()->getConnection();
-            if (!$this->db instanceof PDO) {
-                throw new Exception("Error al obtener la conexión a la base de datos");
-            }
-        } catch (Exception $e) {
-            error_log("Error en InformacionPersonalController::__construct: " . $e->getMessage());
-            throw $e;
-        }
+        $this->db = Database::getInstance()->getConnection();
     }
-
+    
     public static function getInstance() {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
-
+    
     /**
-     * Obtener información personal por cédula
-     */
-    public function obtenerPorCedula($id_cedula) {
-        try {
-            $stmt = $this->db->prepare("SELECT * FROM informacion_personal WHERE id_cedula = ?");
-            if (!$stmt) {
-                throw new Exception("Error al preparar la consulta: " . $this->db->errorInfo()[2]);
-            }
-            
-            $stmt->execute([$id_cedula]);
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            error_log("Error en InformacionPersonalController::obtenerPorCedula: " . $e->getMessage());
-            throw new Exception("Error al obtener la información personal: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Guardar información personal
-     */
-    public function guardar($datos) {
-        try {
-            // Validar datos requeridos
-            $campos_requeridos = [
-                'id_cedula', 'id_tipo_documentos', 'cedula_expedida', 'nombres', 
-                'apellidos', 'edad', 'fecha_expedicion', 'lugar_nacimiento', 
-                'celular_1', 'id_rh', 'id_estatura', 'peso_kg', 'id_estado_civil', 
-                'direccion', 'id_ciudad', 'localidad', 'barrio', 'id_estrato', 'correo'
-            ];
-
-            foreach ($campos_requeridos as $campo) {
-                if (empty($datos[$campo])) {
-                    throw new Exception("El campo {$campo} es requerido");
-                }
-            }
-
-            // Validar formato de email
-            if (!filter_var($datos['correo'], FILTER_VALIDATE_EMAIL)) {
-                throw new Exception("El formato del correo electrónico no es válido");
-            }
-
-            // Validar edad
-            if (!is_numeric($datos['edad']) || $datos['edad'] < 18 || $datos['edad'] > 120) {
-                throw new Exception("La edad debe estar entre 18 y 120 años");
-            }
-
-            // Verificar si ya existe información para esta cédula
-            $existente = $this->obtenerPorCedula($datos['id_cedula']);
-            
-            if ($existente) {
-                // Actualizar registro existente
-                $sql = "UPDATE informacion_personal SET 
-                    id_tipo_documentos = ?, cedula_expedida = ?, nombres = ?, 
-                    apellidos = ?, edad = ?, fecha_expedicion = ?, lugar_nacimiento = ?, 
-                    celular_1 = ?, celular_2 = ?, telefono = ?, id_rh = ?, 
-                    id_estatura = ?, peso_kg = ?, id_estado_civil = ?, hacer_cuanto = ?, 
-                    numero_hijos = ?, direccion = ?, id_ciudad = ?, localidad = ?, 
-                    barrio = ?, id_estrato = ?, correo = ?, cargo = ?, observacion = ?,
-                    fecha_actualizacion = NOW()
-                    WHERE id_cedula = ?";
-                
-                $stmt = $this->db->prepare($sql);
-                if (!$stmt) {
-                    throw new Exception("Error al preparar la consulta de actualización: " . $this->db->errorInfo()[2]);
-                }
-                
-                $stmt->execute([
-                    $datos['id_tipo_documentos'], $datos['cedula_expedida'], $datos['nombres'],
-                    $datos['apellidos'], $datos['edad'], $datos['fecha_expedicion'], $datos['lugar_nacimiento'],
-                    $datos['celular_1'], $datos['celular_2'] ?? null, $datos['telefono'] ?? null, $datos['id_rh'],
-                    $datos['id_estatura'], $datos['peso_kg'], $datos['id_estado_civil'], $datos['hacer_cuanto'] ?? null,
-                    $datos['numero_hijos'] ?? null, $datos['direccion'], $datos['id_ciudad'], $datos['localidad'],
-                    $datos['barrio'], $datos['id_estrato'], $datos['correo'], $datos['cargo'] ?? null, 
-                    $datos['observacion'] ?? null, $datos['id_cedula']
-                ]);
-
-                return [
-                    'success' => true,
-                    'message' => 'Información personal actualizada exitosamente',
-                    'action' => 'updated'
-                ];
-            } else {
-                // Insertar nuevo registro
-                $sql = "INSERT INTO informacion_personal (
-                    id_cedula, id_tipo_documentos, cedula_expedida, nombres, apellidos, 
-                    edad, fecha_expedicion, lugar_nacimiento, celular_1, celular_2, 
-                    telefono, id_rh, id_estatura, peso_kg, id_estado_civil, hacer_cuanto, 
-                    numero_hijos, direccion, id_ciudad, localidad, barrio, id_estrato, 
-                    correo, cargo, observacion, fecha_creacion, fecha_actualizacion
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
-                
-                $stmt = $this->db->prepare($sql);
-                if (!$stmt) {
-                    throw new Exception("Error al preparar la consulta de inserción: " . $this->db->errorInfo()[2]);
-                }
-                
-                $stmt->execute([
-                    $datos['id_cedula'], $datos['id_tipo_documentos'], $datos['cedula_expedida'], 
-                    $datos['nombres'], $datos['apellidos'], $datos['edad'], $datos['fecha_expedicion'], 
-                    $datos['lugar_nacimiento'], $datos['celular_1'], $datos['celular_2'] ?? null, 
-                    $datos['telefono'] ?? null, $datos['id_rh'], $datos['id_estatura'], $datos['peso_kg'], 
-                    $datos['id_estado_civil'], $datos['hacer_cuanto'] ?? null, $datos['numero_hijos'] ?? null, 
-                    $datos['direccion'], $datos['id_ciudad'], $datos['localidad'], $datos['barrio'], 
-                    $datos['id_estrato'], $datos['correo'], $datos['cargo'] ?? null, $datos['observacion'] ?? null
-                ]);
-
-                return [
-                    'success' => true,
-                    'message' => 'Información personal guardada exitosamente',
-                    'action' => 'created',
-                    'id' => $this->db->lastInsertId()
-                ];
-            }
-
-        } catch (Exception $e) {
-            error_log("Error en InformacionPersonalController::guardar: " . $e->getMessage());
-            return [
-                'success' => false,
-                'message' => $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Obtener opciones para los select boxes
-     */
-    public function obtenerOpciones($tipo) {
-        try {
-            $queries = [
-                'tipo_documentos' => "SELECT id, nombre FROM opc_tipo_documentos ORDER BY nombre",
-                'municipios' => "SELECT id_municipio as id, municipio as nombre FROM municipios ORDER BY municipio",
-                'rh' => "SELECT id, nombre FROM opc_rh ORDER BY nombre",
-                'estaturas' => "SELECT id, nombre FROM opc_estaturas ORDER BY nombre",
-                'pesos' => "SELECT id, nombre FROM opc_peso ORDER BY nombre",
-                'estado_civil' => "SELECT id, nombre FROM opc_estado_civiles ORDER BY nombre",
-                'estratos' => "SELECT id, nombre FROM opc_estratos ORDER BY nombre"
-            ];
-
-            if (!isset($queries[$tipo])) {
-                throw new Exception("Tipo de opciones no válido: {$tipo}");
-            }
-
-            $stmt = $this->db->prepare($queries[$tipo]);
-            if (!$stmt) {
-                throw new Exception("Error al preparar la consulta: " . $this->db->errorInfo()[2]);
-            }
-            
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            error_log("Error en InformacionPersonalController::obtenerOpciones: " . $e->getMessage());
-            throw new Exception("Error al obtener las opciones: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Validar datos antes de guardar
-     */
-    public function validarDatos($datos) {
-        $errores = [];
-
-        // Validar campos requeridos
-        $campos_requeridos = [
-            'id_cedula' => 'Número de documento',
-            'nombres' => 'Nombres',
-            'apellidos' => 'Apellidos',
-            'edad' => 'Edad',
-            'celular_1' => 'Celular 1',
-            'direccion' => 'Dirección',
-            'correo' => 'Correo electrónico'
-        ];
-
-        foreach ($campos_requeridos as $campo => $nombre) {
-            if (empty($datos[$campo])) {
-                $errores[] = "El campo {$nombre} es requerido";
-            }
-        }
-
-        // Validar formato de email
-        if (!empty($datos['correo']) && !filter_var($datos['correo'], FILTER_VALIDATE_EMAIL)) {
-            $errores[] = "El formato del correo electrónico no es válido";
-        }
-
-        // Validar edad
-        if (!empty($datos['edad'])) {
-            if (!is_numeric($datos['edad']) || $datos['edad'] < 18 || $datos['edad'] > 120) {
-                $errores[] = "La edad debe estar entre 18 y 120 años";
-            }
-        }
-
-        // Validar formato de teléfonos
-        if (!empty($datos['celular_1']) && !preg_match('/^[0-9]{10}$/', $datos['celular_1'])) {
-            $errores[] = "El celular 1 debe tener 10 dígitos";
-        }
-
-        if (!empty($datos['celular_2']) && !preg_match('/^[0-9]{10}$/', $datos['celular_2'])) {
-            $errores[] = "El celular 2 debe tener 10 dígitos";
-        }
-
-        if (!empty($datos['telefono']) && !preg_match('/^[0-9]{7}$/', $datos['telefono'])) {
-            $errores[] = "El teléfono debe tener 7 dígitos";
-        }
-
-        return $errores;
-    }
-
-    /**
-     * Limpiar y sanitizar datos de entrada
+     * Sanitiza los datos de entrada
      */
     public function sanitizarDatos($datos) {
-        $datos_limpios = [];
+        $sanitizados = [];
         
         foreach ($datos as $clave => $valor) {
             if (is_string($valor)) {
-                $datos_limpios[$clave] = trim(htmlspecialchars($valor, ENT_QUOTES, 'UTF-8'));
+                $sanitizados[$clave] = trim(strip_tags($valor));
             } else {
-                $datos_limpios[$clave] = $valor;
+                $sanitizados[$clave] = $valor;
             }
         }
         
-        return $datos_limpios;
+        // Debug: log de datos sanitizados
+        error_log('DEBUG InformacionPersonalController: Datos sanitizados: ' . json_encode($sanitizados));
+        
+        return $sanitizados;
+    }
+    
+    /**
+     * Valida los datos de entrada
+     */
+    public function validarDatos($datos) {
+        $errores = [];
+        
+        // Validar cédula
+        if (empty($datos['id_cedula']) || !is_numeric($datos['id_cedula'])) {
+            $errores[] = 'La cédula es obligatoria y debe ser numérica.';
+        }
+        
+        // Validar nombres
+        if (empty($datos['nombres']) || !preg_match('/^[A-Za-zÁáÉéÍíÓóÚúÑñ\s]+$/', $datos['nombres'])) {
+            $errores[] = 'Los nombres son obligatorios y solo pueden contener letras.';
+        }
+        
+        // Validar apellidos
+        if (empty($datos['apellidos']) || !preg_match('/^[A-Za-zÁáÉéÍíÓóÚúÑñ\s]+$/', $datos['apellidos'])) {
+            $errores[] = 'Los apellidos son obligatorios y solo pueden contener letras.';
+        }
+        
+        // Validar edad
+        if (empty($datos['edad']) || !is_numeric($datos['edad']) || $datos['edad'] < 18 || $datos['edad'] > 120) {
+            $errores[] = 'La edad debe estar entre 18 y 120 años.';
+        }
+        
+        // Validar celular 1
+        if (empty($datos['celular_1']) || !preg_match('/^[0-9]{10}$/', $datos['celular_1'])) {
+            $errores[] = 'El celular 1 es obligatorio y debe tener 10 dígitos.';
+        }
+        
+        // Validar celular 2 (opcional)
+        if (!empty($datos['celular_2']) && !preg_match('/^[0-9]{10}$/', $datos['celular_2'])) {
+            $errores[] = 'El celular 2 debe tener 10 dígitos.';
+        }
+        
+        // Validar teléfono (opcional)
+        if (!empty($datos['telefono']) && !preg_match('/^[0-9]{7}$/', $datos['telefono'])) {
+            $errores[] = 'El teléfono debe tener 7 dígitos.';
+        }
+        
+        // Validar correo
+        if (empty($datos['correo']) || !filter_var($datos['correo'], FILTER_VALIDATE_EMAIL)) {
+            $errores[] = 'El correo electrónico es obligatorio y debe ser válido.';
+        }
+        
+        // Validar dirección
+        if (empty($datos['direccion'])) {
+            $errores[] = 'La dirección es obligatoria.';
+        }
+        
+        // Validar campos de selección
+        $camposSelect = ['id_tipo_documentos', 'cedula_expedida', 'id_rh', 'id_estatura', 'peso_kg', 'id_estado_civil', 'id_ciudad', 'lugar_nacimiento', 'id_estrato'];
+        foreach ($camposSelect as $campo) {
+            if (empty($datos[$campo]) || $datos[$campo] == '0') {
+                $errores[] = 'El campo ' . str_replace('_', ' ', $campo) . ' es obligatorio.';
+            }
+        }
+        
+        // Validar número de hijos
+        if (isset($datos['numero_hijos']) && (!is_numeric($datos['numero_hijos']) || $datos['numero_hijos'] < 0 || $datos['numero_hijos'] > 20)) {
+            $errores[] = 'El número de hijos debe estar entre 0 y 20.';
+        }
+        
+        // Validar hacer_cuanto
+        if (isset($datos['hacer_cuanto']) && (!is_numeric($datos['hacer_cuanto']) || $datos['hacer_cuanto'] < 0 || $datos['hacer_cuanto'] > 50)) {
+            $errores[] = 'El tiempo en estado civil debe estar entre 0 y 50 años.';
+        }
+        
+        return $errores;
+    }
+    
+    /**
+     * Guarda o actualiza la información personal
+     */
+    public function guardar($datos) {
+        try {
+            // Debug: log de datos recibidos
+            error_log('DEBUG InformacionPersonalController: Datos recibidos para guardar: ' . json_encode($datos));
+            
+            // Verificar si ya existe un registro para esta cédula
+            $existe = $this->obtenerPorCedula($datos['id_cedula']);
+            
+            if ($existe) {
+                // Actualizar registro existente
+                $resultado = $this->actualizar($datos);
+                if ($resultado) {
+                    return [
+                        'success' => true,
+                        'message' => 'Información personal actualizada exitosamente.',
+                        'action' => 'updated'
+                    ];
+                } else {
+                    return [
+                        'success' => false,
+                        'message' => 'Error al actualizar la información personal.'
+                    ];
+                }
+            } else {
+                // Crear nuevo registro
+                $resultado = $this->crear($datos);
+                if ($resultado) {
+                    return [
+                        'success' => true,
+                        'message' => 'Información personal guardada exitosamente.',
+                        'action' => 'created'
+                    ];
+                } else {
+                    return [
+                        'success' => false,
+                        'message' => 'Error al guardar la información personal.'
+                    ];
+                }
+            }
+        } catch (Exception $e) {
+            error_log('ERROR InformacionPersonalController: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Error interno del servidor: ' . $e->getMessage()
+            ];
+        }
+    }
+    
+    /**
+     * Crea un nuevo registro
+     */
+    private function crear($datos) {
+        try {
+            $sql = "INSERT INTO informacion_personal (
+                id_cedula, id_tipo_documentos, cedula_expedida, nombres, apellidos, 
+                edad, fecha_expedicion, lugar_nacimiento, celular_1, celular_2, 
+                telefono, id_rh, id_estatura, peso_kg, id_estado_civil, hacer_cuanto, 
+                numero_hijos, direccion, id_ciudad, localidad, barrio, id_estrato, 
+                correo, cargo, observacion, fecha_creacion
+            ) VALUES (
+                :id_cedula, :id_tipo_documentos, :cedula_expedida, :nombres, :apellidos,
+                :edad, :fecha_expedicion, :lugar_nacimiento, :celular_1, :celular_2,
+                :telefono, :id_rh, :id_estatura, :peso_kg, :id_estado_civil, :hacer_cuanto,
+                :numero_hijos, :direccion, :id_ciudad, :localidad, :barrio, :id_estrato,
+                :correo, :cargo, :observacion, NOW()
+            )";
+            
+            $stmt = $this->db->prepare($sql);
+            
+            // Bind de parámetros
+            $stmt->bindParam(':id_cedula', $datos['id_cedula']);
+            $stmt->bindParam(':id_tipo_documentos', $datos['id_tipo_documentos']);
+            $stmt->bindParam(':cedula_expedida', $datos['cedula_expedida']);
+            $stmt->bindParam(':nombres', $datos['nombres']);
+            $stmt->bindParam(':apellidos', $datos['apellidos']);
+            $stmt->bindParam(':edad', $datos['edad']);
+            $stmt->bindParam(':fecha_expedicion', $datos['fecha_expedicion']);
+            $stmt->bindParam(':lugar_nacimiento', $datos['lugar_nacimiento']);
+            $stmt->bindParam(':celular_1', $datos['celular_1']);
+            $stmt->bindParam(':celular_2', $datos['celular_2']);
+            $stmt->bindParam(':telefono', $datos['telefono']);
+            $stmt->bindParam(':id_rh', $datos['id_rh']);
+            $stmt->bindParam(':id_estatura', $datos['id_estatura']);
+            $stmt->bindParam(':peso_kg', $datos['peso_kg']);
+            $stmt->bindParam(':id_estado_civil', $datos['id_estado_civil']);
+            $stmt->bindParam(':hacer_cuanto', $datos['hacer_cuanto']);
+            $stmt->bindParam(':numero_hijos', $datos['numero_hijos']);
+            $stmt->bindParam(':direccion', $datos['direccion']);
+            $stmt->bindParam(':id_ciudad', $datos['id_ciudad']);
+            $stmt->bindParam(':localidad', $datos['localidad']);
+            $stmt->bindParam(':barrio', $datos['barrio']);
+            $stmt->bindParam(':id_estrato', $datos['id_estrato']);
+            $stmt->bindParam(':correo', $datos['correo']);
+            $stmt->bindParam(':cargo', $datos['cargo']);
+            $stmt->bindParam(':observacion', $datos['observacion']);
+            
+            $resultado = $stmt->execute();
+            
+            error_log('DEBUG InformacionPersonalController: Resultado crear: ' . var_export($resultado, true));
+            
+            return $resultado;
+            
+        } catch (PDOException $e) {
+            error_log('ERROR InformacionPersonalController crear: ' . $e->getMessage());
+            throw new Exception('Error al crear registro: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Actualiza un registro existente
+     */
+    private function actualizar($datos) {
+        try {
+            $sql = "UPDATE informacion_personal SET 
+                id_tipo_documentos = :id_tipo_documentos,
+                cedula_expedida = :cedula_expedida,
+                nombres = :nombres,
+                apellidos = :apellidos,
+                edad = :edad,
+                fecha_expedicion = :fecha_expedicion,
+                lugar_nacimiento = :lugar_nacimiento,
+                celular_1 = :celular_1,
+                celular_2 = :celular_2,
+                telefono = :telefono,
+                id_rh = :id_rh,
+                id_estatura = :id_estatura,
+                peso_kg = :peso_kg,
+                id_estado_civil = :id_estado_civil,
+                hacer_cuanto = :hacer_cuanto,
+                numero_hijos = :numero_hijos,
+                direccion = :direccion,
+                id_ciudad = :id_ciudad,
+                localidad = :localidad,
+                barrio = :barrio,
+                id_estrato = :id_estrato,
+                correo = :correo,
+                cargo = :cargo,
+                observacion = :observacion,
+                fecha_actualizacion = NOW()
+                WHERE id_cedula = :id_cedula";
+            
+            $stmt = $this->db->prepare($sql);
+            
+            // Bind de parámetros
+            $stmt->bindParam(':id_cedula', $datos['id_cedula']);
+            $stmt->bindParam(':id_tipo_documentos', $datos['id_tipo_documentos']);
+            $stmt->bindParam(':cedula_expedida', $datos['cedula_expedida']);
+            $stmt->bindParam(':nombres', $datos['nombres']);
+            $stmt->bindParam(':apellidos', $datos['apellidos']);
+            $stmt->bindParam(':edad', $datos['edad']);
+            $stmt->bindParam(':fecha_expedicion', $datos['fecha_expedicion']);
+            $stmt->bindParam(':lugar_nacimiento', $datos['lugar_nacimiento']);
+            $stmt->bindParam(':celular_1', $datos['celular_1']);
+            $stmt->bindParam(':celular_2', $datos['celular_2']);
+            $stmt->bindParam(':telefono', $datos['telefono']);
+            $stmt->bindParam(':id_rh', $datos['id_rh']);
+            $stmt->bindParam(':id_estatura', $datos['id_estatura']);
+            $stmt->bindParam(':peso_kg', $datos['peso_kg']);
+            $stmt->bindParam(':id_estado_civil', $datos['id_estado_civil']);
+            $stmt->bindParam(':hacer_cuanto', $datos['hacer_cuanto']);
+            $stmt->bindParam(':numero_hijos', $datos['numero_hijos']);
+            $stmt->bindParam(':direccion', $datos['direccion']);
+            $stmt->bindParam(':id_ciudad', $datos['id_ciudad']);
+            $stmt->bindParam(':localidad', $datos['localidad']);
+            $stmt->bindParam(':barrio', $datos['barrio']);
+            $stmt->bindParam(':id_estrato', $datos['id_estrato']);
+            $stmt->bindParam(':correo', $datos['correo']);
+            $stmt->bindParam(':cargo', $datos['cargo']);
+            $stmt->bindParam(':observacion', $datos['observacion']);
+            
+            $resultado = $stmt->execute();
+            
+            error_log('DEBUG InformacionPersonalController: Resultado actualizar: ' . var_export($resultado, true));
+            
+            return $resultado;
+            
+        } catch (PDOException $e) {
+            error_log('ERROR InformacionPersonalController actualizar: ' . $e->getMessage());
+            throw new Exception('Error al actualizar registro: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Obtiene información personal por cédula
+     */
+    public function obtenerPorCedula($cedula) {
+        try {
+            $sql = "SELECT * FROM informacion_personal WHERE id_cedula = :cedula";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':cedula', $cedula);
+            $stmt->execute();
+            
+            return $stmt->fetch(\PDO::FETCH_ASSOC);
+            
+        } catch (PDOException $e) {
+            error_log('ERROR InformacionPersonalController obtenerPorCedula: ' . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Obtiene opciones para los select boxes
+     */
+    public function obtenerOpciones($tipo) {
+        try {
+            $tablas = [
+                'tipo_documentos' => 'opc_tipo_documentos',
+                'municipios' => 'municipios',
+                'rh' => 'opc_rh',
+                'estaturas' => 'opc_estaturas',
+                'pesos' => 'opc_pesos',
+                'estado_civil' => 'opc_estado_civil',
+                'estratos' => 'opc_estratos'
+            ];
+            
+            if (!isset($tablas[$tipo])) {
+                throw new Exception("Tipo de opción no válido: $tipo");
+            }
+            
+            $tabla = $tablas[$tipo];
+            $sql = "SELECT * FROM $tabla ORDER BY nombre";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+        } catch (PDOException $e) {
+            error_log('ERROR InformacionPersonalController obtenerOpciones: ' . $e->getMessage());
+            return [];
+        }
+    }
+    
+    /**
+     * Verifica si existe información para una cédula
+     */
+    public function existeInformacion($cedula) {
+        try {
+            $sql = "SELECT COUNT(*) FROM informacion_personal WHERE id_cedula = :cedula";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':cedula', $cedula);
+            $stmt->execute();
+            
+            return $stmt->fetchColumn() > 0;
+            
+        } catch (PDOException $e) {
+            error_log('ERROR InformacionPersonalController existeInformacion: ' . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Elimina información personal por cédula
+     */
+    public function eliminar($cedula) {
+        try {
+            $sql = "DELETE FROM informacion_personal WHERE id_cedula = :cedula";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':cedula', $cedula);
+            
+            return $stmt->execute();
+            
+        } catch (PDOException $e) {
+            error_log('ERROR InformacionPersonalController eliminar: ' . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Obtiene estadísticas de información personal
+     */
+    public function obtenerEstadisticas() {
+        try {
+            $sql = "SELECT 
+                        COUNT(*) as total_registros,
+                        COUNT(DISTINCT id_ciudad) as ciudades_diferentes,
+                        AVG(edad) as edad_promedio,
+                        COUNT(CASE WHEN id_estado_civil = 1 THEN 1 END) as solteros,
+                        COUNT(CASE WHEN id_estado_civil = 2 THEN 1 END) as casados
+                    FROM informacion_personal";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            
+            return $stmt->fetch(\PDO::FETCH_ASSOC);
+            
+        } catch (PDOException $e) {
+            error_log('ERROR InformacionPersonalController obtenerEstadisticas: ' . $e->getMessage());
+            return [];
+        }
     }
 } 
