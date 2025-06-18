@@ -65,42 +65,28 @@ function convert_png_to_jpg($png_path) {
     }
 }
 
-// Función para verificar si una imagen es válida
-function is_valid_image($file_path) {
-    if (!file_exists($file_path)) {
-        error_log("Archivo no encontrado en is_valid_image: " . $file_path);
-        return false;
-    }
-    
-    try {
-        // Si es PNG, intentar convertir a JPG
-        if (strtolower(pathinfo($file_path, PATHINFO_EXTENSION)) === 'png') {
-            $jpg_path = convert_png_to_jpg($file_path);
-            if ($jpg_path) {
-                return $jpg_path;
-            }
-            error_log("Error al convertir PNG a JPG: " . $file_path);
-            return false;
-        }
-        
-        $image_info = @getimagesize($file_path);
-        if ($image_info === false) {
-            error_log("getimagesize falló para: " . $file_path);
-            return false;
-        }
-        
-        return $file_path;
-    } catch (Exception $e) {
-        error_log("Error en is_valid_image: " . $e->getMessage());
-        return false;
-    }
+// NUEVAS FUNCIONES PARA RUTAS DE IMÁGENES
+function get_image_path($type, $id_cedula, $filename) {
+    $base_dir = __DIR__ . "/../../../../../public/images/";
+    $type_dir = [
+        'firma' => 'firma',
+        'perfil' => 'registro_fotografico',
+        'ubicacion' => 'ubicacion_autorizacion'
+    ];
+    if (!isset($type_dir[$type])) return false;
+    $ruta = $base_dir . $type_dir[$type] . "/" . $id_cedula . "/" . $filename;
+    return file_exists($ruta) ? $ruta : false;
 }
 
-// Función para obtener una imagen por defecto si la original no es válida
 function get_default_image($type) {
-    $default_path = IMG_PATH . '/default_' . $type . '.jpg';
+    $base_dir = __DIR__ . "/../../../../../public/images/";
+    $type_dir = [
+        'firma' => 'firma',
+        'perfil' => 'registro_fotografico',
+        'ubicacion' => 'ubicacion_autorizacion'
+    ];
+    $default_path = $base_dir . $type_dir[$type] . "/default_" . $type . ".jpg";
     if (!file_exists($default_path)) {
-        error_log("Imagen por defecto no encontrada: " . $default_path);
         // Crear una imagen por defecto si no existe
         $img = imagecreatetruecolor(200, 200);
         $bg = imagecolorallocate($img, 255, 255, 255);
@@ -109,6 +95,17 @@ function get_default_image($type) {
         imagedestroy($img);
     }
     return $default_path;
+}
+
+function is_valid_image($file_path, $type, $id_cedula) {
+    // Si la ruta es relativa o solo el nombre, la completamos
+    if (!file_exists($file_path)) {
+        $filename = basename($file_path);
+        $ruta = get_image_path($type, $id_cedula, $filename);
+        if ($ruta) return $ruta;
+        return get_default_image($type);
+    }
+    return $file_path;
 }
 
 // Obtener la cédula de la sesión o del parámetro GET
@@ -146,9 +143,9 @@ if (!isset($row) || empty($row)) {
 
 // Verificar y ajustar rutas de imágenes con manejo de errores
 try {
-    $ruta_firma = isset($ruta_firma) ? is_valid_image($ruta_firma) : get_default_image('firma');
-    $ruta_imagen_ubi = isset($ruta_imagen_ubi) ? is_valid_image($ruta_imagen_ubi) : get_default_image('ubicacion');
-    $foto1 = isset($foto1) ? is_valid_image($foto1) : get_default_image('perfil');
+    $ruta_firma = isset($ruta_firma) ? is_valid_image($ruta_firma, 'firma', $id_cedula) : get_default_image('firma');
+    $ruta_imagen_ubi = isset($ruta_imagen_ubi) ? is_valid_image($ruta_imagen_ubi, 'ubicacion', $id_cedula) : get_default_image('ubicacion');
+    $foto1 = isset($foto1) ? is_valid_image($foto1, 'perfil', $id_cedula) : get_default_image('perfil');
 } catch (Exception $e) {
     error_log("Error al procesar imágenes: " . $e->getMessage());
     $ruta_firma = get_default_image('firma');
