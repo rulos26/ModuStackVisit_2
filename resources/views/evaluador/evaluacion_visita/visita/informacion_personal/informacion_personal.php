@@ -3,244 +3,480 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 ob_start();
+
+// Verificar sesión
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Verificar si el usuario está autenticado
+if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
+    header('Location: ../../../../../public/login.php');
+    exit();
+}
+
 include '../../../../../conn/conexion.php';
-// Verificar si el usuario ha iniciado sesión
 
+// Función para generar opciones de select de forma segura
+function generarOpcionesSelect($mysqli, $sql, $valor_campo = 'id', $texto_campo = 'nombre') {
+    $resultado = $mysqli->query($sql);
+    if (!$resultado) {
+        return '<option value="">Error al cargar datos</option>';
+    }
+    
+    $opciones = '';
+    while ($fila = $resultado->fetch_assoc()) {
+        $valor = htmlspecialchars($fila[$valor_campo]);
+        $texto = htmlspecialchars($fila[$texto_campo]);
+        $opciones .= "<option value='{$valor}'>{$texto}</option>";
+    }
+    return $opciones;
+}
 
+// Función para validar y limpiar entrada
+function limpiarEntrada($dato) {
+    return htmlspecialchars(trim($dato), ENT_QUOTES, 'UTF-8');
+}
+
+// Obtener datos existentes si los hay
+$id_cedula = $_SESSION['id_cedula'];
+$datos_existentes = null;
+
+// Verificar si ya existen datos para esta cédula
+$sql_verificar = "SELECT * FROM informacion_personal WHERE id_cedula = ?";
+$stmt = $mysqli->prepare($sql_verificar);
+if ($stmt) {
+    $stmt->bind_param("s", $id_cedula);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+    if ($resultado->num_rows > 0) {
+        $datos_existentes = $resultado->fetch_assoc();
+    }
+    $stmt->close();
+}
 ?>
 <div class="container mt-4">
     <div class="card mt-5">
-        <div class="card-header">
-            <h5 class="card-title">VISITA DOMICILIARÍA - INFORMACIÓN PERSONAL</h5>
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-person-fill me-2"></i>
+                VISITA DOMICILIARÍA - INFORMACIÓN PERSONAL
+            </h5>
         </div>
         <div class="card-body">
-            <div class="row">
-                <div class="col-6">
-                    <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" width="65%" height="55%">
-
+            <?php if ($datos_existentes): ?>
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Ya existe información registrada para esta cédula. Puede actualizar los datos.
                 </div>
-                <div class="col-6">
-
+            <?php endif; ?>
+            
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 300px;">
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="text-muted">
+                        <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
+                        <small>Cédula: <?php echo htmlspecialchars($id_cedula); ?></small>
+                    </div>
                 </div>
             </div>
-            <form action="guardar.php" method="POST">
-                <div class="row mt-3">
-                    <div class="col-md-4">
-                        <label for="id_cedula" class="form-label">Número de Documento:</label>
-                        <input type="number" class="form-control" id="id_cedula" name="id_cedula" value="<?php echo $_SESSION['id_cedula'] ; ?>" disabled required>
+            
+            <form action="guardar.php" method="POST" id="formInformacionPersonal" novalidate>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="id_cedula" class="form-label">
+                            <i class="bi bi-card-text me-1"></i>Número de Documento:
+                        </label>
+                        <input type="number" class="form-control" id="id_cedula" name="id_cedula" 
+                               value="<?php echo htmlspecialchars($id_cedula); ?>" readonly>
+                        <div class="form-text">Documento de identidad</div>
                     </div>
-                    <div class="col-md-4">
-                        <label for="id_tipo_documentos" class="form-label">Tipo de Documento:</label>
-                        <select class="form-select" id="id_tipo_documentos" name="id_tipo_documentos">
-                            <?php
-                            // Consulta a la tabla de tipo de documentos
-                            $consulta_tipo_documentos = "SELECT id, nombre FROM opc_tipo_documentos";
-                            $resultado_tipo_documentos = $mysqli->query($consulta_tipo_documentos);
-
-                            // Mostrar opciones en el selectbox
-                            while ($fila_tipo_documento = $resultado_tipo_documentos->fetch_assoc()) {
-                                echo "<option value='" . $fila_tipo_documento['id'] . "'>" . $fila_tipo_documento['nombre'] . "</option>";
-                            }
-                            ?>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="id_tipo_documentos" class="form-label">
+                            <i class="bi bi-card-list me-1"></i>Tipo de Documento:
+                        </label>
+                        <select class="form-select" id="id_tipo_documentos" name="id_tipo_documentos" required>
+                            <option value="">Seleccione tipo de documento</option>
+                            <?php echo generarOpcionesSelect($mysqli, "SELECT id, nombre FROM opc_tipo_documentos ORDER BY nombre"); ?>
                         </select>
+                        <div class="invalid-feedback">Por favor seleccione el tipo de documento.</div>
                     </div>
-                    <div class="col-md-4">
-                        <label for="cedula_expedida" class="form-label">Cédula expedida:</label>
-                        <select class="form-select" id="cedula_expedida" name="cedula_expedida">
-                            <?php
-                            // Consulta a la tabla de municipios
-                            // Reemplaza 'localhost', 'usuario', 'contraseña', 'nombre_base_de_datos' por tus propios datos
-
-                            $consulta = "SELECT id_municipio, municipio FROM municipios";
-                            $resultado = $mysqli->query($consulta);
-
-                            // Mostrar opciones en el selectbox
-                            while ($fila = $resultado->fetch_assoc()) {
-                                echo "<option value='" . $fila['id_municipio'] . "'>" . $fila['municipio'] . "</option>";
-                            }
-                            ?>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="cedula_expedida" class="form-label">
+                            <i class="bi bi-geo-alt me-1"></i>Cédula expedida en:
+                        </label>
+                        <select class="form-select" id="cedula_expedida" name="cedula_expedida" required>
+                            <option value="">Seleccione municipio</option>
+                            <?php echo generarOpcionesSelect($mysqli, "SELECT id_municipio, municipio FROM municipios ORDER BY municipio", 'id_municipio', 'municipio'); ?>
                         </select>
+                        <div class="invalid-feedback">Por favor seleccione el municipio de expedición.</div>
                     </div>
-                    <div class="col-md-4">
-                        <label for="nombres" class="form-label">Nombres:</label>
-                        <input type="text" class="form-control" id="nombres" name="nombres" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="apellidos" class="form-label">Apellidos:</label>
-                        <input type="text" class="form-control" id="apellidos" name="apellidos" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="edad" class="form-label">Edad:</label>
-                        <input type="number" class="form-control" id="edad" name="edad" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="fecha_expedicion" class="form-label">Fecha de Expedición:</label>
-                        <input type="date" class="form-control" id="fecha_expedicion" name="fecha_expedicion" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="lugar_nacimiento" class="form-label">Lugar de Nacimiento:</label>
-                        <select class="form-select" id="lugar_nacimiento" name="lugar_nacimiento">
-                            <?php
-                            // Consulta a la tabla de municipios para obtener el lugar de nacimiento
-                            $consulta_lugar_nacimiento = "SELECT id_municipio, municipio FROM municipios";
-                            $resultado_lugar_nacimiento = $mysqli->query($consulta_lugar_nacimiento);
-
-                            // Mostrar opciones en el selectbox
-                            while ($fila_lugar_nacimiento = $resultado_lugar_nacimiento->fetch_assoc()) {
-                                echo "<option value='" . $fila_lugar_nacimiento['id_municipio'] . "'>" . $fila_lugar_nacimiento['municipio'] . "</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="celular_1" class="form-label">Celular 1:</label>
-                        <input type="tel" class="form-control" id="celular_1" name="celular_1" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="celular_2" class="form-label">Celular 2:</label>
-                        <input type="tel" class="form-control" id="celular_2" name="celular_2">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="telefono" class="form-label">Teléfono:</label>
-                        <input type="tel" class="form-control" id="telefono" name="telefono">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="id_rh" class="form-label">Tipo de RH:</label>
-                        <select class="form-select" id="id_rh" name="id_rh">
-                            <?php
-                            // Consulta a la tabla de RH para obtener los tipos de RH
-                            $consulta_rh = "SELECT id, nombre FROM opc_rh";
-                            $resultado_rh = $mysqli->query($consulta_rh);
-
-                            // Mostrar opciones en el selectbox
-                            while ($fila_rh = $resultado_rh->fetch_assoc()) {
-                                echo "<option value='" . $fila_rh['id'] . "'>" . $fila_rh['nombre'] . "</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="id_estatura" class="form-label">Estatura:</label>
-                        <select class="form-select" id="id_estatura" name="id_estatura">
-                            <?php
-                            // Consulta a la tabla de estaturas para obtener las opciones de estatura
-                            $consulta_estaturas = "SELECT id, nombre FROM opc_estaturas";
-                            $resultado_estaturas = $mysqli->query($consulta_estaturas);
-
-                            // Mostrar opciones en el selectbox
-                            while ($fila_estatura = $resultado_estaturas->fetch_assoc()) {
-                                echo "<option value='" . $fila_estatura['id'] . "'>" . $fila_estatura['nombre'] . "</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="peso_kg" class="form-label">Peso (kg):</label>
-                        <select class="form-select" id="peso_kg" name="peso_kg">
-                            <?php
-                            // Consulta a la tabla de peso para obtener las opciones de peso en kg
-                            $consulta_peso = "SELECT id, nombre FROM opc_peso";
-                            $resultado_peso = $mysqli->query($consulta_peso);
-
-                            // Mostrar opciones en el selectbox
-                            while ($fila_peso = $resultado_peso->fetch_assoc()) {
-                                echo "<option value='" . $fila_peso['id'] . "'>" . $fila_peso['nombre'] . "</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="id_estado_civil" class="form-label">Estado Civil:</label>
-                        <select class="form-select" id="id_estado_civil" name="id_estado_civil">
-                            <?php
-                            // Consulta a la tabla de estado civil para obtener las opciones
-                            $consulta_estado_civil = "SELECT id, nombre FROM opc_estado_civiles";
-                            $resultado_estado_civil = $mysqli->query($consulta_estado_civil);
-
-                            // Mostrar opciones en el selectbox
-                            while ($fila_estado_civil = $resultado_estado_civil->fetch_assoc()) {
-                                echo "<option value='" . $fila_estado_civil['id'] . "'>" . $fila_estado_civil['nombre'] . "</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="hacer_cuanto" class="form-label">Hace cuánto tiempo</label>
-                        <input type="number" class="form-control" id="hacer_cuanto" name="hacer_cuanto">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="numero_hijos" class="form-label">Número de Hijos:</label>
-                        <input type="number" class="form-control" id="numero_hijos" name="numero_hijos">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="direccion" class="form-label">Dirección:</label>
-                        <input type="text" class="form-control" id="direccion" name="direccion">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="id_ciudad" class="form-label">Ciudad:</label>
-                        <select class="form-select" id="id_ciudad" name="id_ciudad">
-                            <?php
-                            // Consulta a la tabla de municipios para obtener las ciudades
-                            $consulta_ciudad = "SELECT id_municipio, municipio FROM municipios";
-                            $resultado_ciudad = $mysqli->query($consulta_ciudad);
-
-                            // Mostrar opciones en el selectbox
-                            while ($fila_ciudad = $resultado_ciudad->fetch_assoc()) {
-                                echo "<option value='" . $fila_ciudad['id_municipio'] . "'>" . $fila_ciudad['municipio'] . "</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="localidad" class="form-label">Localidad:</label>
-                        <input type="text" class="form-control" id="localidad" name="localidad">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="barrio" class="form-label">Barrio:</label>
-                        <input type="text" class="form-control" id="barrio" name="barrio">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="id_estrato" class="form-label">Estrato:</label>
-                        <select class="form-select" id="id_estrato" name="id_estrato">
-                            <?php
-                            // Consulta SQL para obtener las opciones de estrato
-                            $sql_estrato = "SELECT `id`,`nombre` FROM `opc_estratos`";
-                            $result_estrato = $mysqli->query($sql_estrato);
-
-                            // Generar las opciones del select box de estrato
-                            while ($row_estrato = $result_estrato->fetch_assoc()) {
-                                echo "<option value='" . $row_estrato['id'] . "'>" . $row_estrato['nombre'] . "</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="correo" class="form-label">Correo Electrónico:</label>
-                        <input type="email" class="form-control" id="correo" name="correo">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="cargo" class="form-label">Cargo:</label>
-                        <input type="text" class="form-control" id="cargo" name="cargo">
-                    </div>
-                    <div class="col-md-12">
-                        <label for="cargo" class="form-label">observación:</label>
-                        <textarea id="observacion" class="form-control" name="observacion" rows="12" required></textarea>
-                    </div>
-                    <!-- fin de row -->
                 </div>
-                <button type="submit" class="btn btn-primary mt-3">Siguiente</button>
-            </form>
 
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="nombres" class="form-label">
+                            <i class="bi bi-person me-1"></i>Nombres:
+                        </label>
+                        <input type="text" class="form-control" id="nombres" name="nombres" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['nombres']) : ''; ?>" 
+                               required pattern="[A-Za-zÁáÉéÍíÓóÚúÑñ\s]+" maxlength="100">
+                        <div class="invalid-feedback">Por favor ingrese nombres válidos (solo letras).</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="apellidos" class="form-label">
+                            <i class="bi bi-person me-1"></i>Apellidos:
+                        </label>
+                        <input type="text" class="form-control" id="apellidos" name="apellidos" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['apellidos']) : ''; ?>" 
+                               required pattern="[A-Za-zÁáÉéÍíÓóÚúÑñ\s]+" maxlength="100">
+                        <div class="invalid-feedback">Por favor ingrese apellidos válidos (solo letras).</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="edad" class="form-label">
+                            <i class="bi bi-calendar me-1"></i>Edad:
+                        </label>
+                        <input type="number" class="form-control" id="edad" name="edad" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['edad']) : ''; ?>" 
+                               required min="18" max="120">
+                        <div class="invalid-feedback">La edad debe estar entre 18 y 120 años.</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="fecha_expedicion" class="form-label">
+                            <i class="bi bi-calendar-date me-1"></i>Fecha de Expedición:
+                        </label>
+                        <input type="date" class="form-control" id="fecha_expedicion" name="fecha_expedicion" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['fecha_expedicion']) : ''; ?>" 
+                               required max="<?php echo date('Y-m-d'); ?>">
+                        <div class="invalid-feedback">Por favor ingrese una fecha válida.</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="lugar_nacimiento" class="form-label">
+                            <i class="bi bi-geo-alt me-1"></i>Lugar de Nacimiento:
+                        </label>
+                        <select class="form-select" id="lugar_nacimiento" name="lugar_nacimiento" required>
+                            <option value="">Seleccione municipio</option>
+                            <?php echo generarOpcionesSelect($mysqli, "SELECT id_municipio, municipio FROM municipios ORDER BY municipio", 'id_municipio', 'municipio'); ?>
+                        </select>
+                        <div class="invalid-feedback">Por favor seleccione el lugar de nacimiento.</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="celular_1" class="form-label">
+                            <i class="bi bi-phone me-1"></i>Celular 1:
+                        </label>
+                        <input type="tel" class="form-control" id="celular_1" name="celular_1" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['celular_1']) : ''; ?>" 
+                               required pattern="[0-9]{10}" placeholder="3001234567">
+                        <div class="invalid-feedback">Ingrese un número de celular válido (10 dígitos).</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="celular_2" class="form-label">
+                            <i class="bi bi-phone me-1"></i>Celular 2:
+                        </label>
+                        <input type="tel" class="form-control" id="celular_2" name="celular_2" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['celular_2']) : ''; ?>" 
+                               pattern="[0-9]{10}" placeholder="3001234567">
+                        <div class="invalid-feedback">Ingrese un número de celular válido (10 dígitos).</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="telefono" class="form-label">
+                            <i class="bi bi-telephone me-1"></i>Teléfono:
+                        </label>
+                        <input type="tel" class="form-control" id="telefono" name="telefono" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['telefono']) : ''; ?>" 
+                               pattern="[0-9]{7}" placeholder="1234567">
+                        <div class="invalid-feedback">Ingrese un número de teléfono válido (7 dígitos).</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="id_rh" class="form-label">
+                            <i class="bi bi-droplet me-1"></i>Tipo de RH:
+                        </label>
+                        <select class="form-select" id="id_rh" name="id_rh" required>
+                            <option value="">Seleccione tipo de sangre</option>
+                            <?php echo generarOpcionesSelect($mysqli, "SELECT id, nombre FROM opc_rh ORDER BY nombre"); ?>
+                        </select>
+                        <div class="invalid-feedback">Por favor seleccione el tipo de sangre.</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="id_estatura" class="form-label">
+                            <i class="bi bi-arrows-vertical me-1"></i>Estatura:
+                        </label>
+                        <select class="form-select" id="id_estatura" name="id_estatura" required>
+                            <option value="">Seleccione estatura</option>
+                            <?php echo generarOpcionesSelect($mysqli, "SELECT id, nombre FROM opc_estaturas ORDER BY nombre"); ?>
+                        </select>
+                        <div class="invalid-feedback">Por favor seleccione la estatura.</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="peso_kg" class="form-label">
+                            <i class="bi bi-weight me-1"></i>Peso (kg):
+                        </label>
+                        <select class="form-select" id="peso_kg" name="peso_kg" required>
+                            <option value="">Seleccione peso</option>
+                            <?php echo generarOpcionesSelect($mysqli, "SELECT id, nombre FROM opc_peso ORDER BY nombre"); ?>
+                        </select>
+                        <div class="invalid-feedback">Por favor seleccione el peso.</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="id_estado_civil" class="form-label">
+                            <i class="bi bi-heart me-1"></i>Estado Civil:
+                        </label>
+                        <select class="form-select" id="id_estado_civil" name="id_estado_civil" required>
+                            <option value="">Seleccione estado civil</option>
+                            <?php echo generarOpcionesSelect($mysqli, "SELECT id, nombre FROM opc_estado_civiles ORDER BY nombre"); ?>
+                        </select>
+                        <div class="invalid-feedback">Por favor seleccione el estado civil.</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="hacer_cuanto" class="form-label">
+                            <i class="bi bi-clock me-1"></i>Hace cuánto tiempo:
+                        </label>
+                        <input type="number" class="form-control" id="hacer_cuanto" name="hacer_cuanto" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['hacer_cuanto']) : ''; ?>" 
+                               min="0" max="50" placeholder="Años">
+                        <div class="form-text">Años en el estado civil actual</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="numero_hijos" class="form-label">
+                            <i class="bi bi-people me-1"></i>Número de Hijos:
+                        </label>
+                        <input type="number" class="form-control" id="numero_hijos" name="numero_hijos" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['numero_hijos']) : ''; ?>" 
+                               min="0" max="20">
+                        <div class="invalid-feedback">El número de hijos debe estar entre 0 y 20.</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="direccion" class="form-label">
+                            <i class="bi bi-geo-alt me-1"></i>Dirección:
+                        </label>
+                        <input type="text" class="form-control" id="direccion" name="direccion" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['direccion']) : ''; ?>" 
+                               required maxlength="200">
+                        <div class="invalid-feedback">Por favor ingrese la dirección.</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="id_ciudad" class="form-label">
+                            <i class="bi bi-building me-1"></i>Ciudad:
+                        </label>
+                        <select class="form-select" id="id_ciudad" name="id_ciudad" required>
+                            <option value="">Seleccione ciudad</option>
+                            <?php echo generarOpcionesSelect($mysqli, "SELECT id_municipio, municipio FROM municipios ORDER BY municipio", 'id_municipio', 'municipio'); ?>
+                        </select>
+                        <div class="invalid-feedback">Por favor seleccione la ciudad.</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="localidad" class="form-label">
+                            <i class="bi bi-geo-alt me-1"></i>Localidad:
+                        </label>
+                        <input type="text" class="form-control" id="localidad" name="localidad" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['localidad']) : ''; ?>" 
+                               required maxlength="100">
+                        <div class="invalid-feedback">Por favor ingrese la localidad.</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="barrio" class="form-label">
+                            <i class="bi bi-house me-1"></i>Barrio:
+                        </label>
+                        <input type="text" class="form-control" id="barrio" name="barrio" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['barrio']) : ''; ?>" 
+                               required maxlength="100">
+                        <div class="invalid-feedback">Por favor ingrese el barrio.</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="id_estrato" class="form-label">
+                            <i class="bi bi-layers me-1"></i>Estrato:
+                        </label>
+                        <select class="form-select" id="id_estrato" name="id_estrato" required>
+                            <option value="">Seleccione estrato</option>
+                            <?php echo generarOpcionesSelect($mysqli, "SELECT id, nombre FROM opc_estratos ORDER BY nombre"); ?>
+                        </select>
+                        <div class="invalid-feedback">Por favor seleccione el estrato.</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="correo" class="form-label">
+                            <i class="bi bi-envelope me-1"></i>Correo Electrónico:
+                        </label>
+                        <input type="email" class="form-control" id="correo" name="correo" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['correo']) : ''; ?>" 
+                               required maxlength="100">
+                        <div class="invalid-feedback">Por favor ingrese un correo electrónico válido.</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="cargo" class="form-label">
+                            <i class="bi bi-briefcase me-1"></i>Cargo:
+                        </label>
+                        <input type="text" class="form-control" id="cargo" name="cargo" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['cargo']) : ''; ?>" 
+                               maxlength="100">
+                        <div class="form-text">Cargo o profesión actual</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <label for="observacion" class="form-label">
+                            <i class="bi bi-chat-text me-1"></i>Observaciones:
+                        </label>
+                        <textarea class="form-control" id="observacion" name="observacion" rows="4" 
+                                  maxlength="1000" placeholder="Ingrese observaciones adicionales..."><?php echo $datos_existentes ? htmlspecialchars($datos_existentes['observacion']) : ''; ?></textarea>
+                        <div class="form-text">Máximo 1000 caracteres</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-primary btn-lg me-2">
+                            <i class="bi bi-check-circle me-2"></i>
+                            <?php echo $datos_existentes ? 'Actualizar' : 'Guardar'; ?>
+                        </button>
+                        <a href="../index.php" class="btn btn-secondary btn-lg">
+                            <i class="bi bi-arrow-left me-2"></i>Volver
+                        </a>
+                    </div>
+                </div>
+            </form>
         </div>
         <div class="card-footer text-body-secondary">
-            © 2024 V0.01
+            <div class="row">
+                <div class="col-md-6">
+                    <small>© 2024 V0.01 - Sistema de Visitas Domiciliarias</small>
+                </div>
+                <div class="col-md-6 text-end">
+                    <small>Usuario: <?php echo htmlspecialchars($_SESSION['username'] ?? 'N/A'); ?></small>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<script src="../../../../../js/toggleMenu.js"></script>
-<script src="../../../../../js/active_link.js"></script>
-<script src="../../../../../js/autorizacion,js"></script>
-<script src="../../../../../js/validar_password.js"></script>
+
+<script>
+// Validación del formulario
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Validación en tiempo real
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('formInformacionPersonal');
+    const inputs = form.querySelectorAll('input, select, textarea');
+    
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            validateField(this);
+        });
+        
+        input.addEventListener('input', function() {
+            if (this.classList.contains('is-invalid')) {
+                validateField(this);
+            }
+        });
+    });
+    
+    function validateField(field) {
+        if (field.checkValidity()) {
+            field.classList.remove('is-invalid');
+            field.classList.add('is-valid');
+        } else {
+            field.classList.remove('is-valid');
+            field.classList.add('is-invalid');
+        }
+    }
+    
+    // Auto-completar fecha de expedición si está vacía
+    const fechaExpedicion = document.getElementById('fecha_expedicion');
+    if (!fechaExpedicion.value) {
+        fechaExpedicion.value = new Date().toISOString().split('T')[0];
+    }
+    
+    // Auto-calcular edad si se proporciona fecha de nacimiento
+    const edadInput = document.getElementById('edad');
+    const fechaNacimiento = document.getElementById('fecha_nacimiento');
+    if (fechaNacimiento) {
+        fechaNacimiento.addEventListener('change', function() {
+            if (this.value) {
+                const fechaNac = new Date(this.value);
+                const hoy = new Date();
+                const edad = hoy.getFullYear() - fechaNac.getFullYear();
+                const mes = hoy.getMonth() - fechaNac.getMonth();
+                if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNac.getDate())) {
+                    edad--;
+                }
+                edadInput.value = edad;
+            }
+        });
+    }
+});
+
+// Confirmación antes de enviar
+document.getElementById('formInformacionPersonal').addEventListener('submit', function(e) {
+    const requiredFields = this.querySelectorAll('[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            isValid = false;
+            field.classList.add('is-invalid');
+        }
+    });
+    
+    if (!isValid) {
+        e.preventDefault();
+        alert('Por favor complete todos los campos obligatorios.');
+        return false;
+    }
+    
+    return confirm('¿Está seguro de que desea guardar la información?');
+});
+</script>
+
 <?php
 $contenido = ob_get_clean();
 include dirname(__DIR__, 3) . '/layout/dashboard.php';
