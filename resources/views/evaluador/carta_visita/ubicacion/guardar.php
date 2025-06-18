@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $url = "https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s+ff0000({$longituds},{$latituds})/{$longituds},{$latituds},15,0/600x300?access_token={$token}";
 
             // Crear el directorio si no existe
-            $directorio_destino = "../informe/img/ubicacion_autorizacion/" . $id_cedula . "/";
+            $directorio_destino = "../../../public/images/ubicacion_autorizacion/" . $id_cedula . "/";
             if (!file_exists($directorio_destino)) {
                 mkdir($directorio_destino, 0777, true);
             }
