@@ -32,9 +32,7 @@ class FirmaController {
             $stmt->bindParam(':ruta', $rutaRelativa);
             $stmt->bindParam(':nombre', $nombreArchivo);
             $stmt->execute();
-            // Redirigir a registro fotográfico
-            header('Location: /ModuStackVisit_2/resources/views/evaluador/carta_visita/registro_fotografico');
-            exit();
+            return true;
         } catch (PDOException $e) {
             return 'Error al guardar la firma en la base de datos: ' . htmlspecialchars($e->getMessage());
         }

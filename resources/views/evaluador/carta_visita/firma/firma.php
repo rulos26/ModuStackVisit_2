@@ -116,7 +116,7 @@ ob_start();
                         <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 60%; height: auto;">
                     </div>
                     <div class="col-6 d-flex align-items-center justify-content-center">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalFirma">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalFirma" id="btnFirmar">
                             Firmar
                         </button>
                     </div>
@@ -145,11 +145,6 @@ ob_start();
                     </div>
                 </div>
                 <input type="hidden" name="firma_digital" id="firmaDigitalInput" required>
-                <div class="row">
-                    <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-success mt-3">Finalizar</button>
-                    </div>
-                </div>
             </form>
         </div>
         <div class="card-footer text-body-secondary">
@@ -198,15 +193,11 @@ document.getElementById('guardarFirmaBtn').addEventListener('click', function() 
     var modal = bootstrap.Modal.getInstance(document.getElementById('modalFirma'));
     modal.hide();
     // Desactivar el botón 'Firmar' después de guardar la firma
-    document.querySelector('button[data-bs-target="#modalFirma"]').disabled = true;
-});
-// Validación para evitar enviar el formulario sin firma
-const firmaForm = document.getElementById('firmaForm');
-firmaForm.addEventListener('submit', function(e) {
-    if (!document.getElementById('firmaDigitalInput').value) {
-        alert('Por favor, firme antes de finalizar.');
-        e.preventDefault();
-    }
+    document.getElementById('btnFirmar').disabled = true;
+    // Enviar el formulario automáticamente
+    setTimeout(function() {
+        document.getElementById('firmaForm').submit();
+    }, 400);
 });
 </script>
 
