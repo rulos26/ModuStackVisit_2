@@ -1,4 +1,4 @@
-<?php /* Plantilla PDF, copia exacta de informeplantilla_1.php */ ?>
+<?php /* Plantilla visual para informe, usando tablas como en el original */ ?>
 <style>
 .customTable { width: 100%; border-collapse: collapse; margin: 20px 0; font-family: Arial, sans-serif; }
 .customTable th, .customTable td { border: 1px solid #222; padding: 8px; }
