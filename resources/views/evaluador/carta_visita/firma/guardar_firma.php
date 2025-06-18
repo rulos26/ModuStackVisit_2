@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['firma_digital'])) {
     }
     $resultado = FirmaController::guardarFirma($firmaBase64, $id_cedula);
     if ($resultado === true) {
-        header('Location: /ModuStackVisit_2/resources/views/evaluador/carta_visita/registro_fotografico');
+        header('Location: /ModuStackVisit_2/resources/views/evaluador/carta_visita/registro_fotografico/registro_fotografico.php');
         exit();
     } else {
         echo '<div style="color:red; font-weight:bold;">Error al guardar la firma: ' . htmlspecialchars($resultado) . '</div>';
