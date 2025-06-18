@@ -11,18 +11,27 @@ use App\Controllers\RegistroFotograficoController;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['foto_digital'])) {
     $fotoBase64 = $_POST['foto_digital'];
     $id_cedula = $_SESSION['cedula_autorizacion'] ?? $_SESSION['user_id'] ?? null;
+    
     if (!$id_cedula) {
-        die('<div style="color:red; font-weight:bold;">No hay cédula en sesión</div>');
+        $_SESSION['error'] = "No hay cédula en sesión";
+        header('Location: registro_fotografico.php');
+        exit();
     }
+
     $resultado = RegistroFotograficoController::guardarFoto($fotoBase64, $id_cedula);
+    
     if ($resultado === true) {
+        $_SESSION['success'] = "Foto guardada exitosamente";
+        $_SESSION['id_cedula'] = $id_cedula; // Aseguramos que la cédula esté en sesión para el siguiente paso
         header('Location: /ModuStackVisit_2/resources/views/evaluador/carta_visita/ubicacion/ubicacion.php');
         exit();
     } else {
-        echo '<div style="color:red; font-weight:bold;">Error al guardar la foto: ' . htmlspecialchars($resultado) . '</div>';
-        echo '<a href="registro_fotografico.php">Volver a intentar</a>';
+        $_SESSION['error'] = "Error al guardar la foto: " . $resultado;
+        header('Location: registro_fotografico.php');
         exit();
     }
 } else {
-    die('<div style="color:red; font-weight:bold;">Acceso no permitido o falta foto_digital</div>');
+    $_SESSION['error'] = "Acceso no permitido o falta foto_digital";
+    header('Location: registro_fotografico.php');
+    exit();
 } 

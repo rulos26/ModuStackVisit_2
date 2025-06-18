@@ -4,16 +4,17 @@ require_once __DIR__ . '/../../../../../app/Controllers/UbicacionController.php'
 
 use App\Controllers\UbicacionController;
 
-// Verificar si hay una sesión activa
-if (!isset($_SESSION['id_cedula'])) {
-    $_SESSION['error'] = "No hay sesión activa";
-    header('Location: ../../../login/login.php');
+// Verificar si hay una sesión activa (revisamos todas las posibles fuentes de la cédula)
+$id_cedula = $_SESSION['id_cedula'] ?? $_SESSION['cedula_autorizacion'] ?? $_SESSION['user_id'] ?? null;
+
+if (!$id_cedula) {
+    $_SESSION['error'] = "No hay sesión activa o cédula no encontrada";
+    header('Location: /ModuStackVisit_2/resources/views/error/error.php?from=ubicacion&test=123');
     exit();
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['latituds']) && isset($_POST['longituds'])) {
-        $id_cedula = $_SESSION['id_cedula'];
         $latitud = $_POST['latituds'];
         $longitud = $_POST['longituds'];
         
@@ -23,6 +24,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             if ($resultado['success']) {
                 $_SESSION['success'] = $resultado['message'];
+                // Aseguramos que la cédula se mantenga en sesión para el siguiente paso
+                $_SESSION['id_cedula'] = $id_cedula;
+                
                 echo '<script>
                     window.open("../informe/index.php", "_blank");
                     setTimeout(function() {
