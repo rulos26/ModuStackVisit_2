@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo '<script>
                     window.open("../informe/index.php", "_blank");
                     setTimeout(function() {
-                        window.location.href = "../index.php";
+                        window.location.href = "../index_carta.php";
                     }, 2000);
                 </script>';
                 exit();
