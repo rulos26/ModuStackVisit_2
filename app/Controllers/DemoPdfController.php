@@ -43,6 +43,37 @@ class DemoPdfController {
         $stmt4->execute();
         $row4 = $stmt4->fetch(\PDO::FETCH_ASSOC);
 
+        // Función para obtener la ruta de la imagen
+        function get_image_path($row, $type, $cedula) {
+            $base = [
+                'firma' => 'public/images/firma/' . $cedula . '/',
+                'perfil' => 'public/images/registro_fotografico/' . $cedula . '/',
+                'ubicacion' => 'public/images/ubicacion_autorizacion/' . $cedula . '/'
+            ];
+            $default = [
+                'firma' => 'public/images/firma/' . $cedula . '/default_firma.jpg',
+                'perfil' => 'public/images/registro_fotografico/' . $cedula . '/default_perfil.jpg',
+                'ubicacion' => 'public/images/ubicacion_autorizacion/' . $cedula . '/default_ubicacion.jpg'
+            ];
+            if ($row && !empty($row['ruta']) && !empty($row['nombre'])) {
+                $ruta = $row['ruta'];
+                $nombre = $row['nombre'];
+                $full = $ruta;
+                if (substr($ruta, -1) !== '/' && substr($nombre, 0, 1) !== '/') {
+                    $full .= '/';
+                }
+                $full .= $nombre;
+                if (file_exists(__DIR__ . '/../../' . $full)) {
+                    return $full;
+                }
+            }
+            return $default[$type];
+        }
+
+        $img_ubicacion = get_image_path($row2, 'ubicacion', $cedula);
+        $img_firma = get_image_path($row3, 'firma', $cedula);
+        $img_perfil = get_image_path($row4, 'perfil', $cedula);
+
         // Crear instancia de Dompdf
         $dompdf = new Dompdf();
         // Contenido HTML con los datos
@@ -56,36 +87,12 @@ class DemoPdfController {
         } else {
             $html .= '<p>No se encontraron datos en autorizaciones.</p>';
         }
-        $html .= '<hr><h2>Tabla: ubicacion_autorizacion</h2>';
-        if ($row2) {
-            $html .= '<ul>';
-            foreach ($row2 as $key => $value) {
-                $html .= '<li><strong>' . htmlspecialchars($key) . ':</strong> ' . htmlspecialchars($value) . '</li>';
-            }
-            $html .= '</ul>';
-        } else {
-            $html .= '<p>No se encontraron datos en ubicacion_autorizacion.</p>';
-        }
-        $html .= '<hr><h2>Tabla: firmas</h2>';
-        if ($row3) {
-            $html .= '<ul>';
-            foreach ($row3 as $key => $value) {
-                $html .= '<li><strong>' . htmlspecialchars($key) . ':</strong> ' . htmlspecialchars($value) . '</li>';
-            }
-            $html .= '</ul>';
-        } else {
-            $html .= '<p>No se encontraron datos en firmas.</p>';
-        }
-        $html .= '<hr><h2>Tabla: foto_perfil_autorizacion</h2>';
-        if ($row4) {
-            $html .= '<ul>';
-            foreach ($row4 as $key => $value) {
-                $html .= '<li><strong>' . htmlspecialchars($key) . ':</strong> ' . htmlspecialchars($value) . '</li>';
-            }
-            $html .= '</ul>';
-        } else {
-            $html .= '<p>No se encontraron datos en foto_perfil_autorizacion.</p>';
-        }
+        $html .= '<hr><h2>Imágenes asociadas</h2>';
+        $html .= '<div style="display:flex;gap:20px;">';
+        $html .= '<div><strong>Ubicación:</strong><br><img src="../../' . $img_ubicacion . '" style="max-width:150px;max-height:150px;"></div>';
+        $html .= '<div><strong>Firma:</strong><br><img src="../../' . $img_firma . '" style="max-width:150px;max-height:150px;"></div>';
+        $html .= '<div><strong>Foto Perfil:</strong><br><img src="../../' . $img_perfil . '" style="max-width:150px;max-height:150px;"></div>';
+        $html .= '</div>';
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
