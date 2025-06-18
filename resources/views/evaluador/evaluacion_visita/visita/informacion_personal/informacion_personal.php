@@ -15,44 +15,32 @@ if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
     exit();
 }
 
-include '../../../../../conn/conexion.php';
+// Incluir el controlador
+require_once __DIR__ . '/../../../../../app/Controllers/InformacionPersonalController.php';
+use App\Controllers\InformacionPersonalController;
 
-// Función para generar opciones de select de forma segura
-function generarOpcionesSelect($mysqli, $sql, $valor_campo = 'id', $texto_campo = 'nombre') {
-    $resultado = $mysqli->query($sql);
-    if (!$resultado) {
-        return '<option value="">Error al cargar datos</option>';
-    }
+try {
+    // Obtener instancia del controlador
+    $controller = InformacionPersonalController::getInstance();
     
-    $opciones = '';
-    while ($fila = $resultado->fetch_assoc()) {
-        $valor = htmlspecialchars($fila[$valor_campo]);
-        $texto = htmlspecialchars($fila[$texto_campo]);
-        $opciones .= "<option value='{$valor}'>{$texto}</option>";
-    }
-    return $opciones;
-}
-
-// Función para validar y limpiar entrada
-function limpiarEntrada($dato) {
-    return htmlspecialchars(trim($dato), ENT_QUOTES, 'UTF-8');
-}
-
-// Obtener datos existentes si los hay
-$id_cedula = $_SESSION['id_cedula'];
-$datos_existentes = null;
-
-// Verificar si ya existen datos para esta cédula
-$sql_verificar = "SELECT * FROM informacion_personal WHERE id_cedula = ?";
-$stmt = $mysqli->prepare($sql_verificar);
-if ($stmt) {
-    $stmt->bind_param("s", $id_cedula);
-    $stmt->execute();
-    $resultado = $stmt->get_result();
-    if ($resultado->num_rows > 0) {
-        $datos_existentes = $resultado->fetch_assoc();
-    }
-    $stmt->close();
+    // Obtener datos existentes si los hay
+    $id_cedula = $_SESSION['id_cedula'];
+    $datos_existentes = $controller->obtenerPorCedula($id_cedula);
+    
+    // Obtener opciones para los select boxes
+    $opciones = [
+        'tipo_documentos' => $controller->obtenerOpciones('tipo_documentos'),
+        'municipios' => $controller->obtenerOpciones('municipios'),
+        'rh' => $controller->obtenerOpciones('rh'),
+        'estaturas' => $controller->obtenerOpciones('estaturas'),
+        'pesos' => $controller->obtenerOpciones('pesos'),
+        'estado_civil' => $controller->obtenerOpciones('estado_civil'),
+        'estratos' => $controller->obtenerOpciones('estratos')
+    ];
+    
+} catch (Exception $e) {
+    error_log("Error en informacion_personal.php: " . $e->getMessage());
+    $error_message = "Error al cargar los datos: " . $e->getMessage();
 }
 ?>
 <div class="container mt-4">
@@ -64,6 +52,13 @@ if ($stmt) {
             </h5>
         </div>
         <div class="card-body">
+            <?php if (isset($error_message)): ?>
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <?php echo htmlspecialchars($error_message); ?>
+                </div>
+            <?php endif; ?>
+            
             <?php if ($datos_existentes): ?>
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle me-2"></i>
@@ -100,7 +95,12 @@ if ($stmt) {
                         </label>
                         <select class="form-select" id="id_tipo_documentos" name="id_tipo_documentos" required>
                             <option value="">Seleccione tipo de documento</option>
-                            <?php echo generarOpcionesSelect($mysqli, "SELECT id, nombre FROM opc_tipo_documentos ORDER BY nombre"); ?>
+                            <?php foreach ($opciones['tipo_documentos'] as $opcion): ?>
+                                <option value="<?php echo htmlspecialchars($opcion['id']); ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['id_tipo_documentos'] == $opcion['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($opcion['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="invalid-feedback">Por favor seleccione el tipo de documento.</div>
                     </div>
@@ -111,7 +111,12 @@ if ($stmt) {
                         </label>
                         <select class="form-select" id="cedula_expedida" name="cedula_expedida" required>
                             <option value="">Seleccione municipio</option>
-                            <?php echo generarOpcionesSelect($mysqli, "SELECT id_municipio, municipio FROM municipios ORDER BY municipio", 'id_municipio', 'municipio'); ?>
+                            <?php foreach ($opciones['municipios'] as $opcion): ?>
+                                <option value="<?php echo htmlspecialchars($opcion['id']); ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['cedula_expedida'] == $opcion['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($opcion['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="invalid-feedback">Por favor seleccione el municipio de expedición.</div>
                     </div>
@@ -166,7 +171,12 @@ if ($stmt) {
                         </label>
                         <select class="form-select" id="lugar_nacimiento" name="lugar_nacimiento" required>
                             <option value="">Seleccione municipio</option>
-                            <?php echo generarOpcionesSelect($mysqli, "SELECT id_municipio, municipio FROM municipios ORDER BY municipio", 'id_municipio', 'municipio'); ?>
+                            <?php foreach ($opciones['municipios'] as $opcion): ?>
+                                <option value="<?php echo htmlspecialchars($opcion['id']); ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['lugar_nacimiento'] == $opcion['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($opcion['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="invalid-feedback">Por favor seleccione el lugar de nacimiento.</div>
                     </div>
@@ -209,7 +219,12 @@ if ($stmt) {
                         </label>
                         <select class="form-select" id="id_rh" name="id_rh" required>
                             <option value="">Seleccione tipo de sangre</option>
-                            <?php echo generarOpcionesSelect($mysqli, "SELECT id, nombre FROM opc_rh ORDER BY nombre"); ?>
+                            <?php foreach ($opciones['rh'] as $opcion): ?>
+                                <option value="<?php echo htmlspecialchars($opcion['id']); ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['id_rh'] == $opcion['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($opcion['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="invalid-feedback">Por favor seleccione el tipo de sangre.</div>
                     </div>
@@ -222,7 +237,12 @@ if ($stmt) {
                         </label>
                         <select class="form-select" id="id_estatura" name="id_estatura" required>
                             <option value="">Seleccione estatura</option>
-                            <?php echo generarOpcionesSelect($mysqli, "SELECT id, nombre FROM opc_estaturas ORDER BY nombre"); ?>
+                            <?php foreach ($opciones['estaturas'] as $opcion): ?>
+                                <option value="<?php echo htmlspecialchars($opcion['id']); ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['id_estatura'] == $opcion['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($opcion['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="invalid-feedback">Por favor seleccione la estatura.</div>
                     </div>
@@ -233,7 +253,12 @@ if ($stmt) {
                         </label>
                         <select class="form-select" id="peso_kg" name="peso_kg" required>
                             <option value="">Seleccione peso</option>
-                            <?php echo generarOpcionesSelect($mysqli, "SELECT id, nombre FROM opc_peso ORDER BY nombre"); ?>
+                            <?php foreach ($opciones['pesos'] as $opcion): ?>
+                                <option value="<?php echo htmlspecialchars($opcion['id']); ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['peso_kg'] == $opcion['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($opcion['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="invalid-feedback">Por favor seleccione el peso.</div>
                     </div>
@@ -244,7 +269,12 @@ if ($stmt) {
                         </label>
                         <select class="form-select" id="id_estado_civil" name="id_estado_civil" required>
                             <option value="">Seleccione estado civil</option>
-                            <?php echo generarOpcionesSelect($mysqli, "SELECT id, nombre FROM opc_estado_civiles ORDER BY nombre"); ?>
+                            <?php foreach ($opciones['estado_civil'] as $opcion): ?>
+                                <option value="<?php echo htmlspecialchars($opcion['id']); ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['id_estado_civil'] == $opcion['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($opcion['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="invalid-feedback">Por favor seleccione el estado civil.</div>
                     </div>
@@ -289,7 +319,12 @@ if ($stmt) {
                         </label>
                         <select class="form-select" id="id_ciudad" name="id_ciudad" required>
                             <option value="">Seleccione ciudad</option>
-                            <?php echo generarOpcionesSelect($mysqli, "SELECT id_municipio, municipio FROM municipios ORDER BY municipio", 'id_municipio', 'municipio'); ?>
+                            <?php foreach ($opciones['municipios'] as $opcion): ?>
+                                <option value="<?php echo htmlspecialchars($opcion['id']); ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['id_ciudad'] == $opcion['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($opcion['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="invalid-feedback">Por favor seleccione la ciudad.</div>
                     </div>
@@ -322,7 +357,12 @@ if ($stmt) {
                         </label>
                         <select class="form-select" id="id_estrato" name="id_estrato" required>
                             <option value="">Seleccione estrato</option>
-                            <?php echo generarOpcionesSelect($mysqli, "SELECT id, nombre FROM opc_estratos ORDER BY nombre"); ?>
+                            <?php foreach ($opciones['estratos'] as $opcion): ?>
+                                <option value="<?php echo htmlspecialchars($opcion['id']); ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['id_estrato'] == $opcion['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($opcion['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="invalid-feedback">Por favor seleccione el estrato.</div>
                     </div>
