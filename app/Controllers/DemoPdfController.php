@@ -93,6 +93,12 @@ class DemoPdfController {
         $html .= '<div><strong>Firma:</strong><br><img src="../../' . $img_firma . '" style="max-width:150px;max-height:150px;"></div>';
         $html .= '<div><strong>Foto Perfil:</strong><br><img src="../../' . $img_perfil . '" style="max-width:150px;max-height:150px;"></div>';
         $html .= '</div>';
+        $html .= '<hr><h2>Debug de rutas de imágenes</h2>';
+        $html .= '<ul>';
+        $html .= '<li><strong>Ruta imagen ubicación:</strong> ' . htmlspecialchars($img_ubicacion) . '</li>';
+        $html .= '<li><strong>Ruta imagen firma:</strong> ' . htmlspecialchars($img_firma) . '</li>';
+        $html .= '<li><strong>Ruta imagen perfil:</strong> ' . htmlspecialchars($img_perfil) . '</li>';
+        $html .= '</ul>';
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
