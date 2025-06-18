@@ -17,7 +17,7 @@ if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
 
 // Incluir el controlador usando ruta desde la raíz del proyecto
 //$controller_path = __DIR__ . '/../../../../../app/Controllers/InformacionPersonalController.php';
-require_once __DIR__ . '/../../../../../app/Controllers/InformacionPersonalController.php';
+require_once __DIR__ . 'InformacionPersonalController.php';
 
 if (!file_exists($controller_path)) {
     die("Error: No se pudo encontrar el archivo InformacionPersonalController.php en: $controller_path");
