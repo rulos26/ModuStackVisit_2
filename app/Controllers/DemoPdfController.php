@@ -45,28 +45,20 @@ class DemoPdfController {
 
         // Función para obtener la ruta de la imagen
         function get_image_path($nombre, $type, $cedula) {
-            $base = [
-                'firma' => 'public/images/firma/' . $cedula . '/',
-                'perfil' => 'public/images/registro_fotografico/' . $cedula . '/',
-                'ubicacion' => 'public/images/ubicacion_autorizacion/' . $cedula . '/'
-            ];
-            $default = [
-                'firma' => 'public/images/firma/' . $cedula . '/default_firma.jpg',
-                'perfil' => 'public/images/registro_fotografico/' . $cedula . '/default_perfil.jpg',
-                'ubicacion' => 'public/images/ubicacion_autorizacion/' . $cedula . '/default_ubicacion.jpg'
-            ];
             if ($nombre && !empty($nombre)) {
-                $full = $base[$type] . $nombre;
-                if (file_exists(__DIR__ . '/../../' . $full)) {
-                    return $full;
+                $ruta = "public/images/{$type}/{$cedula}/{$nombre}";
+                if (file_exists(__DIR__ . '/../../' . $ruta)) {
+                    return $ruta;
                 }
             }
-            return $default[$type];
+            // Imagen por defecto si no existe
+            $default = "public/images/{$type}/{$cedula}/default_{$type}.jpg";
+            return $default;
         }
 
-        $img_ubicacion = get_image_path($row2['nombre'] ?? '', 'ubicacion', $cedula);
+        $img_ubicacion = get_image_path($row2['nombre'] ?? '', 'ubicacion_autorizacion', $cedula);
         $img_firma = get_image_path($row3['nombre'] ?? '', 'firma', $cedula);
-        $img_perfil = get_image_path($row4['nombre'] ?? '', 'perfil', $cedula);
+        $img_perfil = get_image_path($row4['nombre'] ?? '', 'registro_fotografico', $cedula);
 
         // Crear instancia de Dompdf
         $dompdf = new Dompdf();
@@ -91,13 +83,19 @@ class DemoPdfController {
         $html .= '<ul>';
         $html .= '<li><strong>Ubicación:</strong><br>';
         $html .= 'Nombre BD: ' . htmlspecialchars($row2['nombre'] ?? '(sin valor)') . '<br>';
-        $html .= 'Ruta final: ' . htmlspecialchars($img_ubicacion) . '</li>';
+        $html .= 'Ruta final: ' . htmlspecialchars($img_ubicacion) . '<br>';
+        $html .= '<img src="../../' . $img_ubicacion . '" style="max-width:300px;max-height:200px;border:1px solid #333;">';
+        $html .= '</li>';
         $html .= '<li><strong>Firma:</strong><br>';
         $html .= 'Nombre BD: ' . htmlspecialchars($row3['nombre'] ?? '(sin valor)') . '<br>';
-        $html .= 'Ruta final: ' . htmlspecialchars($img_firma) . '</li>';
+        $html .= 'Ruta final: ' . htmlspecialchars($img_firma) . '<br>';
+        $html .= '<img src="../../' . $img_firma . '" style="max-width:300px;max-height:200px;border:1px solid #333;">';
+        $html .= '</li>';
         $html .= '<li><strong>Perfil:</strong><br>';
         $html .= 'Nombre BD: ' . htmlspecialchars($row4['nombre'] ?? '(sin valor)') . '<br>';
-        $html .= 'Ruta final: ' . htmlspecialchars($img_perfil) . '</li>';
+        $html .= 'Ruta final: ' . htmlspecialchars($img_perfil) . '<br>';
+        $html .= '<img src="../../' . $img_perfil . '" style="max-width:300px;max-height:200px;border:1px solid #333;">';
+        $html .= '</li>';
         $html .= '</ul>';
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
