@@ -82,4 +82,29 @@
         </tr>
     </tbody>
 </table>
+<table class="customTable">
+    <thead>
+        <tr>
+            <th colspan="12" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black; text-align: center;">UBICACIÓN EN TIEMPO REAL</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="border: 1px solid black; text-align: center; width: 265px;">
+                <?php if (!empty($img_ubicacion_b64)): ?>
+                    <img src="<?= $img_ubicacion_b64 ?>" alt="Ubicación" style="border: 2px solid black; height: 140px; width: 160px;">
+                <?php else: ?>
+                    <span style="color: #888;">Ubicación no disponible</span>
+                <?php endif; ?>
+            </td>
+            <td style="border: 1px solid black; text-align: center; width: 265px;">
+                <?php if (!empty($img_perfil_b64)): ?>
+                    <img src="<?= $img_perfil_b64 ?>" alt="Foto Perfil" style="border: 2px solid black; height: 145px; width: 166px;">
+                <?php else: ?>
+                    <span style="color: #888;">Foto de perfil no disponible</span>
+                <?php endif; ?>
+            </td>
+        </tr>
+    </tbody>
+</table>
 <!-- Puedes agregar aquí más tablas o secciones según el informe original -->
