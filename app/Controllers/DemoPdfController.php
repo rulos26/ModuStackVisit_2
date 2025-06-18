@@ -74,55 +74,27 @@ class DemoPdfController {
         $img_firma_b64 = img_to_base64($img_firma_path);
         $img_perfil_b64 = img_to_base64($img_perfil_path);
 
+        // --- Renderizado usando plantilla externa ---
+        $data = [
+            'row1' => $row1,
+            'img_ubicacion_b64' => $img_ubicacion_b64,
+            'img_firma_b64' => $img_firma_b64,
+            'img_perfil_b64' => $img_perfil_b64,
+            'row2' => $row2,
+            'row3' => $row3,
+            'row4' => $row4,
+            'img_ubicacion_path' => $img_ubicacion_path,
+            'img_firma_path' => $img_firma_path,
+            'img_perfil_path' => $img_perfil_path
+        ];
+        extract($data);
+        ob_start();
+        include __DIR__ . '/../../resources/views/pdf/plantilla_pdf.php';
+        $html = ob_get_clean();
+        // --- Fin renderizado plantilla ---
+
         // Crear instancia de Dompdf
         $dompdf = new Dompdf();
-        // Contenido HTML con los datos
-        $html = '<style>
-        .container { max-width: 800px; margin: 30px auto; }
-        .card { box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-radius: 10px; border: 1px solid #ddd; }
-        .card-body { padding: 30px; }
-        .alert-info { background: #e7f3fe; border: 1px solid #b3e5fc; color: #31708f; border-radius: 8px; padding: 20px; }
-        .alert-heading { font-size: 1.5em; margin-bottom: 10px; }
-        .text-center { text-align: center; }
-        .btn { display: inline-block; padding: 10px 24px; font-size: 1.1em; border-radius: 6px; text-decoration: none; }
-        .btn-primary { background: #4361ee; color: #fff; border: none; }
-        .img-section { display: flex; justify-content: center; gap: 20px; margin: 30px 0; }
-        .img-section img { max-width: 150px; max-height: 150px; border: 2px solid #888; border-radius: 8px; }
-        </style>';
-        $html .= '<div class="container mt-4">';
-        $html .= '<div class="card shadow">';
-        $html .= '<div class="card-body">';
-        $html .= '<div class="alert alert-info">';
-        $html .= '<h4 class="alert-heading">Carta de Autorización</h4>';
-        $html .= '<p>Esta es la sección personalizada para la gestión de la carta de autorización. Aquí puedes mostrar formularios, tablas o cualquier contenido específico relacionado con este módulo.</p>';
-        $html .= '</div>';
-        $html .= '<div class="img-section">';
-        $html .= ($img_ubicacion_b64 ? '<div><strong>Ubicación</strong><br><img src="' . $img_ubicacion_b64 . '"></div>' : '');
-        $html .= ($img_firma_b64 ? '<div><strong>Firma</strong><br><img src="' . $img_firma_b64 . '"></div>' : '');
-        $html .= ($img_perfil_b64 ? '<div><strong>Perfil</strong><br><img src="' . $img_perfil_b64 . '"></div>' : '');
-        $html .= '</div>';
-        $html .= '</div></div></div>';
-        // --- Fin adaptación fiel ---
-
-        // Sección de debug (opcional)
-        $html .= '<hr><h2>Debug de rutas de imágenes</h2>';
-        $html .= '<ul>';
-        $html .= '<li><strong>Ubicación:</strong><br>';
-        $html .= 'Nombre BD: ' . htmlspecialchars($row2['nombre'] ?? '(sin valor)') . '<br>';
-        $html .= 'Ruta final: ' . htmlspecialchars($img_ubicacion_path) . '<br>';
-        $html .= ($img_ubicacion_b64 ? '<img src="' . $img_ubicacion_b64 . '" style="max-width:300px;max-height:200px;border:1px solid #333;">' : '<span style="color:red">Imagen no encontrada</span>');
-        $html .= '</li>';
-        $html .= '<li><strong>Firma:</strong><br>';
-        $html .= 'Nombre BD: ' . htmlspecialchars($row3['nombre'] ?? '(sin valor)') . '<br>';
-        $html .= 'Ruta final: ' . htmlspecialchars($img_firma_path) . '<br>';
-        $html .= ($img_firma_b64 ? '<img src="' . $img_firma_b64 . '" style="max-width:300px;max-height:200px;border:1px solid #333;">' : '<span style="color:red">Imagen no encontrada</span>');
-        $html .= '</li>';
-        $html .= '<li><strong>Perfil:</strong><br>';
-        $html .= 'Nombre BD: ' . htmlspecialchars($row4['nombre'] ?? '(sin valor)') . '<br>';
-        $html .= 'Ruta final: ' . htmlspecialchars($img_perfil_path) . '<br>';
-        $html .= ($img_perfil_b64 ? '<img src="' . $img_perfil_b64 . '" style="max-width:300px;max-height:200px;border:1px solid #333;">' : '<span style="color:red">Imagen no encontrada</span>');
-        $html .= '</li>';
-        $html .= '</ul>';
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
