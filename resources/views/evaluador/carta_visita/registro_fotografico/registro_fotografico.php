@@ -13,7 +13,7 @@ ob_start();
 ?>
 <link rel="stylesheet" href="../../../../../public/css/styles.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<style>
+    <style>
 .steps-horizontal {
     display: flex;
     justify-content: space-between;
@@ -84,11 +84,11 @@ ob_start();
 .step-horizontal.complete .step-description {
     color: #2ecc71;
 }
-</style>
+    </style>
 
 <div class="container mt-4">
-    <div class="card mt-5">
-        <div class="card-header">
+            <div class="card mt-5">
+                <div class="card-header">
             <h5 class="card-title">Registro Fotográfico</h5>
         </div>
         <div class="card-body">
@@ -138,20 +138,20 @@ ob_start();
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <?php echo htmlspecialchars($_SESSION['success']); ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+                        </div>
                 <?php unset($_SESSION['success']); ?>
             <?php endif; ?>
             <form id="fotoForm" method="POST" enctype="multipart/form-data" action="guardar_foto.php">
                 <div class="row mb-4">
-                    <div class="col-6">
+                        <div class="col-6">
                         <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 60%; height: auto;">
-                    </div>
+                        </div>
                     <div class="col-6 d-flex align-items-center justify-content-center">
                         <button type="button" class="btn btn-primary" id="captureButton">
                             <i class="fas fa-camera"></i> Tomar Foto
                         </button>
-                    </div>
-                </div>
+                                </div>
+                            </div>
                 <div class="row mb-3">
                     <div class="col-12 text-center">
                         <div id="contadorFoto" style="font-size:2rem; color:#4361ee; margin-bottom:1rem; display:none;"></div>
@@ -162,17 +162,17 @@ ob_start();
                 </div>
                 <input type="hidden" name="foto_digital" id="fotoDigitalInput" required>
             </form>
+                </div>
+                <div class="card-footer text-body-secondary">
+                    © 2024 V0.01
+                </div>
+            </div>
         </div>
-        <div class="card-footer text-body-secondary">
-            © 2024 V0.01
-        </div>
-    </div>
-</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 // Lógica para capturar la foto automáticamente al cargar la página con contador
 const video = document.getElementById('video');
-const canvas = document.getElementById('canvas');
+        const canvas = document.getElementById('canvas');
 const fotoPreview = document.getElementById('fotoPreview');
 const fotoDigitalInput = document.getElementById('fotoDigitalInput');
 const fotoForm = document.getElementById('fotoForm');
@@ -181,10 +181,10 @@ const contadorFoto = document.getElementById('contadorFoto');
 let stream = null;
 
 function tomarFotoAutomatica() {
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-    const imageData = canvas.toDataURL('image/png');
+                        const imageData = canvas.toDataURL('image/png');
     fotoDigitalInput.value = imageData;
     fotoPreview.src = imageData;
     fotoPreview.style.display = 'block';
@@ -219,11 +219,11 @@ window.addEventListener('DOMContentLoaded', function() {
                     }
                 }, 1000);
             };
-        })
-        .catch(function(error) {
+                })
+                .catch(function(error) {
             alert('Error al acceder a la cámara: ' + error);
         });
-});
+    });
 </script>
 <?php
 $contenido = ob_get_clean();

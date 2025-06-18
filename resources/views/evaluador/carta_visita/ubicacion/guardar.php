@@ -31,13 +31,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Aseguramos que la cédula se mantenga en sesión para el siguiente paso
                 $_SESSION['id_cedula'] = $id_cedula;
                 
-                echo '<script>
-                    window.open("../informe/index.php", "_blank");
-                    setTimeout(function() {
+                        echo '<script>
+                            window.open("../informe/index.php", "_blank");
+                            setTimeout(function() {
                         window.location.href = "../index_carta.php";
-                    }, 2000);
-                </script>';
-                exit();
+                            }, 2000);
+                        </script>';
+                        exit();
             } else {
                 throw new Exception($resultado['message']);
             }

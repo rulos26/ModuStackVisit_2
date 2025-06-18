@@ -1,4 +1,7 @@
 <?php /* Plantilla PDF, copia exacta de informeplantilla_1.php */ ?>
+<?php if (!isset($logo)) {
+    $logo = '<img src="public/images/header.jpg" alt="Logo" style="width: 1107px; height:206px">';
+} ?>
 <style>
     .customTable {
         width: 100%;
@@ -29,6 +32,17 @@
     }
 </style>
 <div style="border: 2px solid rgb(175, 0, 0); padding: 12px;">
+    <table cellpadding="5" style="width: 100%; margin-bottom: 10px;">
+        <tr>
+            <td width="100%" style="border: 1px solid rgb(175,0,0); text-align: center;">
+                <?php if (!empty($logo)): ?>
+                    <?= $logo ?>
+                <?php else: ?>
+                    <span style="color: #888;">Logo no disponible</span>
+                <?php endif; ?>
+            </td>
+        </tr>
+    </table>
     <table class="customTable">
         <thead>
             <tr>
