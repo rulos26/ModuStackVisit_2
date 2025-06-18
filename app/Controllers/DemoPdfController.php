@@ -95,6 +95,7 @@ class DemoPdfController {
         $html .= 'Nombre BD: ' . htmlspecialchars($row4['nombre'] ?? '(sin valor)') . '<br>';
         $html .= 'Ruta final: ' . htmlspecialchars($img_perfil) . '<br>';
         $html .= '<img src="../../' . $img_perfil . '" style="max-width:300px;max-height:200px;border:1px solid #333;">';
+        $html .= '<img src="../../public/images/registro_fotografico/1231211322/default_registro_fotografico.jpg" style="max-width:300px;max-height:200px;border:1px solid #333;">';
         $html .= '</li>';
         $html .= '</ul>';
         $dompdf->loadHtml($html);
