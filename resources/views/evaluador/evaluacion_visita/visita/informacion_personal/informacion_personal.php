@@ -15,11 +15,8 @@ if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
     exit();
 }
 
-// Definir la ruta base del proyecto
-$project_root = dirname(__DIR__, 5);
-
-// Incluir el controlador
-$controller_path = $project_root . '/app/Controllers/InformacionPersonalController.php';
+// Incluir el controlador usando ruta desde la raíz del proyecto
+$controller_path = __DIR__ . '/../../../../../app/Controllers/InformacionPersonalController.php';
 
 if (!file_exists($controller_path)) {
     die("Error: No se pudo encontrar el archivo InformacionPersonalController.php en: $controller_path");
