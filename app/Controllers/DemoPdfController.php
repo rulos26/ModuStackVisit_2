@@ -88,23 +88,13 @@ class DemoPdfController {
         .btn-primary { background: #4361ee; color: #fff; border: none; }
         .img-section { display: flex; justify-content: center; gap: 20px; margin: 30px 0; }
         .img-section img { max-width: 150px; max-height: 150px; border: 2px solid #888; border-radius: 8px; }
-        .datos-list { margin: 20px 0 0 0; padding: 0; list-style: none; }
-        .datos-list li { margin-bottom: 8px; }
         </style>';
-        $html .= '<div class="container">';
-        $html .= '<div class="card">';
+        $html .= '<div class="container mt-4">';
+        $html .= '<div class="card shadow">';
         $html .= '<div class="card-body">';
         $html .= '<div class="alert alert-info">';
         $html .= '<h4 class="alert-heading">Carta de Autorización</h4>';
-        if ($row1) {
-            $html .= '<ul class="datos-list">';
-            foreach ($row1 as $key => $value) {
-                $html .= '<li><strong>' . htmlspecialchars($key) . ':</strong> ' . htmlspecialchars($value) . '</li>';
-            }
-            $html .= '</ul>';
-        } else {
-            $html .= '<p>No se encontraron datos de autorización.</p>';
-        }
+        $html .= '<p>Esta es la sección personalizada para la gestión de la carta de autorización. Aquí puedes mostrar formularios, tablas o cualquier contenido específico relacionado con este módulo.</p>';
         $html .= '</div>';
         $html .= '<div class="img-section">';
         $html .= ($img_ubicacion_b64 ? '<div><strong>Ubicación</strong><br><img src="' . $img_ubicacion_b64 . '"></div>' : '');
@@ -112,9 +102,9 @@ class DemoPdfController {
         $html .= ($img_perfil_b64 ? '<div><strong>Perfil</strong><br><img src="' . $img_perfil_b64 . '"></div>' : '');
         $html .= '</div>';
         $html .= '</div></div></div>';
-        // --- Fin adaptación visual ---
+        // --- Fin adaptación fiel ---
 
-        // Sección de debug (opcional, puedes comentar si no la quieres)
+        // Sección de debug (opcional)
         $html .= '<hr><h2>Debug de rutas de imágenes</h2>';
         $html .= '<ul>';
         $html .= '<li><strong>Ubicación:</strong><br>';
