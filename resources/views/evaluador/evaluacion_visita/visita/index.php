@@ -42,7 +42,7 @@ ob_start();
 </style>
 <div class="container-visita">
     <div class="card-visita">
-        <img src="../../../../img/empresa/logo.jpg" alt="Logotipo de la empresa" class="logo">
+        <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="logo">
         <h5 class="card-title">VISITA DOMICILIARÍA</h5>
         <div class="alert alert-info">
             <strong>PROTECCIÓN DE DATOS PERSONALES:</strong>
