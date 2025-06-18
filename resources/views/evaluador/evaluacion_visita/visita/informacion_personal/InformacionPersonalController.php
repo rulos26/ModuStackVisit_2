@@ -1,7 +1,8 @@
 <?php
 namespace App\Controllers;
 
-require_once __DIR__ . '/../Database/Database.php';
+// Actualizar la ruta de la base de datos para la nueva ubicación
+require_once __DIR__ . '/../../../../../../app/Database/Database.php';
 
 use App\Database\Database;
 use PDOException;
