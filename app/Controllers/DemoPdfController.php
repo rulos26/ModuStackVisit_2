@@ -23,28 +23,28 @@ class DemoPdfController {
         $row1 = $stmt1->fetch(\PDO::FETCH_ASSOC);
 
         // Consulta de ubicacion_autorizacion
-        $sql2 = "SELECT * FROM ubicacion_autorizacion WHERE id_cedula=:cedula LIMIT 1";
+        $sql2 = "SELECT nombre FROM ubicacion_autorizacion WHERE id_cedula=:cedula LIMIT 1";
         $stmt2 = $db->prepare($sql2);
         $stmt2->bindParam(':cedula', $cedula);
         $stmt2->execute();
         $row2 = $stmt2->fetch(\PDO::FETCH_ASSOC);
 
         // Consulta de firmas
-        $sql3 = "SELECT * FROM firmas WHERE id_cedula=:cedula LIMIT 1";
+        $sql3 = "SELECT nombre  FROM firmas WHERE id_cedula=:cedula LIMIT 1";
         $stmt3 = $db->prepare($sql3);
         $stmt3->bindParam(':cedula', $cedula);
         $stmt3->execute();
         $row3 = $stmt3->fetch(\PDO::FETCH_ASSOC);
 
         // Consulta de foto_perfil_autorizacion
-        $sql4 = "SELECT * FROM foto_perfil_autorizacion WHERE id_cedula=:cedula LIMIT 1";
+        $sql4 = "SELECT nombre FROM foto_perfil_autorizacion WHERE id_cedula=:cedula LIMIT 1";
         $stmt4 = $db->prepare($sql4);
         $stmt4->bindParam(':cedula', $cedula);
         $stmt4->execute();
         $row4 = $stmt4->fetch(\PDO::FETCH_ASSOC);
 
         // Función para obtener la ruta de la imagen
-        function get_image_path($row, $type, $cedula) {
+        function get_image_path($nombre, $type, $cedula) {
             $base = [
                 'firma' => 'public/images/firma/' . $cedula . '/',
                 'perfil' => 'public/images/registro_fotografico/' . $cedula . '/',
@@ -55,14 +55,8 @@ class DemoPdfController {
                 'perfil' => 'public/images/registro_fotografico/' . $cedula . '/default_perfil.jpg',
                 'ubicacion' => 'public/images/ubicacion_autorizacion/' . $cedula . '/default_ubicacion.jpg'
             ];
-            if ($row && !empty($row['ruta']) && !empty($row['nombre'])) {
-                $ruta = $row['ruta'];
-                $nombre = $row['nombre'];
-                $full = $ruta;
-                if (substr($ruta, -1) !== '/' && substr($nombre, 0, 1) !== '/') {
-                    $full .= '/';
-                }
-                $full .= $nombre;
+            if ($nombre && !empty($nombre)) {
+                $full = $base[$type] . $nombre;
                 if (file_exists(__DIR__ . '/../../' . $full)) {
                     return $full;
                 }
@@ -70,9 +64,9 @@ class DemoPdfController {
             return $default[$type];
         }
 
-        $img_ubicacion = get_image_path($row2, 'ubicacion', $cedula);
-        $img_firma = get_image_path($row3, 'firma', $cedula);
-        $img_perfil = get_image_path($row4, 'perfil', $cedula);
+        $img_ubicacion = get_image_path($row2['nombre'] ?? '', 'ubicacion', $cedula);
+        $img_firma = get_image_path($row3['nombre'] ?? '', 'firma', $cedula);
+        $img_perfil = get_image_path($row4['nombre'] ?? '', 'perfil', $cedula);
 
         // Crear instancia de Dompdf
         $dompdf = new Dompdf();
@@ -96,15 +90,12 @@ class DemoPdfController {
         $html .= '<hr><h2>Debug de rutas de imágenes</h2>';
         $html .= '<ul>';
         $html .= '<li><strong>Ubicación:</strong><br>';
-        $html .= 'Ruta BD: ' . htmlspecialchars($row2['ruta'] ?? '(sin valor)') . '<br>';
         $html .= 'Nombre BD: ' . htmlspecialchars($row2['nombre'] ?? '(sin valor)') . '<br>';
         $html .= 'Ruta final: ' . htmlspecialchars($img_ubicacion) . '</li>';
         $html .= '<li><strong>Firma:</strong><br>';
-        $html .= 'Ruta BD: ' . htmlspecialchars($row3['ruta'] ?? '(sin valor)') . '<br>';
         $html .= 'Nombre BD: ' . htmlspecialchars($row3['nombre'] ?? '(sin valor)') . '<br>';
         $html .= 'Ruta final: ' . htmlspecialchars($img_firma) . '</li>';
         $html .= '<li><strong>Perfil:</strong><br>';
-        $html .= 'Ruta BD: ' . htmlspecialchars($row4['ruta'] ?? '(sin valor)') . '<br>';
         $html .= 'Nombre BD: ' . htmlspecialchars($row4['nombre'] ?? '(sin valor)') . '<br>';
         $html .= 'Ruta final: ' . htmlspecialchars($img_perfil) . '</li>';
         $html .= '</ul>';
