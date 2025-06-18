@@ -3,13 +3,22 @@ namespace App\Controllers;
 
 use Exception;
 use PDO;
+use App\Database\Database;
 
 class UbicacionController {
     private static $instance = null;
     private $db;
 
     private function __construct() {
-        $this->db = require __DIR__ . '/../Database/Database.php';
+        try {
+            $this->db = Database::getInstance()->getConnection();
+            if (!$this->db instanceof PDO) {
+                throw new Exception("Error al obtener la conexión a la base de datos");
+            }
+        } catch (Exception $e) {
+            error_log("Error en UbicacionController::__construct: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public static function getInstance() {
@@ -33,6 +42,10 @@ class UbicacionController {
 
             // Insertar ubicación
             $stmt = $this->db->prepare("INSERT INTO ubicacion (id_cedula, latitud, longitud) VALUES (?, ?, ?)");
+            if (!$stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->db->errorInfo()[2]);
+            }
+            
             $stmt->execute([$id_cedula, $latitud, $longitud]);
             $id_ubicacion = $this->db->lastInsertId();
 
@@ -41,6 +54,10 @@ class UbicacionController {
 
             // Guardar registro de mapa
             $stmt = $this->db->prepare("INSERT INTO ubicacion_autorizacion (id_cedula, ruta, nombre) VALUES (?, ?, ?)");
+            if (!$stmt) {
+                throw new Exception("Error al preparar la consulta de mapa: " . $this->db->errorInfo()[2]);
+            }
+            
             $stmt->execute([$id_cedula, dirname($ruta_mapa), basename($ruta_mapa)]);
 
             return [
@@ -53,6 +70,7 @@ class UbicacionController {
             ];
 
         } catch (Exception $e) {
+            error_log("Error en UbicacionController::guardarUbicacion: " . $e->getMessage());
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -71,7 +89,9 @@ class UbicacionController {
             // Crear directorio si no existe
             $directorio_destino = __DIR__ . "/../../public/images/ubicacion_autorizacion/{$id_cedula}/";
             if (!file_exists($directorio_destino)) {
-                mkdir($directorio_destino, 0777, true);
+                if (!mkdir($directorio_destino, 0777, true)) {
+                    throw new Exception("No se pudo crear el directorio para el mapa");
+                }
             }
 
             // Descargar y guardar imagen
@@ -90,6 +110,7 @@ class UbicacionController {
             return $ruta_completa;
 
         } catch (Exception $e) {
+            error_log("Error en UbicacionController::generarMapa: " . $e->getMessage());
             throw new Exception("Error al generar el mapa: " . $e->getMessage());
         }
     }
@@ -97,9 +118,14 @@ class UbicacionController {
     public function obtenerUbicacion($id_cedula) {
         try {
             $stmt = $this->db->prepare("SELECT * FROM ubicacion WHERE id_cedula = ? ORDER BY id DESC LIMIT 1");
+            if (!$stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->db->errorInfo()[2]);
+            }
+            
             $stmt->execute([$id_cedula]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
+            error_log("Error en UbicacionController::obtenerUbicacion: " . $e->getMessage());
             throw new Exception("Error al obtener la ubicación: " . $e->getMessage());
         }
     }
