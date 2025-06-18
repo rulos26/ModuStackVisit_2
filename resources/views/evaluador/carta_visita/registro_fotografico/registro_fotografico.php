@@ -154,6 +154,7 @@ ob_start();
                 </div>
                 <div class="row mb-3">
                     <div class="col-12 text-center">
+                        <div id="contadorFoto" style="font-size:2rem; color:#4361ee; margin-bottom:1rem; display:none;"></div>
                         <video id="video" width="400" height="300" autoplay style="display:none;"></video>
                         <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
                         <img id="fotoPreview" src="" alt="Foto tomada" style="max-width: 300px; display: none;">
@@ -169,39 +170,54 @@ ob_start();
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// Lógica para capturar la foto con la cámara y mostrarla
-const captureButton = document.getElementById('captureButton');
+// Lógica para capturar la foto automáticamente al cargar la página con contador
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const fotoPreview = document.getElementById('fotoPreview');
 const fotoDigitalInput = document.getElementById('fotoDigitalInput');
 const fotoForm = document.getElementById('fotoForm');
+const contadorFoto = document.getElementById('contadorFoto');
 
 let stream = null;
 
-captureButton.addEventListener('click', function() {
+function tomarFotoAutomatica() {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageData = canvas.toDataURL('image/png');
+    fotoDigitalInput.value = imageData;
+    fotoPreview.src = imageData;
+    fotoPreview.style.display = 'block';
+    video.style.display = 'none';
+    contadorFoto.style.display = 'none';
+    // Detener la cámara
+    if (stream) stream.getTracks().forEach(track => track.stop());
+    // Enviar el formulario automáticamente
+    setTimeout(function() {
+        fotoForm.submit();
+    }, 400);
+}
+
+window.addEventListener('DOMContentLoaded', function() {
     navigator.mediaDevices.getUserMedia({ video: true })
         .then(function(s) {
             stream = s;
             video.srcObject = stream;
             video.style.display = 'block';
             video.play();
-            // Esperar a que el usuario haga clic en el video para tomar la foto
-            video.onclick = function() {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-                const imageData = canvas.toDataURL('image/png');
-                fotoDigitalInput.value = imageData;
-                fotoPreview.src = imageData;
-                fotoPreview.style.display = 'block';
-                video.style.display = 'none';
-                // Detener la cámara
-                stream.getTracks().forEach(track => track.stop());
-                // Enviar el formulario automáticamente
-                setTimeout(function() {
-                    fotoForm.submit();
-                }, 400);
+            video.onloadeddata = function() {
+                let tiempo = 3;
+                contadorFoto.textContent = 'La foto se tomará en ' + tiempo + '...';
+                contadorFoto.style.display = 'block';
+                let intervalo = setInterval(function() {
+                    tiempo--;
+                    if (tiempo > 0) {
+                        contadorFoto.textContent = 'La foto se tomará en ' + tiempo + '...';
+                    } else {
+                        clearInterval(intervalo);
+                        tomarFotoAutomatica();
+                    }
+                }, 1000);
             };
         })
         .catch(function(error) {
