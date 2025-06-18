@@ -71,6 +71,15 @@
             <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Correo electrónico</td>
             <td colspan="3" style="border: 1px solid black;"><?= htmlspecialchars($row1['correo'] ?? '') ?></td>
         </tr>
+        <tr>
+            <td colspan="12" style="text-align: center; padding: 16px 0;">
+                <?php if (!empty($img_firma_b64)): ?>
+                    <img src="<?= $img_firma_b64 ?>" alt="Firma" style="max-width: 350px; max-height: 120px; border: 1px solid #888; border-radius: 6px;">
+                <?php else: ?>
+                    <span style="color: #888;">Firma no disponible</span>
+                <?php endif; ?>
+            </td>
+        </tr>
     </tbody>
 </table>
 <!-- Puedes agregar aquí más tablas o secciones según el informe original -->
