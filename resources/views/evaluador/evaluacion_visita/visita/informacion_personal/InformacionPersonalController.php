@@ -171,7 +171,7 @@ class InformacionPersonalController {
      */
     private function crear($datos) {
         try {
-            $sql = "INSERT INTO informacion_personal (
+            $sql = "INSERT INTO evaluados (
                 id_cedula, id_tipo_documentos, cedula_expedida, nombres, apellidos, 
                 edad, fecha_expedicion, lugar_nacimiento, celular_1, celular_2, 
                 telefono, id_rh, id_estatura, peso_kg, id_estado_civil, hacer_cuanto, 
@@ -231,7 +231,7 @@ class InformacionPersonalController {
      */
     private function actualizar($datos) {
         try {
-            $sql = "UPDATE informacion_personal SET 
+            $sql = "UPDATE evaluados SET 
                 id_tipo_documentos = :id_tipo_documentos,
                 cedula_expedida = :cedula_expedida,
                 nombres = :nombres,
@@ -305,7 +305,7 @@ class InformacionPersonalController {
      */
     public function obtenerPorCedula($cedula) {
         try {
-            $sql = "SELECT * FROM informacion_personal WHERE id_cedula = :cedula";
+            $sql = "SELECT * FROM evaluados WHERE id_cedula = :cedula";
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':cedula', $cedula);
             $stmt->execute();
@@ -362,7 +362,7 @@ class InformacionPersonalController {
      */
     public function existeInformacion($cedula) {
         try {
-            $sql = "SELECT COUNT(*) FROM informacion_personal WHERE id_cedula = :cedula";
+            $sql = "SELECT COUNT(*) FROM evaluados WHERE id_cedula = :cedula";
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':cedula', $cedula);
             $stmt->execute();
@@ -380,7 +380,7 @@ class InformacionPersonalController {
      */
     public function eliminar($cedula) {
         try {
-            $sql = "DELETE FROM informacion_personal WHERE id_cedula = :cedula";
+            $sql = "DELETE FROM evaluados WHERE id_cedula = :cedula";
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':cedula', $cedula);
             
@@ -403,7 +403,7 @@ class InformacionPersonalController {
                         AVG(edad) as edad_promedio,
                         COUNT(CASE WHEN id_estado_civil = 1 THEN 1 END) as solteros,
                         COUNT(CASE WHEN id_estado_civil = 2 THEN 1 END) as casados
-                    FROM informacion_personal";
+                    FROM evaluados";
             
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
