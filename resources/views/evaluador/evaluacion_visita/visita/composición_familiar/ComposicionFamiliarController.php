@@ -124,14 +124,24 @@ class ComposicionFamiliarController {
                             VALUES (:id_cedula, :nombre, :id_parentesco, :edad, :id_ocupacion, :telefono, :id_conviven, :observacion)";
                     
                     $stmt = $this->db->prepare($sql);
+                    
+                    // Crear variables temporales para bindParam
+                    $nombre = $nombres[$i];
+                    $parentesco = $parentescos[$i];
+                    $edad = $edades[$i];
+                    $ocupacion = !empty($ocupaciones[$i]) ? $ocupaciones[$i] : null;
+                    $telefono = $telefonos[$i];
+                    $conviven_val = $conviven[$i];
+                    $observacion = $observaciones[$i] ?? '';
+                    
                     $stmt->bindParam(':id_cedula', $id_cedula);
-                    $stmt->bindParam(':nombre', $nombres[$i]);
-                    $stmt->bindParam(':id_parentesco', $parentescos[$i]);
-                    $stmt->bindParam(':edad', $edades[$i]);
-                    $stmt->bindParam(':id_ocupacion', $ocupaciones[$i] ?: null);
-                    $stmt->bindParam(':telefono', $telefonos[$i]);
-                    $stmt->bindParam(':id_conviven', $conviven[$i]);
-                    $stmt->bindParam(':observacion', $observaciones[$i] ?? '');
+                    $stmt->bindParam(':nombre', $nombre);
+                    $stmt->bindParam(':id_parentesco', $parentesco);
+                    $stmt->bindParam(':edad', $edad);
+                    $stmt->bindParam(':id_ocupacion', $ocupacion);
+                    $stmt->bindParam(':telefono', $telefono);
+                    $stmt->bindParam(':id_conviven', $conviven_val);
+                    $stmt->bindParam(':observacion', $observacion);
                     
                     if ($stmt->execute()) {
                         $registros_exitosos++;
