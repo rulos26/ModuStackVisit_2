@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $resultado = $controller->guardar($datos);
             if ($resultado['success']) {
                 $_SESSION['success'] = $resultado['message'];
-                header('Location: ../registro_fotografico/registro_fotografico.php');
+                header('Location: ../composición_familiar/composición_familiar.php');
                 exit();
             } else {
                 $_SESSION['error'] = $resultado['message'];
