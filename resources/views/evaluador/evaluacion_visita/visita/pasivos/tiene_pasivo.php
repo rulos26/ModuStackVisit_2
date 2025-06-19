@@ -15,38 +15,44 @@ if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
     exit();
 }
 
-require_once __DIR__ . '/PatrimonioController.php';
-use App\Controllers\PatrimonioController;
+require_once __DIR__ . '/PasivosController.php';
+use App\Controllers\PasivosController;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $controller = PatrimonioController::getInstance();
+        $controller = PasivosController::getInstance();
         $datos = $controller->sanitizarDatos($_POST);
-        $errores = $controller->validarDatos($datos);
-        if (empty($errores)) {
-            $resultado = $controller->guardar($datos);
+        
+        if (isset($datos['tiene_pasivos']) && $datos['tiene_pasivos'] == '1') {
+            // No tiene pasivos
+            $resultado = $controller->guardarSinPasivos();
             if ($resultado['success']) {
                 $_SESSION['success'] = $resultado['message'];
-                header('Location: ../cuentas_bancarias/cuentas_bancarias.php');
+                header('Location: ../aportante/aportante.php');
                 exit();
             } else {
                 $_SESSION['error'] = $resultado['message'];
             }
         } else {
-            $_SESSION['error'] = implode('<br>', $errores);
+            // Tiene pasivos, redirigir al formulario detallado
+            header('Location: pasivos.php');
+            exit();
         }
     } catch (Exception $e) {
-        error_log("Error en Patrimonio.php: " . $e->getMessage());
+        error_log("Error en tiene_pasivo.php: " . $e->getMessage());
         $_SESSION['error'] = "Error interno del servidor: " . $e->getMessage();
     }
 }
 
 try {
-    $controller = PatrimonioController::getInstance();
+    $controller = PasivosController::getInstance();
     $id_cedula = $_SESSION['id_cedula'];
     $datos_existentes = $controller->obtenerPorCedula($id_cedula);
+    
+    // Obtener opciones para los select
+    $parametros = $controller->obtenerOpciones('parametro');
 } catch (Exception $e) {
-    error_log("Error en Patrimonio.php: " . $e->getMessage());
+    error_log("Error en tiene_pasivo.php: " . $e->getMessage());
     $error_message = "Error al cargar los datos: " . $e->getMessage();
 }
 ?>
@@ -69,8 +75,8 @@ try {
     <div class="card mt-5">
         <div class="card-header bg-primary text-white">
             <h5 class="card-title mb-0">
-                <i class="bi bi-bank me-2"></i>
-                VISITA DOMICILIARÍA - DETALLES DE PATRIMONIO
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                VISITA DOMICILIARÍA - PASIVOS
             </h5>
         </div>
         <div class="card-body">
@@ -126,19 +132,29 @@ try {
                     <div class="step-title">Paso 10</div>
                     <div class="step-description">Servicios Públicos</div>
                 </div>
-                <div class="step-horizontal active">
+                <div class="step-horizontal complete">
                     <div class="step-icon"><i class="fas fa-bank"></i></div>
                     <div class="step-title">Paso 11</div>
                     <div class="step-description">Patrimonio</div>
+                </div>
+                <div class="step-horizontal complete">
+                    <div class="step-icon"><i class="fas fa-credit-card"></i></div>
+                    <div class="step-title">Paso 12</div>
+                    <div class="step-description">Cuentas Bancarias</div>
+                </div>
+                <div class="step-horizontal active">
+                    <div class="step-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="step-title">Paso 13</div>
+                    <div class="step-description">Pasivos</div>
                 </div>
             </div>
 
             <!-- Controles de navegación -->
             <div class="controls text-center mb-4">
-                <a href="tiene_patrimonio.php" class="btn btn-secondary me-2">
+                <a href="../cuentas_bancarias/cuentas_bancarias.php" class="btn btn-secondary me-2">
                     <i class="fas fa-arrow-left me-1"></i>Anterior
                 </a>
-                <button class="btn btn-primary" id="nextBtn" type="button" onclick="document.getElementById('formPatrimonioDetallado').submit();">
+                <button class="btn btn-primary" id="nextBtn" type="button" onclick="document.getElementById('formPasivos').submit();">
                     Siguiente<i class="fas fa-arrow-right ms-1"></i>
                 </button>
             </div>
@@ -169,10 +185,10 @@ try {
                 </div>
             <?php endif; ?>
             
-            <?php if ($datos_existentes): ?>
+            <?php if (!empty($datos_existentes)): ?>
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle me-2"></i>
-                    Ya existe información de patrimonio registrada para esta cédula. Puede actualizar los datos.
+                    Ya existe información de pasivos registrada para esta cédula. Puede actualizar los datos.
                 </div>
             <?php endif; ?>
             
@@ -188,100 +204,23 @@ try {
                 </div>
             </div>
             
-            <form action="" method="POST" id="formPatrimonioDetallado" novalidate autocomplete="off">
-                <!-- Campo oculto para indicar que tiene patrimonio -->
-                <input type="hidden" name="tiene_patrimonio" value="2">
-                
-                <div class="row mb-3">
-                    <div class="col-md-4 mb-3">
-                        <label for="valor_vivienda" class="form-label">
-                            <i class="bi bi-house-dollar me-1"></i>Valor de la Vivienda:
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            <input type="text" class="form-control" id="valor_vivienda" name="valor_vivienda" 
-                                   value="<?php echo $datos_existentes && $datos_existentes['valor_vivienda'] != 'N/A' ? htmlspecialchars($datos_existentes['valor_vivienda']) : ''; ?>"
-                                   placeholder="0.00">
-                        </div>
-                        <div class="form-text">Ingrese el valor estimado de su vivienda</div>
-                    </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <label for="direccion" class="form-label">
-                            <i class="bi bi-geo-alt me-1"></i>Dirección:
-                        </label>
-                        <input type="text" class="form-control" id="direccion" name="direccion" 
-                               value="<?php echo $datos_existentes && $datos_existentes['direccion'] != 'N/A' ? htmlspecialchars($datos_existentes['direccion']) : ''; ?>"
-                               placeholder="Dirección de la vivienda" minlength="10">
-                        <div class="form-text">Mínimo 10 caracteres</div>
-                    </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <label for="id_vehiculo" class="form-label">
-                            <i class="bi bi-car-front me-1"></i>Vehículo:
-                        </label>
-                        <input type="text" class="form-control" id="id_vehiculo" name="id_vehiculo" 
-                               value="<?php echo $datos_existentes && $datos_existentes['id_vehiculo'] != 'N/A' ? htmlspecialchars($datos_existentes['id_vehiculo']) : ''; ?>"
-                               placeholder="Tipo de vehículo" minlength="3">
-                        <div class="form-text">Mínimo 3 caracteres</div>
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <div class="col-md-4 mb-3">
-                        <label for="id_marca" class="form-label">
-                            <i class="bi bi-tag me-1"></i>Marca:
-                        </label>
-                        <input type="text" class="form-control" id="id_marca" name="id_marca" 
-                               value="<?php echo $datos_existentes && $datos_existentes['id_marca'] != 'N/A' ? htmlspecialchars($datos_existentes['id_marca']) : ''; ?>"
-                               placeholder="Marca del vehículo" minlength="2">
-                        <div class="form-text">Mínimo 2 caracteres</div>
-                    </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <label for="id_modelo" class="form-label">
-                            <i class="bi bi-gear me-1"></i>Modelo:
-                        </label>
-                        <input type="text" class="form-control" id="id_modelo" name="id_modelo" 
-                               value="<?php echo $datos_existentes && $datos_existentes['id_modelo'] != 'N/A' ? htmlspecialchars($datos_existentes['id_modelo']) : ''; ?>"
-                               placeholder="Modelo del vehículo" minlength="2">
-                        <div class="form-text">Mínimo 2 caracteres</div>
-                    </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <label for="id_ahorro" class="form-label">
-                            <i class="bi bi-piggy-bank me-1"></i>Ahorro (CDT, Inversiones):
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            <input type="text" class="form-control" id="id_ahorro" name="id_ahorro" 
-                                   value="<?php echo $datos_existentes && $datos_existentes['id_ahorro'] != 'N/A' ? htmlspecialchars($datos_existentes['id_ahorro']) : ''; ?>"
-                                   placeholder="0.00">
-                        </div>
-                        <div class="form-text">Ingrese el valor total de sus ahorros</div>
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
+            <form action="" method="POST" id="formPasivos" novalidate autocomplete="off">
+                <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="otros" class="form-label">
-                            <i class="bi bi-plus-circle me-1"></i>Otros Bienes:
+                        <label for="tiene_pasivos" class="form-label">
+                            <i class="bi bi-question-circle me-1"></i>¿Posee usted pasivos?
                         </label>
-                        <input type="text" class="form-control" id="otros" name="otros" 
-                               value="<?php echo $datos_existentes && $datos_existentes['otros'] != 'N/A' ? htmlspecialchars($datos_existentes['otros']) : ''; ?>"
-                               placeholder="Otros bienes o activos">
-                        <div class="form-text">Opcional - Otros bienes o activos que posea</div>
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <div class="col-md-12 mb-3">
-                        <label for="observacion" class="form-label">
-                            <i class="bi bi-chat-text me-1"></i>Observación:
-                        </label>
-                        <textarea class="form-control" id="observacion" name="observacion" 
-                                  rows="4" maxlength="1000"><?php echo $datos_existentes && $datos_existentes['observacion'] != 'N/A' ? htmlspecialchars($datos_existentes['observacion']) : ''; ?></textarea>
-                        <div class="form-text">Máximo 1000 caracteres. Mínimo 10 caracteres si se llena.</div>
+                        <select class="form-select" id="tiene_pasivos" name="tiene_pasivos" required>
+                            <option value="">Seleccione una opción</option>
+                            <option value="1" <?php echo (!empty($datos_existentes) && $datos_existentes[0]['item'] == 'N/A') ? 'selected' : ''; ?>>No</option>
+                            <?php foreach ($parametros as $parametro): ?>
+                                <option value="<?php echo $parametro['id']; ?>" 
+                                    <?php echo (!empty($datos_existentes) && $datos_existentes[0]['item'] != 'N/A' && $datos_existentes[0]['item'] == $parametro['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($parametro['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="form-text">Seleccione "No" si no posee pasivos, o "Sí" para continuar con el formulario detallado.</div>
                     </div>
                 </div>
                 
@@ -289,9 +228,9 @@ try {
                     <div class="col-12 text-center">
                         <button type="submit" class="btn btn-primary btn-lg me-2">
                             <i class="bi bi-check-circle me-2"></i>
-                            <?php echo $datos_existentes ? 'Actualizar' : 'Guardar'; ?>
+                            Continuar
                         </button>
-                        <a href="tiene_patrimonio.php" class="btn btn-secondary btn-lg">
+                        <a href="../cuentas_bancarias/cuentas_bancarias.php" class="btn btn-secondary btn-lg">
                             <i class="bi bi-arrow-left me-2"></i>Volver
                         </a>
                     </div>
@@ -310,24 +249,6 @@ try {
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/autonumeric@4.1.0/dist/autoNumeric.min.js"></script>
-<script>
-// Inicializar autoNumeric para campos de dinero
-new AutoNumeric('#valor_vivienda', {
-    currencySymbol: '$',
-    decimalCharacter: '.',
-    digitGroupSeparator: ',',
-    minimumValue: '0'
-});
-
-new AutoNumeric('#id_ahorro', {
-    currencySymbol: '$',
-    decimalCharacter: '.',
-    digitGroupSeparator: ',',
-    minimumValue: '0'
-});
-</script>
 
 <?php
 $contenido = ob_get_clean();

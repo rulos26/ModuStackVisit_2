@@ -6,12 +6,12 @@ if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
     exit();
 }
 
-require_once __DIR__ . '/PatrimonioController.php';
-use App\Controllers\PatrimonioController;
+require_once __DIR__ . '/CuentasBancariasController.php';
+use App\Controllers\CuentasBancariasController;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $controller = PatrimonioController::getInstance();
+        $controller = CuentasBancariasController::getInstance();
         $datos = $controller->sanitizarDatos($_POST);
         $errores = $controller->validarDatos($datos);
         
@@ -19,26 +19,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $resultado = $controller->guardar($datos);
             if ($resultado['success']) {
                 $_SESSION['success'] = $resultado['message'];
-                header('Location: ../cuentas_bancarias/cuentas_bancarias.php');
+                header('Location: ../pasivos/tiene_pasivo.php');
                 exit();
             } else {
                 $_SESSION['error'] = $resultado['message'];
-                header('Location: tiene_patrimonio.php');
+                header('Location: cuentas_bancarias.php');
                 exit();
             }
         } else {
             $_SESSION['error'] = implode('<br>', $errores);
-            header('Location: tiene_patrimonio.php');
+            header('Location: cuentas_bancarias.php');
             exit();
         }
     } catch (Exception $e) {
-        error_log("Error en vali.php de patrimonio: " . $e->getMessage());
+        error_log("Error en guardar.php de cuentas bancarias: " . $e->getMessage());
         $_SESSION['error'] = "Error interno del servidor: " . $e->getMessage();
-        header('Location: tiene_patrimonio.php');
+        header('Location: cuentas_bancarias.php');
         exit();
     }
 } else {
-    header('Location: tiene_patrimonio.php');
+    header('Location: cuentas_bancarias.php');
     exit();
 }
 ?>
