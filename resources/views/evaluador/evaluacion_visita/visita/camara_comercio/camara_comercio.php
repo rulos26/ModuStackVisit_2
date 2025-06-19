@@ -196,12 +196,12 @@ try {
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6 mb-3 campos-adicionales" id="campo-actividad" style="display: none;">
-                        <label for="actividad" class="form-label">
+                    <div class="col-md-6 mb-3 campos-adicionales" id="campo-activdad" style="display: none;">
+                        <label for="activdad" class="form-label">
                             <i class="bi bi-gear me-1"></i>Actividad:
                         </label>
-                        <input type="text" class="form-control" id="actividad" name="actividad" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['actividad']) : ''; ?>" 
+                        <input type="text" class="form-control" id="activdad" name="activdad" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['activdad']) : ''; ?>" 
                                maxlength="200">
                         <div class="invalid-feedback">Por favor ingrese la actividad.</div>
                     </div>

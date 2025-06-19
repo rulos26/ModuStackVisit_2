@@ -53,9 +53,9 @@ class CamaraComercioController {
                 $errores[] = 'La razón social debe tener al menos 2 caracteres.';
             }
             
-            // Validar actividad solo si se proporciona
-            if (!empty($datos['actividad']) && strlen(trim($datos['actividad'])) < 2) {
-                $errores[] = 'La actividad debe tener al menos 2 caracteres.';
+            // Validar activdad solo si se proporciona
+            if (!empty($datos['activdad']) && strlen(trim($datos['activdad'])) < 2) {
+                $errores[] = 'La activdad debe tener al menos 2 caracteres.';
             }
         }
         
@@ -68,17 +68,17 @@ class CamaraComercioController {
             $tiene_camara = $datos['tiene_camara'];
             $nombre = $datos['nombre'] ?? '';
             $razon = $datos['razon'] ?? '';
-            $actividad = $datos['actividad'] ?? '';
+            $activdad = $datos['activdad'] ?? '';
             $observacion = $datos['observacion'] ?? '';
 
             $existe = $this->obtenerPorCedula($id_cedula);
             if ($existe) {
-                $sql = "UPDATE camara_comercio SET tiene_camara = :tiene_camara, nombre = :nombre, razon = :razon, actividad = :actividad, observacion = :observacion WHERE id_cedula = :id_cedula";
+                $sql = "UPDATE camara_comercio SET tiene_camara = :tiene_camara, nombre = :nombre, razon = :razon, activdad = :activdad, observacion = :observacion WHERE id_cedula = :id_cedula";
                 $stmt = $this->db->prepare($sql);
                 $stmt->bindParam(':tiene_camara', $tiene_camara);
                 $stmt->bindParam(':nombre', $nombre);
                 $stmt->bindParam(':razon', $razon);
-                $stmt->bindParam(':actividad', $actividad);
+                $stmt->bindParam(':activdad', $activdad);
                 $stmt->bindParam(':observacion', $observacion);
                 $stmt->bindParam(':id_cedula', $id_cedula);
                 $ok = $stmt->execute();
@@ -88,13 +88,13 @@ class CamaraComercioController {
                     return ['success'=>false, 'message'=>'Error al actualizar la información.'];
                 }
             } else {
-                $sql = "INSERT INTO camara_comercio (id_cedula, tiene_camara, nombre, razon, actividad, observacion) VALUES (:id_cedula, :tiene_camara, :nombre, :razon, :actividad, :observacion)";
+                $sql = "INSERT INTO camara_comercio (id_cedula, tiene_camara, nombre, razon, activdad, observacion) VALUES (:id_cedula, :tiene_camara, :nombre, :razon, :activdad, :observacion)";
                 $stmt = $this->db->prepare($sql);
                 $stmt->bindParam(':id_cedula', $id_cedula);
                 $stmt->bindParam(':tiene_camara', $tiene_camara);
                 $stmt->bindParam(':nombre', $nombre);
                 $stmt->bindParam(':razon', $razon);
-                $stmt->bindParam(':actividad', $actividad);
+                $stmt->bindParam(':activdad', $activdad);
                 $stmt->bindParam(':observacion', $observacion);
                 $ok = $stmt->execute();
                 if ($ok) {
