@@ -1,6 +1,46 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/ModuStackVisit_2/conn/conexion.php';
-$id_cedula = $_SESSION['id_cedula'];
+
+// Validar que la sesión tenga el id_cedula
+if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
+    $id_cedula = '0';
+} else {
+    $id_cedula = $_SESSION['id_cedula'];
+}
+
+// Inicializar array con valores por defecto
+$filas_invetario = [
+    'id' => '',
+    'id_cedula' => $id_cedula,
+    'televisor_cant' => '',
+    'dvd_cant' => '',
+    'teatro_casa_cant' => '',
+    'equipo_sonido_cant' => '',
+    'computador_cant' => '',
+    'impresora_cant' => '',
+    'movil_cant' => '',
+    'estufa_cant' => '',
+    'nevera_cant' => '',
+    'lavadora_cant' => '',
+    'microondas_cant' => '',
+    'moto_cant' => '',
+    'carro_cant' => '',
+    'observacion' => '',
+    'televisor_nombre_cant' => 'No disponible',
+    'dvd_nombre_cant' => 'No disponible',
+    'teatro_casa_nombre_cant' => 'No disponible',
+    'equipo_sonido_nombre_cant' => 'No disponible',
+    'computador_nombre_cant' => 'No disponible',
+    'impresora_nombre_cant' => 'No disponible',
+    'movil_nombre_cant' => 'No disponible',
+    'estufa_nombre_cant' => 'No disponible',
+    'nevera_nombre_cant' => 'No disponible',
+    'lavadora_nombre_cant' => 'No disponible',
+    'microondas_nombre_cant' => 'No disponible',
+    'moto_nombre_cant' => 'No disponible',
+    'carro_nombre_cant' => 'No disponible'
+];
+
 $invetario="SELECT 
 ie.televisor_cant, ie.dvd_cant, ie.teatro_casa_cant, ie.equipo_sonido_cant, 
 ie.computador_cant, ie.impresora_cant, ie.movil_cant,ie.estufa_cant,  ie.nevera_cant, 
@@ -51,9 +91,17 @@ ie.id_cedula = '$id_cedula'";
 
 $data_invetario = $mysqli->query($invetario);
 
-if ($data_invetario->num_rows > 0) {
-    $filas_invetario = $data_invetario->fetch_assoc();
-    //var_dump($filas_invetario);
+if ($data_invetario && $data_invetario->num_rows > 0) {
+    $temp_inventario = $data_invetario->fetch_assoc();
+    // Combinar datos de la base de datos con valores por defecto
+    $filas_invetario = array_merge($filas_invetario, $temp_inventario);
+    
+    // Asegurar que no haya valores nulos
+    foreach ($filas_invetario as $key => $value) {
+        if ($value === null || $value === '') {
+            $filas_invetario[$key] = 'No disponible';
+        }
+    }
 } else {
     echo "No se encontraron registros.";
 }

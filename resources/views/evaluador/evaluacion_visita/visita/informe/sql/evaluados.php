@@ -1,9 +1,18 @@
 <?php
+// Verificar si la sesión ya está activa antes de iniciarla
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
 include $_SERVER['DOCUMENT_ROOT'] . '/ModuStackVisit_2/conn/conexion.php';
-$id_cedula = $_SESSION['id_cedula'];
+
+// Validar que la sesión tenga el id_cedula
+if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
+    $id_cedula = '0';
+} else {
+    $id_cedula = $_SESSION['id_cedula'];
+}
+
 $evaluado = "SELECT 
 e.id,e.id_cedula,e.id_tipo_documentos, e.cedula_expedida, e.nombres, e.apellidos, 
 e.edad, e.fecha_expedicion, e.lugar_nacimiento, e.celular_1, e.celular_2, e.telefono, 
@@ -33,7 +42,55 @@ LEFT JOIN
 opc_estratos es ON e.id_estrato = es.id
 WHERE 
 e.id_cedula = '$id_cedula';";
+
 $data_evaluados = $mysqli->query($evaluado);
-if ($data_evaluados->num_rows > 0) {
-    $row = $data_evaluados->fetch_assoc();
+
+// Inicializar array con valores por defecto para evitar warnings de TCPDF
+$row = [
+    'id' => '',
+    'id_cedula' => $id_cedula,
+    'id_tipo_documentos' => '',
+    'cedula_expedida' => '',
+    'nombres' => 'No disponible',
+    'apellidos' => 'No disponible',
+    'edad' => 'No disponible',
+    'fecha_expedicion' => '',
+    'lugar_nacimiento' => '',
+    'celular_1' => 'No disponible',
+    'celular_2' => 'No disponible',
+    'telefono' => 'No disponible',
+    'id_rh' => '',
+    'id_estatura' => '',
+    'peso_kg' => '',
+    'id_estado_civil' => '',
+    'hacer_cuanto' => '',
+    'numero_hijos' => '',
+    'direccion' => 'No disponible',
+    'id_ciudad' => '',
+    'localidad' => '',
+    'barrio' => '',
+    'id_estrato' => '',
+    'correo' => 'No disponible',
+    'cargo' => 'No disponible',
+    'observacion' => '',
+    'tipo_documento_nombre' => 'No disponible',
+    'lugar_nacimiento_municipio' => 'No disponible',
+    'ciudad_nombre' => 'No disponible',
+    'rh_nombre' => 'No disponible',
+    'estatura_nombre' => 'No disponible',
+    'estado_civil_nombre' => 'No disponible',
+    'estrato_nombre' => 'No disponible'
+];
+
+if ($data_evaluados && $data_evaluados->num_rows > 0) {
+    $temp_row = $data_evaluados->fetch_assoc();
+    // Combinar datos de la base de datos con valores por defecto
+    $row = array_merge($row, $temp_row);
+    
+    // Asegurar que no haya valores nulos
+    foreach ($row as $key => $value) {
+        if ($value === null || $value === '') {
+            $row[$key] = 'No disponible';
+        }
+    }
 }
