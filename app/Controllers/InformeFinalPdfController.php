@@ -103,6 +103,44 @@ class InformeFinalPdfController {
             }
         }
 
+        // Consulta de composición familiar
+        $sql_familia = "SELECT 
+            cf.id, 
+            cf.id_cedula, 
+            cf.nombre, 
+            cf.id_parentesco, 
+            cf.edad, 
+            cf.id_ocupacion, 
+            cf.telefono, 
+            cf.id_conviven,
+            cf.observacion,
+            op.nombre AS nombre_parentesco,
+            oo.nombre AS nombre_ocupacion,
+            opa.nombre AS nombre_parametro 
+        FROM composicion_familiar cf
+        LEFT JOIN opc_parentesco op ON cf.id_parentesco = op.id
+        LEFT JOIN opc_ocupacion oo ON cf.id_ocupacion = oo.id
+        LEFT JOIN opc_parametro opa ON cf.id_conviven = opa.id
+        WHERE cf.id_cedula = :cedula";
+        
+        $stmt_familia = $db->prepare($sql_familia);
+        $stmt_familia->bindParam(':cedula', $cedula);
+        $stmt_familia->execute();
+        $composicion_familiar = $stmt_familia->fetchAll(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de composición familiar
+        if ($composicion_familiar) {
+            foreach ($composicion_familiar as &$familiar) {
+                // Convertir campos vacíos a N/A
+                $campos_texto = ['nombre', 'nombre_parentesco', 'edad', 'nombre_ocupacion', 
+                               'telefono', 'nombre_parametro', 'observacion'];
+                foreach ($campos_texto as $campo) {
+                    $familiar[$campo] = empty($familiar[$campo]) ? 'N/A' : $familiar[$campo];
+                }
+            }
+            unset($familiar); // Romper la referencia
+        }
+
         // Función para convertir imagen a base64
         function img_to_base64($img_path) {
             if (!file_exists($img_path)) return '';
@@ -123,7 +161,8 @@ class InformeFinalPdfController {
             'logo_b64' => $logo_b64,
             'evaluado' => $evaluado,
             'camara_comercio' => $camara_comercio,
-            'estado_salud' => $estado_salud
+            'estado_salud' => $estado_salud,
+            'composicion_familiar' => $composicion_familiar
         ];
         extract($data);
         ob_start();

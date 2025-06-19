@@ -236,6 +236,57 @@
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <?php if (!empty($composicion_familiar)): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="7" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            COMPOSICIÓN FAMILIAR (con quién vive, y familia de origen)
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Nombre</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Parentesco</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Edad</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Ocupación</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Teléfono</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Conviven</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Observación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($composicion_familiar as $familiar): ?>
+                        <tr>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($familiar['nombre']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($familiar['nombre_parentesco']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($familiar['edad']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($familiar['nombre_ocupacion']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($familiar['telefono']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($familiar['nombre_parametro']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($familiar['observacion']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="7" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            COMPOSICIÓN FAMILIAR (con quién vive, y familia de origen)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="7" style="border: 1px solid black; text-align: center;">
+                            Lo sentimos, el aspirante no tiene familia registrada
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </body>
 </html>
