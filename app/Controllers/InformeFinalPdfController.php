@@ -135,7 +135,7 @@ class InformeFinalPdfController {
                     rh.nombre as rh_nombre,
                     est.nombre as estatura_nombre,
                     ec.nombre as estado_civil_nombre,
-                    m.nombre as lugar_nacimiento_municipio
+                    m.municipio as lugar_nacimiento_municipio
                 FROM evaluados e
                 LEFT JOIN opc_tipo_documentos td ON e.tipo_documento_id = td.id
                 LEFT JOIN opciones c ON e.ciudad_id = c.id
@@ -799,8 +799,8 @@ class InformeFinalPdfController {
             $query = "
                 SELECT 
                     u.*,
-                    d.nombre as departamento_nombre,
-                    m.nombre as municipio_nombre
+                    d.departamento as departamento_nombre,
+                    m.municipio as municipio_nombre
                 FROM ubicacion u
                 LEFT JOIN departamento d ON u.departamento_id = d.id
                 LEFT JOIN municipios m ON u.municipio_id = m.id
