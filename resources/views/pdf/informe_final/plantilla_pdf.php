@@ -7,7 +7,7 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 5px;
+            padding: 10px;
         }
         .header {
             border: 2px solid rgb(96, 196, 30);
@@ -17,8 +17,8 @@
         .logo-container {
             border: 1px solid rgb(175,0,0);
             text-align: center;
-            padding: 10px;
-            margin-bottom: 15px;
+            padding: 5px;
+            margin-bottom: 7.5px;
         }
         .logo {
             max-width: 100%;
