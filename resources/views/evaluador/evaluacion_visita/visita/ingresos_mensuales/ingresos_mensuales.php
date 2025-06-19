@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 ob_start();
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+session_start();
 }
 
 if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
@@ -194,18 +194,18 @@ try {
                     <?php echo htmlspecialchars($error_message); ?>
                 </div>
             <?php endif; ?>
-            
+
             <?php if (!empty($datos_existentes)): ?>
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle me-2"></i>
                     Ya existe información de ingresos mensuales registrada para esta cédula. Puede actualizar los datos.
-                </div>
+                        </div>
             <?php endif; ?>
-            
+
             <div class="row mb-4">
                 <div class="col-md-6">
                     <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 300px;">
-                </div>
+                        </div>
                 <div class="col-md-6 text-end">
                     <div class="text-muted">
                         <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
@@ -215,70 +215,70 @@ try {
             </div>
             
             <form action="" method="POST" id="formIngresos" novalidate autocomplete="off">
-                <div class="row">
-                    <!-- Campo Salario -->
-                    <div class="col-md-4 mb-3">
+                        <div class="row">
+                            <!-- Campo Salario -->
+                            <div class="col-md-4 mb-3">
                         <label for="salario_val" class="form-label">
                             <i class="bi bi-briefcase me-1"></i>Salario:
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
+                                    <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="salario_val" name="salario_val" 
                                    value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['salario_val'] ?? '') : ''; ?>"
                                    placeholder="0.00" required>
-                        </div>
+                                </div>
                         <div class="form-text">Ingrese el salario mensual</div>
-                    </div>
+                            </div>
                     
-                    <!-- Campo Pensión -->
-                    <div class="col-md-4 mb-3">
+                            <!-- Campo Pensión -->
+                            <div class="col-md-4 mb-3">
                         <label for="pension_val" class="form-label">
                             <i class="bi bi-person-check me-1"></i>Pensión:
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
+                                    <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="pension_val" name="pension_val" 
                                    value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['pension_val'] ?? '') : ''; ?>"
                                    placeholder="0.00" required>
-                        </div>
+                                </div>
                         <div class="form-text">Ingrese el valor de la pensión</div>
-                    </div>
+                            </div>
                     
-                    <!-- Campo Arriendo -->
-                    <div class="col-md-4 mb-3">
+                            <!-- Campo Arriendo -->
+                            <div class="col-md-4 mb-3">
                         <label for="arriendo_val" class="form-label">
                             <i class="bi bi-house me-1"></i>Arriendo:
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
+                                    <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="arriendo_val" name="arriendo_val" 
                                    value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['arriendo_val'] ?? '') : ''; ?>"
                                    placeholder="0.00" required>
-                        </div>
+                                </div>
                         <div class="form-text">Ingrese el valor del arriendo</div>
-                    </div>
+                            </div>
                     
-                    <!-- Campo Trabajo Independiente -->
-                    <div class="col-md-4 mb-3">
+                            <!-- Campo Trabajo Independiente -->
+                            <div class="col-md-4 mb-3">
                         <label for="trabajo_independiente_val" class="form-label">
                             <i class="bi bi-person-workspace me-1"></i>Trabajo Independiente:
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
+                                    <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="trabajo_independiente_val" name="trabajo_independiente_val" 
                                    value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['trabajo_independiente_val'] ?? '') : ''; ?>"
                                    placeholder="0.00" required>
-                        </div>
+                                </div>
                         <div class="form-text">Ingrese ingresos por trabajo independiente</div>
-                    </div>
+                            </div>
                     
-                    <!-- Campo Otros -->
-                    <div class="col-md-4 mb-3">
+                            <!-- Campo Otros -->
+                            <div class="col-md-4 mb-3">
                         <label for="otros_val" class="form-label">
                             <i class="bi bi-plus-circle me-1"></i>Otros:
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
+                                    <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="otros_val" name="otros_val" 
                                    value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['otros_val'] ?? '') : ''; ?>"
                                    placeholder="0.00" required>
@@ -298,7 +298,7 @@ try {
                         </a>
                     </div>
                 </div>
-            </form>
+                    </form>
         </div>
         <div class="card-footer text-body-secondary">
             <div class="row">
@@ -311,7 +311,7 @@ try {
             </div>
         </div>
     </div>
-</div>
+    </div>
 
 <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.1.0/dist/autoNumeric.min.js"></script>
 <script>

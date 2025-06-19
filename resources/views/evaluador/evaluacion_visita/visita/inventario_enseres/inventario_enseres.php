@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 ob_start();
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+session_start();
 }
 
 if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
@@ -161,18 +161,18 @@ try {
                     <?php echo htmlspecialchars($error_message); ?>
                 </div>
             <?php endif; ?>
-            
+
             <?php if ($datos_existentes): ?>
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle me-2"></i>
                     Ya existe información del inventario de enseres registrada para esta cédula. Puede actualizar los datos.
-                </div>
+                        </div>
             <?php endif; ?>
-            
+
             <div class="row mb-4">
                 <div class="col-md-6">
                     <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 300px;">
-                </div>
+                        </div>
                 <div class="col-md-6 text-end">
                     <div class="text-muted">
                         <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
@@ -182,12 +182,12 @@ try {
             </div>
             
             <form action="" method="POST" id="formInventarioEnseres" novalidate autocomplete="off">
-                <div class="row">
+                        <div class="row">
                     <div class="col-md-4 mb-3">
                         <label for="televisor_cant" class="form-label">
                             <i class="bi bi-tv me-1"></i>Televisores:
                         </label>
-                        <select class="form-select" id="televisor_cant" name="televisor_cant">
+                                <select class="form-select" id="televisor_cant" name="televisor_cant">
                             <option value="">Seleccione</option>
                             <?php foreach ($parametros as $parametro): ?>
                                 <option value="<?php echo $parametro['id']; ?>" 
@@ -195,13 +195,13 @@ try {
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                        </select>
-                    </div>
+                                </select>
+                            </div>
                     <div class="col-md-4 mb-3">
                         <label for="dvd_cant" class="form-label">
                             <i class="bi bi-disc me-1"></i>DVDs:
                         </label>
-                        <select class="form-select" id="dvd_cant" name="dvd_cant">
+                                <select class="form-select" id="dvd_cant" name="dvd_cant">
                             <option value="">Seleccione</option>
                             <?php foreach ($parametros as $parametro): ?>
                                 <option value="<?php echo $parametro['id']; ?>" 
@@ -209,13 +209,13 @@ try {
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                        </select>
-                    </div>
+                                </select>
+                            </div>
                     <div class="col-md-4 mb-3">
                         <label for="teatro_casa_cant" class="form-label">
                             <i class="bi bi-speaker me-1"></i>Teatros en Casa:
                         </label>
-                        <select class="form-select" id="teatro_casa_cant" name="teatro_casa_cant">
+                                <select class="form-select" id="teatro_casa_cant" name="teatro_casa_cant">
                             <option value="">Seleccione</option>
                             <?php foreach ($parametros as $parametro): ?>
                                 <option value="<?php echo $parametro['id']; ?>" 
@@ -223,16 +223,16 @@ try {
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                        </select>
+                                </select>
                     </div>
-                </div>
-                
+                            </div>
+
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label for="equipo_sonido_cant" class="form-label">
                             <i class="bi bi-music-note me-1"></i>Equipos de Sonido:
                         </label>
-                        <select class="form-select" id="equipo_sonido_cant" name="equipo_sonido_cant">
+                                <select class="form-select" id="equipo_sonido_cant" name="equipo_sonido_cant">
                             <option value="">Seleccione</option>
                             <?php foreach ($parametros as $parametro): ?>
                                 <option value="<?php echo $parametro['id']; ?>" 
@@ -240,13 +240,13 @@ try {
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                        </select>
-                    </div>
+                                </select>
+                            </div>
                     <div class="col-md-4 mb-3">
                         <label for="computador_cant" class="form-label">
                             <i class="bi bi-laptop me-1"></i>Computadores:
                         </label>
-                        <select class="form-select" id="computador_cant" name="computador_cant">
+                                <select class="form-select" id="computador_cant" name="computador_cant">
                             <option value="">Seleccione</option>
                             <?php foreach ($parametros as $parametro): ?>
                                 <option value="<?php echo $parametro['id']; ?>" 
@@ -254,13 +254,13 @@ try {
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                        </select>
-                    </div>
+                                </select>
+                            </div>
                     <div class="col-md-4 mb-3">
                         <label for="impresora_cant" class="form-label">
                             <i class="bi bi-printer me-1"></i>Impresoras:
                         </label>
-                        <select class="form-select" id="impresora_cant" name="impresora_cant">
+                                <select class="form-select" id="impresora_cant" name="impresora_cant">
                             <option value="">Seleccione</option>
                             <?php foreach ($parametros as $parametro): ?>
                                 <option value="<?php echo $parametro['id']; ?>" 
@@ -268,16 +268,16 @@ try {
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                        </select>
+                                </select>
                     </div>
-                </div>
-                
+                            </div>
+
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label for="movil_cant" class="form-label">
                             <i class="bi bi-phone me-1"></i>Dispositivos Móviles:
                         </label>
-                        <select class="form-select" id="movil_cant" name="movil_cant">
+                                <select class="form-select" id="movil_cant" name="movil_cant">
                             <option value="">Seleccione</option>
                             <?php foreach ($parametros as $parametro): ?>
                                 <option value="<?php echo $parametro['id']; ?>" 
@@ -285,13 +285,13 @@ try {
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                        </select>
-                    </div>
+                                </select>
+                            </div>
                     <div class="col-md-4 mb-3">
                         <label for="estufa_cant" class="form-label">
                             <i class="bi bi-fire me-1"></i>Estufas:
                         </label>
-                        <select class="form-select" id="estufa_cant" name="estufa_cant">
+                                <select class="form-select" id="estufa_cant" name="estufa_cant">
                             <option value="">Seleccione</option>
                             <?php foreach ($parametros as $parametro): ?>
                                 <option value="<?php echo $parametro['id']; ?>" 
@@ -299,13 +299,13 @@ try {
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                        </select>
-                    </div>
+                                </select>
+                            </div>
                     <div class="col-md-4 mb-3">
                         <label for="nevera_cant" class="form-label">
                             <i class="bi bi-snow me-1"></i>Neveras:
                         </label>
-                        <select class="form-select" id="nevera_cant" name="nevera_cant">
+                                <select class="form-select" id="nevera_cant" name="nevera_cant">
                             <option value="">Seleccione</option>
                             <?php foreach ($parametros as $parametro): ?>
                                 <option value="<?php echo $parametro['id']; ?>" 
@@ -313,16 +313,16 @@ try {
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                        </select>
+                                </select>
                     </div>
-                </div>
-                
+                            </div>
+
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label for="lavadora_cant" class="form-label">
                             <i class="bi bi-water me-1"></i>Lavadoras:
                         </label>
-                        <select class="form-select" id="lavadora_cant" name="lavadora_cant">
+                                <select class="form-select" id="lavadora_cant" name="lavadora_cant">
                             <option value="">Seleccione</option>
                             <?php foreach ($parametros as $parametro): ?>
                                 <option value="<?php echo $parametro['id']; ?>" 
@@ -330,13 +330,13 @@ try {
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                        </select>
-                    </div>
+                                </select>
+                            </div>
                     <div class="col-md-4 mb-3">
                         <label for="microondas_cant" class="form-label">
                             <i class="bi bi-lightning me-1"></i>Microondas:
                         </label>
-                        <select class="form-select" id="microondas_cant" name="microondas_cant">
+                                <select class="form-select" id="microondas_cant" name="microondas_cant">
                             <option value="">Seleccione</option>
                             <?php foreach ($parametros as $parametro): ?>
                                 <option value="<?php echo $parametro['id']; ?>" 
@@ -344,13 +344,13 @@ try {
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                        </select>
-                    </div>
+                                </select>
+                            </div>
                     <div class="col-md-4 mb-3">
                         <label for="moto_cant" class="form-label">
                             <i class="bi bi-bicycle me-1"></i>Motos:
                         </label>
-                        <select class="form-select" id="moto_cant" name="moto_cant">
+                                <select class="form-select" id="moto_cant" name="moto_cant">
                             <option value="">Seleccione</option>
                             <?php foreach ($parametros as $parametro): ?>
                                 <option value="<?php echo $parametro['id']; ?>" 
@@ -358,8 +358,8 @@ try {
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                        </select>
-                    </div>
+                                </select>
+                            </div>
                 </div>
                 
                 <div class="row">
@@ -367,7 +367,7 @@ try {
                         <label for="carro_cant" class="form-label">
                             <i class="bi bi-car-front me-1"></i>Carros:
                         </label>
-                        <select class="form-select" id="carro_cant" name="carro_cant">
+                                <select class="form-select" id="carro_cant" name="carro_cant">
                             <option value="">Seleccione</option>
                             <?php foreach ($parametros as $parametro): ?>
                                 <option value="<?php echo $parametro['id']; ?>" 
@@ -375,10 +375,10 @@ try {
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-                
+                                </select>
+                            </div>
+                            </div>   
+
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label for="observacion" class="form-label">
@@ -387,9 +387,9 @@ try {
                         <textarea class="form-control" id="observacion" name="observacion" 
                                   rows="4" maxlength="1000"><?php echo $datos_existentes ? htmlspecialchars($datos_existentes['observacion']) : ''; ?></textarea>
                         <div class="form-text">Máximo 1000 caracteres. Mínimo 10 caracteres si se llena.</div>
-                    </div>
+                        </div>
                 </div>
-                
+
                 <div class="row">
                     <div class="col-12 text-center">
                         <button type="submit" class="btn btn-primary btn-lg me-2">
@@ -402,8 +402,8 @@ try {
                     </div>
                 </div>
             </form>
-        </div>
-        <div class="card-footer text-body-secondary">
+            </div>
+            <div class="card-footer text-body-secondary">
             <div class="row">
                 <div class="col-md-6">
                     <small>© 2024 V0.01 - Sistema de Visitas Domiciliarias</small>
@@ -414,7 +414,7 @@ try {
             </div>
         </div>
     </div>
-</div>
+    </div>
 
 <?php
 $contenido = ob_get_clean();

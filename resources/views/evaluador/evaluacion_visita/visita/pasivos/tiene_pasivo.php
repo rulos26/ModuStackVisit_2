@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 ob_start();
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+session_start();
 }
 
 if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
@@ -184,18 +184,18 @@ try {
                     <?php echo htmlspecialchars($error_message); ?>
                 </div>
             <?php endif; ?>
-            
+
             <?php if (!empty($datos_existentes)): ?>
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle me-2"></i>
                     Ya existe información de pasivos registrada para esta cédula. Puede actualizar los datos.
-                </div>
+                        </div>
             <?php endif; ?>
-            
+
             <div class="row mb-4">
                 <div class="col-md-6">
                     <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 300px;">
-                </div>
+                        </div>
                 <div class="col-md-6 text-end">
                     <div class="text-muted">
                         <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
@@ -205,7 +205,7 @@ try {
             </div>
             
             <form action="" method="POST" id="formPasivos" novalidate autocomplete="off">
-                <div class="row">
+                        <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="tiene_pasivos" class="form-label">
                             <i class="bi bi-question-circle me-1"></i>¿Posee usted pasivos?
@@ -219,11 +219,11 @@ try {
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                        </select>
+                                </select>
                         <div class="form-text">Seleccione "No" si no posee pasivos, o "Sí" para continuar con el formulario detallado.</div>
                     </div>
-                </div>
-                
+                            </div>
+                            
                 <div class="row">
                     <div class="col-12 text-center">
                         <button type="submit" class="btn btn-primary btn-lg me-2">
@@ -233,11 +233,11 @@ try {
                         <a href="../cuentas_bancarias/cuentas_bancarias.php" class="btn btn-secondary btn-lg">
                             <i class="bi bi-arrow-left me-2"></i>Volver
                         </a>
-                    </div>
+                        </div>
                 </div>
             </form>
-        </div>
-        <div class="card-footer text-body-secondary">
+                </div>
+                <div class="card-footer text-body-secondary">
             <div class="row">
                 <div class="col-md-6">
                     <small>© 2024 V0.01 - Sistema de Visitas Domiciliarias</small>
@@ -248,7 +248,7 @@ try {
             </div>
         </div>
     </div>
-</div>
+    </div>
 
 <?php
 $contenido = ob_get_clean();

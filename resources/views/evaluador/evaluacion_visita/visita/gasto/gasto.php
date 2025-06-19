@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 ob_start();
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+session_start();
 }
 
 if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
@@ -220,7 +220,7 @@ try {
             </div>
             
             <form action="" method="POST" id="formGastos" novalidate autocomplete="off">
-                <div class="row">
+                    <div class="row">
                     <!-- Campo Alimentación -->
                     <div class="col-md-4 mb-3">
                         <label for="alimentacion_val" class="form-label">
@@ -255,14 +255,14 @@ try {
                             <i class="bi bi-heart-pulse me-1"></i>Salud:
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
+                                    <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="salud_val" name="salud_val" 
                                    value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['salud_val'] ?? '') : ''; ?>"
                                    placeholder="0.00" required>
                         </div>
                         <div class="form-text">Gastos en salud mensual</div>
-                    </div>
-                </div>
+                              </div>
+                            </div>
                 
                 <div class="row">
                     <!-- Campo Recreación -->
@@ -271,13 +271,13 @@ try {
                             <i class="bi bi-emoji-smile me-1"></i>Recreación:
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
+                                    <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="recreacion_val" name="recreacion_val" 
                                    value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['recreacion_val'] ?? '') : ''; ?>"
                                    placeholder="0.00" required>
                         </div>
                         <div class="form-text">Gastos en recreación mensual</div>
-                    </div>
+                                 </div>
                     
                     <!-- Campo Cuota de Créditos -->
                     <div class="col-md-4 mb-3">
@@ -285,13 +285,13 @@ try {
                             <i class="bi bi-credit-card me-1"></i>Cuota de Créditos:
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
+                                    <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="cuota_creditos_val" name="cuota_creditos_val" 
                                    value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['cuota_creditos_val'] ?? '') : ''; ?>"
                                    placeholder="0.00" required>
-                        </div>
+                                </div>
                         <div class="form-text">Cuotas de créditos mensuales</div>
-                    </div>
+                            </div>
                     
                     <!-- Campo Arriendo -->
                     <div class="col-md-4 mb-3">
@@ -299,14 +299,14 @@ try {
                             <i class="bi bi-house me-1"></i>Arriendo:
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
+                                    <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="arriendo_val" name="arriendo_val" 
                                    value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['arriendo_val'] ?? '') : ''; ?>"
                                    placeholder="0.00" required>
                         </div>
                         <div class="form-text">Gastos en arriendo mensual</div>
-                    </div>
-                </div>
+                                </div>
+                            </div>
                 
                 <div class="row">
                     <!-- Campo Servicios Públicos -->
@@ -315,13 +315,13 @@ try {
                             <i class="bi bi-lightning-charge me-1"></i>Servicios Públicos:
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
+                                    <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="servicios_publicos_val" name="servicios_publicos_val" 
                                    value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['servicios_publicos_val'] ?? '') : ''; ?>"
                                    placeholder="0.00" required>
-                        </div>
+                                </div>
                         <div class="form-text">Gastos en servicios públicos</div>
-                    </div>
+                            </div>
                     
                     <!-- Campo Otros -->
                     <div class="col-md-4 mb-3">
@@ -329,7 +329,7 @@ try {
                             <i class="bi bi-plus-circle me-1"></i>Otros:
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
+                                    <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="otros_val" name="otros_val" 
                                    value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['otros_val'] ?? '') : ''; ?>"
                                    placeholder="0.00" required>
@@ -349,7 +349,7 @@ try {
                         </a>
                     </div>
                 </div>
-            </form>
+                    </form>
         </div>
         <div class="card-footer text-body-secondary">
             <div class="row">
@@ -362,7 +362,7 @@ try {
             </div>
         </div>
     </div>
-</div>
+    </div>
 
 <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.1.0/dist/autoNumeric.min.js"></script>
 <script>
