@@ -139,7 +139,7 @@ class SaludController {
                     return ['success'=>false, 'message'=>'Error al actualizar la información de salud.'];
                 }
             } else {
-                $sql = "INSERT INTO salud (id_cedula, id_estado_salud, tipo_enfermedad, tipo_enfermedad_cual, limitacion_fisica, limitacion_fisica_cual, tipo_medicamento, tipo_medicamento_cual, ingiere_alcohol, ingiere_alcohol_cual, fuma, observacion) 
+                $sql = "INSERT INTO estados_salud (id_cedula, id_estado_salud, tipo_enfermedad, tipo_enfermedad_cual, limitacion_fisica, limitacion_fisica_cual, tipo_medicamento, tipo_medicamento_cual, ingiere_alcohol, ingiere_alcohol_cual, fuma, observacion) 
                         VALUES (:id_cedula, :id_estado_salud, :tipo_enfermedad, :tipo_enfermedad_cual, :limitacion_fisica, :limitacion_fisica_cual, :tipo_medicamento, :tipo_medicamento_cual, :ingiere_alcohol, :ingiere_alcohol_cual, :fuma, :observacion)";
                 $stmt = $this->db->prepare($sql);
                 $stmt->bindParam(':id_cedula', $id_cedula);
