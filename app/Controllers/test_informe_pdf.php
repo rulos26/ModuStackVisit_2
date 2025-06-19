@@ -9,6 +9,30 @@ require_once __DIR__ . '/InformeFinalPdfController.php';
 
 use App\Controllers\InformeFinalPdfController;
 
+echo "<!DOCTYPE html>";
+echo "<html>";
+echo "<head>";
+echo "<title>Test Informe PDF</title>";
+echo "<style>";
+echo "body { font-family: Arial, sans-serif; margin: 20px; }";
+echo ".test-link { display: inline-block; margin: 10px; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; }";
+echo ".test-link:hover { background-color: #0056b3; }";
+echo "</style>";
+echo "</head>";
+echo "<body>";
+
+echo "<h1>Test de Informe PDF</h1>";
+
+echo "<h2>Pruebas Disponibles:</h2>";
+
+echo "<a href='InformeFinalPdfController.php?action=Informefinalpdf' class='test-link'>";
+echo "Test Controlador Principal (con debug)";
+echo "</a>";
+
+echo "<a href='test_plantilla_simple.php' class='test-link'>";
+echo "Test Plantilla Simple (debug completo)";
+echo "</a>";
+
 // Verificar si el archivo de logo existe
 $logo_path = __DIR__ . '/../../public/images/header.jpg';
 echo "<h2>Información de Debug</h2>";
@@ -62,4 +86,21 @@ if (is_dir($images_dir)) {
     }
     echo "</ul>";
 }
+
+echo "<h3>Instrucciones:</h3>";
+echo "<ol>";
+echo "<li>Haz clic en 'Test Plantilla Simple' para ver el debug completo</li>";
+echo "<li>Revisa si las variables se están pasando correctamente</li>";
+echo "<li>Si funciona, prueba el controlador principal</li>";
+echo "</ol>";
+
+echo "<h3>Archivos creados:</h3>";
+echo "<ul>";
+echo "<li><strong>InformeFinalPdfController.php</strong> - Controlador principal con debug</li>";
+echo "<li><strong>plantilla_simple.php</strong> - Plantilla de prueba simple</li>";
+echo "<li><strong>test_plantilla_simple.php</strong> - Test completo con debug</li>";
+echo "</ul>";
+
+echo "</body>";
+echo "</html>";
 ?> 
