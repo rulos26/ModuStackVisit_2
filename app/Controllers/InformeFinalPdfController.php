@@ -16,10 +16,13 @@ class DemoPdfController {
         $db = Database::getInstance()->getConnection();
         $cedula = '1231211322';
         
+        $logo_path = __DIR__ . '/../../public/images/header.jpg';
+        $logo_b64 = img_to_base64($logo_path);
+
         // --- Renderizado usando plantilla externa ---
         $data = [
             'cedula' => $cedula ,
-            
+            'logo_b64'  => $logo_b64
         ];
         extract($data);
         ob_start();
