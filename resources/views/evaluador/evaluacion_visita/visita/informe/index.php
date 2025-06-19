@@ -1,4 +1,8 @@
 <?php
+// Mostrar errores solo en desarrollo
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 require_once('../../../../../librery/tcpdf.php');
 include '../../../../../conn/conexion.php';
 include 'sql/evaluados.php';
