@@ -538,6 +538,12 @@ $info_vivienda  = '
          </tr>
     </table>';
 
+// Validación para los campos de $filas_invetario
+function obtenerDatoInventario($array, $clave) {
+    return (isset($array[$clave]) && $array[$clave] !== '') ? $array[$clave] : 'No hay datos';
+}
+
+// Modifica $data_inventario para usar la función de validación
 $data_inventario = ' <table class="customTable">
   <thead>
       <tr>
@@ -548,53 +554,53 @@ $data_inventario = ' <table class="customTable">
   <tbody>
       <tr>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Televisor</td>
-          <td colspan="2" style="border: 1px solid black;">' . $filas_invetario['televisor_nombre_cant'] . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'televisor_nombre_cant') . '</td>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">D.V.D</td>
-          <td colspan="2" style="border: 1px solid black;"> ' . $filas_invetario['dvd_nombre_cant'] . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'dvd_nombre_cant') . '</td>
     
       </tr>
        <tr>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Teatro en Casa</td>
-          <td colspan="2" style="border: 1px solid black;">' . $filas_invetario['teatro_casa_nombre_cant'] . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'teatro_casa_nombre_cant') . '</td>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Equipo de Sonido</td>
-          <td colspan="2" style="border: 1px solid black;">' . $filas_invetario['equipo_sonido_nombre_cant'] . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'equipo_sonido_nombre_cant') . '</td>
     
           </tr>
       
       <tr>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Computador</td>
-          <td colspan="2" style="border: 1px solid black;">' . $filas_invetario['computador_nombre_cant'] . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'computador_nombre_cant') . '</td>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Impresora</td>
-          <td colspan="2" style="border: 1px solid black;"> ' . $filas_invetario['impresora_nombre_cant'] . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'impresora_nombre_cant') . '</td>
       </tr>
        <tr>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Movil</td>
-          <td colspan="2" style="border: 1px solid black;">' . $filas_invetario['movil_nombre_cant'] . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'movil_nombre_cant') . '</td>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Estufa</td>
-          <td colspan="2" style="border: 1px solid black;">' . $filas_invetario['estufa_nombre_cant'] . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'estufa_nombre_cant') . '</td>
    
           </tr>
        <tr>
       <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Nevera</td>
-      <td colspan="2" style="border: 1px solid black;">' . $filas_invetario['nevera_nombre_cant'] . '</td>
+      <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'nevera_nombre_cant') . '</td>
       <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Lavadora</td>
-      <td colspan="2" style="border: 1px solid black;">' . $filas_invetario['lavadora_nombre_cant'] . '</td>
+      <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'lavadora_nombre_cant') . '</td>
     
       </tr>
 <tr>
 <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Microondas</td>
-<td colspan="2" style="border: 1px solid black;">' . $filas_invetario['microondas_nombre_cant'] . '</td>
+<td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'microondas_nombre_cant') . '</td>
 <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Moto</td>
-<td colspan="2" style="border: 1px solid black;">' . $filas_invetario['moto_nombre_cant'] . '</td>
+<td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'moto_nombre_cant') . '</td>
 
 </tr>
 <tr>
 <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Carro</td>
-<td colspan="8" style="border: 1px solid black;">' . $filas_invetario['carro_nombre_cant'] . '</td>
+<td colspan="8" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'carro_nombre_cant') . '</td>
 </tr>
 <tr>
 <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">observaciones</td>
-<td colspan="8" style="border: 1px solid black;">' . $filas_invetario['observacion'] . '</td>
+<td colspan="8" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'observacion') . '</td>
 </tr>
   </tbody>
   </table>';
