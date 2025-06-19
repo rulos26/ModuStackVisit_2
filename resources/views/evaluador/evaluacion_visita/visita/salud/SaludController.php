@@ -183,7 +183,7 @@ class SaludController {
     public function obtenerOpciones($tipo) {
         try {
             $tablas = [
-                'estados' => 'opc_estados',
+                'estados' => 'estados_salud',
                 'parametro' => 'opc_parametro'
             ];
             
