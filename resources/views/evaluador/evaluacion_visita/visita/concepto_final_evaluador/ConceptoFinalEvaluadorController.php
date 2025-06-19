@@ -46,8 +46,7 @@ class ConceptoFinalEvaluadorController {
             'evaluacion_experiencia_laboral' => 'Evaluación Experiencia Laboral',
             'observaciones' => 'Observaciones',
             'id_concepto_final' => 'Concepto Final de la Visita',
-            'nombre_evaluador' => 'Nombre del Evaluador',
-            
+            'nombre_evaluador' => 'Nombre del Evaluador'
         ];
         
         foreach ($campos_requeridos as $campo => $nombre) {
@@ -77,15 +76,21 @@ class ConceptoFinalEvaluadorController {
             }
         }
         
-        // Validar que los conceptos sean números válidos
+        // Validar que los conceptos sean números válidos (solo concepto final es requerido)
         $campos_concepto = [
-            'id_concepto_final' => 'Concepto Final de la Visita',
-            'id_concepto_seguridad' => 'Concepto de Seguridad'
+            'id_concepto_final' => 'Concepto Final de la Visita'
         ];
         
         foreach ($campos_concepto as $campo => $nombre) {
             if (isset($datos[$campo]) && (!is_numeric($datos[$campo]) || $datos[$campo] < 1)) {
                 $errores[] = "Debe seleccionar una opción válida para '$nombre'.";
+            }
+        }
+        
+        // Validar concepto de seguridad solo si se proporciona (opcional)
+        if (isset($datos['id_concepto_seguridad']) && !empty($datos['id_concepto_seguridad'])) {
+            if (!is_numeric($datos['id_concepto_seguridad']) || $datos['id_concepto_seguridad'] < 1) {
+                $errores[] = "El concepto de seguridad debe ser una opción válida.";
             }
         }
         
@@ -167,7 +172,7 @@ class ConceptoFinalEvaluadorController {
 
     public function obtenerConceptosSeguridad() {
         try {
-            $sql = "SELECT * FROM opc_concepto_seguridad ORDER BY nombre";
+            $sql = "SELECT id, nombre FROM opc_concepto_seguridad ORDER BY nombre";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
