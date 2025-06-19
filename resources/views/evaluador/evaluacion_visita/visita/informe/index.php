@@ -95,11 +95,23 @@ $image_file = "$ruta_imagen"; // Ruta de tu imagen
 $ancho = 30.2; // Ancho en mm
 $alto = 41.4; // Alto en mm
 
-// Agregar la imagen con dimensiones especificadas
-$perfil = '<img src="' . $ruta_imagen . '" alt="Logo"  style="border: 2px solid black; height: 177px; width: 200px;">'; // Cambiar la ruta según la ubicación del logo
+// Validación para la imagen de perfil
+if (!empty($ruta_imagen)) {
+    $image_file_perfil = $ruta_imagen;
+} else {
+    $image_file_perfil = '';
+}
+
+// Modifica la variable $perfil para mostrar mensaje alternativo si no hay imagen de perfil
+$perfil = !empty($image_file_perfil) ? '<img src="' . $image_file_perfil . '" alt="Logo"  style="border: 2px solid black; height: 177px; width: 200px;">' : '<span>No hay imagen de perfil disponible.</span>';
 
 //$pdf->Image($image_file, $x = 15, $y = 70, $w = $ancho, $h = $alto, '', '', '', false, 300, '', false, false, 0);
-$image_file_ubi = "$ruta_imagen_ubi";
+// Antes de usar $image_file_ubi, aseguramos que tenga un valor válido
+if (!empty($ruta_imagen_ubi)) {
+    $image_file_ubi = $ruta_imagen_ubi;
+} else {
+    $image_file_ubi = '';
+}
 // Dimensiones de la imagen
 $ancho_ubi = 180.2; // Ancho en mm
 $alto_ubi = 50.4; // Alto en mm
@@ -1139,15 +1151,12 @@ $data_fotos_unicacion = '
  <tbody>
      <tr>
          <td colspan="6" style="border: 1px solid black; text-align: center;">
-         <img src="' . $image_file_ubi . '" alt="Logo"  style="border: 2px solid black; height: 270px; width: 1006px;">
+         ' . (!empty($image_file_ubi) ? '<img src="' . $image_file_ubi . '" alt="Logo"  style="border: 2px solid black; height: 270px; width: 1006px;">' : '<span>No hay imagen de ubicación disponible.</span>') . '
          </td>
      </tr>
-        
-    
  </tbody>
  </table>
-
-'; // Cambiar la ruta según la ubicación del logo';
+';
 
 $ubicacion_foto = '
 <table cellpadding="5" style="width: 100%;">
@@ -1156,8 +1165,12 @@ $ubicacion_foto = '
          </tr>
     </table> <br><br>' ;
 
+// Validación para las imágenes de evidencia (foto1 a foto8)
+function mostrarImagenEvidencia($foto) {
+    return !empty($foto) ? '<img src="' . $foto . '" alt="Evidencia"  style="border: 2px solid black; height: 160px; width: 165px;">' : '<span>No hay imagen disponible.</span>';
+}
 
-    $data_evidencia ='
+$data_evidencia ='
     <table class="customTable">
      <thead>
          <tr>
@@ -1166,47 +1179,23 @@ $ubicacion_foto = '
      </thead>
      <tbody>
          <tr>
-                  
-             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">
-             <img src="' . $foto1 . '" alt="Logo"  style="border: 2px solid black; height: 160px; width: 165px;">
-             </td>
-             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">
-             <img src="' . $foto2 . '" alt="Logo"  style="border: 2px solid black; height: 160px; width: 166px;">
-             </td>
-             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">
-             <img src="' . $foto3 . '" alt="Logo"  style="border: 2px solid black; height: 160px; width: 166px;">
-             </td>
+             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">' . mostrarImagenEvidencia($foto1) . '</td>
+             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">' . mostrarImagenEvidencia($foto2) . '</td>
+             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">' . mostrarImagenEvidencia($foto3) . '</td>
          </tr>
          <tr>
-                  
-             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">
-             <img src="' . $foto4 . '" alt="Logo"  style="border: 2px solid black; height: 160px; width: 165px;">
-             </td>
-             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">
-             <img src="' . $foto5 . '" alt="Logo"  style="border: 2px solid black; height: 160px; width: 166px;">
-             </td>
-             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">
-             <img src="' . $foto6 . '" alt="Logo"  style="border: 2px solid black; height: 160px; width: 166px;">
-             </td>
+             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">' . mostrarImagenEvidencia($foto4) . '</td>
+             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">' . mostrarImagenEvidencia($foto5) . '</td>
+             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">' . mostrarImagenEvidencia($foto6) . '</td>
          </tr>
-            
          <tr>
-                  
-             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">
-             <img src="' . $foto7 . '" alt="Logo"  style="border: 2px solid black; height: 160px; width: 165px;">
-             </td>
-             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">
-             <img src="' . $foto8 . '" alt="Logo"  style="border: 2px solid black; height: 160px; width: 166px;">
-             </td>
-             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">
-             <img src="' . $foto8 . '" alt="Logo"  style="border: 2px solid black; height: 160px; width: 166px;">
-             </td>
+             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">' . mostrarImagenEvidencia($foto7) . '</td>
+             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">' . mostrarImagenEvidencia($foto8) . '</td>
+             <td  style="border: 1px solid black; text-align: center; 165px; width: 165px;">' . mostrarImagenEvidencia($foto8) . '</td>
          </tr>
-        
      </tbody>
      </table>
-    
-    ';
+';
 $evidencia_foto = '
     <table cellpadding="5" style="width: 100%;">
             <tr style="border: ' . $borderWidth . 'px solid rgb(' . implode(',', $borderColor) . ');">
