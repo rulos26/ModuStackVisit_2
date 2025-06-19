@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 ob_start();
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+session_start();
 }
 
 if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
@@ -281,7 +281,7 @@ try {
                         </div>
                     </div>
                     
-                    <div class="row">
+                        <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="id_nivel_academico" class="form-label">
                                 <i class="bi bi-mortarboard me-1"></i>Nivel Académico:
@@ -294,7 +294,7 @@ try {
                                         <?php echo htmlspecialchars($nivel['nombre']); ?>
                                     </option>
                                 <?php endforeach; ?>
-                            </select>
+                                </select>
                             <div class="invalid-feedback">Debe seleccionar el nivel académico.</div>
                         </div>
                         <div class="col-md-4 mb-3">
@@ -341,8 +341,8 @@ try {
                                    pattern="[0-9]{7,10}">
                             <div class="invalid-feedback">El teléfono 1 es obligatorio (7-10 dígitos).</div>
                         </div>
-                    </div>
-                    
+                            </div>
+                            
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="telefono_2" class="form-label">
@@ -394,8 +394,8 @@ try {
                     </div>
                 </div>
             </form>
-        </div>
-        <div class="card-footer text-body-secondary">
+                </div>
+                <div class="card-footer text-body-secondary">
             <div class="row">
                 <div class="col-md-6">
                     <small>© 2024 V0.01 - Sistema de Visitas Domiciliarias</small>
@@ -406,9 +406,9 @@ try {
             </div>
         </div>
     </div>
-</div>
+    </div>
 
-<script>
+    <script>
 function toggleCamposPareja() {
     const tienePareja = document.getElementById('tiene_pareja').value;
     const camposPareja = document.getElementById('camposPareja');
@@ -464,7 +464,7 @@ document.getElementById('formTienePareja').addEventListener('submit', function(e
         }
     }
 });
-</script>
+    </script>
 
 <?php
 $contenido = ob_get_clean();

@@ -15,19 +15,19 @@ if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
     exit();
 }
 
-require_once __DIR__ . '/EstadoViviendaController.php';
-use App\Controllers\EstadoViviendaController;
+require_once __DIR__ . '/ServiciosPublicosController.php';
+use App\Controllers\ServiciosPublicosController;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $controller = EstadoViviendaController::getInstance();
+        $controller = ServiciosPublicosController::getInstance();
         $datos = $controller->sanitizarDatos($_POST);
         $errores = $controller->validarDatos($datos);
         if (empty($errores)) {
             $resultado = $controller->guardar($datos);
             if ($resultado['success']) {
                 $_SESSION['success'] = $resultado['message'];
-                header('Location: ../inventario_enseres/inventario_enseres.php');
+                header('Location: ../Patrimonio/tiene_patrimonio.php');
                 exit();
             } else {
                 $_SESSION['error'] = $resultado['message'];
@@ -36,20 +36,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['error'] = implode('<br>', $errores);
         }
     } catch (Exception $e) {
-        error_log("Error en estado_vivienda.php: " . $e->getMessage());
+        error_log("Error en servicios_publicos.php: " . $e->getMessage());
         $_SESSION['error'] = "Error interno del servidor: " . $e->getMessage();
     }
 }
 
 try {
-    $controller = EstadoViviendaController::getInstance();
+    $controller = ServiciosPublicosController::getInstance();
     $id_cedula = $_SESSION['id_cedula'];
     $datos_existentes = $controller->obtenerPorCedula($id_cedula);
     
     // Obtener opciones para los select
-    $estados = $controller->obtenerOpciones('estados');
+    $parametros = $controller->obtenerOpciones('parametro');
 } catch (Exception $e) {
-    error_log("Error en estado_vivienda.php: " . $e->getMessage());
+    error_log("Error en servicios_publicos.php: " . $e->getMessage());
     $error_message = "Error al cargar los datos: " . $e->getMessage();
 }
 ?>
@@ -72,8 +72,8 @@ try {
     <div class="card mt-5">
         <div class="card-header bg-primary text-white">
             <h5 class="card-title mb-0">
-                <i class="bi bi-house-check me-2"></i>
-                VISITA DOMICILIARÍA - ESTADO DE LA VIVIENDA
+                <i class="bi bi-lightning-charge me-2"></i>
+                VISITA DOMICILIARÍA - SERVICIOS PÚBLICOS Y OTROS
             </h5>
         </div>
         <div class="card-body">
@@ -114,19 +114,29 @@ try {
                     <div class="step-title">Paso 7</div>
                     <div class="step-description">Tipo de Vivienda</div>
                 </div>
-                <div class="step-horizontal active">
+                <div class="step-horizontal complete">
                     <div class="step-icon"><i class="fas fa-clipboard-check"></i></div>
                     <div class="step-title">Paso 8</div>
                     <div class="step-description">Estado de Vivienda</div>
+                </div>
+                <div class="step-horizontal complete">
+                    <div class="step-icon"><i class="fas fa-box-seam"></i></div>
+                    <div class="step-title">Paso 9</div>
+                    <div class="step-description">Inventario de Enseres</div>
+                </div>
+                <div class="step-horizontal active">
+                    <div class="step-icon"><i class="fas fa-lightning-charge"></i></div>
+                    <div class="step-title">Paso 10</div>
+                    <div class="step-description">Servicios Públicos</div>
                 </div>
             </div>
 
             <!-- Controles de navegación -->
             <div class="controls text-center mb-4">
-                <a href="../tipo_vivienda/tipo_vivienda.php" class="btn btn-secondary me-2">
+                <a href="../inventario_enseres/inventario_enseres.php" class="btn btn-secondary me-2">
                     <i class="fas fa-arrow-left me-1"></i>Anterior
                 </a>
-                <button class="btn btn-primary" id="nextBtn" type="button" onclick="document.getElementById('formEstadoVivienda').submit();">
+                <button class="btn btn-primary" id="nextBtn" type="button" onclick="document.getElementById('formServiciosPublicos').submit();">
                     Siguiente<i class="fas fa-arrow-right ms-1"></i>
                 </button>
             </div>
@@ -160,7 +170,7 @@ try {
             <?php if ($datos_existentes): ?>
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle me-2"></i>
-                    Ya existe información del estado de vivienda registrada para esta cédula. Puede actualizar los datos.
+                    Ya existe información de servicios públicos registrada para esta cédula. Puede actualizar los datos.
                 </div>
             <?php endif; ?>
             
@@ -176,22 +186,125 @@ try {
                 </div>
             </div>
             
-            <form action="" method="POST" id="formEstadoVivienda" novalidate autocomplete="off">
+            <form action="" method="POST" id="formServiciosPublicos" novalidate autocomplete="off">
                 <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="id_estado" class="form-label">
-                            <i class="bi bi-clipboard-check me-1"></i>Estado de la Vivienda: <span class="text-danger">*</span>
+                    <div class="col-md-4 mb-3">
+                        <label for="agua" class="form-label">
+                            <i class="bi bi-droplet me-1"></i>Agua:
                         </label>
-                        <select class="form-select" id="id_estado" name="id_estado" required>
+                        <select class="form-select" id="agua" name="agua">
                             <option value="">Seleccione</option>
-                            <?php foreach ($estados as $estado): ?>
-                                <option value="<?php echo $estado['id']; ?>" 
-                                    <?php echo ($datos_existentes && $datos_existentes['id_estado'] == $estado['id']) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($estado['nombre']); ?>
+                            <?php foreach ($parametros as $parametro): ?>
+                                <option value="<?php echo $parametro['id']; ?>" 
+                                    <?php echo ($datos_existentes && $datos_existentes['agua'] == $parametro['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <div class="invalid-feedback">Debe seleccionar el estado de la vivienda.</div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="luz" class="form-label">
+                            <i class="bi bi-lightning me-1"></i>Luz:
+                        </label>
+                        <select class="form-select" id="luz" name="luz">
+                            <option value="">Seleccione</option>
+                            <?php foreach ($parametros as $parametro): ?>
+                                <option value="<?php echo $parametro['id']; ?>" 
+                                    <?php echo ($datos_existentes && $datos_existentes['luz'] == $parametro['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($parametro['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="gas" class="form-label">
+                            <i class="bi bi-fire me-1"></i>Gas:
+                        </label>
+                        <select class="form-select" id="gas" name="gas">
+                            <option value="">Seleccione</option>
+                            <?php foreach ($parametros as $parametro): ?>
+                                <option value="<?php echo $parametro['id']; ?>" 
+                                    <?php echo ($datos_existentes && $datos_existentes['gas'] == $parametro['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($parametro['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="telefono" class="form-label">
+                            <i class="bi bi-telephone me-1"></i>Teléfono:
+                        </label>
+                        <select class="form-select" id="telefono" name="telefono">
+                            <option value="">Seleccione</option>
+                            <?php foreach ($parametros as $parametro): ?>
+                                <option value="<?php echo $parametro['id']; ?>" 
+                                    <?php echo ($datos_existentes && $datos_existentes['telefono'] == $parametro['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($parametro['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="alcantarillado" class="form-label">
+                            <i class="bi bi-water me-1"></i>Alcantarillado:
+                        </label>
+                        <select class="form-select" id="alcantarillado" name="alcantarillado">
+                            <option value="">Seleccione</option>
+                            <?php foreach ($parametros as $parametro): ?>
+                                <option value="<?php echo $parametro['id']; ?>" 
+                                    <?php echo ($datos_existentes && $datos_existentes['alcantarillado'] == $parametro['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($parametro['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="internet" class="form-label">
+                            <i class="bi bi-wifi me-1"></i>Internet:
+                        </label>
+                        <select class="form-select" id="internet" name="internet">
+                            <option value="">Seleccione</option>
+                            <?php foreach ($parametros as $parametro): ?>
+                                <option value="<?php echo $parametro['id']; ?>" 
+                                    <?php echo ($datos_existentes && $datos_existentes['internet'] == $parametro['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($parametro['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="administracion" class="form-label">
+                            <i class="bi bi-building me-1"></i>Administración:
+                        </label>
+                        <select class="form-select" id="administracion" name="administracion">
+                            <option value="">Seleccione</option>
+                            <?php foreach ($parametros as $parametro): ?>
+                                <option value="<?php echo $parametro['id']; ?>" 
+                                    <?php echo ($datos_existentes && $datos_existentes['administracion'] == $parametro['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($parametro['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="parqueadero" class="form-label">
+                            <i class="bi bi-car-front me-1"></i>Parqueadero:
+                        </label>
+                        <select class="form-select" id="parqueadero" name="parqueadero">
+                            <option value="">Seleccione</option>
+                            <?php foreach ($parametros as $parametro): ?>
+                                <option value="<?php echo $parametro['id']; ?>" 
+                                    <?php echo ($datos_existentes && $datos_existentes['parqueadero'] == $parametro['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($parametro['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                 </div>
                 
@@ -201,7 +314,7 @@ try {
                             <i class="bi bi-chat-text me-1"></i>Observación:
                         </label>
                         <textarea class="form-control" id="observacion" name="observacion" 
-                                  rows="6" maxlength="1000"><?php echo $datos_existentes ? htmlspecialchars($datos_existentes['observacion']) : ''; ?></textarea>
+                                  rows="4" maxlength="1000"><?php echo $datos_existentes ? htmlspecialchars($datos_existentes['observacion']) : ''; ?></textarea>
                         <div class="form-text">Máximo 1000 caracteres. Mínimo 10 caracteres si se llena.</div>
                     </div>
                 </div>
@@ -212,7 +325,7 @@ try {
                             <i class="bi bi-check-circle me-2"></i>
                             <?php echo $datos_existentes ? 'Actualizar' : 'Guardar'; ?>
                         </button>
-                        <a href="../tipo_vivienda/tipo_vivienda.php" class="btn btn-secondary btn-lg">
+                        <a href="../inventario_enseres/inventario_enseres.php" class="btn btn-secondary btn-lg">
                             <i class="bi bi-arrow-left me-2"></i>Volver
                         </a>
                     </div>

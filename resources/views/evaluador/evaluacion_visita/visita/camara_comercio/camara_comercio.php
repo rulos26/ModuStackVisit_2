@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 ob_start();
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+session_start();
 }
 
 if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
@@ -195,7 +195,7 @@ try {
                         <div class="invalid-feedback">Por favor ingrese la razón social.</div>
                     </div>
                 </div>
-                <div class="row">
+                    <div class="row">
                     <div class="col-md-6 mb-3 campos-adicionales" id="campo-activdad" style="display: none;">
                         <label for="activdad" class="form-label">
                             <i class="bi bi-gear me-1"></i>Actividad:
@@ -211,8 +211,8 @@ try {
                         </label>
                         <textarea class="form-control" id="observacion" name="observacion" rows="2" maxlength="1000"><?php echo $datos_existentes ? htmlspecialchars($datos_existentes['observacion']) : ''; ?></textarea>
                         <div class="form-text">Máximo 1000 caracteres</div>
-                    </div>
-                </div>
+                        </div>
+                        </div>
                 <div class="row">
                     <div class="col-12 text-center">
                         <button type="submit" class="btn btn-primary btn-lg me-2">
