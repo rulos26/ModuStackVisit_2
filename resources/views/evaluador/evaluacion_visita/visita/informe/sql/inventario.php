@@ -1,5 +1,5 @@
 <?php
-include '../../../../../conn/conexion.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/ModuStackVisit_2/conn/conexion.php';
 $id_cedula = $_SESSION['id_cedula'];
 $invetario="SELECT 
 ie.televisor_cant, ie.dvd_cant, ie.teatro_casa_cant, ie.equipo_sonido_cant, 

@@ -1,5 +1,5 @@
 <?php
-include '../../../../../conn/conexion.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/ModuStackVisit_2/conn/conexion.php';
 $id_cedula = $_SESSION['id_cedula'];
 $familia = "SELECT cf.id, cf.id_cedula, cf.nombre, cf.id_parentesco, cf.edad, cf.id_ocupacion, cf.telefono, cf.id_conviven,cf.observacion,
 op.nombre AS nombre_parentesco,

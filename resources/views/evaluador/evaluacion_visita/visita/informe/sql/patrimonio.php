@@ -1,5 +1,5 @@
 <?php
-include '../../../../../conn/conexion.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/ModuStackVisit_2/conn/conexion.php';
 $id_cedula = $_SESSION['id_cedula'];
 $patrimonio="SELECT id,id_cedula,valor_vivienda,direccion,
 id_vehiculo,id_marca,id_modelo,id_ahorro,otros,observacion 

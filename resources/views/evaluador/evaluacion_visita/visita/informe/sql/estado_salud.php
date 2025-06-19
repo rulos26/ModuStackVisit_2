@@ -1,5 +1,5 @@
 <?php
-include '../../../../../conn/conexion.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/ModuStackVisit_2/conn/conexion.php';
 $salud =  "SELECT e.id, e.id_cedula, oe1.nombre AS nombre_estado_salud, oe2.nombre AS nombre_tipo_enfermedad,
 e.tipo_enfermedad_cual, oe3.nombre AS nombre_limitacion_fisica, e.limitacion_fisica_cual,
 oe4.nombre AS nombre_tipo_medicamento, e.tipo_medicamento_cual, oe5.nombre AS nombre_ingiere_alcohol,

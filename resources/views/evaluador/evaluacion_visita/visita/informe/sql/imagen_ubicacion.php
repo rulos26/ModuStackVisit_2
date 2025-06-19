@@ -1,6 +1,6 @@
 <?php
 //session_start();
-include '../../../../../conn/conexion.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/ModuStackVisit_2/conn/conexion.php';
 $id_cedula = $_SESSION['id_cedula'];
 //consulta foto perfil
 $sql = "SELECT * FROM ubicacion_foto where id_cedula= $id_cedula";

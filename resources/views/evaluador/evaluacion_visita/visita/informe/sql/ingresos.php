@@ -1,5 +1,5 @@
 <?php
-include '../../../../../conn/conexion.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/ModuStackVisit_2/conn/conexion.php';
 $id_cedula = $_SESSION['id_cedula'];
 $ingresos="SELECT * FROM `ingresos_mensuales` WHERE   `id_cedula`='$id_cedula';";
 $ingresos_data = $mysqli->query($ingresos);

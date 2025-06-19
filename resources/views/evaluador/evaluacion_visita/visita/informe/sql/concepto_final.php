@@ -1,6 +1,6 @@
 <?php
 
-include '../../../../../conn/conexion.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/ModuStackVisit_2/conn/conexion.php';
 $id_cedula = $_SESSION['id_cedula'];
 $concepto_final="SELECT c.id, c.id_cedula, c.actitud, c.condiciones_vivienda, c.dinamica_familiar, c.condiciones_economicas, 
 c.condiciones_academicas, c.evaluacion_experiencia_laboral, c.observaciones, c.id_concepto_final, 

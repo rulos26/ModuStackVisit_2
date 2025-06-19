@@ -1,5 +1,5 @@
 <?php
-include '../../../../../conn/conexion.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/ModuStackVisit_2/conn/conexion.php';
 $id_cedula = $_SESSION['id_cedula'];
 $exp_laboral="SELECT `id`, `id_cedula`, `empresa`, `tiempo`, `cargo`, `salario`, `retiro`, `concepto`,
 `nombre`, `numero` FROM `experiencia_laboral` WHERE `id_cedula`='1110456003';  ";
