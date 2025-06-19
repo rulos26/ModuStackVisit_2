@@ -14,7 +14,7 @@ echo "<h2>1. Verificación de Rutas</h2>";
 
 $rutas = [
     'anterior' => '../informacion_pareja/tiene_pareja.php',
-    'siguiente' => '../registro_fotografico/registro_fotografico.php',
+    'siguiente' => '../estado_vivienda/estado_vivienda.php',
     'dashboard' => [
         dirname(__DIR__, 4) . '/layout/dashboard.php',
         dirname(__DIR__, 5) . '/layout/dashboard.php',

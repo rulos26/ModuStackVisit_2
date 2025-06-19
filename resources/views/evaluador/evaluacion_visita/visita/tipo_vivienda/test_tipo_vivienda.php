@@ -125,7 +125,7 @@ try {
     echo "<h2>8. Verificando navegación</h2>";
     echo "✓ Navegación implementada:<br>";
     echo "&nbsp;&nbsp;&nbsp;&nbsp;✓ Anterior: información_pareja/tiene_pareja.php<br>";
-    echo "&nbsp;&nbsp;&nbsp;&nbsp;✓ Siguiente: registro_fotografico/registro_fotografico.php<br>";
+    echo "&nbsp;&nbsp;&nbsp;&nbsp;✓ Siguiente: estado_vivienda/estado_vivienda.php<br>";
     echo "&nbsp;&nbsp;&nbsp;&nbsp;✓ Stepper visual con 7 pasos<br>";
     
     echo "<h2>9. Verificando funcionalidades</h2>";
