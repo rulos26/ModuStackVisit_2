@@ -158,23 +158,34 @@
                 <tbody>
                     <tr>
                         <td colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">¿Tiene Cámara de Comercio?</td>
-                        <td colspan="6" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($camara_comercio['tiene_camara'] ?? '') ?></td>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($camara_comercio['tiene_camara'] ?? 'N/A') ?></td>
                     </tr>
+                    <?php 
+                    $mostrar_datos = ($camara_comercio['tiene_camara'] ?? '') !== 'No';
+                    ?>
                     <tr>
                         <td colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Nombre de la Empresa</td>
-                        <td colspan="6" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($camara_comercio['nombre'] ?? '') ?></td>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;">
+                            <?= $mostrar_datos ? htmlspecialchars($camara_comercio['nombre'] ?: 'N/A') : 'N/A' ?>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Razón Social</td>
-                        <td colspan="6" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($camara_comercio['razon'] ?? '') ?></td>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;">
+                            <?= $mostrar_datos ? htmlspecialchars($camara_comercio['razon'] ?: 'N/A') : 'N/A' ?>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Actividad</td>
-                        <td colspan="6" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($camara_comercio['activdad'] ?? '') ?></td>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;">
+                            <?= $mostrar_datos ? htmlspecialchars($camara_comercio['activdad'] ?: 'N/A') : 'N/A' ?>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Observación</td>
-                        <td colspan="6" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($camara_comercio['observacion'] ?? '') ?></td>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;">
+                            <?= $mostrar_datos ? htmlspecialchars($camara_comercio['observacion'] ?: 'N/A') : 'N/A' ?>
+                        </td>
                     </tr>
                 </tbody>
             </table>
