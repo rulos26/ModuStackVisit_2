@@ -151,7 +151,7 @@
                 <thead>
                     <tr>
                         <th colspan="12" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
-                            <center>CÁMARA DE COMERCIO</center>
+                            CÁMARA DE COMERCIO
                         </th>
                     </tr>
                 </thead>
@@ -400,6 +400,81 @@
                     <tr>
                         <td colspan="12" style="border: 1px solid black; text-align: center;">
                             No se encontró información sobre la vivienda
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
+
+        <?php if ($inventario_enseres): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="12" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            INVENTARIO DE ENSERES
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Televisor</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($inventario_enseres['televisor_nombre_cant']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">D.V.D</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($inventario_enseres['dvd_nombre_cant']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Teatro en Casa</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($inventario_enseres['teatro_casa_nombre_cant']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Equipo de Sonido</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($inventario_enseres['equipo_sonido_nombre_cant']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Computador</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($inventario_enseres['computador_nombre_cant']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Impresora</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($inventario_enseres['impresora_nombre_cant']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Móvil</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($inventario_enseres['movil_nombre_cant']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Estufa</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($inventario_enseres['estufa_nombre_cant']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Nevera</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($inventario_enseres['nevera_nombre_cant']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Lavadora</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($inventario_enseres['lavadora_nombre_cant']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Microondas</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($inventario_enseres['microondas_nombre_cant']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Moto</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($inventario_enseres['moto_nombre_cant']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Carro</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($inventario_enseres['carro_nombre_cant']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Observaciones</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($inventario_enseres['observacion']) ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="12" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            INVENTARIO DE ENSERES
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="12" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre el inventario de enseres
                         </td>
                     </tr>
                 </tbody>
