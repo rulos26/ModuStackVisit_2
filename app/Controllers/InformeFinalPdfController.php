@@ -141,6 +141,58 @@ class InformeFinalPdfController {
             unset($familiar); // Romper la referencia
         }
 
+        // Consulta de información de la pareja
+        $sql_pareja = "SELECT 
+            IP.id, 
+            IP.id_cedula,
+            IP.cedula, 
+            IP.id_tipo_documentos, 
+            IP.cedula_expedida, 
+            IP.nombres, 
+            IP.edad, 
+            IP.id_genero,
+            IP.id_nivel_academico, 
+            IP.actividad, 
+            IP.empresa, 
+            IP.antiguedad, 
+            IP.direccion_empresa, 
+            IP.telefono_1, 
+            IP.telefono_2, 
+            IP.vive_candidato, 
+            TD.nombre AS tipo_documento_nombre,
+            G.id AS id_genero_pareja, 
+            G.nombre AS nombre_genero, 
+            NA.id AS id_nivel_academico_pareja, 
+            NA.nombre AS nombre_nivel_academico 
+        FROM informacion_pareja AS IP
+        LEFT JOIN opc_tipo_documentos AS TD ON IP.id_tipo_documentos = TD.id 
+        LEFT JOIN opc_genero AS G ON IP.id_genero = G.id 
+        LEFT JOIN opc_nivel_academico AS NA ON IP.id_nivel_academico = NA.id
+        WHERE IP.id_cedula = :cedula";
+        
+        $stmt_pareja = $db->prepare($sql_pareja);
+        $stmt_pareja->bindParam(':cedula', $cedula);
+        $stmt_pareja->execute();
+        $informacion_pareja = $stmt_pareja->fetch(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de información de la pareja
+        if ($informacion_pareja) {
+            // Convertir campos vacíos a N/A
+            $campos_texto = [
+                'cedula', 'tipo_documento_nombre', 'cedula_expedida', 'nombres', 
+                'edad', 'nombre_genero', 'nombre_nivel_academico', 'actividad', 
+                'empresa', 'antiguedad', 'direccion_empresa', 'telefono_1', 
+                'telefono_2'
+            ];
+            foreach ($campos_texto as $campo) {
+                $informacion_pareja[$campo] = empty($informacion_pareja[$campo]) ? 'N/A' : $informacion_pareja[$campo];
+            }
+
+            // Convertir campo binario
+            $informacion_pareja['vive_candidato'] = $informacion_pareja['vive_candidato'] === '0' ? 'Sí' : 
+                                                   ($informacion_pareja['vive_candidato'] === '1' ? 'No' : 'N/A');
+        }
+
         // Función para convertir imagen a base64
         function img_to_base64($img_path) {
             if (!file_exists($img_path)) return '';
@@ -162,7 +214,8 @@ class InformeFinalPdfController {
             'evaluado' => $evaluado,
             'camara_comercio' => $camara_comercio,
             'estado_salud' => $estado_salud,
-            'composicion_familiar' => $composicion_familiar
+            'composicion_familiar' => $composicion_familiar,
+            'informacion_pareja' => $informacion_pareja
         ];
         extract($data);
         ob_start();

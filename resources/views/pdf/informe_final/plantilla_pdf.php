@@ -287,6 +287,69 @@
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <?php if ($informacion_pareja): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="14" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            Información de la Pareja (Cónyuge, compañera sentimental)
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Cédula</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Tipo Documento</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Cédula Expedida</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Nombres</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Edad</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Género</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Nivel Académico</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Actividad</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Empresa</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Antigüedad</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Dirección Empresa</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Teléfono 1</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Teléfono 2</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold; background-color: #ABABAB;">Vive con Candidato</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_pareja['cedula']) ?></td>
+                        <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_pareja['tipo_documento_nombre']) ?></td>
+                        <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_pareja['cedula_expedida']) ?></td>
+                        <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_pareja['nombres']) ?></td>
+                        <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_pareja['edad']) ?></td>
+                        <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_pareja['nombre_genero']) ?></td>
+                        <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_pareja['nombre_nivel_academico']) ?></td>
+                        <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_pareja['actividad']) ?></td>
+                        <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_pareja['empresa']) ?></td>
+                        <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_pareja['antiguedad']) ?></td>
+                        <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_pareja['direccion_empresa']) ?></td>
+                        <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_pareja['telefono_1']) ?></td>
+                        <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_pareja['telefono_2']) ?></td>
+                        <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_pareja['vive_candidato']) ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="14" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            Información de la Pareja (Cónyuge, compañera sentimental)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="14" style="border: 1px solid black; text-align: center;">
+                            Lo sentimos, el aspirante no tiene pareja registrada
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </body>
 </html>
