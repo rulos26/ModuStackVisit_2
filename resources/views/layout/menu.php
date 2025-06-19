@@ -46,6 +46,12 @@
                 PDF de ejemplo
             </a>
         </li>
+        <li>
+            <a href="/ModuStackVisit_2/resources/views/pdf/informe_final/plantilla_pdf.php" target="_blank" class="nav-link link-dark">
+                <i class="bi bi-file-earmark-pdf me-2"></i>
+                Informe Final PDF
+            </a>
+        </li>
     </ul>
     <hr>
     <div class="text-muted small">&copy; <?php echo date('Y'); ?> Mi Sistema</div>
