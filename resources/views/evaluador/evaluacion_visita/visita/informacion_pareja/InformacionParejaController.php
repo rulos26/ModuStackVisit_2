@@ -167,7 +167,7 @@ class InformacionParejaController {
             $existe = $this->obtenerPorCedula($id_cedula);
             if ($existe) {
                 $sql = "UPDATE informacion_pareja SET 
-                        tiene_pareja = :tiene_pareja, ced = :ced, id_tipo_documentos = :id_tipo_documentos, 
+                         ced = :ced, id_tipo_documentos = :id_tipo_documentos, 
                         cedula_expedida = :cedula_expedida, nombres = :nombres, edad = :edad, 
                         id_genero = :id_genero, id_nivel_academico = :id_nivel_academico, actividad = :actividad, 
                         empresa = :empresa, antiguedad = :antiguedad, direccion_empresa = :direccion_empresa, 
@@ -175,7 +175,7 @@ class InformacionParejaController {
                         observacion = :observacion 
                         WHERE id_cedula = :id_cedula";
                 $stmt = $this->db->prepare($sql);
-                $stmt->bindParam(':tiene_pareja', $tiene_pareja);
+                //$stmt->bindParam(':tiene_pareja', $tiene_pareja);
                 $stmt->bindParam(':ced', $ced);
                 $stmt->bindParam(':id_tipo_documentos', $id_tipo_documentos);
                 $stmt->bindParam(':cedula_expedida', $cedula_expedida);
