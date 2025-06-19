@@ -167,7 +167,7 @@ class ConceptoFinalEvaluadorController {
 
     public function obtenerConceptosSeguridad() {
         try {
-            $sql = "SELECT id, nombre FROM opc_concepto_seguridad ORDER BY nombre";
+            $sql = "SELECT * FROM opc_concepto_seguridad ORDER BY nombre";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
