@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $latitud = $_POST['latituds'];
             $longitud = $_POST['longituds'];
             
-            $resultado = $controller->guardarUbicacion($id_cedula, $latitud, $longitud);
+            $resultado = $controller->guardar($id_cedula, $latitud, $longitud);
             
             if ($resultado['success']) {
                 $_SESSION['success'] = $resultado['message'];
