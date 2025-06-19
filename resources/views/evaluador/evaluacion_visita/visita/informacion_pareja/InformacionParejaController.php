@@ -194,11 +194,11 @@ class InformacionParejaController {
                 $stmt->bindParam(':id_cedula', $id_cedula);
                 $ok = $stmt->execute();
             } else {
-                $sql = "INSERT INTO informacion_pareja (id_cedula, tiene_pareja, ced, id_tipo_documentos, cedula_expedida, nombres, edad, id_genero, id_nivel_academico, actividad, empresa, antiguedad, direccion_empresa, telefono_1, telefono_2, vive_candidato, observacion) 
-                        VALUES (:id_cedula, :tiene_pareja, :ced, :id_tipo_documentos, :cedula_expedida, :nombres, :edad, :id_genero, :id_nivel_academico, :actividad, :empresa, :antiguedad, :direccion_empresa, :telefono_1, :telefono_2, :vive_candidato, :observacion)";
+                $sql = "INSERT INTO informacion_pareja (id_cedula, ced, id_tipo_documentos, cedula_expedida, nombres, edad, id_genero, id_nivel_academico, actividad, empresa, antiguedad, direccion_empresa, telefono_1, telefono_2, vive_candidato, observacion) 
+                        VALUES (:id_cedula,  :ced, :id_tipo_documentos, :cedula_expedida, :nombres, :edad, :id_genero, :id_nivel_academico, :actividad, :empresa, :antiguedad, :direccion_empresa, :telefono_1, :telefono_2, :vive_candidato, :observacion)";
                 $stmt = $this->db->prepare($sql);
                 $stmt->bindParam(':id_cedula', $id_cedula);
-                $stmt->bindParam(':tiene_pareja', $tiene_pareja);
+                //$stmt->bindParam(':tiene_pareja', $tiene_pareja);
                 $stmt->bindParam(':ced', $ced);
                 $stmt->bindParam(':id_tipo_documentos', $id_tipo_documentos);
                 $stmt->bindParam(':cedula_expedida', $cedula_expedida);
