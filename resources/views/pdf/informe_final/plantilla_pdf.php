@@ -7,7 +7,7 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
         }
         .header {
             border: 2px solid rgb(96, 196, 30);
