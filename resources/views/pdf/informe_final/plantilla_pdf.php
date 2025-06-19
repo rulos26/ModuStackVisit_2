@@ -2,69 +2,21 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Informe Final</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-        .header {
-            border: 2px solid rgb(175, 0, 0);
-            padding: 12px;
-            margin-bottom: 20px;
-        }
-        .logo-container {
-            border: 1px solid rgb(175,0,0);
-            text-align: center;
-            padding: 10px;
-            margin-bottom: 15px;
-        }
-        .logo {
-            max-width: 100%;
-            height: auto;
-            max-height: 103px;
-        }
-        .content {
-            padding: 15px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-        }
-        .cedula-info {
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            margin-top: 10px;
-        }
-        .debug-info {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-        }
-    </style>
+    <title>Test Simplesss</title>
 </head>
 <body>
-    <div class="header">
-        <div class="logo-container">
-            <?php if (!empty($logo_b64)): ?>
-                <img src="<?= $logo_b64 ?>" alt="Logo" class="logo">
-            <?php else: ?>
-                <div class="debug-info">
-                    <strong>Logo no disponible</strong><br>
-                    Ruta del logo: <?= __DIR__ . '/../../public/images/header.jpg' ?><br>
-                    ¿Existe el archivo? <?= file_exists(__DIR__ . '/../../public/images/header.jpg') ? 'Sí' : 'No' ?>
-                </div>
-            <?php endif; ?>
-        </div>
-        
-        <div class="content">
-            <h2>Informe Final de Visita Domiciliaria</h2>
-            <div class="cedula-info">
-                Cédula del Evaluado: <?= htmlspecialchars($cedula) ?>
-            </div>
-        </div>
-    </div>
+    <h1>Test de Variables</h1>
+    
+    <h2>Variable Cédula:</h2>
+    <p>Valor: <?php echo isset($cedula) ? $cedula : 'NO DEFINIDA'; ?></p>
+    
+    <h2>Variable Logo:</h2>
+    <p>Valor: <?php echo isset($logo_b64) ? (empty($logo_b64) ? 'VACÍA' : 'CON DATOS') : 'NO DEFINIDA'; ?></p>
+    
+    <h2>Debug Info:</h2>
+    <p>Variables definidas: <?php echo implode(', ', array_keys(get_defined_vars())); ?></p>
+    
+    <h2>Contenido de Variables:</h2>
+    <pre><?php print_r(get_defined_vars()); ?></pre>
 </body>
-</html>
+</html> 

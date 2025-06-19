@@ -19,6 +19,10 @@ echo ".test-link { display: inline-block; margin: 10px; padding: 10px 20px; back
 echo ".test-link:hover { background-color: #0056b3; }";
 echo ".success-link { background-color: #28a745; }";
 echo ".success-link:hover { background-color: #1e7e34; }";
+echo ".warning-link { background-color: #ffc107; color: #212529; }";
+echo ".warning-link:hover { background-color: #e0a800; }";
+echo ".info-link { background-color: #17a2b8; }";
+echo ".info-link:hover { background-color: #138496; }";
 echo "</style>";
 echo "</head>";
 echo "<body>";
@@ -31,11 +35,15 @@ echo "<a href='test_plantilla_simple.php' class='test-link'>";
 echo "Test Plantilla Simple (debug completo)";
 echo "</a>";
 
+echo "<a href='test_controller_refactorizado.php' class='test-link info-link'>";
+echo "Test Controlador Refactorizado (MVC)";
+echo "</a>";
+
 echo "<a href='test_pdf_final.php' class='test-link success-link'>";
 echo "Generar PDF Final (sin debug)";
 echo "</a>";
 
-echo "<a href='InformeFinalPdfController.php?action=Informefinalpdf' class='test-link'>";
+echo "<a href='InformeFinalPdfController.php?action=Informefinalpdf' class='test-link warning-link'>";
 echo "Test Controlador Principal";
 echo "</a>";
 
@@ -95,17 +103,20 @@ if (is_dir($images_dir)) {
 
 echo "<h3>Instrucciones:</h3>";
 echo "<ol>";
-echo "<li>Haz clic en 'Test Plantilla Simple' para ver el debug completo</li>";
+echo "<li>Haz clic en 'Test Controlador Refactorizado' para ver la nueva arquitectura MVC</li>";
 echo "<li>Si el debug funciona, haz clic en 'Generar PDF Final' para ver el PDF real</li>";
 echo "<li>El PDF debe mostrar la cédula '1231211322' y el logo</li>";
 echo "</ol>";
 
 echo "<h3>Archivos creados:</h3>";
 echo "<ul>";
-echo "<li><strong>InformeFinalPdfController.php</strong> - Controlador principal</li>";
+echo "<li><strong>InformeFinalPdfController.php</strong> - Controlador principal refactorizado</li>";
 echo "<li><strong>plantilla_simple.php</strong> - Plantilla de prueba simple</li>";
 echo "<li><strong>test_plantilla_simple.php</strong> - Test completo con debug</li>";
 echo "<li><strong>test_pdf_final.php</strong> - Genera PDF final sin debug</li>";
+echo "<li><strong>test_controller_refactorizado.php</strong> - Test del controlador MVC</li>";
+echo "<li><strong>debug_view.php</strong> - Vista de debug para test simple</li>";
+echo "<li><strong>debug_controller.php</strong> - Vista de debug para controlador MVC</li>";
 echo "</ul>";
 
 echo "</body>";
