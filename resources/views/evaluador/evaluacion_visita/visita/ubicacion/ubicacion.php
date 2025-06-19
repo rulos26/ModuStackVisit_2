@@ -24,11 +24,17 @@ use App\Controllers\UbicacionController;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $controller = UbicacionController::getInstance();
-        $datos = $controller->sanitizarDatos($_POST);
-        $errores = $controller->validarDatos($datos);
         
-        if (empty($errores)) {
-            $resultado = $controller->guardar($datos);
+        // Validar que se recibieron las coordenadas
+        if (!isset($_POST['latituds']) || !isset($_POST['longituds']) || 
+            empty($_POST['latituds']) || empty($_POST['longituds'])) {
+            $_SESSION['error'] = "No se recibieron las coordenadas de ubicación.";
+        } else {
+            $latitud = $_POST['latituds'];
+            $longitud = $_POST['longituds'];
+            
+            $resultado = $controller->guardarUbicacion($id_cedula, $latitud, $longitud);
+            
             if ($resultado['success']) {
                 $_SESSION['success'] = $resultado['message'];
                 // Aseguramos que la cédula se mantenga en sesión para el siguiente paso
@@ -44,8 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $_SESSION['error'] = $resultado['message'];
             }
-        } else {
-            $_SESSION['error'] = implode('<br>', $errores);
         }
     } catch (Exception $e) {
         error_log("Error en ubicacion.php: " . $e->getMessage());
@@ -55,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 try {
     $controller = UbicacionController::getInstance();
-    $datos_existentes = $controller->obtenerPorCedula($id_cedula);
+    $datos_existentes = $controller->obtenerUbicacion($id_cedula);
 } catch (Exception $e) {
     error_log("Error en ubicacion.php: " . $e->getMessage());
     $error_message = "Error al cargar los datos: " . $e->getMessage();
@@ -189,16 +193,21 @@ try {
                     <div class="step-title">Paso 20</div>
                     <div class="step-description">Experiencia Laboral</div>
                 </div>
+                <div class="step-horizontal complete">
+                    <div class="step-icon"><i class="fas fa-clipboard-check"></i></div>
+                    <div class="step-title">Paso 21</div>
+                    <div class="step-description">Concepto Final</div>
+                </div>
                 <div class="step-horizontal active">
                     <div class="step-icon"><i class="fas fa-map-marker-alt"></i></div>
-                    <div class="step-title">Paso 21</div>
+                    <div class="step-title">Paso 22</div>
                     <div class="step-description">Ubicación</div>
                 </div>
             </div>
 
             <!-- Controles de navegación -->
             <div class="controls text-center mb-4">
-                <a href="../experiencia_laboral/experiencia_laboral.php" class="btn btn-secondary me-2">
+                <a href="../concepto_final_evaluador/concepto_final_evaluador.php" class="btn btn-secondary me-2">
                     <i class="fas fa-arrow-left me-1"></i>Anterior
                 </a>
                 <button class="btn btn-primary" id="nextBtn" type="button" onclick="document.getElementById('formUbicacion').submit();">

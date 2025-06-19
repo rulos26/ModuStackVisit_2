@@ -1,17 +1,26 @@
 <?php
 namespace App\Controllers;
 
-require_once __DIR__ . '/../../../../../../app/Database/Database.php';
-use App\Database\Database;
-use PDOException;
+require_once __DIR__ . '/../../../../../app/Database/Database.php';
+
 use Exception;
+use PDO;
+use App\Database\Database;
 
 class UbicacionController {
     private static $instance = null;
     private $db;
 
     private function __construct() {
-        $this->db = Database::getInstance()->getConnection();
+        try {
+            $this->db = Database::getInstance()->getConnection();
+            if (!$this->db instanceof PDO) {
+                throw new Exception("Error al obtener la conexión a la base de datos");
+            }
+        } catch (Exception $e) {
+            error_log("Error en UbicacionController::__construct: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public static function getInstance() {
@@ -21,147 +30,105 @@ class UbicacionController {
         return self::$instance;
     }
 
-    public function sanitizarDatos($datos) {
-        $sanitizados = [];
-        foreach ($datos as $clave => $valor) {
-            if (is_string($valor)) {
-                $sanitizados[$clave] = trim(strip_tags($valor));
-            } else {
-                $sanitizados[$clave] = $valor;
-            }
-        }
-        return $sanitizados;
-    }
-
-    public function validarDatos($datos) {
-        $errores = [];
-        
-        // Validar campos requeridos
-        if (!isset($datos['latituds']) || empty($datos['latituds'])) {
-            $errores[] = "La latitud es requerida.";
-        }
-        
-        if (!isset($datos['longituds']) || empty($datos['longituds'])) {
-            $errores[] = "La longitud es requerida.";
-        }
-        
-        // Validar que sean números válidos
-        if (isset($datos['latituds']) && !is_numeric($datos['latituds'])) {
-            $errores[] = "La latitud debe ser un número válido.";
-        }
-        
-        if (isset($datos['longituds']) && !is_numeric($datos['longituds'])) {
-            $errores[] = "La longitud debe ser un número válido.";
-        }
-        
-        // Validar rangos de coordenadas (aproximadamente Colombia)
-        if (isset($datos['latituds']) && is_numeric($datos['latituds'])) {
-            $latitud = floatval($datos['latituds']);
-            if ($latitud < -4.5 || $latitud > 13.5) {
-                $errores[] = "La latitud debe estar en el rango válido para Colombia (-4.5 a 13.5).";
-            }
-        }
-        
-        if (isset($datos['longituds']) && is_numeric($datos['longituds'])) {
-            $longitud = floatval($datos['longituds']);
-            if ($longitud < -79.5 || $longitud > -66.5) {
-                $errores[] = "La longitud debe estar en el rango válido para Colombia (-79.5 a -66.5).";
-            }
-        }
-        
-        return $errores;
-    }
-
-    public function guardar($datos) {
-        try {
-            $id_cedula = $_SESSION['id_cedula'] ?? $_SESSION['cedula_autorizacion'] ?? $_SESSION['user_id'] ?? null;
-            
-            if (!$id_cedula) {
-                return ['success' => false, 'message' => 'No hay sesión activa o cédula no encontrada.'];
-            }
-            
-            // Primero eliminar registros existentes para esta cédula
-            $sql_delete = "DELETE FROM ubicacion WHERE id_cedula = :id_cedula";
-            $stmt_delete = $this->db->prepare($sql_delete);
-            $stmt_delete->bindParam(':id_cedula', $id_cedula);
-            $stmt_delete->execute();
-            
-            // Insertar el nuevo registro
-            $sql = "INSERT INTO ubicacion (id_cedula, latitud, longitud, fecha_registro) 
-                    VALUES (:id_cedula, :latitud, :longitud, NOW())";
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id_cedula', $id_cedula);
-            $stmt->bindParam(':latitud', $datos['latituds']);
-            $stmt->bindParam(':longitud', $datos['longituds']);
-            
-            if ($stmt->execute()) {
-                return [
-                    'success' => true, 
-                    'message' => 'Ubicación guardada exitosamente.'
-                ];
-            } else {
-                return ['success' => false, 'message' => 'No se pudo guardar la ubicación.'];
-            }
-            
-        } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error de base de datos: ' . $e->getMessage()];
-        } catch (Exception $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
-        }
-    }
-
-    public function obtenerPorCedula($id_cedula) {
-        try {
-            $sql = "SELECT * FROM ubicacion WHERE id_cedula = :id_cedula ORDER BY fecha_registro DESC LIMIT 1";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id_cedula', $id_cedula);
-            $stmt->execute();
-            return $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            return null;
-        }
-    }
-
     public function guardarUbicacion($id_cedula, $latitud, $longitud) {
         try {
             // Validar datos
-            if (empty($latitud) || empty($longitud)) {
-                return ['success' => false, 'message' => 'Latitud y longitud son requeridas.'];
+            if (empty($id_cedula) || empty($latitud) || empty($longitud)) {
+                throw new Exception("Todos los campos son requeridos");
             }
-            
+
+            // Validar formato de coordenadas
             if (!is_numeric($latitud) || !is_numeric($longitud)) {
-                return ['success' => false, 'message' => 'Latitud y longitud deben ser números válidos.'];
+                throw new Exception("Las coordenadas deben ser valores numéricos");
+            }
+
+            // Insertar ubicación
+            $stmt = $this->db->prepare("INSERT INTO ubicacion (id_cedula, latitud, longitud) VALUES (?, ?, ?)");
+            if (!$stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->db->errorInfo()[2]);
             }
             
-            // Primero eliminar registros existentes para esta cédula
-            $sql_delete = "DELETE FROM ubicacion WHERE id_cedula = :id_cedula";
-            $stmt_delete = $this->db->prepare($sql_delete);
-            $stmt_delete->bindParam(':id_cedula', $id_cedula);
-            $stmt_delete->execute();
-            
-            // Insertar el nuevo registro
-            $sql = "INSERT INTO ubicacion (id_cedula, latitud, longitud, fecha_registro) 
-                    VALUES (:id_cedula, :latitud, :longitud, NOW())";
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id_cedula', $id_cedula);
-            $stmt->bindParam(':latitud', $latitud);
-            $stmt->bindParam(':longitud', $longitud);
-            
-            if ($stmt->execute()) {
-                return [
-                    'success' => true, 
-                    'message' => 'Ubicación guardada exitosamente.'
-                ];
-            } else {
-                return ['success' => false, 'message' => 'No se pudo guardar la ubicación.'];
+            $stmt->execute([$id_cedula, $latitud, $longitud]);
+            $id_ubicacion = $this->db->lastInsertId();
+
+            // Generar y guardar mapa
+            $ruta_mapa = $this->generarMapa($id_cedula, $latitud, $longitud);
+
+            // Guardar registro de mapa
+            $stmt = $this->db->prepare("INSERT INTO ubicacion_foto (id_cedula, ruta, nombre) VALUES (?, ?, ?)");
+            if (!$stmt) {
+                throw new Exception("Error al preparar la consulta de mapa: " . $this->db->errorInfo()[2]);
             }
             
-        } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error de base de datos: ' . $e->getMessage()];
+            $stmt->execute([$id_cedula, dirname($ruta_mapa), basename($ruta_mapa)]);
+
+            return [
+                'success' => true,
+                'message' => 'Ubicación guardada exitosamente',
+                'data' => [
+                    'id_ubicacion' => $id_ubicacion,
+                    'ruta_mapa' => $ruta_mapa
+                ]
+            ];
+
         } catch (Exception $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            error_log("Error en UbicacionController::guardarUbicacion: " . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => $e->getMessage()
+            ];
+        }
+    }
+
+    private function generarMapa($id_cedula, $latitud, $longitud) {
+        try {
+            // Token de Mapbox
+            $token = 'pk.eyJ1IjoianVhbmRpYXo4NzAxMjYiLCJhIjoiY21hbWxueHJ1MGtlMTJrb3N3bWVwamowNSJ9.5Gsp0Q69b1z3oQijt-Aw2Q';
+            
+            // URL para obtener el mapa estático
+            $url = "https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s+ff0000({$longitud},{$latitud})/{$longitud},{$latitud},15,0/600x300?access_token={$token}";
+
+            // Crear directorio si no existe
+            $directorio_destino = __DIR__ . "../informe/img/ubicacion_foto/{$id_cedula}/";
+            if (!file_exists($directorio_destino)) {
+                if (!mkdir($directorio_destino, 0777, true)) {
+                    throw new Exception("No se pudo crear el directorio para el mapa");
+                }
+            }
+
+            // Descargar y guardar imagen
+            $imagen = file_get_contents($url);
+            if ($imagen === false) {
+                throw new Exception("Error al obtener la imagen del mapa");
+            }
+
+            $nombre_archivo = 'mapa_ubicacion_' . time() . '.jpg';
+            $ruta_completa = $directorio_destino . $nombre_archivo;
+
+            if (file_put_contents($ruta_completa, $imagen) === false) {
+                throw new Exception("Error al guardar la imagen del mapa");
+            }
+
+            return $ruta_completa;
+
+        } catch (Exception $e) {
+            error_log("Error en UbicacionController::generarMapa: " . $e->getMessage());
+            throw new Exception("Error al generar el mapa: " . $e->getMessage());
+        }
+    }
+
+    public function obtenerUbicacion($id_cedula) {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM ubicacion WHERE id_cedula = ? ORDER BY id DESC LIMIT 1");
+            if (!$stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->db->errorInfo()[2]);
+            }
+            
+            $stmt->execute([$id_cedula]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log("Error en UbicacionController::obtenerUbicacion: " . $e->getMessage());
+            throw new Exception("Error al obtener la ubicación: " . $e->getMessage());
         }
     }
 } 

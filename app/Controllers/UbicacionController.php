@@ -55,7 +55,7 @@ class UbicacionController {
             $ruta_mapa = $this->generarMapa($id_cedula, $latitud, $longitud);
 
             // Guardar registro de mapa
-            $stmt = $this->db->prepare("INSERT INTO ubicacion_autorizacion (id_cedula, ruta, nombre) VALUES (?, ?, ?)");
+            $stmt = $this->db->prepare("INSERT INTO ubicacion_foto (id_cedula, ruta, nombre) VALUES (?, ?, ?)");
             if (!$stmt) {
                 throw new Exception("Error al preparar la consulta de mapa: " . $this->db->errorInfo()[2]);
             }
@@ -89,7 +89,7 @@ class UbicacionController {
             $url = "https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s+ff0000({$longitud},{$latitud})/{$longitud},{$latitud},15,0/600x300?access_token={$token}";
 
             // Crear directorio si no existe
-            $directorio_destino = __DIR__ . "/../../public/images/ubicacion_autorizacion/{$id_cedula}/";
+            $directorio_destino = __DIR__ . "/../../informe/img/ubicacion_foto/{$id_cedula}/";
             if (!file_exists($directorio_destino)) {
                 if (!mkdir($directorio_destino, 0777, true)) {
                     throw new Exception("No se pudo crear el directorio para el mapa");
