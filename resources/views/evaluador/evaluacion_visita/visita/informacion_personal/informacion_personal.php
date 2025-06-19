@@ -37,15 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($resultado['success']) {
                 $_SESSION['success'] = $resultado['message'];
                 
-                // Redirigir según la acción realizada
-                if ($resultado['action'] === 'created') {
-                    // Si es un nuevo registro, continuar al siguiente paso
-                    header('Location: ../camara_comercio/camara_comercio.php');
-                    exit();
-                } else {
-                    // Si es una actualización, mostrar mensaje de éxito
-                    $_SESSION['success'] = $resultado['message'];
-                }
+                // Siempre redirigir a la siguiente pantalla después de guardar/actualizar exitosamente
+                header('Location: ../camara_comercio/camara_comercio.php');
+                exit();
             } else {
                 $_SESSION['error'] = $resultado['message'];
             }
