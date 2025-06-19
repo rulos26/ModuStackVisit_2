@@ -11,7 +11,7 @@
         }
         .header {
             border: 2px solid rgb(96, 196, 30);
-            padding: 12px;
+            padding: 5px;
             margin-bottom: 20px;
         }
         .logo-container {
