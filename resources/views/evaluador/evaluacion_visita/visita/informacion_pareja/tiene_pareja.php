@@ -27,12 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $resultado = $controller->guardar($datos);
             if ($resultado['success']) {
                 $_SESSION['success'] = $resultado['message'];
-                // Redirigir según la respuesta
-                if ($datos['tiene_pareja'] == '2') {
-                    header('Location: informacion_pareja.php');
-                } else {
-                    header('Location: ../registro_fotografico/registro_fotografico.php');
-                }
+                header('Location: ../tipo_vivienda/tipo_vivienda.php');
                 exit();
             } else {
                 $_SESSION['error'] = $resultado['message'];
@@ -53,6 +48,10 @@ try {
     
     // Obtener opciones para los select
     $opciones_parametro = $controller->obtenerOpciones('parametro');
+    $tipo_documentos = $controller->obtenerOpciones('tipo_documentos');
+    $municipios = $controller->obtenerOpciones('municipios');
+    $generos = $controller->obtenerOpciones('genero');
+    $niveles_academicos = $controller->obtenerOpciones('nivel_academico');
 } catch (Exception $e) {
     error_log("Error en tiene_pareja.php: " . $e->getMessage());
     $error_message = "Error al cargar los datos: " . $e->getMessage();
@@ -71,6 +70,9 @@ try {
 .step-horizontal .step-description { font-size: 0.85rem; color: #888; text-align: center; }
 .step-horizontal.active .step-title, .step-horizontal.active .step-description { color: #4361ee; }
 .step-horizontal.complete .step-title, .step-horizontal.complete .step-description { color: #2ecc71; }
+
+.campos-pareja { display: none; }
+.campos-pareja.show { display: block; }
 </style>
 
 <div class="container mt-4">
@@ -78,7 +80,7 @@ try {
         <div class="card-header bg-primary text-white">
             <h5 class="card-title mb-0">
                 <i class="bi bi-heart me-2"></i>
-                VISITA DOMICILIARÍA - INFORMACIÓN DE LA PAREJA
+                VISITA DOMICILIARÍA - INFORMACIÓN DE LA PAREJA (CÓNYUGE, COMPAÑERA SENTIMENTAL)
             </h5>
         </div>
         <div class="card-body">
@@ -113,6 +115,11 @@ try {
                     <div class="step-icon"><i class="fas fa-heart"></i></div>
                     <div class="step-title">Paso 6</div>
                     <div class="step-description">Información Pareja</div>
+                </div>
+                <div class="step-horizontal">
+                    <div class="step-icon"><i class="fas fa-home"></i></div>
+                    <div class="step-title">Paso 7</div>
+                    <div class="step-description">Tipo de Vivienda</div>
                 </div>
             </div>
 
@@ -172,12 +179,13 @@ try {
             </div>
             
             <form action="" method="POST" id="formTienePareja" novalidate autocomplete="off">
+                <!-- Campo obligatorio -->
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="tiene_pareja" class="form-label">
-                            <i class="bi bi-heart me-1"></i>¿Está usted en relación sentimental actual?
+                            <i class="bi bi-heart me-1"></i>¿Está usted en relación sentimental actual? <span class="text-danger">*</span>
                         </label>
-                        <select class="form-select" id="tiene_pareja" name="tiene_pareja" required>
+                        <select class="form-select" id="tiene_pareja" name="tiene_pareja" required onchange="toggleCamposPareja()">
                             <option value="">Seleccione una opción</option>
                             <?php foreach ($opciones_parametro as $opcion): ?>
                                 <option value="<?php echo $opcion['id']; ?>" 
@@ -190,11 +198,195 @@ try {
                     </div>
                 </div>
                 
+                <!-- Campos de información de pareja (se muestran/ocultan dinámicamente) -->
+                <div id="camposPareja" class="campos-pareja">
+                    <hr class="my-4">
+                    <h6 class="text-primary mb-3">
+                        <i class="bi bi-person-heart me-2"></i>Información de la Pareja
+                    </h6>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="ced" class="form-label">
+                                <i class="bi bi-card-text me-1"></i>Cédula:
+                            </label>
+                            <input type="number" class="form-control" id="ced" name="ced" 
+                                   value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['ced']) : ''; ?>">
+                            <div class="invalid-feedback">La cédula debe ser numérica.</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_tipo_documentos" class="form-label">
+                                <i class="bi bi-file-text me-1"></i>Tipo de Documento:
+                            </label>
+                            <select class="form-select" id="id_tipo_documentos" name="id_tipo_documentos">
+                                <option value="">Seleccione</option>
+                                <?php foreach ($tipo_documentos as $tipo): ?>
+                                    <option value="<?php echo $tipo['id']; ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['id_tipo_documentos'] == $tipo['id']) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($tipo['nombre']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="invalid-feedback">Debe seleccionar el tipo de documento.</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="cedula_expedida" class="form-label">
+                                <i class="bi bi-geo-alt me-1"></i>Cédula expedida:
+                            </label>
+                            <select class="form-select" id="cedula_expedida" name="cedula_expedida">
+                                <option value="">Seleccione</option>
+                                <?php foreach ($municipios as $municipio): ?>
+                                    <option value="<?php echo $municipio['id_municipio']; ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['cedula_expedida'] == $municipio['id_municipio']) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($municipio['municipio']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="invalid-feedback">Debe seleccionar dónde fue expedida la cédula.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="nombres" class="form-label">
+                                <i class="bi bi-person me-1"></i>Nombres Completos:
+                            </label>
+                            <input type="text" class="form-control" id="nombres" name="nombres" 
+                                   value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['nombres']) : ''; ?>">
+                            <div class="invalid-feedback">Los nombres completos son obligatorios.</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="edad" class="form-label">
+                                <i class="bi bi-calendar me-1"></i>Edad:
+                            </label>
+                            <input type="number" class="form-control" id="edad" name="edad" 
+                                   value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['edad']) : ''; ?>" 
+                                   min="18" max="120">
+                            <div class="invalid-feedback">La edad debe estar entre 18 y 120 años.</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_genero" class="form-label">
+                                <i class="bi bi-gender-ambiguous me-1"></i>Género:
+                            </label>
+                            <select class="form-select" id="id_genero" name="id_genero">
+                                <option value="">Seleccione</option>
+                                <?php foreach ($generos as $genero): ?>
+                                    <option value="<?php echo $genero['id']; ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['id_genero'] == $genero['id']) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($genero['nombre']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="invalid-feedback">Debe seleccionar el género.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="id_nivel_academico" class="form-label">
+                                <i class="bi bi-mortarboard me-1"></i>Nivel Académico:
+                            </label>
+                            <select class="form-select" id="id_nivel_academico" name="id_nivel_academico">
+                                <option value="">Seleccione</option>
+                                <?php foreach ($niveles_academicos as $nivel): ?>
+                                    <option value="<?php echo $nivel['id']; ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['id_nivel_academico'] == $nivel['id']) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($nivel['nombre']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="invalid-feedback">Debe seleccionar el nivel académico.</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="actividad" class="form-label">
+                                <i class="bi bi-briefcase me-1"></i>Actividad:
+                            </label>
+                            <input type="text" class="form-control" id="actividad" name="actividad" 
+                                   value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['actividad']) : ''; ?>">
+                            <div class="invalid-feedback">La actividad es obligatoria.</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="empresa" class="form-label">
+                                <i class="bi bi-building me-1"></i>Empresa:
+                            </label>
+                            <input type="text" class="form-control" id="empresa" name="empresa" 
+                                   value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['empresa']) : ''; ?>">
+                            <div class="invalid-feedback">La empresa es obligatoria.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="antiguedad" class="form-label">
+                                <i class="bi bi-clock-history me-1"></i>Antigüedad:
+                            </label>
+                            <input type="text" class="form-control" id="antiguedad" name="antiguedad" 
+                                   value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['antiguedad']) : ''; ?>">
+                            <div class="invalid-feedback">La antigüedad es obligatoria.</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="direccion_empresa" class="form-label">
+                                <i class="bi bi-geo-alt me-1"></i>Dirección Empresa:
+                            </label>
+                            <input type="text" class="form-control" id="direccion_empresa" name="direccion_empresa" 
+                                   value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['direccion_empresa']) : ''; ?>">
+                            <div class="invalid-feedback">La dirección de la empresa es obligatoria.</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="telefono_1" class="form-label">
+                                <i class="bi bi-telephone me-1"></i>Teléfono 1:
+                            </label>
+                            <input type="tel" class="form-control" id="telefono_1" name="telefono_1" 
+                                   value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['telefono_1']) : ''; ?>" 
+                                   pattern="[0-9]{7,10}">
+                            <div class="invalid-feedback">El teléfono 1 es obligatorio (7-10 dígitos).</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="telefono_2" class="form-label">
+                                <i class="bi bi-telephone-plus me-1"></i>Teléfono 2:
+                            </label>
+                            <input type="tel" class="form-control" id="telefono_2" name="telefono_2" 
+                                   value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['telefono_2']) : ''; ?>" 
+                                   pattern="[0-9]{7,10}">
+                            <div class="invalid-feedback">El teléfono 2 debe tener entre 7 y 10 dígitos.</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="vive_candidato" class="form-label">
+                                <i class="bi bi-house-heart me-1"></i>Vive con el candidato:
+                            </label>
+                            <select class="form-select" id="vive_candidato" name="vive_candidato">
+                                <option value="">Seleccione</option>
+                                <?php foreach ($opciones_parametro as $opcion): ?>
+                                    <option value="<?php echo $opcion['id']; ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['vive_candidato'] == $opcion['id']) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($opcion['nombre']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="invalid-feedback">Debe seleccionar si vive con el candidato.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="observacion" class="form-label">
+                                <i class="bi bi-chat-text me-1"></i>Observación:
+                            </label>
+                            <textarea class="form-control" id="observacion" name="observacion" 
+                                      rows="4" maxlength="1000"><?php echo $datos_existentes ? htmlspecialchars($datos_existentes['observacion']) : ''; ?></textarea>
+                            <div class="form-text">Máximo 1000 caracteres</div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="row">
                     <div class="col-12 text-center">
                         <button type="submit" class="btn btn-primary btn-lg me-2">
                             <i class="bi bi-check-circle me-2"></i>
-                            <?php echo $datos_existentes ? 'Actualizar' : 'Continuar'; ?>
+                            <?php echo $datos_existentes ? 'Actualizar' : 'Guardar'; ?>
                         </button>
                         <a href="../composición_familiar/composición_familiar.php" class="btn btn-secondary btn-lg">
                             <i class="bi bi-arrow-left me-2"></i>Volver
@@ -215,6 +407,64 @@ try {
         </div>
     </div>
 </div>
+
+<script>
+function toggleCamposPareja() {
+    const tienePareja = document.getElementById('tiene_pareja').value;
+    const camposPareja = document.getElementById('camposPareja');
+    
+    if (tienePareja === '2') { // Si tiene pareja
+        camposPareja.classList.add('show');
+        // Hacer obligatorios los campos de pareja
+        const camposObligatorios = camposPareja.querySelectorAll('input[required], select[required]');
+        camposObligatorios.forEach(campo => {
+            campo.required = true;
+        });
+    } else {
+        camposPareja.classList.remove('show');
+        // Quitar obligatoriedad de los campos de pareja
+        const camposObligatorios = camposPareja.querySelectorAll('input, select');
+        camposObligatorios.forEach(campo => {
+            campo.required = false;
+        });
+    }
+}
+
+// Ejecutar al cargar la página para mostrar campos si ya hay datos
+document.addEventListener('DOMContentLoaded', function() {
+    toggleCamposPareja();
+});
+
+// Validación del formulario
+document.getElementById('formTienePareja').addEventListener('submit', function(e) {
+    const tienePareja = document.getElementById('tiene_pareja').value;
+    
+    if (!tienePareja) {
+        e.preventDefault();
+        alert('Por favor seleccione si está en relación sentimental actual.');
+        return false;
+    }
+    
+    if (tienePareja === '2') {
+        // Validar campos obligatorios de pareja
+        const camposObligatorios = [
+            'ced', 'id_tipo_documentos', 'cedula_expedida', 'nombres', 'edad', 
+            'id_genero', 'id_nivel_academico', 'actividad', 'empresa', 
+            'antiguedad', 'direccion_empresa', 'telefono_1', 'vive_candidato'
+        ];
+        
+        for (let campo of camposObligatorios) {
+            const elemento = document.getElementById(campo);
+            if (!elemento.value.trim()) {
+                e.preventDefault();
+                alert(`Por favor complete el campo: ${elemento.previousElementSibling.textContent.replace('*', '').trim()}`);
+                elemento.focus();
+                return false;
+            }
+        }
+    }
+});
+</script>
 
 <?php
 $contenido = ob_get_clean();

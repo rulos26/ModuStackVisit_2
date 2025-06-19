@@ -36,9 +36,10 @@ class InformacionParejaController {
     public function validarDatos($datos) {
         $errores = [];
         
-        // Validar si tiene pareja
+        // Validar si tiene pareja (único campo obligatorio)
         if (empty($datos['tiene_pareja']) || $datos['tiene_pareja'] == '0') {
             $errores[] = 'Debe seleccionar si está en relación sentimental actual.';
+            return $errores; // Si no selecciona, no validar más campos
         }
         
         // Si tiene pareja (valor 2), validar los campos adicionales
