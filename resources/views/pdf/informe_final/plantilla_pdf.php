@@ -10,7 +10,7 @@
             padding: 20px;
         }
         .header {
-            border: 2px solid rgb(175, 0, 0);
+            border: 2px solid rgb(96, 196, 30);
             padding: 12px;
             margin-bottom: 20px;
         }
