@@ -7,14 +7,13 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Dompdf\Dompdf;
 use App\Database\Database;
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-ob_start();
-class DemoPdfController {
-    public static function generarEjemplo() {
+use Exception;
+
+class InformeFinalPdfController {
+    
+    public static function generarInforme($cedula = '1231211322') {
         $db = Database::getInstance()->getConnection();
-        $cedula = '1231211322';
+        
         // Consulta de autorizaciones
         $sql1 = "SELECT `id`, `cedula`, `nombres`, `direccion`, `localidad`, `barrio`, `telefono`, `celular`, `fecha`, `autorizacion`, `correo` FROM `autorizaciones` WHERE cedula=:cedula LIMIT 1";
         $stmt1 = $db->prepare($sql1);
@@ -30,7 +29,7 @@ class DemoPdfController {
         $row2 = $stmt2->fetch(\PDO::FETCH_ASSOC);
 
         // Consulta de firmas
-        $sql3 = "SELECT nombre  FROM firmas WHERE id_cedula=:cedula LIMIT 1";
+        $sql3 = "SELECT nombre FROM firmas WHERE id_cedula=:cedula LIMIT 1";
         $stmt3 = $db->prepare($sql3);
         $stmt3->bindParam(':cedula', $cedula);
         $stmt3->execute();
@@ -103,7 +102,15 @@ class DemoPdfController {
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
         // Enviar el PDF al navegador
-        $dompdf->stream('ejemplo.pdf', ["Attachment" => false]);
+        $dompdf->stream('informe_cedula_' . $cedula . '.pdf', ["Attachment" => false]);
         exit;
     }
-} 
+}
+
+// Manejar la acción desde el menú
+if (isset($_GET['action']) && $_GET['action'] === 'generarInforme') {
+    $cedula = $_GET['cedula'] ?? '1231211322';
+    InformeFinalPdfController::generarInforme($cedula);
+}
+
+?> 
