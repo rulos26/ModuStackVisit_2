@@ -176,13 +176,13 @@ class InformacionPersonalController {
                 edad, fecha_expedicion, lugar_nacimiento, celular_1, celular_2, 
                 telefono, id_rh, id_estatura, peso_kg, id_estado_civil, hacer_cuanto, 
                 numero_hijos, direccion, id_ciudad, localidad, barrio, id_estrato, 
-                correo, cargo, observacion, fecha_creacion
+                correo, cargo, observacion
             ) VALUES (
                 :id_cedula, :id_tipo_documentos, :cedula_expedida, :nombres, :apellidos,
                 :edad, :fecha_expedicion, :lugar_nacimiento, :celular_1, :celular_2,
                 :telefono, :id_rh, :id_estatura, :peso_kg, :id_estado_civil, :hacer_cuanto,
                 :numero_hijos, :direccion, :id_ciudad, :localidad, :barrio, :id_estrato,
-                :correo, :cargo, :observacion, NOW()
+                :correo, :cargo, :observacion
             )";
             
             $stmt = $this->db->prepare($sql);
@@ -255,8 +255,7 @@ class InformacionPersonalController {
                 id_estrato = :id_estrato,
                 correo = :correo,
                 cargo = :cargo,
-                observacion = :observacion,
-                fecha_actualizacion = NOW()
+                observacion = :observacion
                 WHERE id_cedula = :id_cedula";
             
             $stmt = $this->db->prepare($sql);
