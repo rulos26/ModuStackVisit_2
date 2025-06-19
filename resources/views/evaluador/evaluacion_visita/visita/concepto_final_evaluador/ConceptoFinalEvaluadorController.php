@@ -47,7 +47,7 @@ class ConceptoFinalEvaluadorController {
             'observaciones' => 'Observaciones',
             'id_concepto_final' => 'Concepto Final de la Visita',
             'nombre_evaluador' => 'Nombre del Evaluador',
-            'id_concepto_seguridad' => 'Concepto de Seguridad'
+            
         ];
         
         foreach ($campos_requeridos as $campo => $nombre) {
