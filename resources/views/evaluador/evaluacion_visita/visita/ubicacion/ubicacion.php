@@ -41,10 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['id_cedula'] = $id_cedula;
                 
                 echo '<script>
-                    window.open("../informe/index.php", "_blank");
-                    setTimeout(function() {
-                        window.location.href = "../perfil/perfil.php";
-                    }, 2000);
+                    window.location.href = "../perfil/perfil.php";
                 </script>';
                 exit();
             } else {
