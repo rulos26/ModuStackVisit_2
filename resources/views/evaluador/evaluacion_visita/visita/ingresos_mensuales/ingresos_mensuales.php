@@ -15,12 +15,12 @@ if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
     exit();
 }
 
-require_once __DIR__ . '/AportanteController.php';
-use App\Controllers\AportanteController;
+require_once __DIR__ . '/IngresosMensualesController.php';
+use App\Controllers\IngresosMensualesController;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $controller = AportanteController::getInstance();
+        $controller = IngresosMensualesController::getInstance();
         $datos = $controller->sanitizarDatos($_POST);
         $errores = $controller->validarDatos($datos);
         
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $resultado = $controller->guardar($datos);
             if ($resultado['success']) {
                 $_SESSION['success'] = $resultado['message'];
-                header('Location: ../data_credito/data_credito.php');
+                header('Location: ../gasto/gasto.php');
                 exit();
             } else {
                 $_SESSION['error'] = $resultado['message'];
@@ -37,17 +37,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['error'] = implode('<br>', $errores);
         }
     } catch (Exception $e) {
-        error_log("Error en aportante.php: " . $e->getMessage());
+        error_log("Error en ingresos_mensuales.php: " . $e->getMessage());
         $_SESSION['error'] = "Error interno del servidor: " . $e->getMessage();
     }
 }
 
 try {
-    $controller = AportanteController::getInstance();
+    $controller = IngresosMensualesController::getInstance();
     $id_cedula = $_SESSION['id_cedula'];
     $datos_existentes = $controller->obtenerPorCedula($id_cedula);
 } catch (Exception $e) {
-    error_log("Error en aportante.php: " . $e->getMessage());
+    error_log("Error en ingresos_mensuales.php: " . $e->getMessage());
     $error_message = "Error al cargar los datos: " . $e->getMessage();
 }
 ?>
@@ -64,17 +64,14 @@ try {
 .step-horizontal .step-description { font-size: 0.85rem; color: #888; text-align: center; }
 .step-horizontal.active .step-title, .step-horizontal.active .step-description { color: #4361ee; }
 .step-horizontal.complete .step-title, .step-horizontal.complete .step-description { color: #2ecc71; }
-.aportante-item { border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 20px; background: #f8f9fa; }
-.aportante-item h6 { color: #495057; margin-bottom: 15px; border-bottom: 2px solid #dee2e6; padding-bottom: 10px; }
-.btn-remove-aportante { position: absolute; top: 10px; right: 10px; }
 </style>
 
 <div class="container mt-4">
     <div class="card mt-5">
         <div class="card-header bg-primary text-white">
             <h5 class="card-title mb-0">
-                <i class="bi bi-people me-2"></i>
-                VISITA DOMICILIARÍA - PERSONAS QUE APORTAN ECONÓMICAMENTE AL HOGAR
+                <i class="bi bi-cash-stack me-2"></i>
+                VISITA DOMICILIARÍA - INGRESOS MENSUALES DEL NÚCLEO FAMILIAR
             </h5>
         </div>
         <div class="card-body">
@@ -145,19 +142,29 @@ try {
                     <div class="step-title">Paso 13</div>
                     <div class="step-description">Pasivos</div>
                 </div>
-                <div class="step-horizontal active">
+                <div class="step-horizontal complete">
                     <div class="step-icon"><i class="fas fa-people"></i></div>
                     <div class="step-title">Paso 14</div>
                     <div class="step-description">Aportantes</div>
+                </div>
+                <div class="step-horizontal complete">
+                    <div class="step-icon"><i class="fas fa-shield-check"></i></div>
+                    <div class="step-title">Paso 15</div>
+                    <div class="step-description">Data Crédito</div>
+                </div>
+                <div class="step-horizontal active">
+                    <div class="step-icon"><i class="fas fa-cash-stack"></i></div>
+                    <div class="step-title">Paso 16</div>
+                    <div class="step-description">Ingresos Mensuales</div>
                 </div>
             </div>
 
             <!-- Controles de navegación -->
             <div class="controls text-center mb-4">
-                <a href="../pasivos/tiene_pasivo.php" class="btn btn-secondary me-2">
+                <a href="../data_credito/data_credito.php" class="btn btn-secondary me-2">
                     <i class="fas fa-arrow-left me-1"></i>Anterior
                 </a>
-                <button class="btn btn-primary" id="nextBtn" type="button" onclick="document.getElementById('formAportantes').submit();">
+                <button class="btn btn-primary" id="nextBtn" type="button" onclick="document.getElementById('formIngresos').submit();">
                     Siguiente<i class="fas fa-arrow-right ms-1"></i>
                 </button>
             </div>
@@ -191,7 +198,7 @@ try {
             <?php if (!empty($datos_existentes)): ?>
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle me-2"></i>
-                    Ya existen <?php echo count($datos_existentes); ?> aportante(s) registrado(s) para esta cédula. Puede actualizar los datos.
+                    Ya existe información de ingresos mensuales registrada para esta cédula. Puede actualizar los datos.
                 </div>
             <?php endif; ?>
             
@@ -207,82 +214,86 @@ try {
                 </div>
             </div>
             
-            <form action="" method="POST" id="formAportantes" novalidate autocomplete="off">
-                <div id="aportantes-container">
-                    <!-- Aportante inicial -->
-                    <div class="aportante-item" data-aportante="0">
-                        <h6><i class="fas fa-user me-2"></i>Aportante #1</h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="nombre_0" class="form-label">
-                                    <i class="bi bi-person me-1"></i>Nombre:
-                                </label>
-                                <input type="text" class="form-control" id="nombre_0" name="nombre[]" 
-                                       value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes[0]['nombre'] ?? '') : ''; ?>"
-                                       placeholder="Ej: Juan Pérez, María García" minlength="3" maxlength="100" required>
-                                <div class="form-text">Mínimo 3 caracteres, máximo 100</div>
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="valor_0" class="form-label">
-                                    <i class="bi bi-cash-stack me-1"></i>Valor del Aporte:
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    <input type="text" class="form-control" id="valor_0" name="valor[]" 
-                                           value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes[0]['valor'] ?? '') : ''; ?>"
-                                           placeholder="0.00" required>
-                                </div>
-                                <div class="form-text">Ingrese el valor mensual del aporte</div>
-                            </div>
+            <form action="" method="POST" id="formIngresos" novalidate autocomplete="off">
+                <div class="row">
+                    <!-- Campo Salario -->
+                    <div class="col-md-4 mb-3">
+                        <label for="salario_val" class="form-label">
+                            <i class="bi bi-briefcase me-1"></i>Salario:
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="text" class="form-control" id="salario_val" name="salario_val" 
+                                   value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['salario_val'] ?? '') : ''; ?>"
+                                   placeholder="0.00" required>
                         </div>
+                        <div class="form-text">Ingrese el salario mensual</div>
                     </div>
                     
-                    <!-- Aportantes adicionales si existen datos -->
-                    <?php if (!empty($datos_existentes) && count($datos_existentes) > 1): ?>
-                        <?php for ($i = 1; $i < count($datos_existentes); $i++): ?>
-                            <div class="aportante-item" data-aportante="<?php echo $i; ?>">
-                                <button type="button" class="btn btn-danger btn-sm btn-remove-aportante" onclick="removeAportante(this)">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                                <h6><i class="fas fa-user me-2"></i>Aportante #<?php echo $i + 1; ?></h6>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="nombre_<?php echo $i; ?>" class="form-label">
-                                            <i class="bi bi-person me-1"></i>Nombre:
-                                        </label>
-                                        <input type="text" class="form-control" id="nombre_<?php echo $i; ?>" name="nombre[]" 
-                                               value="<?php echo htmlspecialchars($datos_existentes[$i]['nombre']); ?>"
-                                               placeholder="Ej: Juan Pérez, María García" minlength="3" maxlength="100" required>
-                                    </div>
-                                    
-                                    <div class="col-md-6 mb-3">
-                                        <label for="valor_<?php echo $i; ?>" class="form-label">
-                                            <i class="bi bi-cash-stack me-1"></i>Valor del Aporte:
-                                        </label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">$</span>
-                                            <input type="text" class="form-control" id="valor_<?php echo $i; ?>" name="valor[]" 
-                                                   value="<?php echo htmlspecialchars($datos_existentes[$i]['valor']); ?>"
-                                                   placeholder="0.00" required>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endfor; ?>
-                    <?php endif; ?>
+                    <!-- Campo Pensión -->
+                    <div class="col-md-4 mb-3">
+                        <label for="pension_val" class="form-label">
+                            <i class="bi bi-person-check me-1"></i>Pensión:
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="text" class="form-control" id="pension_val" name="pension_val" 
+                                   value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['pension_val'] ?? '') : ''; ?>"
+                                   placeholder="0.00" required>
+                        </div>
+                        <div class="form-text">Ingrese el valor de la pensión</div>
+                    </div>
+                    
+                    <!-- Campo Arriendo -->
+                    <div class="col-md-4 mb-3">
+                        <label for="arriendo_val" class="form-label">
+                            <i class="bi bi-house me-1"></i>Arriendo:
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="text" class="form-control" id="arriendo_val" name="arriendo_val" 
+                                   value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['arriendo_val'] ?? '') : ''; ?>"
+                                   placeholder="0.00" required>
+                        </div>
+                        <div class="form-text">Ingrese el valor del arriendo</div>
+                    </div>
+                    
+                    <!-- Campo Trabajo Independiente -->
+                    <div class="col-md-4 mb-3">
+                        <label for="trabajo_independiente_val" class="form-label">
+                            <i class="bi bi-person-workspace me-1"></i>Trabajo Independiente:
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="text" class="form-control" id="trabajo_independiente_val" name="trabajo_independiente_val" 
+                                   value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['trabajo_independiente_val'] ?? '') : ''; ?>"
+                                   placeholder="0.00" required>
+                        </div>
+                        <div class="form-text">Ingrese ingresos por trabajo independiente</div>
+                    </div>
+                    
+                    <!-- Campo Otros -->
+                    <div class="col-md-4 mb-3">
+                        <label for="otros_val" class="form-label">
+                            <i class="bi bi-plus-circle me-1"></i>Otros:
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="text" class="form-control" id="otros_val" name="otros_val" 
+                                   value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['otros_val'] ?? '') : ''; ?>"
+                                   placeholder="0.00" required>
+                        </div>
+                        <div class="form-text">Ingrese otros ingresos</div>
+                    </div>
                 </div>
                 
                 <div class="row">
                     <div class="col-12 text-center">
-                        <button type="button" class="btn btn-success btn-lg me-2" id="btnAgregarAportante">
-                            <i class="bi bi-plus-circle me-2"></i>Agregar Otro Aportante
-                        </button>
                         <button type="submit" class="btn btn-primary btn-lg me-2">
                             <i class="bi bi-check-circle me-2"></i>
                             <?php echo !empty($datos_existentes) ? 'Actualizar' : 'Guardar'; ?>
                         </button>
-                        <a href="../pasivos/tiene_pasivo.php" class="btn btn-secondary btn-lg">
+                        <a href="../data_credito/data_credito.php" class="btn btn-secondary btn-lg">
                             <i class="bi bi-arrow-left me-2"></i>Volver
                         </a>
                     </div>
@@ -304,10 +315,8 @@ try {
 
 <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.1.0/dist/autoNumeric.min.js"></script>
 <script>
-let aportanteCounter = <?php echo !empty($datos_existentes) ? count($datos_existentes) : 1; ?>;
-
-// Inicializar autoNumeric para campos de dinero existentes
-document.querySelectorAll('input[id^="valor_"]').forEach(function(input) {
+// Inicializar autoNumeric para campos de dinero
+document.querySelectorAll('input[id$="_val"]').forEach(function(input) {
     new AutoNumeric(input, {
         currencySymbol: '$',
         decimalCharacter: '.',
@@ -315,66 +324,6 @@ document.querySelectorAll('input[id^="valor_"]').forEach(function(input) {
         minimumValue: '0'
     });
 });
-
-document.getElementById('btnAgregarAportante').addEventListener('click', function() {
-    const container = document.getElementById('aportantes-container');
-    const nuevoAportante = document.createElement('div');
-    nuevoAportante.className = 'aportante-item';
-    nuevoAportante.setAttribute('data-aportante', aportanteCounter);
-    
-    nuevoAportante.innerHTML = `
-        <button type="button" class="btn btn-danger btn-sm btn-remove-aportante" onclick="removeAportante(this)">
-            <i class="fas fa-times"></i>
-        </button>
-        <h6><i class="fas fa-user me-2"></i>Aportante #${aportanteCounter + 1}</h6>
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="nombre_${aportanteCounter}" class="form-label">
-                    <i class="bi bi-person me-1"></i>Nombre:
-                </label>
-                <input type="text" class="form-control" id="nombre_${aportanteCounter}" name="nombre[]" 
-                       placeholder="Ej: Juan Pérez, María García" minlength="3" maxlength="100" required>
-                <div class="form-text">Mínimo 3 caracteres, máximo 100</div>
-            </div>
-            
-            <div class="col-md-6 mb-3">
-                <label for="valor_${aportanteCounter}" class="form-label">
-                    <i class="bi bi-cash-stack me-1"></i>Valor del Aporte:
-                </label>
-                <div class="input-group">
-                    <span class="input-group-text">$</span>
-                    <input type="text" class="form-control" id="valor_${aportanteCounter}" name="valor[]" 
-                           placeholder="0.00" required>
-                </div>
-                <div class="form-text">Ingrese el valor mensual del aporte</div>
-            </div>
-        </div>
-    `;
-    
-    container.appendChild(nuevoAportante);
-    
-    // Inicializar autoNumeric para el nuevo campo de dinero
-    new AutoNumeric(`#valor_${aportanteCounter}`, {
-        currencySymbol: '$',
-        decimalCharacter: '.',
-        digitGroupSeparator: ',',
-        minimumValue: '0'
-    });
-    
-    aportanteCounter++;
-});
-
-function removeAportante(button) {
-    const aportanteItem = button.closest('.aportante-item');
-    aportanteItem.remove();
-    
-    // Renumerar los aportantes restantes
-    const aportantes = document.querySelectorAll('.aportante-item');
-    aportantes.forEach((aportante, index) => {
-        const titulo = aportante.querySelector('h6');
-        titulo.innerHTML = `<i class="fas fa-user me-2"></i>Aportante #${index + 1}`;
-    });
-}
 </script>
 
 <?php
