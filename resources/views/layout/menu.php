@@ -29,6 +29,18 @@
             </a>
         </li>
         <li>
+            <a href="/ModuStackVisit_2/app/Controllers/test_controlador.php" class="nav-link link-dark">
+                <i class="bi bi-bug me-2"></i>
+                Probar Controlador
+            </a>
+        </li>
+        <li>
+            <a href="/ModuStackVisit_2/app/Controllers/test_modular_directo.php" class="nav-link link-dark">
+                <i class="bi bi-lightning me-2"></i>
+                Prueba Directa Modular
+            </a>
+        </li>
+        <li>
             <a href="/ModuStackVisit_2/resources/views/pdf/demo_pdf.php" class="nav-link link-dark">
                 <i class="bi bi-file-earmark-pdf me-2"></i>
                 PDF de ejemplo

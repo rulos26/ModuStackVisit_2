@@ -297,7 +297,7 @@ class ConfiguracionInforme {
         <table cellpadding='5' style='{$this->styles['table']}'>
             <tr style='border: {$this->borderWidth}px solid rgb(" . implode(',', $this->borderColor) . ");'>
                 <td width='100%' style='border: {$this->borderWidth}px solid rgb(" . implode(',', $this->borderColor) . ");'>{$logo}</td>
-            </tr>
+    </tr>
         </table>
         {$info}";
     }
@@ -317,13 +317,13 @@ class ConfiguracionInforme {
         <table cellpadding='5' style='{$this->styles['table']}'>
             <tr style='border: {$this->borderWidth}px solid rgb(" . implode(',', $this->borderColor) . ");'>
                 <td style='border: {$this->borderWidth}px solid rgb(" . implode(',', $this->borderColor) . ");'>Código: " . REPORT_CODE . "</td>
-            </tr>
+        </tr>
             <tr style='border: {$this->borderWidth}px solid rgb(" . implode(',', $this->borderColor) . ");'>
                 <td style='border: {$this->borderWidth}px solid rgb(" . implode(',', $this->borderColor) . ");'>Versión: " . REPORT_VERSION . "</td>
-            </tr>
+        </tr>
             <tr style='border: {$this->borderWidth}px solid rgb(" . implode(',', $this->borderColor) . ");'>
                 <td style='border: {$this->borderWidth}px solid rgb(" . implode(',', $this->borderColor) . ");'>Fecha de vigencia: " . REPORT_VALIDITY . "</td>
-            </tr>
+</tr>
         </table>";
     }
     
@@ -408,7 +408,7 @@ class DataManager {
                 <td width='40%' style='border: 1px solid rgb(255, 255, 255);'>{$perfil}</td>
                 <td width='20%' style='border: 1px solid rgb(255, 255, 255);'></td>
                 <td width='40%' style='border: 1px solid rgb(255, 255, 255);'>{$infoEvaluador}</td>
-            </tr>
+    </tr>
         </table>";
     }
     
@@ -432,19 +432,19 @@ class DataManager {
         <table cellpadding='5' style='width: 100%;'>
             <tr style='border: 1px solid rgb(255, 255, 255);'>
                 <td style='border: 1px solid rgb(255, 255, 255); font-weight: bold; text-align: right;'>" . $this->getDato('nombres') . "</td>
-            </tr>
+         </tr>
             <tr style='border: 1px solid rgb(255, 255, 255);'>
                 <td style='border: 1px solid rgb(255, 255, 255); font-weight: bold; text-align: right;'>" . $this->getDato('cargo') . "</td>
-            </tr>
+    </tr>
             <tr style='border: 1px solid rgb(255, 255, 255);'>
                 <td style='border: 1px solid rgb(255, 255, 255); font-weight: bold; text-align: right;'>" . $this->getDato('id_cedula') . "</td>
-            </tr>
+</tr>
             <tr style='border: 1px solid rgb(255, 255, 255);'>
                 <td style='border: 1px solid rgb(255, 255, 255); font-weight: bold; text-align: right;'>" . $this->getDato('edad') . " años</td>
-            </tr>
+    </tr>
             <tr style='border: 1px solid rgb(255, 255, 255);'>
                 <td style='border: 1px solid rgb(255, 255, 255); font-weight: bold; text-align: right;'>Fecha visita: {$fecha_actual}</td>
-            </tr>
+    </tr>
         </table>";
     }
     
@@ -480,7 +480,7 @@ class DataManager {
         <table cellpadding='5' style='width: 100%;'>
             <tr style='border: 1px solid rgb(255, 255, 255);'>
                 <td width='100%' style='border: 1px solid rgb(255, 255, 255);'>{$tabla}</td>
-            </tr>
+         </tr>
         </table>";
     }
     
@@ -539,7 +539,7 @@ class DataManager {
         <table cellpadding='5' style='width: 100%;'>
             <tr style='border: 1px solid rgb(255, 255, 255);'>
                 <td width='100%' style='border: 1px solid rgb(255, 255, 255);'>{$tabla}</td>
-            </tr>
+     </tr>
         </table>";
     }
     
