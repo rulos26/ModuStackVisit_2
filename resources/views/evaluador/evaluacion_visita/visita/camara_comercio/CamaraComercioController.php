@@ -35,14 +35,30 @@ class CamaraComercioController {
 
     public function validarDatos($datos) {
         $errores = [];
+        
+        // El único campo obligatorio es tiene_camara
         if (empty($datos['tiene_camara'])) {
             $errores[] = 'Debe seleccionar si tiene cámara de comercio.';
         }
+        
+        // Si tiene_camara es Sí, los campos adicionales son opcionales pero si se llenan deben ser válidos
         if ($datos['tiene_camara'] === 'Si') {
-            if (empty($datos['nombre'])) $errores[] = 'El nombre de la empresa es obligatorio.';
-            if (empty($datos['razon'])) $errores[] = 'La razón social es obligatoria.';
-            if (empty($datos['actividad'])) $errores[] = 'La actividad es obligatoria.';
+            // Validar nombre solo si se proporciona
+            if (!empty($datos['nombre']) && strlen(trim($datos['nombre'])) < 2) {
+                $errores[] = 'El nombre de la empresa debe tener al menos 2 caracteres.';
+            }
+            
+            // Validar razón social solo si se proporciona
+            if (!empty($datos['razon']) && strlen(trim($datos['razon'])) < 2) {
+                $errores[] = 'La razón social debe tener al menos 2 caracteres.';
+            }
+            
+            // Validar actividad solo si se proporciona
+            if (!empty($datos['actividad']) && strlen(trim($datos['actividad'])) < 2) {
+                $errores[] = 'La actividad debe tener al menos 2 caracteres.';
+            }
         }
+        
         return $errores;
     }
 

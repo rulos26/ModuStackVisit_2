@@ -176,7 +176,7 @@ try {
                         </select>
                         <div class="invalid-feedback">Por favor seleccione si tiene cámara de comercio.</div>
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-4 mb-3 campos-adicionales" id="campo-nombre" style="display: none;">
                         <label for="nombre" class="form-label">
                             <i class="bi bi-building me-1"></i>Nombre de Empresa:
                         </label>
@@ -185,7 +185,7 @@ try {
                                maxlength="200">
                         <div class="invalid-feedback">Por favor ingrese el nombre de la empresa.</div>
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-4 mb-3 campos-adicionales" id="campo-razon" style="display: none;">
                         <label for="razon" class="form-label">
                             <i class="bi bi-briefcase me-1"></i>Razón Social:
                         </label>
@@ -196,7 +196,7 @@ try {
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-6 mb-3 campos-adicionales" id="campo-actividad" style="display: none;">
                         <label for="actividad" class="form-label">
                             <i class="bi bi-gear me-1"></i>Actividad:
                         </label>
@@ -205,7 +205,7 @@ try {
                                maxlength="200">
                         <div class="invalid-feedback">Por favor ingrese la actividad.</div>
                     </div>
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-6 mb-3 campos-adicionales" id="campo-observacion" style="display: none;">
                         <label for="observacion" class="form-label">
                             <i class="bi bi-chat-text me-1"></i>Observaciones:
                         </label>
@@ -225,6 +225,49 @@ try {
                     </div>
                 </div>
             </form>
+            
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const tieneCamaraSelect = document.getElementById('tiene_camara');
+                const camposAdicionales = document.querySelectorAll('.campos-adicionales');
+                
+                // Verificar si hay datos existentes
+                const tieneDatosExistentes = <?php echo ($datos_existentes && $datos_existentes['tiene_camara'] == 'Si') ? 'true' : 'false'; ?>;
+                
+                // Función para mostrar/ocultar campos
+                function toggleCampos() {
+                    const valor = tieneCamaraSelect.value;
+                    
+                    if (valor === 'Si') {
+                        camposAdicionales.forEach(campo => {
+                            campo.style.display = 'block';
+                        });
+                    } else {
+                        camposAdicionales.forEach(campo => {
+                            campo.style.display = 'none';
+                            // Limpiar valores cuando se ocultan
+                            const input = campo.querySelector('input, textarea');
+                            if (input) {
+                                input.value = '';
+                            }
+                        });
+                    }
+                }
+                
+                // Ejecutar al cargar la página
+                toggleCampos();
+                
+                // Si hay datos existentes y tiene_camara es 'Si', mostrar campos
+                if (tieneDatosExistentes) {
+                    camposAdicionales.forEach(campo => {
+                        campo.style.display = 'block';
+                    });
+                }
+                
+                // Ejecutar cuando cambie la selección
+                tieneCamaraSelect.addEventListener('change', toggleCampos);
+            });
+            </script>
         </div>
         <div class="card-footer text-body-secondary">
             <div class="row">
