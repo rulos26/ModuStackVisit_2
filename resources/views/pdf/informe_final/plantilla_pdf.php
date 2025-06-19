@@ -14,11 +14,12 @@
             padding: 5px;
             margin-bottom: 10px;
         }
+        /* Contenedor del logo - espacios reducidos para optimizar espacio vertical */
         .logo-container {
             border: 1px solid rgb(175,0,0);
             text-align: center;
-            padding: 5px;
-            margin-bottom: 7.5px;
+            padding: 2px;
+            margin-bottom: 3px;
         }
         .logo {
             max-width: 100%;
