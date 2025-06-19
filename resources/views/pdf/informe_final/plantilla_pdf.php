@@ -350,6 +350,61 @@
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <?php if ($tipo_vivienda): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="12" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            TIPO DE VIVIENDA
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Tipo de Vivienda</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($tipo_vivienda['nombre_tipo_vivienda']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Sector</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($tipo_vivienda['nombre_sector']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Propietario</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($tipo_vivienda['nombre_propiedad']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Número de Familias que habitan la vivienda</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($tipo_vivienda['numero_de_familia']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Número de hogares habitan en la vivienda</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($tipo_vivienda['personas_nucleo_familiar']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Tiempo en años de Residencia en el Sector</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($tipo_vivienda['tiempo_sector']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Número de Pisos de la Vivienda</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($tipo_vivienda['numero_de_pisos']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Estado de la vivienda</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;">N/A</td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="12" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            TIPO DE VIVIENDA
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="12" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre la vivienda
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </body>
 </html>

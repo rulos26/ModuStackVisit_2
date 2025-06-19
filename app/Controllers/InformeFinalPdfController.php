@@ -193,6 +193,48 @@ class InformeFinalPdfController {
                                                    ($informacion_pareja['vive_candidato'] === '1' ? 'No' : 'N/A');
         }
 
+        // Consulta de tipo de vivienda
+        $sql_vivienda = "SELECT 
+            tv.id,
+            tv.id_cedula,
+            tv.id_tipo_vivienda,
+            tv.id_sector,
+            tv.id_propietario,
+            tv.numero_de_familia, 
+            tv.personas_nucleo_familiar,
+            tv.tiempo_sector,
+            tv.numero_de_pisos,
+            otv.nombre AS nombre_tipo_vivienda,
+            os.nombre AS nombre_sector,
+            op.nombre AS nombre_propiedad
+        FROM tipo_vivienda AS tv
+        JOIN opc_tipo_vivienda AS otv ON tv.id_tipo_vivienda = otv.id
+        JOIN opc_sector AS os ON tv.id_sector = os.id
+        JOIN opc_propiedad AS op ON tv.id_propietario = op.id
+        WHERE tv.id_cedula = :cedula";
+        
+        $stmt_vivienda = $db->prepare($sql_vivienda);
+        $stmt_vivienda->bindParam(':cedula', $cedula);
+        $stmt_vivienda->execute();
+        $tipo_vivienda = $stmt_vivienda->fetch(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de tipo de vivienda
+        if ($tipo_vivienda) {
+            // Convertir campos vacíos a N/A
+            $campos_texto = [
+                'nombre_tipo_vivienda',
+                'nombre_sector',
+                'nombre_propiedad',
+                'numero_de_familia',
+                'personas_nucleo_familiar',
+                'tiempo_sector',
+                'numero_de_pisos'
+            ];
+            foreach ($campos_texto as $campo) {
+                $tipo_vivienda[$campo] = empty($tipo_vivienda[$campo]) ? 'N/A' : $tipo_vivienda[$campo];
+            }
+        }
+
         // Función para convertir imagen a base64
         function img_to_base64($img_path) {
             if (!file_exists($img_path)) return '';
@@ -215,7 +257,8 @@ class InformeFinalPdfController {
             'camara_comercio' => $camara_comercio,
             'estado_salud' => $estado_salud,
             'composicion_familiar' => $composicion_familiar,
-            'informacion_pareja' => $informacion_pareja
+            'informacion_pareja' => $informacion_pareja,
+            'tipo_vivienda' => $tipo_vivienda
         ];
         extract($data);
         ob_start();
