@@ -8,10 +8,6 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 use Dompdf\Dompdf;
 use App\Database\Database;
 use Exception;
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-ob_start();
 
 class InformeFinalPdfController {
     
@@ -29,43 +25,30 @@ class InformeFinalPdfController {
     
     public static function Informefinalpdf() {
         try {
+            // Limpiar cualquier salida previa
+            if (ob_get_level()) {
+                ob_end_clean();
+            }
+            
             $db = Database::getInstance()->getConnection();
             $cedula = '1231211322';
             
             $logo_path = __DIR__ . '/../../public/images/header.jpg';
             $logo_b64 = self::img_to_base64($logo_path);
 
-            // Debug: Verificar variables
-            echo "<h3>Debug - Variables:</h3>";
-            echo "<p>Cédula: " . $cedula . "</p>";
-            echo "<p>Logo path: " . $logo_path . "</p>";
-            echo "<p>Logo existe: " . (file_exists($logo_path) ? 'SÍ' : 'NO') . "</p>";
-            echo "<p>Logo base64: " . (empty($logo_b64) ? 'VACÍO' : 'CON DATOS') . "</p>";
-
-            // --- Renderizado usando plantilla externa ---
+            // Preparar datos para la plantilla
             $data = [
                 'cedula' => $cedula,
                 'logo_b64' => $logo_b64
             ];
             
-            // Debug: Verificar array de datos
-            echo "<h3>Debug - Array de datos:</h3>";
-            echo "<pre>" . print_r($data, true) . "</pre>";
-            
+            // Extraer variables para la plantilla
             extract($data);
             
-            // Debug: Verificar variables después del extract
-            echo "<h3>Debug - Variables después del extract:</h3>";
-            echo "<p>Cédula después extract: " . (isset($cedula) ? $cedula : 'NO DEFINIDA') . "</p>";
-            echo "<p>Logo_b64 después extract: " . (isset($logo_b64) ? 'DEFINIDA' : 'NO DEFINIDA') . "</p>";
-            
+            // Generar HTML desde la plantilla
             ob_start();
             include __DIR__ . '/../../resources/views/pdf/informe_final/plantilla_pdf.php';
             $html = ob_get_clean();
-            
-            // Debug: Verificar HTML generado
-            echo "<h3>Debug - HTML generado:</h3>";
-            echo "<textarea style='width: 100%; height: 200px;'>" . htmlspecialchars($html) . "</textarea>";
             
             // Crear instancia de Dompdf
             $dompdf = new Dompdf();
@@ -78,7 +61,8 @@ class InformeFinalPdfController {
             exit;
             
         } catch (Exception $e) {
-            echo "<h3>Error:</h3>";
+            // Si hay error, mostrar en una página HTML
+            echo "<h3>Error al generar PDF:</h3>";
             echo "<p>" . $e->getMessage() . "</p>";
             echo "<p>Línea: " . $e->getLine() . "</p>";
             echo "<p>Archivo: " . $e->getFile() . "</p>";
