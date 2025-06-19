@@ -123,27 +123,23 @@ class InformacionParejaController {
             $id_cedula = $_SESSION['id_cedula'];
             $tiene_pareja = $datos['tiene_pareja'];
             
-            // Si no tiene pareja, solo guardar esa información
+            // Si no tiene pareja, no guardar nada en la base de datos
             if ($tiene_pareja == '1') {
+                // Eliminar registros existentes si los hay
                 $existe = $this->obtenerPorCedula($id_cedula);
                 if ($existe) {
-                    $sql = "UPDATE informacion_pareja SET tiene_pareja = :tiene_pareja WHERE id_cedula = :id_cedula";
+                    $sql = "DELETE FROM informacion_pareja WHERE id_cedula = :id_cedula";
                     $stmt = $this->db->prepare($sql);
-                    $stmt->bindParam(':tiene_pareja', $tiene_pareja);
                     $stmt->bindParam(':id_cedula', $id_cedula);
                     $ok = $stmt->execute();
                 } else {
-                    $sql = "INSERT INTO informacion_pareja (id_cedula, tiene_pareja) VALUES (:id_cedula, :tiene_pareja)";
-                    $stmt = $this->db->prepare($sql);
-                    $stmt->bindParam(':id_cedula', $id_cedula);
-                    $stmt->bindParam(':tiene_pareja', $tiene_pareja);
-                    $ok = $stmt->execute();
+                    $ok = true; // No hay nada que eliminar
                 }
                 
                 if ($ok) {
-                    return ['success'=>true, 'message'=>'Información de pareja guardada exitosamente.'];
+                    return ['success'=>true, 'message'=>'Información procesada exitosamente.'];
                 } else {
-                    return ['success'=>false, 'message'=>'Error al guardar la información de pareja.'];
+                    return ['success'=>false, 'message'=>'Error al procesar la información.'];
                 }
             }
             
@@ -167,7 +163,7 @@ class InformacionParejaController {
             $existe = $this->obtenerPorCedula($id_cedula);
             if ($existe) {
                 $sql = "UPDATE informacion_pareja SET 
-                         ced = :ced, id_tipo_documentos = :id_tipo_documentos, 
+                        ced = :ced, id_tipo_documentos = :id_tipo_documentos, 
                         cedula_expedida = :cedula_expedida, nombres = :nombres, edad = :edad, 
                         id_genero = :id_genero, id_nivel_academico = :id_nivel_academico, actividad = :actividad, 
                         empresa = :empresa, antiguedad = :antiguedad, direccion_empresa = :direccion_empresa, 
@@ -175,7 +171,6 @@ class InformacionParejaController {
                         observacion = :observacion 
                         WHERE id_cedula = :id_cedula";
                 $stmt = $this->db->prepare($sql);
-                //$stmt->bindParam(':tiene_pareja', $tiene_pareja);
                 $stmt->bindParam(':ced', $ced);
                 $stmt->bindParam(':id_tipo_documentos', $id_tipo_documentos);
                 $stmt->bindParam(':cedula_expedida', $cedula_expedida);
@@ -195,10 +190,9 @@ class InformacionParejaController {
                 $ok = $stmt->execute();
             } else {
                 $sql = "INSERT INTO informacion_pareja (id_cedula, ced, id_tipo_documentos, cedula_expedida, nombres, edad, id_genero, id_nivel_academico, actividad, empresa, antiguedad, direccion_empresa, telefono_1, telefono_2, vive_candidato, observacion) 
-                        VALUES (:id_cedula,  :ced, :id_tipo_documentos, :cedula_expedida, :nombres, :edad, :id_genero, :id_nivel_academico, :actividad, :empresa, :antiguedad, :direccion_empresa, :telefono_1, :telefono_2, :vive_candidato, :observacion)";
+                        VALUES (:id_cedula, :ced, :id_tipo_documentos, :cedula_expedida, :nombres, :edad, :id_genero, :id_nivel_academico, :actividad, :empresa, :antiguedad, :direccion_empresa, :telefono_1, :telefono_2, :vive_candidato, :observacion)";
                 $stmt = $this->db->prepare($sql);
                 $stmt->bindParam(':id_cedula', $id_cedula);
-                //$stmt->bindParam(':tiene_pareja', $tiene_pareja);
                 $stmt->bindParam(':ced', $ced);
                 $stmt->bindParam(':id_tipo_documentos', $id_tipo_documentos);
                 $stmt->bindParam(':cedula_expedida', $cedula_expedida);
