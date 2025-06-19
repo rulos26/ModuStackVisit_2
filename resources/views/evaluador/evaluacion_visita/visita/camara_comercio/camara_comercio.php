@@ -4,52 +4,51 @@ ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
-session_start();
-if (!isset($_SESSION['id_cedula'])) {
+ob_start();
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
     header('Location: ../../../../../public/login.php');
     exit();
 }
 
-require_once __DIR__ . '/../../../../../app/Database/Database.php';
-use App\Database\Database;
+require_once __DIR__ . '/CamaraComercioController.php';
+use App\Controllers\CamaraComercioController;
 
-// Procesamiento del formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $db = Database::getInstance()->getConnection();
-        $id_cedula = $_SESSION['id_cedula'];
-        $tiene_camara = $_POST['tiene_camara'] ?? '';
-        $nombre = $_POST['nombre'] ?? '';
-        $razon = $_POST['razon'] ?? '';
-        $actividad = $_POST['actividad'] ?? '';
-        $observacion = $_POST['observacion'] ?? '';
-
-        // Insertar o actualizar registro
-        $sql = "REPLACE INTO camara_comercio (id_cedula, tiene_camara, nombre, razon, actividad, observacion) VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt = $db->prepare($sql);
-        $stmt->execute([$id_cedula, $tiene_camara, $nombre, $razon, $actividad, $observacion]);
-
-        $_SESSION['success'] = 'Información de Cámara de Comercio guardada exitosamente.';
-        header('Location: ../salud/salud.php');
-        exit();
+        $controller = CamaraComercioController::getInstance();
+        $datos = $controller->sanitizarDatos($_POST);
+        $errores = $controller->validarDatos($datos);
+        if (empty($errores)) {
+            $resultado = $controller->guardar($datos);
+            if ($resultado['success']) {
+                $_SESSION['success'] = $resultado['message'];
+                header('Location: ../salud/salud.php');
+                exit();
+            } else {
+                $_SESSION['error'] = $resultado['message'];
+            }
+        } else {
+            $_SESSION['error'] = implode('<br>', $errores);
+        }
     } catch (Exception $e) {
-        $_SESSION['error'] = 'Error al guardar: ' . $e->getMessage();
+        error_log("Error en camara_comercio.php: " . $e->getMessage());
+        $_SESSION['error'] = "Error interno del servidor: " . $e->getMessage();
     }
 }
 
-// Obtener datos existentes si los hay
-$datos_existentes = [];
 try {
-    $db = Database::getInstance()->getConnection();
+    $controller = CamaraComercioController::getInstance();
     $id_cedula = $_SESSION['id_cedula'];
-    $stmt = $db->prepare("SELECT * FROM camara_comercio WHERE id_cedula = ?");
-    $stmt->execute([$id_cedula]);
-    $datos_existentes = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+    $datos_existentes = $controller->obtenerPorCedula($id_cedula);
 } catch (Exception $e) {
-    $error_message = 'Error al cargar los datos: ' . $e->getMessage();
+    error_log("Error en camara_comercio.php: " . $e->getMessage());
+    $error_message = "Error al cargar los datos: " . $e->getMessage();
 }
-
-ob_start();
 ?>
 <link rel="stylesheet" href="../../../../../public/css/styles.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -68,10 +67,14 @@ ob_start();
 
 <div class="container mt-4">
     <div class="card mt-5">
-        <div class="card-header">
-            <h5 class="card-title">Cámara de Comercio</h5>
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-building me-2"></i>
+                VISITA DOMICILIARÍA - CÁMARA DE COMERCIO
+            </h5>
         </div>
         <div class="card-body">
+            <!-- Indicador de pasos -->
             <div class="steps-horizontal mb-4">
                 <div class="step-horizontal complete">
                     <div class="step-icon"><i class="fas fa-user"></i></div>
@@ -104,84 +107,163 @@ ob_start();
                     <div class="step-description">Finalización</div>
                 </div>
             </div>
+
+            <!-- Controles de navegación -->
             <div class="controls text-center mb-4">
                 <a href="../informacion_personal/informacion_personal.php" class="btn btn-secondary me-2">
                     <i class="fas fa-arrow-left me-1"></i>Anterior
                 </a>
-                <button class="btn btn-primary" id="nextBtn" type="button" onclick="document.getElementById('camaraComercioForm').submit();">
+                <button class="btn btn-primary" id="nextBtn" type="button" onclick="document.getElementById('formCamaraComercio').submit();">
                     Siguiente<i class="fas fa-arrow-right ms-1"></i>
                 </button>
             </div>
+
+            <!-- Mensajes de sesión -->
             <?php if (isset($_SESSION['error'])): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <?php echo htmlspecialchars($_SESSION['error']); ?>
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <?php echo $_SESSION['error']; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <?php unset($_SESSION['error']); ?>
             <?php endif; ?>
+            
             <?php if (isset($_SESSION['success'])): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <?php echo htmlspecialchars($_SESSION['success']); ?>
+                    <i class="fas fa-check-circle me-2"></i>
+                    <?php echo $_SESSION['success']; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <?php unset($_SESSION['success']); ?>
             <?php endif; ?>
+            
             <?php if (isset($error_message)): ?>
                 <div class="alert alert-danger">
                     <i class="bi bi-exclamation-triangle me-2"></i>
                     <?php echo htmlspecialchars($error_message); ?>
                 </div>
             <?php endif; ?>
-            <form class="form-section" action="" method="post" autocomplete="off" id="camaraComercioForm">
-                <div class="row">
-                    <div class="col-6">
-                        <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 60%; height: auto;">
-                    </div>
-                    <div class="col-6"></div>
+            
+            <?php if ($datos_existentes): ?>
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Ya existe información registrada para esta cédula. Puede actualizar los datos.
                 </div>
+            <?php endif; ?>
+            
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 300px;">
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="text-muted">
+                        <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
+                        <small>Cédula: <?php echo htmlspecialchars($id_cedula); ?></small>
+                    </div>
+                </div>
+            </div>
+            
+            <form action="" method="POST" id="formCamaraComercio" novalidate autocomplete="off">
                 <div class="row">
                     <div class="col-md-4 mb-3">
-                        <label for="tiene_camara" class="form-label">¿Tiene Cámara de Comercio?</label>
+                        <label for="tiene_camara" class="form-label">
+                            <i class="bi bi-building me-1"></i>¿Tiene Cámara de Comercio?
+                        </label>
                         <select class="form-select" id="tiene_camara" name="tiene_camara" required>
-                            <option value="" selected>Seleccione una opción</option>
-                            <option value="Si" <?php if (($datos_existentes['tiene_camara'] ?? '') === 'Si') echo 'selected'; ?>>Sí</option>
-                            <option value="No" <?php if (($datos_existentes['tiene_camara'] ?? '') === 'No') echo 'selected'; ?>>No</option>
+                            <option value="">Seleccione una opción</option>
+                            <option value="Si" <?php echo ($datos_existentes && $datos_existentes['tiene_camara'] == 'Si') ? 'selected' : ''; ?>>Sí</option>
+                            <option value="No" <?php echo ($datos_existentes && $datos_existentes['tiene_camara'] == 'No') ? 'selected' : ''; ?>>No</option>
                         </select>
-                        <div class="invalid-feedback">Por favor seleccione una opción.</div>
+                        <div class="invalid-feedback">Por favor seleccione si tiene cámara de comercio.</div>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label for="nombre" class="form-label">Nombre de Empresa</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" maxlength="200" value="<?php echo htmlspecialchars($datos_existentes['nombre'] ?? ''); ?>">
+                        <label for="nombre" class="form-label">
+                            <i class="bi bi-building me-1"></i>Nombre de Empresa:
+                        </label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['nombre']) : ''; ?>" 
+                               maxlength="200">
+                        <div class="invalid-feedback">Por favor ingrese el nombre de la empresa.</div>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label for="razon" class="form-label">Razón Social</label>
-                        <input type="text" class="form-control" id="razon" name="razon" maxlength="200" value="<?php echo htmlspecialchars($datos_existentes['razon'] ?? ''); ?>">
+                        <label for="razon" class="form-label">
+                            <i class="bi bi-briefcase me-1"></i>Razón Social:
+                        </label>
+                        <input type="text" class="form-control" id="razon" name="razon" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['razon']) : ''; ?>" 
+                               maxlength="200">
+                        <div class="invalid-feedback">Por favor ingrese la razón social.</div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="actividad" class="form-label">Actividad</label>
-                        <input type="text" class="form-control" id="actividad" name="actividad" maxlength="200" value="<?php echo htmlspecialchars($datos_existentes['actividad'] ?? ''); ?>">
+                        <label for="actividad" class="form-label">
+                            <i class="bi bi-gear me-1"></i>Actividad:
+                        </label>
+                        <input type="text" class="form-control" id="actividad" name="actividad" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['actividad']) : ''; ?>" 
+                               maxlength="200">
+                        <div class="invalid-feedback">Por favor ingrese la actividad.</div>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="observacion" class="form-label">Observaciones</label>
-                        <textarea class="form-control" id="observacion" name="observacion" rows="2" maxlength="1000"><?php echo htmlspecialchars($datos_existentes['observacion'] ?? ''); ?></textarea>
+                        <label for="observacion" class="form-label">
+                            <i class="bi bi-chat-text me-1"></i>Observaciones:
+                        </label>
+                        <textarea class="form-control" id="observacion" name="observacion" rows="2" maxlength="1000"><?php echo $datos_existentes ? htmlspecialchars($datos_existentes['observacion']) : ''; ?></textarea>
+                        <div class="form-text">Máximo 1000 caracteres</div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="submit" class="btn btn-primary btn-lg me-2">
+                            <i class="bi bi-check-circle me-2"></i>
+                            <?php echo $datos_existentes ? 'Actualizar' : 'Guardar'; ?>
+                        </button>
+                        <a href="../informacion_personal/informacion_personal.php" class="btn btn-secondary btn-lg">
+                            <i class="bi bi-arrow-left me-2"></i>Volver
+                        </a>
                     </div>
                 </div>
             </form>
         </div>
         <div class="card-footer text-body-secondary">
-            © 2024 V0.01
+            <div class="row">
+                <div class="col-md-6">
+                    <small>© 2024 V0.01 - Sistema de Visitas Domiciliarias</small>
+                </div>
+                <div class="col-md-6 text-end">
+                    <small>Usuario: <?php echo htmlspecialchars($_SESSION['username'] ?? 'N/A'); ?></small>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <script src="../../../../../public/js/validacionCamaraComercio.js"></script>
 <?php
 $contenido = ob_get_clean();
-include dirname(__DIR__, 3) . '/layout/dashboard.php';
+// Intentar múltiples rutas posibles para el dashboard
+$dashboard_paths = [
+    dirname(__DIR__, 4) . '/layout/dashboard.php',
+    dirname(__DIR__, 5) . '/layout/dashboard.php',
+    dirname(__DIR__, 6) . '/layout/dashboard.php',
+    __DIR__ . '/../../../../../layout/dashboard.php',
+    __DIR__ . '/../../../../../../layout/dashboard.php'
+];
+$dashboard_incluido = false;
+foreach ($dashboard_paths as $path) {
+    if (file_exists($path)) {
+        include $path;
+        $dashboard_incluido = true;
+        break;
+    }
+}
+if (!$dashboard_incluido) {
+    echo $contenido;
+    echo '<div style="background: #f8d7da; color: #721c24; padding: 1rem; margin: 1rem; border: 1px solid #f5c6cb; border-radius: 0.25rem;">';
+    echo '<strong>Advertencia:</strong> No se pudo cargar el layout del dashboard. Rutas probadas:<br>';
+    foreach ($dashboard_paths as $path) {
+        echo '- ' . htmlspecialchars($path) . '<br>';
+    }
+    echo '</div>';
+}
 ?>
