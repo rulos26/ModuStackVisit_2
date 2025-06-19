@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Redirigir según la acción realizada
                 if ($resultado['action'] === 'created') {
                     // Si es un nuevo registro, continuar al siguiente paso
-                    header('Location: ../registro_fotografico/registro_fotografico.php');
+                    header('Location: ../camara_comercio/camara_comercio.php');
                     exit();
                 } else {
                     // Si es una actualización, mostrar mensaje de éxito
@@ -179,19 +179,19 @@ try {
                     <div class="step-description">Información Personal</div>
                 </div>
                 <div class="step-horizontal">
-                    <div class="step-icon"><i class="fas fa-camera"></i></div>
+                    <div class="step-icon"><i class="fas fa-building"></i></div>
                     <div class="step-title">Paso 3</div>
+                    <div class="step-description">Cámara de Comercio</div>
+                </div>
+                <div class="step-horizontal">
+                    <div class="step-icon"><i class="fas fa-camera"></i></div>
+                    <div class="step-title">Paso 4</div>
                     <div class="step-description">Registro Fotográfico</div>
                 </div>
                 <div class="step-horizontal">
                     <div class="step-icon"><i class="fas fa-map-marker-alt"></i></div>
-                    <div class="step-title">Paso 4</div>
-                    <div class="step-description">Ubicación</div>
-                </div>
-                <div class="step-horizontal">
-                    <div class="step-icon"><i class="fas fa-file-signature"></i></div>
                     <div class="step-title">Paso 5</div>
-                    <div class="step-description">Firma</div>
+                    <div class="step-description">Ubicación</div>
                 </div>
                 <div class="step-horizontal">
                     <div class="step-icon"><i class="fas fa-flag-checkered"></i></div>
@@ -289,9 +289,9 @@ try {
                         <select class="form-select" id="cedula_expedida" name="cedula_expedida" required>
                             <option value="">Seleccione municipio</option>
                             <?php foreach ($opciones['municipios'] as $opcion): ?>
-                                <option value="<?php echo htmlspecialchars($opcion['id']); ?>" 
-                                        <?php echo ($datos_existentes && $datos_existentes['cedula_expedida'] == $opcion['id']) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($opcion['nombre']); ?>
+                                <option value="<?php echo htmlspecialchars($opcion['id_municipio']); ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['cedula_expedida'] == $opcion['id_municipio']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($opcion['municipio']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -349,9 +349,9 @@ try {
                         <select class="form-select" id="lugar_nacimiento" name="lugar_nacimiento" required>
                             <option value="">Seleccione municipio</option>
                             <?php foreach ($opciones['municipios'] as $opcion): ?>
-                                <option value="<?php echo htmlspecialchars($opcion['id']); ?>" 
-                                        <?php echo ($datos_existentes && $datos_existentes['lugar_nacimiento'] == $opcion['id']) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($opcion['nombre']); ?>
+                                <option value="<?php echo htmlspecialchars($opcion['id_municipio']); ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['lugar_nacimiento'] == $opcion['id_municipio']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($opcion['municipio']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -497,9 +497,9 @@ try {
                         <select class="form-select" id="id_ciudad" name="id_ciudad" required>
                             <option value="">Seleccione ciudad</option>
                             <?php foreach ($opciones['municipios'] as $opcion): ?>
-                                <option value="<?php echo htmlspecialchars($opcion['id']); ?>" 
-                                        <?php echo ($datos_existentes && $datos_existentes['id_ciudad'] == $opcion['id']) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($opcion['nombre']); ?>
+                                <option value="<?php echo htmlspecialchars($opcion['id_municipio']); ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['id_ciudad'] == $opcion['id_municipio']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($opcion['municipio']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>

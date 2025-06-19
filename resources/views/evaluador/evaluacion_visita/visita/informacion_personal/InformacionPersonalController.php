@@ -338,7 +338,14 @@ class InformacionPersonalController {
             }
             
             $tabla = $tablas[$tipo];
-            $sql = "SELECT * FROM $tabla ORDER BY nombre";
+            
+            // Consulta específica para municipios
+            if ($tipo === 'municipios') {
+                $sql = "SELECT id_municipio, municipio FROM $tabla ORDER BY municipio";
+            } else {
+                $sql = "SELECT * FROM $tabla ORDER BY nombre";
+            }
+            
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             
