@@ -12,7 +12,7 @@
         .header {
             border: 2px solid rgb(96, 196, 30);
             padding: 5px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         .logo-container {
             border: 1px solid rgb(175,0,0);
