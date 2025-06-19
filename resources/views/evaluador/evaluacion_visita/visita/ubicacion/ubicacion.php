@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 try {
     $controller = UbicacionController::getInstance();
-    $datos_existentes = $controller->obtenerUbicacion($id_cedula);
+    $datos_existentes = $controller->obtenerPorCedula($id_cedula);
 } catch (Exception $e) {
     error_log("Error en ubicacion.php: " . $e->getMessage());
     $error_message = "Error al cargar los datos: " . $e->getMessage();
