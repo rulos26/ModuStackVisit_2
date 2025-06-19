@@ -61,6 +61,11 @@ $foto6;
 $foto7;
 $foto8;
 
+// Definir $data_info_personal si no está definida
+if (!isset($data_info_personal)) {
+    $data_info_personal = '<span style="color:red">Información personal no disponible</span>';
+}
+
 // Clase para configuración del PDF
 class PDFConfig {
     const PAGE_FORMAT = 'A4';
@@ -199,10 +204,7 @@ try {
     $pdfFilename = 'informe_' . date('Y-m-d_H-i-s') . '.pdf';
     $pdf->Output($pdfFilename, 'I');
     
-    Logger::log("PDF generado correctamente: {$pdfFilename}");
-    
 } catch (Exception $e) {
-    Logger::logError("Error al generar PDF", $e);
     echo "Error al generar el informe PDF: " . $e->getMessage();
 }
 
