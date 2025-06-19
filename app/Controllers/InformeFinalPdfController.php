@@ -56,6 +56,53 @@ class InformeFinalPdfController {
         $stmt_camara->execute();
         $camara_comercio = $stmt_camara->fetch(\PDO::FETCH_ASSOC);
 
+        // Consulta de estado de salud
+        $sql_salud = "SELECT 
+            es.id,
+            es.id_cedula,
+            es.id_estado_salud,
+            oe.nombre AS nombre_estado_salud,
+            es.tipo_enfermedad,
+            es.tipo_enfermedad_cual,
+            es.limitacion_fisica,
+            es.limitacion_fisica_cual,
+            es.tipo_medicamento,
+            es.tipo_medicamento_cual,
+            es.ingiere_alcohol,
+            es.ingiere_alcohol_cual,
+            es.fuma,
+            es.observacion
+        FROM estados_salud es
+        JOIN opc_estados oe ON es.id_estado_salud = oe.id
+        WHERE es.id_cedula = :cedula";
+        
+        $stmt_salud = $db->prepare($sql_salud);
+        $stmt_salud->bindParam(':cedula', $cedula);
+        $stmt_salud->execute();
+        $estado_salud = $stmt_salud->fetch(\PDO::FETCH_ASSOC);
+
+        // Función para convertir valores binarios a Sí/No
+        function convertirSiNo($valor) {
+            if ($valor === null || $valor === '') return 'N/A';
+            return $valor == '0' ? 'Sí' : 'No';
+        }
+
+        // Procesar los campos de estado de salud
+        if ($estado_salud) {
+            $estado_salud['tipo_enfermedad'] = convertirSiNo($estado_salud['tipo_enfermedad']);
+            $estado_salud['limitacion_fisica'] = convertirSiNo($estado_salud['limitacion_fisica']);
+            $estado_salud['tipo_medicamento'] = convertirSiNo($estado_salud['tipo_medicamento']);
+            $estado_salud['ingiere_alcohol'] = convertirSiNo($estado_salud['ingiere_alcohol']);
+            $estado_salud['fuma'] = convertirSiNo($estado_salud['fuma']);
+            
+            // Convertir campos vacíos a N/A
+            $campos_texto = ['tipo_enfermedad_cual', 'limitacion_fisica_cual', 'tipo_medicamento_cual', 
+                           'ingiere_alcohol_cual', 'observacion', 'nombre_estado_salud'];
+            foreach ($campos_texto as $campo) {
+                $estado_salud[$campo] = empty($estado_salud[$campo]) ? 'N/A' : $estado_salud[$campo];
+            }
+        }
+
         // Función para convertir imagen a base64
         function img_to_base64($img_path) {
             if (!file_exists($img_path)) return '';
@@ -75,7 +122,8 @@ class InformeFinalPdfController {
             'cedula' => $cedula,
             'logo_b64' => $logo_b64,
             'evaluado' => $evaluado,
-            'camara_comercio' => $camara_comercio
+            'camara_comercio' => $camara_comercio,
+            'estado_salud' => $estado_salud
         ];
         extract($data);
         ob_start();

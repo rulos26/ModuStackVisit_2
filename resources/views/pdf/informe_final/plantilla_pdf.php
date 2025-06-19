@@ -190,6 +190,52 @@
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <?php if ($estado_salud): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            Estado de Salud del Aspirante
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Estado de salud</td>
+                        <td colspan="3" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estado_salud['nombre_estado_salud']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">¿Padece algún tipo de enfermedad?</td>
+                        <td colspan="1" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estado_salud['tipo_enfermedad']) ?></td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estado_salud['tipo_enfermedad_cual']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">¿Tiene alguna limitación física?</td>
+                        <td colspan="1" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estado_salud['limitacion_fisica']) ?></td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estado_salud['limitacion_fisica_cual']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">¿Toma algún tipo de medicamento?</td>
+                        <td colspan="1" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estado_salud['tipo_medicamento']) ?></td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estado_salud['tipo_medicamento_cual']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">¿Ingiere alcohol?</td>
+                        <td colspan="1" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estado_salud['ingiere_alcohol']) ?></td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estado_salud['ingiere_alcohol_cual']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">¿Fuma?</td>
+                        <td colspan="3" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estado_salud['fuma']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Observaciones</td>
+                        <td colspan="3" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estado_salud['observacion']) ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </body>
 </html>
