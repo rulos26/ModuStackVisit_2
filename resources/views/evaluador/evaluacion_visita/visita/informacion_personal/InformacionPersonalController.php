@@ -328,8 +328,8 @@ class InformacionPersonalController {
                 'municipios' => 'municipios',
                 'rh' => 'opc_rh',
                 'estaturas' => 'opc_estaturas',
-                'pesos' => 'opc_pesos',
-                'estado_civil' => 'opc_estado_civil',
+                'pesos' => 'opc_peso',
+                'estado_civil' => 'opc_estado_civiles',
                 'estratos' => 'opc_estratos'
             ];
             
@@ -343,7 +343,7 @@ class InformacionPersonalController {
             if ($tipo === 'municipios') {
                 $sql = "SELECT id_municipio, municipio FROM $tabla ORDER BY municipio";
             } else {
-                $sql = "SELECT * FROM $tabla ORDER BY nombre";
+                $sql = "SELECT id, nombre FROM $tabla ORDER BY nombre";
             }
             
             $stmt = $this->db->prepare($sql);
