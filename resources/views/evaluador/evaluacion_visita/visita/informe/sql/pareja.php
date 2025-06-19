@@ -1,5 +1,5 @@
 <?php
-include '../../../../../conn/conexion.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/ModuStackVisit_2/conn/conexion.php';
 $id_cedula = $_SESSION['id_cedula'];
 $pareja = "SELECT IP.id, IP.id_cedula,IP.cedula, IP.id_tipo_documentos, 
 IP.cedula_expedida, IP.nombres, IP.edad, IP.id_genero,

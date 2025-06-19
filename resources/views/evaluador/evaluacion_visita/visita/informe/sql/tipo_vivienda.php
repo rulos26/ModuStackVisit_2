@@ -1,5 +1,5 @@
 <?php
-include '../../../../../conn/conexion.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/ModuStackVisit_2/conn/conexion.php';
 $vivienda = "SELECT 
 tv.id,tv.id_cedula,tv.id_tipo_vivienda,tv.id_sector,tv.id_propietario,tv.numero_de_familia, 
 tv.personas_nucleo_familiar,tv.tiempo_sector,tv.numero_de_pisos,

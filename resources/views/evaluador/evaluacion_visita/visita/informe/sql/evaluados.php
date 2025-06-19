@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../../../../conn/conexion.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/ModuStackVisit_2/conn/conexion.php';
 $id_cedula = $_SESSION['id_cedula'];
 $evaluado = "SELECT 
 e.id,e.id_cedula,e.id_tipo_documentos, e.cedula_expedida, e.nombres, e.apellidos, 
