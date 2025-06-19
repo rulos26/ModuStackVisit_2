@@ -17,6 +17,12 @@
             </a>
         </li>
         <li>
+            <a href="/ModuStackVisit_2/resources/views/evaluador/evaluacion_visita/visita/informe/menu_principal.php" class="nav-link link-dark">
+                <i class="bi bi-file-earmark-pdf me-2"></i>
+                Generar Informe PDF
+            </a>
+        </li>
+        <li>
             <a href="/ModuStackVisit_2/resources/views/pdf/demo_pdf.php" class="nav-link link-dark">
                 <i class="bi bi-file-earmark-pdf me-2"></i>
                 PDF de ejemplo
