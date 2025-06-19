@@ -538,10 +538,17 @@ $info_vivienda  = '
          </tr>
     </table>';
 
+// Definir función general para obtener datos seguros de arrays asociativos
+function obtenerDatoSeguro($array, $clave) {
+    return (isset($array[$clave]) && $array[$clave] !== '') ? $array[$clave] : 'No hay datos';
+}
+
 // Validación para los campos de $filas_invetario
 function obtenerDatoInventario($array, $clave) {
     return (isset($array[$clave]) && $array[$clave] !== '') ? $array[$clave] : 'No hay datos';
 }
+
+
 
 // Modifica $data_inventario para usar la función de validación
 $data_inventario = ' <table class="customTable">
@@ -554,53 +561,53 @@ $data_inventario = ' <table class="customTable">
   <tbody>
       <tr>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Televisor</td>
-          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'televisor_nombre_cant') . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_invetario, 'televisor_nombre_cant') . '</td>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">D.V.D</td>
-          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'dvd_nombre_cant') . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_invetario, 'dvd_nombre_cant') . '</td>
     
       </tr>
        <tr>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Teatro en Casa</td>
-          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'teatro_casa_nombre_cant') . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_invetario, 'teatro_casa_nombre_cant') . '</td>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Equipo de Sonido</td>
-          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'equipo_sonido_nombre_cant') . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_invetario, 'equipo_sonido_nombre_cant') . '</td>
     
           </tr>
       
       <tr>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Computador</td>
-          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'computador_nombre_cant') . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_invetario, 'computador_nombre_cant') . '</td>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Impresora</td>
-          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'impresora_nombre_cant') . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_invetario, 'impresora_nombre_cant') . '</td>
       </tr>
        <tr>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Movil</td>
-          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'movil_nombre_cant') . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_invetario, 'movil_nombre_cant') . '</td>
           <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Estufa</td>
-          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'estufa_nombre_cant') . '</td>
+          <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_invetario, 'estufa_nombre_cant') . '</td>
    
           </tr>
        <tr>
       <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Nevera</td>
-      <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'nevera_nombre_cant') . '</td>
+      <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_invetario, 'nevera_nombre_cant') . '</td>
       <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Lavadora</td>
-      <td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'lavadora_nombre_cant') . '</td>
+      <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_invetario, 'lavadora_nombre_cant') . '</td>
     
       </tr>
 <tr>
 <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Microondas</td>
-<td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'microondas_nombre_cant') . '</td>
+<td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_invetario, 'microondas_nombre_cant') . '</td>
 <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Moto</td>
-<td colspan="2" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'moto_nombre_cant') . '</td>
+<td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_invetario, 'moto_nombre_cant') . '</td>
 
 </tr>
 <tr>
 <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Carro</td>
-<td colspan="8" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'carro_nombre_cant') . '</td>
+<td colspan="8" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_invetario, 'carro_nombre_cant') . '</td>
 </tr>
 <tr>
 <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">observaciones</td>
-<td colspan="8" style="border: 1px solid black;">' . obtenerDatoInventario($filas_invetario, 'observacion') . '</td>
+<td colspan="8" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_invetario, 'observacion') . '</td>
 </tr>
   </tbody>
   </table>';
@@ -623,34 +630,34 @@ $data_servicios = ' <table class="customTable">
  <tbody>
      <tr>
          <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Agua</td>
-         <td colspan="2" style="border: 1px solid black;">' . $filas_servicios['nombre_agua'] . '</td>
+         <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_servicios, 'nombre_agua') . '</td>
          <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Luz</td>
-         <td colspan="2" style="border: 1px solid black;"> ' . $filas_servicios['nombre_luz'] . '</td>
+         <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_servicios, 'nombre_luz') . '</td>
   
      </tr>
      <tr>
          <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Gas</td>
-         <td colspan="2" style="border: 1px solid black;">' . $filas_servicios['nombre_gas'] . '</td>
+         <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_servicios, 'nombre_gas') . '</td>
          <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Alcantarillado</td>
-         <td colspan="2" style="border: 1px solid black;">' . $filas_servicios['nombre_alcantarillado'] . '</td>
+         <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_servicios, 'nombre_alcantarillado') . '</td>
    
      
          </tr>
      <tr>
          <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Internet</td>
-         <td colspan="2" style="border: 1px solid black;">' . $filas_servicios['nombre_internet'] . '</td>
+         <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_servicios, 'nombre_internet') . '</td>
          <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Administración</td>
-         <td colspan="2" style="border: 1px solid black;"> ' . $filas_servicios['nombre_administracion'] . '</td>
+         <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_servicios, 'nombre_administracion') . '</td>
    
          </tr>
      <tr>
          <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Parqueadero</td>
-         <td colspan="8" style="border: 1px solid black;">' . $filas_servicios['nombre_parqueadero'] . '</td>
+         <td colspan="8" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_servicios, 'nombre_parqueadero') . '</td>
      </tr>
      
 <tr>
 <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">observaciones</td>
-<td colspan="8" style="border: 1px solid black;">' . $filas_servicios['observacion'] . '</td>
+<td colspan="8" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_servicios, 'observacion') . '</td>
 </tr>
  </tbody>
  </table>';
@@ -671,34 +678,34 @@ $data_patrimonio = ' <table class="customTable">
 <tbody>
     <tr>
         <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Valor Vivienda</td>
-        <td colspan="2" style="border: 1px solid black;">' . $filas_patrimonio['valor_vivienda'] . '</td>
+        <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_patrimonio, 'valor_vivienda') . '</td>
         <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Dirección</td>
-        <td colspan="2" style="border: 1px solid black;"> ' . $filas_patrimonio['direccion'] . '</td>
+        <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_patrimonio, 'direccion') . '</td>
  
     </tr>
     
     <tr>
         <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Vehiculo</td>
-        <td colspan="2" style="border: 1px solid black;">' . $filas_patrimonio['id_vehiculo'] . '</td>
+        <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_patrimonio, 'id_vehiculo') . '</td>
         <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Marca</td>
-        <td colspan="2" style="border: 1px solid black;">' . $filas_patrimonio['id_marca'] . '</td>
+        <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_patrimonio, 'id_marca') . '</td>
  
         </tr>
     <tr>
         <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Modelo</td>
-        <td colspan="2" style="border: 1px solid black;">' . $filas_patrimonio['id_modelo'] . '</td>
+        <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_patrimonio, 'id_modelo') . '</td>
         <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Ahorro (CDT, Inversiones)</td>
-        <td colspan="2" style="border: 1px solid black;">' . $filas_patrimonio['id_ahorro'] . '</td>
+        <td colspan="2" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_patrimonio, 'id_ahorro') . '</td>
  
         </tr>
     <tr>
     <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">Otros</td>
-    <td colspan="8" style="border: 1px solid black;"> ' . $filas_patrimonio['otros'] . '</td>
+    <td colspan="8" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_patrimonio, 'otros') . '</td>
 </tr>
 
 <tr>
 <td colspan="4" style="font-weight: bold;  background-color: #ABABAB; border: 1px solid black;  ">observaciones</td>
-<td colspan="8" style="border: 1px solid black;">' . $filas_patrimonio['observacion'] . '</td>
+<td colspan="8" style="border: 1px solid black;">' . obtenerDatoSeguro($filas_patrimonio, 'observacion') . '</td>
 </tr>
 </tbody>
 </table>';
@@ -730,10 +737,10 @@ $data_cuentas = '
 if ($cuenta_data->num_rows > 0) {
     while ($cuentas_row = $cuenta_data->fetch_assoc()) {
         $data_cuentas .= '<tr>';
-        $data_cuentas .= '<td style="border: 1px solid black; text-align: center;">' . $cuentas_row['id_entidad'] . '</td>';
-        $data_cuentas .= '<td style="border: 1px solid black; text-align: center;">' . $cuentas_row['id_tipo_cuenta'] . '</td>';
-        $data_cuentas .= '<td style="border: 1px solid black; text-align: center;">' . $cuentas_row['ciudad']  . '</td>';
-        $data_cuentas .= '<td style="border: 1px solid black; text-align: center;">' . $cuentas_row['observaciones'] . '</td>';
+        $data_cuentas .= '<td style="border: 1px solid black; text-align: center;">' . obtenerDatoSeguro($cuentas_row, 'id_entidad') . '</td>';
+        $data_cuentas .= '<td style="border: 1px solid black; text-align: center;">' . obtenerDatoSeguro($cuentas_row, 'id_tipo_cuenta') . '</td>';
+        $data_cuentas .= '<td style="border: 1px solid black; text-align: center;">' . obtenerDatoSeguro($cuentas_row, 'ciudad') . '</td>';
+        $data_cuentas .= '<td style="border: 1px solid black; text-align: center;">' . obtenerDatoSeguro($cuentas_row, 'observaciones') . '</td>';
         $data_cuentas .= '</tr>';
     }
 } else {
@@ -773,12 +780,12 @@ $data_pasivos = '<table class="table table-bordered">
 if ($data_pasivo->num_rows > 0) {
     while ($pasivo_row = $data_pasivo->fetch_assoc()) {
         $data_pasivos .= '<tr>';
-        $data_pasivos .= '<td style="border: 1px solid black; text-align: center;">' . $pasivo_row['item'] . '</td>';
-        $data_pasivos .= '<td style="border: 1px solid black; text-align: center;">' . $pasivo_row['id_entidad'] . '</td>';
-        $data_pasivos .= '<td style="border: 1px solid black; text-align: center;">' . $pasivo_row['id_tipo_inversion']  . '</td>';
-        $data_pasivos .= '<td style="border: 1px solid black; text-align: center;">' . $pasivo_row['municipio']  . '</td>';
-        $data_pasivos .= '<td style="border: 1px solid black; text-align: center;">' . $pasivo_row['deuda'] . '</td>';
-        $data_pasivos .= '<td style="border: 1px solid black; text-align: center;">' . $pasivo_row['cuota_mes'] . '</td>';
+        $data_pasivos .= '<td style="border: 1px solid black; text-align: center;">' . obtenerDatoSeguro($pasivo_row, 'item') . '</td>';
+        $data_pasivos .= '<td style="border: 1px solid black; text-align: center;">' . obtenerDatoSeguro($pasivo_row, 'id_entidad') . '</td>';
+        $data_pasivos .= '<td style="border: 1px solid black; text-align: center;">' . obtenerDatoSeguro($pasivo_row, 'id_tipo_inversion')  . '</td>';
+        $data_pasivos .= '<td style="border: 1px solid black; text-align: center;">' . obtenerDatoSeguro($pasivo_row, 'municipio')  . '</td>';
+        $data_pasivos .= '<td style="border: 1px solid black; text-align: center;">' . obtenerDatoSeguro($pasivo_row, 'deuda') . '</td>';
+        $data_pasivos .= '<td style="border: 1px solid black; text-align: center;">' . obtenerDatoSeguro($pasivo_row, 'cuota_mes') . '</td>';
         $data_pasivos .= '</tr>';
     }
 } else {
