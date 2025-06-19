@@ -1219,7 +1219,7 @@ $evidencia_foto = '
 // Contenedor que alberga las dos tablas
 $containerStyle = 'width: 100%; margin-bottom: 0;'; // Estilo del contenedor
 
-// Contenido HTML
+// Contenido HTML - SOLO PRIMER MÓDULO PARA PRUEBA
 $htmlContent = '
 <div style="border: 2px solid rgb(175, 0, 0);">
     <table cellpadding="5" style="width: 100%; ">
@@ -1228,7 +1228,10 @@ $htmlContent = '
             </tr>
            
     </table>
-    ' . $fila_perfil . $info_personal . $info_camara . $info_salud . $info_familia . $info_pareja . $info_vivienda . $info_inventario . $info_servicios . $info_patrimonio . $info_cuentas . $info_pasivo . $info_aportantes . $info_ingreso . $info_gasto . $info_acade . $exp_laboral .  $info_judi . $concepto_final . $ubicacion_foto .$evidencia_foto. '
+    ' . $fila_perfil . $info_personal . '
+    <!-- MÓDULOS COMENTADOS PARA PRUEBA:
+    ' . $info_camara . $info_salud . $info_familia . $info_pareja . $info_vivienda . $info_inventario . $info_servicios . $info_patrimonio . $info_cuentas . $info_pasivo . $info_aportantes . $info_ingreso . $info_gasto . $info_acade . $exp_laboral .  $info_judi . $concepto_final . $ubicacion_foto .$evidencia_foto. '
+    -->
 </div>
 ';
 
@@ -1238,3 +1241,9 @@ $pdf->writeHTML($htmlContent, true, false, true, false, '');
 
 // Salida del PDF (descarga directa)
 $pdf->Output('Fila_con_Columnas.pdf', 'I');
+
+// LOG DE DEPURACIÓN PARA PRIMER MÓDULO
+error_log("=== PRUEBA PRIMER MÓDULO ===");
+error_log("Variable \$row: " . print_r($row, true));
+error_log("Variable \$fila_perfil: " . substr($fila_perfil, 0, 100) . "...");
+error_log("Variable \$info_personal: " . substr($info_personal, 0, 100) . "...");
