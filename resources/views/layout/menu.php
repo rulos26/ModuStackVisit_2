@@ -23,6 +23,12 @@
             </a>
         </li>
         <li>
+            <a href="/ModuStackVisit_2/app/Controllers/ejemplo_uso_informe.php" class="nav-link link-dark">
+                <i class="bi bi-gear me-2"></i>
+                Controlador Informe PDF
+            </a>
+        </li>
+        <li>
             <a href="/ModuStackVisit_2/resources/views/pdf/demo_pdf.php" class="nav-link link-dark">
                 <i class="bi bi-file-earmark-pdf me-2"></i>
                 PDF de ejemplo
