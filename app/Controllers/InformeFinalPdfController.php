@@ -41,6 +41,21 @@ class InformeFinalPdfController {
         $stmt->execute();
         $evaluado = $stmt->fetch(\PDO::FETCH_ASSOC);
 
+        // Consulta de cámara de comercio
+        $sql_camara = "SELECT 
+            tiene_camara,
+            nombre,
+            razon,
+            activdad,
+            observacion
+        FROM camara_comercio 
+        WHERE id_cedula = :cedula";
+        
+        $stmt_camara = $db->prepare($sql_camara);
+        $stmt_camara->bindParam(':cedula', $cedula);
+        $stmt_camara->execute();
+        $camara_comercio = $stmt_camara->fetch(\PDO::FETCH_ASSOC);
+
         // Función para convertir imagen a base64
         function img_to_base64($img_path) {
             if (!file_exists($img_path)) return '';
@@ -59,7 +74,8 @@ class InformeFinalPdfController {
         $data = [
             'cedula' => $cedula,
             'logo_b64' => $logo_b64,
-            'evaluado' => $evaluado
+            'evaluado' => $evaluado,
+            'camara_comercio' => $camara_comercio
         ];
         extract($data);
         ob_start();
