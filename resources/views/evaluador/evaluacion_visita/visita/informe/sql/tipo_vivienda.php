@@ -28,7 +28,7 @@ if ($data_vivienda->num_rows > 0) {
 $estado_vivienda = "SELECT ev.id, ev.id_cedula, ev.id_estado, op.nombre
         FROM estado_vivienda AS ev
         JOIN opc_estados AS op ON ev.id_estado = op.id
-        WHERE ev.id_cedula = '1110456003'";
+        WHERE ev.id_cedula = '$id_cedula'";
 
 $data_vivi = $mysqli->query($estado_vivienda);
 if ($data_vivi->num_rows > 0) {

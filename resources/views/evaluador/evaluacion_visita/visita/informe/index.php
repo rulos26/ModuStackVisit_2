@@ -28,6 +28,29 @@ include 'sql/regristo_fotos.php';
 include 'sql/concepto_final.php';
 $id_cedula = $_SESSION['id_cedula'];
 $fecha_actual = date('Y-m-d'); // Formato: Año-Mes-Día
+
+// Inicializar variables para evitar errores
+$ruta_imagen = '';
+$ruta_imagen_ubi = '';
+$row_viv = array();
+
+// Verificar si existe foto de perfil
+if (isset($foto) && $foto->num_rows > 0) {
+    $foto_data = $foto->fetch_assoc();
+    $ruta_imagen = $foto_data['ruta'] . $foto_data['nombre'];
+}
+
+// Verificar si existe imagen de ubicación
+if (isset($foto_ubi) && $foto_ubi->num_rows > 0) {
+    $foto_ubi_data = $foto_ubi->fetch_assoc();
+    $ruta_imagen_ubi = $foto_ubi_data['ruta'] . $foto_ubi_data['nombre'];
+}
+
+// Verificar si existe estado de vivienda
+if (isset($data_vivi) && $data_vivi->num_rows > 0) {
+    $row_viv = $data_vivi->fetch_assoc();
+}
+
 $foto1;
 $foto2;
 $foto3;
