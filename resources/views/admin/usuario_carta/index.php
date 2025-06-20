@@ -1,6 +1,9 @@
 <?php
 session_start();
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+ob_start();
 // Verificar si hay una sesión activa de administrador
 if (!isset($_SESSION['admin_id']) && !isset($_SESSION['username'])) {
     header('Location: /ModuStackVisit_2/resources/views/error/error.php?from=admin_usuario_carta');
