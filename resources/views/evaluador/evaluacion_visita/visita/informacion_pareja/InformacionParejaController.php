@@ -123,23 +123,38 @@ class InformacionParejaController {
             $id_cedula = $_SESSION['id_cedula'];
             $tiene_pareja = $datos['tiene_pareja'];
             
-            // Si no tiene pareja, no guardar nada en la base de datos
+            // Si el usuario indica que NO tiene pareja
             if ($tiene_pareja == '1') {
-                // Eliminar registros existentes si los hay
                 $existe = $this->obtenerPorCedula($id_cedula);
+                $observacion_no_pareja = 'N/A - El usuario indica no tener pareja.';
+                
                 if ($existe) {
-                    $sql = "DELETE FROM informacion_pareja WHERE id_cedula = :id_cedula";
+                    // Si ya existe un registro, se actualiza para limpiar los campos
+                    $sql = "UPDATE informacion_pareja SET 
+                            ced = NULL, id_tipo_documentos = NULL, cedula_expedida = NULL, 
+                            nombres = '', edad = NULL, id_genero = NULL, 
+                            id_nivel_academico = NULL, actividad = '', empresa = '', 
+                            antiguedad = '', direccion_empresa = '', telefono_1 = '', 
+                            telefono_2 = '', vive_candidato = NULL, 
+                            observacion = :observacion
+                            WHERE id_cedula = :id_cedula";
                     $stmt = $this->db->prepare($sql);
                     $stmt->bindParam(':id_cedula', $id_cedula);
-                    $ok = $stmt->execute();
+                    $stmt->bindParam(':observacion', $observacion_no_pareja);
                 } else {
-                    $ok = true; // No hay nada que eliminar
+                    // Si no existe, se inserta un nuevo registro con campos vacíos/nulos
+                    $sql = "INSERT INTO informacion_pareja (id_cedula, ced, id_tipo_documentos, cedula_expedida, nombres, edad, id_genero, id_nivel_academico, actividad, empresa, antiguedad, direccion_empresa, telefono_1, telefono_2, vive_candidato, observacion) 
+                            VALUES (:id_cedula, NULL, NULL, NULL, '', NULL, NULL, NULL, '', '', '', '', '', '', NULL, :observacion)";
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->bindParam(':id_cedula', $id_cedula);
+                    $stmt->bindParam(':observacion', $observacion_no_pareja);
                 }
+                $ok = $stmt->execute();
                 
                 if ($ok) {
-                    return ['success'=>true, 'message'=>'Información procesada exitosamente.'];
+                    return ['success' => true, 'message' => 'Se ha registrado que no tiene pareja.'];
                 } else {
-                    return ['success'=>false, 'message'=>'Error al procesar la información.'];
+                    return ['success' => false, 'message' => 'Error al registrar la información.'];
                 }
             }
             

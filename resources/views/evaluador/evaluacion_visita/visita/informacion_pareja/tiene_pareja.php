@@ -410,56 +410,60 @@ try {
 
     <script>
 function toggleCamposPareja() {
-    const tienePareja = document.getElementById('tiene_pareja').value;
-    const camposPareja = document.getElementById('camposPareja');
-    
-    if (tienePareja === '2') { // Si tiene pareja
-        camposPareja.classList.add('show');
-        // Hacer obligatorios los campos de pareja
-        const camposObligatorios = camposPareja.querySelectorAll('input[required], select[required]');
-        camposObligatorios.forEach(campo => {
-            campo.required = true;
-        });
+    const tieneParejaSelect = document.getElementById('tiene_pareja');
+    const camposParejaDiv = document.getElementById('camposPareja');
+    const campos = camposParejaDiv.querySelectorAll('input, select, textarea');
+
+    if (tieneParejaSelect.value === '2') { // '2' corresponde a "Sí"
+        camposParejaDiv.classList.add('show');
     } else {
-        camposPareja.classList.remove('show');
-        // Quitar obligatoriedad de los campos de pareja
-        const camposObligatorios = camposPareja.querySelectorAll('input, select');
-        camposObligatorios.forEach(campo => {
-            campo.required = false;
+        camposParejaDiv.classList.remove('show');
+        // Limpiar todos los campos cuando se ocultan para no enviar datos antiguos
+        campos.forEach(campo => {
+            if (campo.type === 'select-one') {
+                campo.selectedIndex = 0; // Resetea el select
+            } else {
+                campo.value = ''; // Limpia inputs y textareas
+            }
         });
     }
 }
 
-// Ejecutar al cargar la página para mostrar campos si ya hay datos
+// Ejecutar al cargar la página para establecer el estado inicial correcto
 document.addEventListener('DOMContentLoaded', function() {
     toggleCamposPareja();
 });
 
-// Validación del formulario
-document.getElementById('formTienePareja').addEventListener('submit', function(e) {
-    const tienePareja = document.getElementById('tiene_pareja').value;
+// Validación del formulario (mejorada)
+document.getElementById('formTienePareja').addEventListener('submit', function(event) {
+    const tieneParejaSelect = document.getElementById('tiene_pareja');
     
-    if (!tienePareja) {
-        e.preventDefault();
-        alert('Por favor seleccione si está en relación sentimental actual.');
-        return false;
+    // Validar que se haya seleccionado una opción principal
+    if (!tieneParejaSelect.value || tieneParejaSelect.value === '') {
+        event.preventDefault();
+        alert('Por favor, seleccione si está en una relación sentimental actual.');
+        tieneParejaSelect.focus();
+        return;
     }
     
-    if (tienePareja === '2') {
-        // Validar campos obligatorios de pareja
+    // Validar campos de la pareja solo si se seleccionó "Sí"
+    if (tieneParejaSelect.value === '2') {
         const camposObligatorios = [
             'ced', 'id_tipo_documentos', 'cedula_expedida', 'nombres', 'edad', 
             'id_genero', 'id_nivel_academico', 'actividad', 'empresa', 
             'antiguedad', 'direccion_empresa', 'telefono_1', 'vive_candidato'
         ];
         
-        for (let campo of camposObligatorios) {
-            const elemento = document.getElementById(campo);
-            if (!elemento.value.trim()) {
-                e.preventDefault();
-                alert(`Por favor complete el campo: ${elemento.previousElementSibling.textContent.replace('*', '').trim()}`);
+        for (const idCampo of camposObligatorios) {
+            const elemento = document.getElementById(idCampo);
+            if (!elemento.value || elemento.value.trim() === '') {
+                event.preventDefault();
+                // Obtener el texto de la etiqueta para un mensaje más claro
+                const label = elemento.closest('.mb-3').querySelector('label');
+                const labelText = label ? label.innerText.replace('*', '').trim() : idCampo;
+                alert(`El campo "${labelText}" es obligatorio.`);
                 elemento.focus();
-                return false;
+                return;
             }
         }
     }
