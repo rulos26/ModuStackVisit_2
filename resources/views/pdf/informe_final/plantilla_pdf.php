@@ -639,6 +639,55 @@
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <?php if ($pasivos && count($pasivos) > 0): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            PASIVOS
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">PRODUCTOS</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">ENTIDAD</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">TIPO INVERSIÓN</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">CIUDAD</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">DEUDA</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">CUOTA MES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($pasivos as $pasivo): ?>
+                        <tr>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($pasivo['item']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($pasivo['id_entidad']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($pasivo['id_tipo_inversion']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($pasivo['municipio']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($pasivo['deuda']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($pasivo['cuota_mes']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            PASIVOS
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre pasivos
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </body>
 </html>

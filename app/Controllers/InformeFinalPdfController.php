@@ -385,6 +385,40 @@ class InformeFinalPdfController {
             }
         }
 
+        // Consulta de pasivos
+        $sql_pasivos = "SELECT 
+            p.item, 
+            p.id_entidad, 
+            p.id_tipo_inversion, 
+            p.id_ciudad, 
+            p.deuda, 
+            p.cuota_mes,
+            m.id_municipio, 
+            m.municipio
+        FROM pasivos p
+        LEFT JOIN municipios m ON p.id_ciudad = m.id_municipio
+        WHERE p.id_cedula = :cedula";
+        
+        $stmt_pasivos = $db->prepare($sql_pasivos);
+        $stmt_pasivos->bindParam(':cedula', $cedula);
+        $stmt_pasivos->execute();
+        $pasivos = $stmt_pasivos->fetchAll(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de pasivos
+        if ($pasivos) {
+            foreach ($pasivos as &$pasivo) {
+                // Lista de campos a procesar
+                $campos_pasivo = [
+                    'item', 'id_entidad', 'id_tipo_inversion', 'municipio', 'deuda', 'cuota_mes'
+                ];
+
+                // Convertir campos vacíos a N/A
+                foreach ($campos_pasivo as $campo) {
+                    $pasivo[$campo] = empty($pasivo[$campo]) ? 'N/A' : $pasivo[$campo];
+                }
+            }
+        }
+
         // Función para convertir imagen a base64
         function img_to_base64($img_path) {
             if (!file_exists($img_path)) return '';
@@ -412,7 +446,8 @@ class InformeFinalPdfController {
             'inventario_enseres' => $inventario_enseres,
             'servicios_publicos' => $servicios_publicos,
             'patrimonio' => $patrimonio,
-            'cuentas_bancarias' => $cuentas_bancarias
+            'cuentas_bancarias' => $cuentas_bancarias,
+            'pasivos' => $pasivos
         ];
         extract($data);
         ob_start();
