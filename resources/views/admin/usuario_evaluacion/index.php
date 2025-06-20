@@ -1,6 +1,9 @@
 <?php
 session_start();
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+ob_start();
 // Verificar si hay una sesión activa de administrador
 if (!isset($_SESSION['admin_id']) && !isset($_SESSION['username'])) {
     header('Location: /ModuStackVisit_2/resources/views/error/error.php?from=admin_usuario_evaluacion');
@@ -12,40 +15,71 @@ $admin_username = $_SESSION['username'] ?? 'Administrador';
 // Conexión a la base de datos
 require_once __DIR__ . '/../../../../conn/conexion.php';
 
-// Consulta para obtener todos los registros de evaluados
-$sql = "SELECT * FROM `evaluados`";
-$result = $mysqli->query($sql);
+// 1. Obtener todos los evaluados
+$sql_evaluados = "SELECT * FROM evaluados ORDER BY id DESC";
+$result_evaluados = $mysqli->query($sql_evaluados);
 
-$evaluados = [];
-if ($result && $result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $evaluados[] = $row;
-    }
-}
-
-// Contadores para las estadísticas - Asumimos columnas, se debe ajustar
-$total_evaluados = count($evaluados);
+$evaluados_data = [];
+$total_evaluados = 0;
 $evaluaciones_completadas = 0;
 $en_proceso = 0;
-$informes_generados = 0;
+$pendientes = 0;
+$informes_generados = 0; // Se mantiene por si se usa en el futuro
 
-foreach ($evaluados as $evaluado) {
-    // Lógica de ejemplo para estados - ajustar según la estructura real de la BD
-    if (isset($evaluado['estado'])) {
-        if ($evaluado['estado'] === 'Completada') {
+if ($result_evaluados) {
+    $total_evaluados = $result_evaluados->num_rows;
+    
+    // Lista de tablas de módulos a verificar
+    $tablas_a_verificar = [
+        'camara_comercio', 'estados_salud', 'composicion_familiar', 'informacion_pareja', 
+        'tipo_vivienda', 'inventario_enseres', 'servicios_publicos', 'patrimonio', 
+        'cuentas_bancarias', 'pasivos', 'aportante', 'data_credito', 
+        'ingresos_mensuales', 'gasto', 'estudios', 'informacion_judicial', 
+        'experiencia_laboral', 'concepto_final_evaluador', 'ubicacion_autorizacion', 
+        'evidencia_fotografica'
+    ];
+    $total_tablas = count($tablas_a_verificar);
+
+    while ($row = $result_evaluados->fetch_assoc()) {
+        $cedula = $row['id_cedula'];
+        $tablas_completadas = 0;
+
+        // 2. Contar cuántas tablas tienen registro para la cédula
+        foreach ($tablas_a_verificar as $tabla) {
+            $sql_check = "SELECT id FROM `$tabla` WHERE id_cedula = '$cedula' LIMIT 1";
+            $result_check = $mysqli->query($sql_check);
+            if ($result_check && $result_check->num_rows > 0) {
+                $tablas_completadas++;
+            }
+        }
+
+        // 3. Calcular progreso y determinar estado
+        $progreso = $total_tablas > 0 ? ($tablas_completadas / $total_tablas) * 100 : 0;
+        
+        $estado = '';
+        if ($progreso == 100) {
+            $estado = 'Completada';
             $evaluaciones_completadas++;
-        } elseif ($evaluado['estado'] === 'En Proceso') {
+        } elseif ($progreso >= 75) {
+            $estado = 'En Proceso';
             $en_proceso++;
+        } else {
+            $estado = 'Pendiente';
+            $pendientes++;
+        }
+
+        // 4. Agregar data al array de evaluados
+        $evaluados_data[] = array_merge($row, [
+            'progreso' => round($progreso),
+            'estado' => $estado,
+        ]);
+
+        // Lógica de ejemplo para informes generados (si existe el campo)
+        if (isset($row['informe_generado']) && $row['informe_generado']) {
+            $informes_generados++;
         }
     }
-    
-    // Suponiendo una columna para informes generados
-    if (isset($evaluado['informe_generado']) && $evaluado['informe_generado']) {
-        $informes_generados++;
-    }
 }
-$pendientes = $total_evaluados - $evaluaciones_completadas - $en_proceso;
-
 ?>
 
 <!DOCTYPE html>
@@ -162,9 +196,9 @@ $pendientes = $total_evaluados - $evaluaciones_completadas - $en_proceso;
                         <div class="col-md-3">
                             <div class="card">
                                 <div class="card-body text-center">
-                                    <i class="fas fa-file-pdf fa-3x text-info mb-3"></i>
-                                    <h4 class="card-title">Informes Generados</h4>
-                                    <h2 class="text-info"><?php echo $informes_generados; ?></h2>
+                                    <i class="fas fa-file-pdf fa-3x text-danger mb-3"></i>
+                                    <h4 class="card-title">Pendientes</h4>
+                                    <h2 class="text-danger"><?php echo $pendientes; ?></h2>
                                 </div>
                             </div>
                         </div>
@@ -274,17 +308,20 @@ $pendientes = $total_evaluados - $evaluaciones_completadas - $en_proceso;
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php if (!empty($evaluados)): ?>
-                                            <?php foreach ($evaluados as $evaluado): ?>
+                                        <?php if (!empty($evaluados_data)): ?>
+                                            <?php foreach ($evaluados_data as $evaluado): ?>
                                                 <tr>
                                                     <td><?php echo htmlspecialchars($evaluado['id_cedula'] ?? 'N/A'); ?></td>
-                                                    <td><?php echo htmlspecialchars($evaluado['nombres'] ?? 'N/A'); ?></td>
+                                                    <td><?php echo htmlspecialchars($evaluado['nombres'] ?? 'N/A'); ?> <?php echo htmlspecialchars($evaluado['apellidos'] ?? ''); ?></td>
                                                     <td>
                                                         <?php 
-                                                        $progreso = $evaluado['progreso'] ?? rand(10, 100); 
+                                                        $progreso = $evaluado['progreso'];
                                                         $progreso_color = 'bg-danger';
-                                                        if ($progreso > 75) $progreso_color = 'bg-success';
-                                                        elseif ($progreso > 40) $progreso_color = 'bg-warning';
+                                                        if ($evaluado['estado'] === 'Completada') {
+                                                            $progreso_color = 'bg-success';
+                                                        } elseif ($evaluado['estado'] === 'En Proceso') {
+                                                            $progreso_color = 'bg-warning';
+                                                        }
                                                         ?>
                                                         <div class="progress" title="<?php echo $progreso; ?>%">
                                                             <div class="progress-bar <?php echo $progreso_color; ?>" style="width: <?php echo $progreso; ?>%"></div>
@@ -292,7 +329,7 @@ $pendientes = $total_evaluados - $evaluaciones_completadas - $en_proceso;
                                                     </td>
                                                     <td>
                                                         <?php
-                                                        $estado = $evaluado['estado'] ?? 'Pendiente';
+                                                        $estado = $evaluado['estado'];
                                                         $badge_class = 'bg-secondary';
                                                         if ($estado === 'Completada') $badge_class = 'bg-success';
                                                         if ($estado === 'En Proceso') $badge_class = 'bg-warning';
