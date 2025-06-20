@@ -14,8 +14,15 @@
         $rol = $_SESSION['rol'] ?? null;
 
         // --- Menú para Evaluador (Rol 2) o Administrador (Rol 1) ---
-        if ($rol == 2 || $rol == 1) {
+        if ($rol == 2 ) {
         ?>
+        <hr>
+            <li class="nav-item">
+                <span class="nav-link link-dark fw-bold text-primary">
+                    <i class="bi bi-shield-lock me-2"></i>
+                    Opciones del evaluador
+                </span>
+            </li>
             <li class="nav-item">
                 <a href="/ModuStackVisit_2/resources/views/evaluador/carta_visita/index_carta.php" class="nav-link link-dark">
                     <i class="bi bi-file-earmark-text me-2"></i>
@@ -38,7 +45,7 @@
             <li class="nav-item">
                 <span class="nav-link link-dark fw-bold text-primary">
                     <i class="bi bi-shield-lock me-2"></i>
-                    Administración
+                    Opciones del administrador
                 </span>
             </li>
             <li>
