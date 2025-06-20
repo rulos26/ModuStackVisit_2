@@ -291,6 +291,42 @@ class InformeFinalPdfController {
             }
         }
 
+        // Consulta de servicios públicos
+        $sql_servicios = "SELECT sp.agua, sp.luz, sp.gas, sp.telefono, sp.alcantarillado, sp.internet, sp.administracion, sp.parqueadero, sp.observacion,
+            op1.nombre AS nombre_agua, op2.nombre AS nombre_luz, op3.nombre AS nombre_gas, op4.nombre AS nombre_telefono,
+            op5.nombre AS nombre_alcantarillado, op6.nombre AS nombre_internet, op7.nombre AS nombre_administracion,
+            op8.nombre AS nombre_parqueadero
+        FROM servicios_publicos sp
+        LEFT JOIN opc_parametro op1 ON sp.agua = op1.id
+        LEFT JOIN opc_parametro op2 ON sp.luz = op2.id
+        LEFT JOIN opc_parametro op3 ON sp.gas = op3.id
+        LEFT JOIN opc_parametro op4 ON sp.telefono = op4.id
+        LEFT JOIN opc_parametro op5 ON sp.alcantarillado = op5.id
+        LEFT JOIN opc_parametro op6 ON sp.internet = op6.id
+        LEFT JOIN opc_parametro op7 ON sp.administracion = op7.id
+        LEFT JOIN opc_parametro op8 ON sp.parqueadero = op8.id
+        WHERE sp.id_cedula = :cedula";
+        
+        $stmt_servicios = $db->prepare($sql_servicios);
+        $stmt_servicios->bindParam(':cedula', $cedula);
+        $stmt_servicios->execute();
+        $servicios_publicos = $stmt_servicios->fetch(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de servicios públicos
+        if ($servicios_publicos) {
+            // Lista de campos a procesar
+            $campos_servicios = [
+                'nombre_agua', 'nombre_luz', 'nombre_gas', 'nombre_telefono',
+                'nombre_alcantarillado', 'nombre_internet', 'nombre_administracion',
+                'nombre_parqueadero', 'observacion'
+            ];
+
+            // Convertir campos vacíos a N/A
+            foreach ($campos_servicios as $campo) {
+                $servicios_publicos[$campo] = empty($servicios_publicos[$campo]) ? 'N/A' : $servicios_publicos[$campo];
+            }
+        }
+
         // Función para convertir imagen a base64
         function img_to_base64($img_path) {
             if (!file_exists($img_path)) return '';
@@ -315,7 +351,8 @@ class InformeFinalPdfController {
             'composicion_familiar' => $composicion_familiar,
             'informacion_pareja' => $informacion_pareja,
             'tipo_vivienda' => $tipo_vivienda,
-            'inventario_enseres' => $inventario_enseres
+            'inventario_enseres' => $inventario_enseres,
+            'servicios_publicos' => $servicios_publicos
         ];
         extract($data);
         ob_start();

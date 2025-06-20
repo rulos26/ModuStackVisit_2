@@ -480,6 +480,63 @@
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <?php if ($servicios_publicos): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="12" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            SERVICIOS PÚBLICOS Y OTROS
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Agua</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($servicios_publicos['nombre_agua']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Luz</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($servicios_publicos['nombre_luz']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Gas</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($servicios_publicos['nombre_gas']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Alcantarillado</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($servicios_publicos['nombre_alcantarillado']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Internet</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($servicios_publicos['nombre_internet']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Administración</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($servicios_publicos['nombre_administracion']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Parqueadero</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($servicios_publicos['nombre_parqueadero']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Observaciones</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($servicios_publicos['observacion']) ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="12" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            SERVICIOS PÚBLICOS Y OTROS
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="12" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre servicios públicos
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </body>
 </html>
