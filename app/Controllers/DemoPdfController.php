@@ -129,8 +129,11 @@ class DemoPdfController {
             $dompdf->setPaper('A4', 'portrait');
             $dompdf->render();
             
+            // Nombre dinámico del PDF
+            $nombre_pdf = "carta_autorizacion_{$cedula}.pdf";
+            
             // Enviar el PDF al navegador
-            $dompdf->stream('ejemplo.pdf', ["Attachment" => false]);
+            $dompdf->stream($nombre_pdf, ["Attachment" => false]);
             exit;
             
         } catch (\Exception $e) {
