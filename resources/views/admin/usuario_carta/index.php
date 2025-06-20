@@ -264,14 +264,16 @@ if ($result_autorizaciones) {
                                                                 <button type="button" class="btn btn-sm btn-outline-primary" title="Ver detalles">
                                                                     <i class="fas fa-eye"></i>
                                                                 </button>
-                                                                <button type="button" class="btn btn-sm btn-outline-warning" title="Editar">
-                                                                    <i class="fas fa-edit"></i>
+                                                                <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                                        onclick="eliminarUsuario('<?php echo htmlspecialchars($usuario['cedula']); ?>', '<?php echo htmlspecialchars($usuario['nombres']); ?>')" 
+                                                                        title="Eliminar">
+                                                                    <i class="fas fa-trash"></i>
                                                                 </button>
                                                             <?php endif; ?>
-                                                            <button type="button" class="btn btn-sm btn-outline-danger" 
-                                                                    onclick="eliminarUsuario('<?php echo htmlspecialchars($usuario['cedula']); ?>', '<?php echo htmlspecialchars($usuario['nombres']); ?>')" 
-                                                                    title="Eliminar">
-                                                                <i class="fas fa-trash"></i>
+                                                            <button type="button" class="btn btn-sm btn-outline-warning" 
+                                                                    onclick="editarUsuario('<?php echo htmlspecialchars($usuario['cedula']); ?>', '<?php echo htmlspecialchars($usuario['nombres']); ?>')" 
+                                                                    title="Editar/Completar">
+                                                                <i class="fas fa-edit"></i>
                                                             </button>
                                                         </div>
                                                     </td>
@@ -397,6 +399,129 @@ if ($result_autorizaciones) {
                     btn.disabled = false;
                 });
             }
+        }
+
+        // Función para editar/completar usuario
+        function editarUsuario(cedula, nombres) {
+            // Mostrar indicador de carga
+            const btn = event.target.closest('button');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+
+            // Verificar estado de tablas
+            fetch('verificar_tablas_usuario.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'cedula=' + encodeURIComponent(cedula)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Mostrar modal con información de tablas faltantes
+                    mostrarModalTablasFaltantes(data, cedula, nombres);
+                } else {
+                    alert('Error al verificar tablas: ' + data.message);
+                }
+                // Restaurar botón
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al verificar tablas. Por favor, inténtalo de nuevo.');
+                // Restaurar botón
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            });
+        }
+
+        // Función para mostrar modal con tablas faltantes
+        function mostrarModalTablasFaltantes(data, cedula, nombres) {
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.id = 'modalTablasFaltantes';
+            modal.innerHTML = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="fas fa-tasks me-2"></i>Estado de Completitud - ${nombres}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <strong>Progreso:</strong> ${data.tablas_completadas} de ${data.total_tablas} tablas completadas (${data.porcentaje_completado}%)
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6 class="mb-3">Estado de cada módulo:</h6>
+                                    ${data.tablas.map(tabla => `
+                                        <div class="d-flex justify-content-between align-items-center mb-2 p-2 ${tabla.completada ? 'bg-success bg-opacity-10' : 'bg-warning bg-opacity-10'} rounded">
+                                            <div>
+                                                <i class="fas ${tabla.completada ? 'fa-check-circle text-success' : 'fa-exclamation-triangle text-warning'} me-2"></i>
+                                                <strong>${tabla.nombre}</strong>
+                                            </div>
+                                            <div>
+                                                ${tabla.completada ? 
+                                                    '<span class="badge bg-success">Completada</span>' : 
+                                                    '<span class="badge bg-warning">Pendiente</span>'
+                                                }
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            
+                            ${data.puede_acceder ? `
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <h6 class="mb-3">Acciones disponibles:</h6>
+                                        <div class="d-grid gap-2">
+                                            ${data.tablas_faltantes.map(tabla => `
+                                                <a href="${tabla.url}" class="btn btn-warning" target="_blank">
+                                                    <i class="fas ${tabla.icono} me-2"></i>
+                                                    Completar ${tabla.nombre}
+                                                </a>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            ` : `
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="alert alert-danger">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            <strong>Acceso restringido:</strong> Se requiere completar al menos 3 de 4 módulos para acceder al sistema.
+                                        </div>
+                                    </div>
+                                </div>
+                            `}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
+            
+            // Limpiar modal cuando se cierre
+            modal.addEventListener('hidden.bs.modal', function() {
+                document.body.removeChild(modal);
+            });
         }
     </script>
 </body>
