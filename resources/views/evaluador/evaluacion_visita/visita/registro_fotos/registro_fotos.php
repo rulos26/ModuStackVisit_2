@@ -54,6 +54,14 @@ try {
     error_log("Error en registro_fotos.php: " . $e->getMessage());
     $error_message = "Error al cargar los datos: " . $e->getMessage();
 }
+
+// Determinar la URL base del proyecto dinámicamente
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+$host = $_SERVER['HTTP_HOST'];
+// Asumiendo que ModuStackVisit_2 es el directorio raíz del proyecto en el servidor web
+$base_path = '/ModuStackVisit_2/'; 
+$base_url = $protocol . $host . $base_path;
+
 ?>
 <link rel="stylesheet" href="../../../../../public/css/styles.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -269,7 +277,7 @@ try {
                             <div class="card-body text-center">
                                 <?php if ($foto_existente): ?>
                                     <div class="mb-3">
-                                        <img src="../../../../../public/images/evidencia_fotografica/<?php echo $id_cedula; ?>/<?php echo $foto_existente['nombre']; ?>" 
+                                        <img src="<?php echo $base_url . $foto_existente['ruta'] . $foto_existente['nombre']; ?>" 
                                              alt="<?php echo htmlspecialchars($descripcion); ?>" 
                                              class="photo-preview">
                                     </div>
