@@ -16,7 +16,7 @@
                 Evaluación visita domiciliaria
             </a>
         </li>
-        <li>
+        <!-- <li>
             <a href="/ModuStackVisit_2/resources/views/evaluador/evaluacion_visita/visita/informe/menu_principal.php" class="nav-link link-dark">
                 <i class="bi bi-file-earmark-pdf me-2"></i>
                 Generar Informe PDF
@@ -57,7 +57,7 @@
                 <i class="bi bi-file-earmark-pdf me-2"></i>
                 Informe Final PDF
             </a>
-        </li>
+        </li> -->
         <hr>
         <li class="nav-item">
             <span class="nav-link link-dark fw-bold text-primary">
