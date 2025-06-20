@@ -675,7 +675,7 @@ class InformeFinalPdfController {
         }
 
         // Consulta de evidencia fotográfica
-        $sql_evidencia = "SELECT id, id_cedula, nombre, tipo, descripcion 
+        $sql_evidencia = "SELECT nombre
         FROM evidencia_fotografica 
         WHERE id_cedula = :cedula 
         ORDER BY tipo, id";
