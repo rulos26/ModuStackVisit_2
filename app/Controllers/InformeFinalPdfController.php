@@ -327,6 +327,31 @@ class InformeFinalPdfController {
             }
         }
 
+        // Consulta de patrimonio
+        $sql_patrimonio = "SELECT id, id_cedula, valor_vivienda, direccion,
+            id_vehiculo, id_marca, id_modelo, id_ahorro, otros, observacion 
+        FROM patrimonio 
+        WHERE id_cedula = :cedula";
+        
+        $stmt_patrimonio = $db->prepare($sql_patrimonio);
+        $stmt_patrimonio->bindParam(':cedula', $cedula);
+        $stmt_patrimonio->execute();
+        $patrimonio = $stmt_patrimonio->fetch(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de patrimonio
+        if ($patrimonio) {
+            // Lista de campos a procesar
+            $campos_patrimonio = [
+                'valor_vivienda', 'direccion', 'id_vehiculo', 'id_marca',
+                'id_modelo', 'id_ahorro', 'otros', 'observacion'
+            ];
+
+            // Convertir campos vacíos a N/A
+            foreach ($campos_patrimonio as $campo) {
+                $patrimonio[$campo] = empty($patrimonio[$campo]) ? 'N/A' : $patrimonio[$campo];
+            }
+        }
+
         // Función para convertir imagen a base64
         function img_to_base64($img_path) {
             if (!file_exists($img_path)) return '';
@@ -352,7 +377,8 @@ class InformeFinalPdfController {
             'informacion_pareja' => $informacion_pareja,
             'tipo_vivienda' => $tipo_vivienda,
             'inventario_enseres' => $inventario_enseres,
-            'servicios_publicos' => $servicios_publicos
+            'servicios_publicos' => $servicios_publicos,
+            'patrimonio' => $patrimonio
         ];
         extract($data);
         ob_start();

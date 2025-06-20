@@ -537,6 +537,63 @@
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <?php if ($patrimonio): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="12" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            PATRIMONIO
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Valor Vivienda</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($patrimonio['valor_vivienda']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Dirección</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($patrimonio['direccion']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Vehículo</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($patrimonio['id_vehiculo']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Marca</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($patrimonio['id_marca']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Modelo</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($patrimonio['id_modelo']) ?></td>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Ahorro (CDT, Inversiones)</td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($patrimonio['id_ahorro']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Otros</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($patrimonio['otros']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Observaciones</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($patrimonio['observacion']) ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="12" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            PATRIMONIO
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="12" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre patrimonio
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </body>
 </html>
