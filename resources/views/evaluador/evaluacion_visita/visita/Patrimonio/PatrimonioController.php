@@ -102,7 +102,7 @@ class PatrimonioController {
                 $id_modelo = 'N/A';
                 $id_ahorro = 'N/A';
                 $otros = 'N/A';
-                $observacion = 'N/A';
+                $observacion = !empty($datos['observacion']) ? $datos['observacion'] : 'N/A';
             } else {
                 // Si tiene patrimonio, usar los datos del formulario
                 $valor_vivienda = $datos['valor_vivienda'] ?? '';
@@ -118,14 +118,12 @@ class PatrimonioController {
             $existe = $this->obtenerPorCedula($id_cedula);
             if ($existe) {
                 $sql = "UPDATE patrimonio SET 
-                        tiene_patrimonio = :tiene_patrimonio,
                         valor_vivienda = :valor_vivienda, direccion = :direccion, 
                         id_vehiculo = :id_vehiculo, id_marca = :id_marca, 
                         id_modelo = :id_modelo, id_ahorro = :id_ahorro, 
                         otros = :otros, observacion = :observacion
                         WHERE id_cedula = :id_cedula";
                 $stmt = $this->db->prepare($sql);
-                $stmt->bindParam(':tiene_patrimonio', $tiene_patrimonio);
                 $stmt->bindParam(':valor_vivienda', $valor_vivienda);
                 $stmt->bindParam(':direccion', $direccion);
                 $stmt->bindParam(':id_vehiculo', $id_vehiculo);
@@ -137,13 +135,12 @@ class PatrimonioController {
                 $stmt->bindParam(':id_cedula', $id_cedula);
                 $ok = $stmt->execute();
             } else {
-                $sql = "INSERT INTO patrimonio (id_cedula, tiene_patrimonio, valor_vivienda, direccion, 
+                $sql = "INSERT INTO patrimonio (id_cedula, valor_vivienda, direccion, 
                         id_vehiculo, id_marca, id_modelo, id_ahorro, otros, observacion) 
-                        VALUES (:id_cedula, :tiene_patrimonio, :valor_vivienda, :direccion, :id_vehiculo, 
+                        VALUES (:id_cedula, :valor_vivienda, :direccion, :id_vehiculo, 
                         :id_marca, :id_modelo, :id_ahorro, :otros, :observacion)";
                 $stmt = $this->db->prepare($sql);
                 $stmt->bindParam(':id_cedula', $id_cedula);
-                $stmt->bindParam(':tiene_patrimonio', $tiene_patrimonio);
                 $stmt->bindParam(':valor_vivienda', $valor_vivienda);
                 $stmt->bindParam(':direccion', $direccion);
                 $stmt->bindParam(':id_vehiculo', $id_vehiculo);
