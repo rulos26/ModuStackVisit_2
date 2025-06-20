@@ -8,6 +8,27 @@ if (!isset($_SESSION['admin_id']) && !isset($_SESSION['username'])) {
 }
 
 $admin_username = $_SESSION['username'] ?? 'Administrador';
+
+// Conexión a la base de datos
+require_once __DIR__ . '/../../../../conn/conexion.php';
+
+// Consulta para obtener todos los registros de autorizaciones
+$sql = "SELECT `id`, `cedula`, `nombres`, `correo` FROM `autorizaciones`";
+$result = $mysqli->query($sql);
+
+// Contadores para las estadísticas
+$total_usuarios = 0;
+$cartas_completadas = 0;
+$en_proceso = 0;
+$pendientes = 0;
+
+if ($result) {
+    $total_usuarios = $result->num_rows;
+    // Aquí puedes agregar lógica para contar por estado si tienes una columna de estado
+    $cartas_completadas = $total_usuarios; // Por ahora asumimos que todos están completados
+    $en_proceso = 0;
+    $pendientes = 0;
+}
 ?>
 
 <!DOCTYPE html>
@@ -95,7 +116,7 @@ $admin_username = $_SESSION['username'] ?? 'Administrador';
                                 <div class="card-body text-center">
                                     <i class="fas fa-users fa-3x text-primary mb-3"></i>
                                     <h4 class="card-title">Total Usuarios</h4>
-                                    <h2 class="text-primary">0</h2>
+                                    <h2 class="text-primary"><?php echo $total_usuarios; ?></h2>
                                 </div>
                             </div>
                         </div>
@@ -104,7 +125,7 @@ $admin_username = $_SESSION['username'] ?? 'Administrador';
                                 <div class="card-body text-center">
                                     <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
                                     <h4 class="card-title">Cartas Completadas</h4>
-                                    <h2 class="text-success">0</h2>
+                                    <h2 class="text-success"><?php echo $cartas_completadas; ?></h2>
                                 </div>
                             </div>
                         </div>
@@ -113,7 +134,7 @@ $admin_username = $_SESSION['username'] ?? 'Administrador';
                                 <div class="card-body text-center">
                                     <i class="fas fa-clock fa-3x text-warning mb-3"></i>
                                     <h4 class="card-title">En Proceso</h4>
-                                    <h2 class="text-warning">0</h2>
+                                    <h2 class="text-warning"><?php echo $en_proceso; ?></h2>
                                 </div>
                             </div>
                         </div>
@@ -122,7 +143,7 @@ $admin_username = $_SESSION['username'] ?? 'Administrador';
                                 <div class="card-body text-center">
                                     <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
                                     <h4 class="card-title">Pendientes</h4>
-                                    <h2 class="text-danger">0</h2>
+                                    <h2 class="text-danger"><?php echo $pendientes; ?></h2>
                                 </div>
                             </div>
                         </div>
@@ -157,21 +178,50 @@ $admin_username = $_SESSION['username'] ?? 'Administrador';
                                 <table class="table table-hover">
                                     <thead class="table-dark">
                                         <tr>
+                                            <th>ID</th>
                                             <th>Cédula</th>
-                                            <th>Nombre</th>
+                                            <th>Nombres</th>
+                                            <th>Correo</th>
                                             <th>Estado</th>
                                             <th>Fecha Creación</th>
-                                            <th>Última Actividad</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td colspan="6" class="text-center text-muted">
-                                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                                <p>No hay usuarios registrados</p>
-                                            </td>
-                                        </tr>
+                                        <?php if ($result && $result->num_rows > 0): ?>
+                                            <?php while ($row = $result->fetch_assoc()): ?>
+                                                <tr>
+                                                    <td><?php echo htmlspecialchars($row['id']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['cedula']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['nombres']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['correo']); ?></td>
+                                                    <td>
+                                                        <span class="badge bg-success">Completada</span>
+                                                    </td>
+                                                    <td><?php echo date('d/m/Y'); ?></td>
+                                                    <td>
+                                                        <div class="btn-group" role="group">
+                                                            <button type="button" class="btn btn-sm btn-outline-primary" title="Ver detalles">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-outline-warning" title="Editar">
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            <?php endwhile; ?>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted">
+                                                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                                                    <p>No hay usuarios registrados</p>
+                                                </td>
+                                            </tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
