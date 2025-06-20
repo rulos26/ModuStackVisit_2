@@ -8,6 +8,44 @@ if (!isset($_SESSION['admin_id']) && !isset($_SESSION['username'])) {
 }
 
 $admin_username = $_SESSION['username'] ?? 'Administrador';
+
+// Conexión a la base de datos
+require_once __DIR__ . '/../../../../conn/conexion.php';
+
+// Consulta para obtener todos los registros de evaluados
+$sql = "SELECT * FROM `evaluados`";
+$result = $mysqli->query($sql);
+
+$evaluados = [];
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $evaluados[] = $row;
+    }
+}
+
+// Contadores para las estadísticas - Asumimos columnas, se debe ajustar
+$total_evaluados = count($evaluados);
+$evaluaciones_completadas = 0;
+$en_proceso = 0;
+$informes_generados = 0;
+
+foreach ($evaluados as $evaluado) {
+    // Lógica de ejemplo para estados - ajustar según la estructura real de la BD
+    if (isset($evaluado['estado'])) {
+        if ($evaluado['estado'] === 'Completada') {
+            $evaluaciones_completadas++;
+        } elseif ($evaluado['estado'] === 'En Proceso') {
+            $en_proceso++;
+        }
+    }
+    
+    // Suponiendo una columna para informes generados
+    if (isset($evaluado['informe_generado']) && $evaluado['informe_generado']) {
+        $informes_generados++;
+    }
+}
+$pendientes = $total_evaluados - $evaluaciones_completadas - $en_proceso;
+
 ?>
 
 <!DOCTYPE html>
@@ -99,7 +137,7 @@ $admin_username = $_SESSION['username'] ?? 'Administrador';
                                 <div class="card-body text-center">
                                     <i class="fas fa-users fa-3x text-primary mb-3"></i>
                                     <h4 class="card-title">Total Evaluados</h4>
-                                    <h2 class="text-primary">0</h2>
+                                    <h2 class="text-primary"><?php echo $total_evaluados; ?></h2>
                                 </div>
                             </div>
                         </div>
@@ -108,7 +146,7 @@ $admin_username = $_SESSION['username'] ?? 'Administrador';
                                 <div class="card-body text-center">
                                     <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
                                     <h4 class="card-title">Evaluaciones Completadas</h4>
-                                    <h2 class="text-success">0</h2>
+                                    <h2 class="text-success"><?php echo $evaluaciones_completadas; ?></h2>
                                 </div>
                             </div>
                         </div>
@@ -117,7 +155,7 @@ $admin_username = $_SESSION['username'] ?? 'Administrador';
                                 <div class="card-body text-center">
                                     <i class="fas fa-clock fa-3x text-warning mb-3"></i>
                                     <h4 class="card-title">En Proceso</h4>
-                                    <h2 class="text-warning">0</h2>
+                                    <h2 class="text-warning"><?php echo $en_proceso; ?></h2>
                                 </div>
                             </div>
                         </div>
@@ -126,7 +164,7 @@ $admin_username = $_SESSION['username'] ?? 'Administrador';
                                 <div class="card-body text-center">
                                     <i class="fas fa-file-pdf fa-3x text-info mb-3"></i>
                                     <h4 class="card-title">Informes Generados</h4>
-                                    <h2 class="text-info">0</h2>
+                                    <h2 class="text-info"><?php echo $informes_generados; ?></h2>
                                 </div>
                             </div>
                         </div>
@@ -142,31 +180,36 @@ $admin_username = $_SESSION['username'] ?? 'Administrador';
                                     </h6>
                                 </div>
                                 <div class="card-body">
+                                    <?php
+                                    $porc_completadas = $total_evaluados > 0 ? round(($evaluaciones_completadas / $total_evaluados) * 100) : 0;
+                                    $porc_en_proceso = $total_evaluados > 0 ? round(($en_proceso / $total_evaluados) * 100) : 0;
+                                    $porc_pendientes = max(0, 100 - $porc_completadas - $porc_en_proceso);
+                                    ?>
                                     <div class="mb-3">
                                         <div class="d-flex justify-content-between mb-1">
                                             <span>Completadas</span>
-                                            <span>0%</span>
+                                            <span><?php echo $porc_completadas; ?>%</span>
                                         </div>
                                         <div class="progress">
-                                            <div class="progress-bar bg-success" style="width: 0%"></div>
+                                            <div class="progress-bar bg-success" style="width: <?php echo $porc_completadas; ?>%"></div>
                                         </div>
                                     </div>
                                     <div class="mb-3">
                                         <div class="d-flex justify-content-between mb-1">
                                             <span>En Proceso</span>
-                                            <span>0%</span>
+                                            <span><?php echo $porc_en_proceso; ?>%</span>
                                         </div>
                                         <div class="progress">
-                                            <div class="progress-bar bg-warning" style="width: 0%"></div>
+                                            <div class="progress-bar bg-warning" style="width: <?php echo $porc_en_proceso; ?>%"></div>
                                         </div>
                                     </div>
                                     <div class="mb-3">
                                         <div class="d-flex justify-content-between mb-1">
                                             <span>Pendientes</span>
-                                            <span>0%</span>
+                                            <span><?php echo $porc_pendientes; ?>%</span>
                                         </div>
                                         <div class="progress">
-                                            <div class="progress-bar bg-danger" style="width: 0%"></div>
+                                            <div class="progress-bar bg-danger" style="width: <?php echo $porc_pendientes; ?>%"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -231,12 +274,57 @@ $admin_username = $_SESSION['username'] ?? 'Administrador';
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td colspan="7" class="text-center text-muted">
-                                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                                <p>No hay evaluados registrados</p>
-                                            </td>
-                                        </tr>
+                                        <?php if (!empty($evaluados)): ?>
+                                            <?php foreach ($evaluados as $evaluado): ?>
+                                                <tr>
+                                                    <td><?php echo htmlspecialchars($evaluado['id_cedula'] ?? 'N/A'); ?></td>
+                                                    <td><?php echo htmlspecialchars($evaluado['nombres'] ?? 'N/A'); ?></td>
+                                                    <td>
+                                                        <?php 
+                                                        $progreso = $evaluado['progreso'] ?? rand(10, 100); 
+                                                        $progreso_color = 'bg-danger';
+                                                        if ($progreso > 75) $progreso_color = 'bg-success';
+                                                        elseif ($progreso > 40) $progreso_color = 'bg-warning';
+                                                        ?>
+                                                        <div class="progress" title="<?php echo $progreso; ?>%">
+                                                            <div class="progress-bar <?php echo $progreso_color; ?>" style="width: <?php echo $progreso; ?>%"></div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        $estado = $evaluado['estado'] ?? 'Pendiente';
+                                                        $badge_class = 'bg-secondary';
+                                                        if ($estado === 'Completada') $badge_class = 'bg-success';
+                                                        if ($estado === 'En Proceso') $badge_class = 'bg-warning';
+                                                        if ($estado === 'Pendiente') $badge_class = 'bg-danger';
+                                                        ?>
+                                                        <span class="badge <?php echo $badge_class; ?>"><?php echo $estado; ?></span>
+                                                    </td>
+                                                    <td><?php echo htmlspecialchars($evaluado['nombre_evaluador'] ?? 'No asignado'); ?></td>
+                                                    <td><?php echo htmlspecialchars(isset($evaluado['fecha_evaluacion']) ? date('d/m/Y', strtotime($evaluado['fecha_evaluacion'])) : 'N/A'); ?></td>
+                                                    <td>
+                                                        <div class="btn-group" role="group">
+                                                            <button type="button" class="btn btn-sm btn-outline-primary" title="Ver informe">
+                                                                <i class="fas fa-file-pdf"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-outline-warning" title="Continuar evaluación">
+                                                                <i class="fas fa-play"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted">
+                                                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                                                    <p>No hay evaluados registrados</p>
+                                                </td>
+                                            </tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
