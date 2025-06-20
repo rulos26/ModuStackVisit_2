@@ -4,79 +4,58 @@
     </a>
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
-        <li class="nav-item">
-            <a href="/ModuStackVisit_2/resources/views/evaluador/carta_visita/index_carta.php" class="nav-link link-dark">
-                <i class="bi bi-file-earmark-text me-2"></i>
-                Carta de autorización
-            </a>
-        </li>
-        <li>
-            <a href="/ModuStackVisit_2/resources/views/evaluador/evaluacion_visita/index_evaluacion.php" class="nav-link link-dark">
-                <i class="bi bi-house-door me-2"></i>
-                Evaluación visita domiciliaria
-            </a>
-        </li>
-        <!-- <li>
-            <a href="/ModuStackVisit_2/resources/views/evaluador/evaluacion_visita/visita/informe/menu_principal.php" class="nav-link link-dark">
-                <i class="bi bi-file-earmark-pdf me-2"></i>
-                Generar Informe PDF
-            </a>
-        </li>
-        <li>
-            <a href="/ModuStackVisit_2/app/Controllers/InformeFinalPdfController.php?action=generarInforme&cedula=1231211322" target="_blank" class="nav-link link-dark">
-                <i class="bi bi-file-earmark-pdf me-2"></i>
-                Informe Final PDF (Controlador)
-            </a>
-        </li>
-        <li>
-            <a href="/ModuStackVisit_2/app/Controllers/ejemplo_uso_informe.php" class="nav-link link-dark">
-                <i class="bi bi-gear me-2"></i>
-                Controlador Informe PDF
-            </a>
-        </li>
-        <li>
-            <a href="/ModuStackVisit_2/app/Controllers/test_controlador.php" class="nav-link link-dark">
-                <i class="bi bi-bug me-2"></i>
-                Probar Controlador
-            </a>
-        </li>
-        <li>
-            <a href="/ModuStackVisit_2/app/Controllers/test_modular_directo.php" class="nav-link link-dark">
-                <i class="bi bi-lightning me-2"></i>
-                Prueba Directa Modular
-            </a>
-        </li>
-        <li>
-            <a href="/ModuStackVisit_2/resources/views/pdf/demo_pdf.php" class="nav-link link-dark">
-                <i class="bi bi-file-earmark-pdf me-2"></i>
-                PDF de ejemplo
-            </a>
-        </li>
-        <li>
-            <a href="/ModuStackVisit_2/resources/views/pdf/informe_final/plantilla_pdf.php" target="_blank" class="nav-link link-dark">
-                <i class="bi bi-file-earmark-pdf me-2"></i>
-                Informe Final PDF
-            </a>
-        </li> -->
-        <hr>
-        <li class="nav-item">
-            <span class="nav-link link-dark fw-bold text-primary">
-                <i class="bi bi-shield-lock me-2"></i>
-                Administración
-            </span>
-        </li>
-        <li>
-            <a href="/ModuStackVisit_2/resources/views/admin/usuario_carta/index.php" class="nav-link link-dark">
-                <i class="bi bi-envelope me-2"></i>
-                Usuarios Carta
-            </a>
-        </li>
-        <li>
-            <a href="/ModuStackVisit_2/resources/views/admin/usuario_evaluacion/index.php" class="nav-link link-dark">
-                <i class="bi bi-clipboard-check me-2"></i>
-                Usuarios Evaluación
-            </a>
-        </li>
+        <?php
+        // Asegurarse de que la sesión esté iniciada
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Obtener el rol del usuario de la sesión
+        $rol = $_SESSION['rol'] ?? null;
+
+        // --- Menú para Evaluador (Rol 2) o Administrador (Rol 1) ---
+        if ($rol == 2 || $rol == 1) {
+        ?>
+            <li class="nav-item">
+                <a href="/ModuStackVisit_2/resources/views/evaluador/carta_visita/index_carta.php" class="nav-link link-dark">
+                    <i class="bi bi-file-earmark-text me-2"></i>
+                    Carta de autorización
+                </a>
+            </li>
+            <li>
+                <a href="/ModuStackVisit_2/resources/views/evaluador/evaluacion_visita/index_evaluacion.php" class="nav-link link-dark">
+                    <i class="bi bi-house-door me-2"></i>
+                    Evaluación visita domiciliaria
+                </a>
+            </li>
+        <?php
+        }
+
+        // --- Menú exclusivo para Administrador (Rol 1) ---
+        if ($rol == 1) {
+        ?>
+            <hr>
+            <li class="nav-item">
+                <span class="nav-link link-dark fw-bold text-primary">
+                    <i class="bi bi-shield-lock me-2"></i>
+                    Administración
+                </span>
+            </li>
+            <li>
+                <a href="/ModuStackVisit_2/resources/views/admin/usuario_carta/index.php" class="nav-link link-dark">
+                    <i class="bi bi-envelope me-2"></i>
+                    Usuarios Carta
+                </a>
+            </li>
+            <li>
+                <a href="/ModuStackVisit_2/resources/views/admin/usuario_evaluacion/index.php" class="nav-link link-dark">
+                    <i class="bi bi-clipboard-check me-2"></i>
+                    Usuarios Evaluación
+                </a>
+            </li>
+        <?php
+        }
+        ?>
     </ul>
     <hr>
     <div class="text-muted small">&copy; <?php echo date('Y'); ?> Mi Sistema</div>
