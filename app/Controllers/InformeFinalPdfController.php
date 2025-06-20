@@ -642,7 +642,7 @@ class InformeFinalPdfController {
         }
 
         // Consulta de ubicación foto
-        $sql_ubicacion = "SELECT  nombre 
+        $sql_ubicacion = "SELECT nombre 
         FROM ubicacion_autorizacion
         WHERE id_cedula = :cedula";
         
@@ -651,10 +651,23 @@ class InformeFinalPdfController {
         $stmt_ubicacion->execute();
         $ubicacion_foto = $stmt_ubicacion->fetch(\PDO::FETCH_ASSOC);
         
-        //same  el  campo nombre  de la tabla ubicacion_autorizacion  en una variable
-        $nombre_ubicacion_foto = $ubicacion_foto['nombre'];
-        $fotoo_ubicacion_path = __DIR__ . '/../../public/images/ubicacion_autorizacion/'.$cedula.'/'.$nombre_ubicacion_foto;
-        $fotoo_ubicacion_b64 = img_to_base64($fotoo_ubicacion_path);
+        // Función para convertir imagen a base64
+        function img_to_base64($img_path) {
+            if (!file_exists($img_path)) return '';
+            $info = pathinfo($img_path);
+            $ext = strtolower($info['extension']);
+            $mime = ($ext === 'png') ? 'image/png' : (($ext === 'gif') ? 'image/gif' : 'image/jpeg');
+            $data = base64_encode(file_get_contents($img_path));
+            return 'data:' . $mime . ';base64,' . $data;
+        }
+        
+        // Procesar la imagen de ubicación
+        $fotoo_ubicacion_b64 = '';
+        if ($ubicacion_foto && !empty($ubicacion_foto['nombre'])) {
+            $nombre_ubicacion_foto = $ubicacion_foto['nombre'];
+            $fotoo_ubicacion_path = __DIR__ . '/../../public/images/ubicacion_autorizacion/'.$cedula.'/'.$nombre_ubicacion_foto;
+            $fotoo_ubicacion_b64 = img_to_base64($fotoo_ubicacion_path);
+        }
         
         
         // Header - Logo

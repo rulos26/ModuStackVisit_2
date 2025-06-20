@@ -1134,7 +1134,7 @@
             </table>
         <?php endif; ?>
 
-        <?php if ($ubicacion_b64): ?>
+        <?php if ($fotoo_ubicacion_b64): ?>
             <table class="customTable" style="border: 1px solid black;">
                 <thead>
                     <tr>
