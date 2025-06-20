@@ -58,6 +58,25 @@
                 Informe Final PDF
             </a>
         </li>
+        <hr>
+        <li class="nav-item">
+            <span class="nav-link link-dark fw-bold text-primary">
+                <i class="bi bi-shield-lock me-2"></i>
+                Administración
+            </span>
+        </li>
+        <li>
+            <a href="/ModuStackVisit_2/resources/views/admin/usuario_carta/index.php" class="nav-link link-dark">
+                <i class="bi bi-envelope me-2"></i>
+                Usuarios Carta
+            </a>
+        </li>
+        <li>
+            <a href="/ModuStackVisit_2/resources/views/admin/usuario_evaluacion/index.php" class="nav-link link-dark">
+                <i class="bi bi-clipboard-check me-2"></i>
+                Usuarios Evaluación
+            </a>
+        </li>
     </ul>
     <hr>
     <div class="text-muted small">&copy; <?php echo date('Y'); ?> Mi Sistema</div>
