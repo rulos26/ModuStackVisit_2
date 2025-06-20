@@ -641,6 +641,27 @@ class InformeFinalPdfController {
             }
         }
 
+        // Consulta de ubicación foto
+        $sql_ubicacion = "SELECT id, id_cedula, ruta, nombre 
+        FROM ubicacion_foto 
+        WHERE id_cedula = :cedula";
+        
+        $stmt_ubicacion = $db->prepare($sql_ubicacion);
+        $stmt_ubicacion->bindParam(':cedula', $cedula);
+        $stmt_ubicacion->execute();
+        $ubicacion_foto = $stmt_ubicacion->fetch(\PDO::FETCH_ASSOC);
+
+        // Procesar la imagen de ubicación
+        $ubicacion_b64 = null;
+        if ($ubicacion_foto && !empty($ubicacion_foto['ruta'])) {
+            $ruta_imagen = $ubicacion_foto['ruta'];
+            if (file_exists($ruta_imagen)) {
+                $tipo_imagen = mime_content_type($ruta_imagen);
+                $contenido_imagen = file_get_contents($ruta_imagen);
+                $ubicacion_b64 = 'data:' . $tipo_imagen . ';base64,' . base64_encode($contenido_imagen);
+            }
+        }
+
         // Función para convertir imagen a base64
         function img_to_base64($img_path) {
             if (!file_exists($img_path)) return '';
@@ -677,7 +698,8 @@ class InformeFinalPdfController {
             'estudios' => $estudios,
             'informacion_judicial' => $informacion_judicial,
             'experiencia_laboral' => $experiencia_laboral,
-            'concepto_final' => $concepto_final
+            'concepto_final' => $concepto_final,
+            'ubicacion_b64' => $ubicacion_b64
         ];
         extract($data);
         ob_start();

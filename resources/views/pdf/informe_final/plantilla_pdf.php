@@ -1133,6 +1133,42 @@
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <?php if ($ubicacion_b64): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            UBICACIÓN EN TIEMPO REAL
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;">
+                            <img src="<?= $ubicacion_b64 ?>" alt="Ubicación" style="border: 2px solid black; height: 270px; width: 1006px;">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            UBICACIÓN EN TIEMPO REAL
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;">
+                            No se encontró imagen de ubicación
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </body>
 </html>
