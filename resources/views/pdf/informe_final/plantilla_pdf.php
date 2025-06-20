@@ -1190,8 +1190,19 @@ error_reporting(E_ALL);
             8 => 'Otros'
         ];
         
+        $evidencias_arrays = [
+            1 => $evidencia_fotografia_b64 ?? [],
+            2 => $evidencia_fotografia_2_b64 ?? [],
+            3 => $evidencia_fotografia_3_b64 ?? [],
+            4 => $evidencia_fotografia_4_b64 ?? [],
+            5 => $evidencia_fotografia_5_b64 ?? [],
+            6 => $evidencia_fotografia_6_b64 ?? [],
+            7 => $evidencia_fotografia_7_b64 ?? [],
+            8 => $evidencia_fotografia_8_b64 ?? []
+        ];
+        
         $hay_evidencias = false;
-        foreach ($evidencias_por_tipo as $tipo => $evidencias) {
+        foreach ($evidencias_arrays as $evidencias) {
             if (!empty($evidencias)) {
                 $hay_evidencias = true;
                 break;
@@ -1209,30 +1220,23 @@ error_reporting(E_ALL);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($evidencias_por_tipo as $tipo => $evidencias): ?>
+                    <?php foreach ($evidencias_arrays as $tipo => $evidencias): ?>
                         <?php if (!empty($evidencias)): ?>
                             <tr>
                                 <td colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
                                     <?= htmlspecialchars($tipos_evidencia[$tipo] ?? 'Tipo ' . $tipo) ?>
                                 </td>
                             </tr>
-                            <?php foreach ($evidencias as $evidencia): ?>
+                            <?php foreach ($evidencias as $imagen_b64): ?>
                                 <tr>
                                     <td colspan="6" style="border: 1px solid black; text-align: center;">
-                                        <?php if (!empty($evidencia['imagen_b64'])): ?>
-                                            <img src="<?= $evidencia['imagen_b64'] ?>" alt="Evidencia" style="max-width: 100%; height: auto; max-height: 300px; border: 1px solid #ccc;">
+                                        <?php if (!empty($imagen_b64)): ?>
+                                            <img src="<?= $imagen_b64 ?>" alt="Evidencia" style="max-width: 100%; height: auto; max-height: 300px; border: 1px solid #ccc;">
                                         <?php else: ?>
                                             <span style="color: #888;">Imagen no disponible</span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
-                                <?php if (!empty($evidencia['descripcion']) && $evidencia['descripcion'] !== 'N/A'): ?>
-                                    <tr>
-                                        <td colspan="6" style="border: 1px solid black; text-align: center; font-style: italic;">
-                                            <strong>Descripción:</strong> <?= htmlspecialchars($evidencia['descripcion']) ?>
-                                        </td>
-                                    </tr>
-                                <?php endif; ?>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     <?php endforeach; ?>

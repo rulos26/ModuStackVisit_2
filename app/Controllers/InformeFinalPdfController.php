@@ -656,6 +656,56 @@ class InformeFinalPdfController {
         $stmt_ubicacion->execute();
         $ubicacion_foto = $stmt_ubicacion->fetch(\PDO::FETCH_ASSOC);
         
+        // Consulta de evidencia fotográfica por tipo
+        $sql_evidencia_fotografia = "SELECT nombre from evidencia_fotografica where id_cedula = :cedula and tipo = 1";
+        $sql_evidencia_fotografia_2 = "SELECT nombre from evidencia_fotografica where id_cedula = :cedula and tipo = 2";
+        $sql_evidencia_fotografia_3 = "SELECT nombre from evidencia_fotografica where id_cedula = :cedula and tipo = 3";
+        $sql_evidencia_fotografia_4 = "SELECT nombre from evidencia_fotografica where id_cedula = :cedula and tipo = 4";
+        $sql_evidencia_fotografia_5 = "SELECT nombre from evidencia_fotografica where id_cedula = :cedula and tipo = 5";
+        $sql_evidencia_fotografia_6 = "SELECT nombre from evidencia_fotografica where id_cedula = :cedula and tipo = 6";
+        $sql_evidencia_fotografia_7 = "SELECT nombre from evidencia_fotografica where id_cedula = :cedula and tipo = 7";
+        $sql_evidencia_fotografia_8 = "SELECT nombre from evidencia_fotografica where id_cedula = :cedula and tipo = 8";
+        
+        $stmt_evidencia_fotografia = $db->prepare($sql_evidencia_fotografia);
+        $stmt_evidencia_fotografia->bindParam(':cedula', $cedula);
+        $stmt_evidencia_fotografia->execute();
+        $evidencia_fotografia = $stmt_evidencia_fotografia->fetchAll(\PDO::FETCH_ASSOC);
+
+        $stmt_evidencia_fotografia_2 = $db->prepare($sql_evidencia_fotografia_2);
+        $stmt_evidencia_fotografia_2->bindParam(':cedula', $cedula);
+        $stmt_evidencia_fotografia_2->execute();
+        $evidencia_fotografia_2 = $stmt_evidencia_fotografia_2->fetchAll(\PDO::FETCH_ASSOC);
+        
+        $stmt_evidencia_fotografia_3 = $db->prepare($sql_evidencia_fotografia_3);
+        $stmt_evidencia_fotografia_3->bindParam(':cedula', $cedula);
+        $stmt_evidencia_fotografia_3->execute();
+        $evidencia_fotografia_3 = $stmt_evidencia_fotografia_3->fetchAll(\PDO::FETCH_ASSOC);
+        
+        $stmt_evidencia_fotografia_4 = $db->prepare($sql_evidencia_fotografia_4);
+        $stmt_evidencia_fotografia_4->bindParam(':cedula', $cedula);
+        $stmt_evidencia_fotografia_4->execute();
+        $evidencia_fotografia_4 = $stmt_evidencia_fotografia_4->fetchAll(\PDO::FETCH_ASSOC);
+
+        $stmt_evidencia_fotografia_5 = $db->prepare($sql_evidencia_fotografia_5);
+        $stmt_evidencia_fotografia_5->bindParam(':cedula', $cedula);
+        $stmt_evidencia_fotografia_5->execute();
+        $evidencia_fotografia_5 = $stmt_evidencia_fotografia_5->fetchAll(\PDO::FETCH_ASSOC);
+
+        $stmt_evidencia_fotografia_6 = $db->prepare($sql_evidencia_fotografia_6);
+        $stmt_evidencia_fotografia_6->bindParam(':cedula', $cedula);
+        $stmt_evidencia_fotografia_6->execute();
+        $evidencia_fotografia_6 = $stmt_evidencia_fotografia_6->fetchAll(\PDO::FETCH_ASSOC);
+
+        $stmt_evidencia_fotografia_7 = $db->prepare($sql_evidencia_fotografia_7);
+        $stmt_evidencia_fotografia_7->bindParam(':cedula', $cedula);
+        $stmt_evidencia_fotografia_7->execute();
+        $evidencia_fotografia_7 = $stmt_evidencia_fotografia_7->fetchAll(\PDO::FETCH_ASSOC);
+
+        $stmt_evidencia_fotografia_8 = $db->prepare($sql_evidencia_fotografia_8);
+        $stmt_evidencia_fotografia_8->bindParam(':cedula', $cedula);
+        $stmt_evidencia_fotografia_8->execute();
+        $evidencia_fotografia_8 = $stmt_evidencia_fotografia_8->fetchAll(\PDO::FETCH_ASSOC);
+
         // Función para convertir imagen a base64
         function img_to_base64($img_path) {
             if (!file_exists($img_path)) return '';
@@ -665,7 +715,87 @@ class InformeFinalPdfController {
             $data = base64_encode(file_get_contents($img_path));
             return 'data:' . $mime . ';base64,' . $data;
         }
-        
+
+        // Procesar evidencia fotográfica tipo 1
+        $evidencia_fotografia_b64 = [];
+        if ($evidencia_fotografia) {
+            foreach ($evidencia_fotografia as $evidencia) {
+                $nombre_evidencia = $evidencia['nombre'];
+                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_fotografia_b64[] = img_to_base64($evidencia_path);
+            }
+        }
+
+        // Procesar evidencia fotográfica tipo 2
+        $evidencia_fotografia_2_b64 = [];
+        if ($evidencia_fotografia_2) {
+            foreach ($evidencia_fotografia_2 as $evidencia) {
+                $nombre_evidencia = $evidencia['nombre'];
+                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_fotografia_2_b64[] = img_to_base64($evidencia_path);
+            }
+        }
+
+        // Procesar evidencia fotográfica tipo 3
+        $evidencia_fotografia_3_b64 = [];
+        if ($evidencia_fotografia_3) {
+            foreach ($evidencia_fotografia_3 as $evidencia) {
+                $nombre_evidencia = $evidencia['nombre'];
+                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_fotografia_3_b64[] = img_to_base64($evidencia_path);
+            }
+        }
+
+        // Procesar evidencia fotográfica tipo 4
+        $evidencia_fotografia_4_b64 = [];
+        if ($evidencia_fotografia_4) {
+            foreach ($evidencia_fotografia_4 as $evidencia) {
+                $nombre_evidencia = $evidencia['nombre'];
+                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_fotografia_4_b64[] = img_to_base64($evidencia_path);
+            }
+        }
+
+        // Procesar evidencia fotográfica tipo 5
+        $evidencia_fotografia_5_b64 = [];
+        if ($evidencia_fotografia_5) {
+            foreach ($evidencia_fotografia_5 as $evidencia) {
+                $nombre_evidencia = $evidencia['nombre'];
+                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_fotografia_5_b64[] = img_to_base64($evidencia_path);
+            }
+        }
+
+        // Procesar evidencia fotográfica tipo 6
+        $evidencia_fotografia_6_b64 = [];
+        if ($evidencia_fotografia_6) {
+            foreach ($evidencia_fotografia_6 as $evidencia) {
+                $nombre_evidencia = $evidencia['nombre'];
+                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_fotografia_6_b64[] = img_to_base64($evidencia_path);
+            }
+        }
+
+        // Procesar evidencia fotográfica tipo 7
+        $evidencia_fotografia_7_b64 = [];
+        if ($evidencia_fotografia_7) {
+            foreach ($evidencia_fotografia_7 as $evidencia) {
+                $nombre_evidencia = $evidencia['nombre'];
+                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_fotografia_7_b64[] = img_to_base64($evidencia_path);
+            }
+        }
+
+        // Procesar evidencia fotográfica tipo 8
+        $evidencia_fotografia_8_b64 = [];
+        if ($evidencia_fotografia_8) {
+            foreach ($evidencia_fotografia_8 as $evidencia) {
+                $nombre_evidencia = $evidencia['nombre'];
+                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_fotografia_8_b64[] = img_to_base64($evidencia_path);
+            }
+        }
+
         // Procesar la imagen de ubicación
         $fotoo_ubicacion_b64 = '';
         if ($ubicacion_foto && !empty($ubicacion_foto['nombre'])) {
@@ -674,44 +804,6 @@ class InformeFinalPdfController {
             $fotoo_ubicacion_b64 = img_to_base64($fotoo_ubicacion_path);
         }
 
-        // Consulta de evidencia fotográfica
-        $sql_evidencia = "SELECT nombre
-        FROM evidencia_fotografica 
-        WHERE id_cedula = :cedula 
-        ORDER BY tipo, id";
-        
-        $stmt_evidencia = $db->prepare($sql_evidencia);
-        $stmt_evidencia->bindParam(':cedula', $cedula);
-        $stmt_evidencia->execute();
-        $evidencias_raw = $stmt_evidencia->fetchAll(\PDO::FETCH_ASSOC);
-
-        // Organizar evidencias por tipo
-        $evidencias_por_tipo = [];
-        for ($i = 1; $i <= 8; $i++) {
-            $evidencias_por_tipo[$i] = [];
-        }
-
-        // Procesar las evidencias y organizarlas por tipo
-        if ($evidencias_raw) {
-            foreach ($evidencias_raw as $evidencia) {
-                $tipo = (int)$evidencia['tipo'];
-                if ($tipo >= 1 && $tipo <= 8) {
-                    // Procesar la imagen
-                    $nombre_evidencia = $evidencia['nombre'];
-                    $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
-                    $evidencia_b64 = img_to_base64($evidencia_path);
-                    
-                    $evidencias_por_tipo[$tipo][] = [
-                        'id' => $evidencia['id'],
-                        'nombre' => $evidencia['nombre'] ?: 'N/A',
-                        'descripcion' => $evidencia['descripcion'] ?: 'N/A',
-                        'imagen_b64' => $evidencia_b64
-                    ];
-                }
-            }
-        }
-        
-        
         // Header - Logo
         $logo_path = __DIR__ . '/../../public/images/header.jpg';
         $logo_b64 = img_to_base64($logo_path);
@@ -740,7 +832,14 @@ class InformeFinalPdfController {
             'experiencia_laboral' => $experiencia_laboral,
             'concepto_final' => $concepto_final,
             'fotoo_ubicacion_b64' => $fotoo_ubicacion_b64,
-            'evidencias_por_tipo' => $evidencias_por_tipo
+            'evidencia_fotografia_b64' => $evidencia_fotografia_b64,
+            'evidencia_fotografia_2_b64' => $evidencia_fotografia_2_b64,
+            'evidencia_fotografia_3_b64' => $evidencia_fotografia_3_b64,
+            'evidencia_fotografia_4_b64' => $evidencia_fotografia_4_b64,
+            'evidencia_fotografia_5_b64' => $evidencia_fotografia_5_b64,
+            'evidencia_fotografia_6_b64' => $evidencia_fotografia_6_b64,
+            'evidencia_fotografia_7_b64' => $evidencia_fotografia_7_b64,
+            'evidencia_fotografia_8_b64' => $evidencia_fotografia_8_b64
         ];
         extract($data);
         ob_start();
