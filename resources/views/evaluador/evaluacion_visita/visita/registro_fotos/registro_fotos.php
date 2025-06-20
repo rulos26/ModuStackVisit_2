@@ -305,7 +305,7 @@ try {
                             <i class="fas fa-check-circle me-2"></i>
                             <strong>¡Todas las fotos han sido registradas exitosamente!</strong>
                         </div>
-                        <a href="../informe/index.php" class="btn btn-success btn-lg" target="_blank">
+                        <a href="/ModuStackVisit_2/app/Controllers/InformeFinalPdfController.php?action=generarInforme&cedula=1231211322" class="btn btn-success btn-lg" target="_blank">
                             <i class="fas fa-arrow-right me-2"></i>Continuar con Informe
                         </a>
                     </div>

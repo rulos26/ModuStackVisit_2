@@ -15,7 +15,10 @@ error_reporting(E_ALL);
 
 class InformeFinalPdfController {
     
-    public static function generarInforme($cedula = '1231211322') {
+    public static function generarInforme() {
+        session_start();
+        $cedula = $_SESSION['id_cedula'] ?? '1231211322';
+        
         $db = Database::getInstance()->getConnection();
         
         // Consulta del evaluado
@@ -860,8 +863,7 @@ class InformeFinalPdfController {
 
 // Manejar la acción desde el menú
 if (isset($_GET['action']) && $_GET['action'] === 'generarInforme') {
-    $cedula = $_GET['cedula'] ?? '1231211322';
-    InformeFinalPdfController::generarInforme($cedula);
+    InformeFinalPdfController::generarInforme();
 }
 
 ?> 
