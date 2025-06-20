@@ -46,9 +46,9 @@ $sql = "
             ELSE 0
         END as pendiente
     FROM autorizaciones a
-    LEFT JOIN ubicacion_autorizacion ua ON a.cedula = ua.cedula
-    LEFT JOIN firmas f ON a.cedula = f.cedula
-    LEFT JOIN foto_perfil_autorizacion fp ON a.cedula = fp.cedula
+    LEFT JOIN ubicacion_autorizacion ua ON a.cedula = ua.id_cedula
+    LEFT JOIN firmas f ON a.cedula = f.id_cedula
+    LEFT JOIN foto_perfil_autorizacion fp ON a.cedula = fp.id_cedula
     ORDER BY a.id DESC
 ";
 
