@@ -45,7 +45,7 @@ class InformacionParejaController {
         // Si tiene pareja (valor 2), validar los campos adicionales
         if ($datos['tiene_pareja'] == '2') {
             // Validar cédula
-            if (empty($datos['ced']) || !is_numeric($datos['ced'])) {
+            if (empty($datos['cedula']) || !is_numeric($datos['cedula'])) {
                 $errores[] = 'La cédula de la pareja es obligatoria y debe ser numérica.';
             }
             
@@ -131,7 +131,7 @@ class InformacionParejaController {
                 if ($existe) {
                     // Si ya existe un registro, se actualiza para limpiar los campos
                     $sql = "UPDATE informacion_pareja SET 
-                            ced = NULL, id_tipo_documentos = NULL, cedula_expedida = NULL, 
+                            cedula = NULL, id_tipo_documentos = NULL, cedula_expedida = NULL, 
                             nombres = '', edad = NULL, id_genero = NULL, 
                             id_nivel_academico = NULL, actividad = '', empresa = '', 
                             antiguedad = '', direccion_empresa = '', telefono_1 = '', 
@@ -143,7 +143,7 @@ class InformacionParejaController {
                     $stmt->bindParam(':observacion', $observacion_no_pareja);
                 } else {
                     // Si no existe, se inserta un nuevo registro con campos vacíos/nulos
-                    $sql = "INSERT INTO informacion_pareja (id_cedula, ced, id_tipo_documentos, cedula_expedida, nombres, edad, id_genero, id_nivel_academico, actividad, empresa, antiguedad, direccion_empresa, telefono_1, telefono_2, vive_candidato, observacion) 
+                    $sql = "INSERT INTO informacion_pareja (id_cedula, cedula, id_tipo_documentos, cedula_expedida, nombres, edad, id_genero, id_nivel_academico, actividad, empresa, antiguedad, direccion_empresa, telefono_1, telefono_2, vive_candidato, observacion) 
                             VALUES (:id_cedula, NULL, NULL, NULL, '', NULL, NULL, NULL, '', '', '', '', '', '', NULL, :observacion)";
                     $stmt = $this->db->prepare($sql);
                     $stmt->bindParam(':id_cedula', $id_cedula);
@@ -159,7 +159,7 @@ class InformacionParejaController {
             }
             
             // Si tiene pareja, guardar toda la información
-            $ced = $datos['ced'];
+            $cedula = $datos['cedula'];
             $id_tipo_documentos = $datos['id_tipo_documentos'];
             $cedula_expedida = $datos['cedula_expedida'];
             $nombres = $datos['nombres'];
@@ -178,7 +178,7 @@ class InformacionParejaController {
             $existe = $this->obtenerPorCedula($id_cedula);
             if ($existe) {
                 $sql = "UPDATE informacion_pareja SET 
-                        ced = :ced, id_tipo_documentos = :id_tipo_documentos, 
+                        cedula = :cedula, id_tipo_documentos = :id_tipo_documentos, 
                         cedula_expedida = :cedula_expedida, nombres = :nombres, edad = :edad, 
                         id_genero = :id_genero, id_nivel_academico = :id_nivel_academico, actividad = :actividad, 
                         empresa = :empresa, antiguedad = :antiguedad, direccion_empresa = :direccion_empresa, 
@@ -186,7 +186,7 @@ class InformacionParejaController {
                         observacion = :observacion 
                         WHERE id_cedula = :id_cedula";
                 $stmt = $this->db->prepare($sql);
-                $stmt->bindParam(':ced', $ced);
+                $stmt->bindParam(':cedula', $cedula);
                 $stmt->bindParam(':id_tipo_documentos', $id_tipo_documentos);
                 $stmt->bindParam(':cedula_expedida', $cedula_expedida);
                 $stmt->bindParam(':nombres', $nombres);
@@ -204,11 +204,11 @@ class InformacionParejaController {
                 $stmt->bindParam(':id_cedula', $id_cedula);
                 $ok = $stmt->execute();
             } else {
-                $sql = "INSERT INTO informacion_pareja (id_cedula, ced, id_tipo_documentos, cedula_expedida, nombres, edad, id_genero, id_nivel_academico, actividad, empresa, antiguedad, direccion_empresa, telefono_1, telefono_2, vive_candidato, observacion) 
-                        VALUES (:id_cedula, :ced, :id_tipo_documentos, :cedula_expedida, :nombres, :edad, :id_genero, :id_nivel_academico, :actividad, :empresa, :antiguedad, :direccion_empresa, :telefono_1, :telefono_2, :vive_candidato, :observacion)";
+                $sql = "INSERT INTO informacion_pareja (id_cedula, cedula, id_tipo_documentos, cedula_expedida, nombres, edad, id_genero, id_nivel_academico, actividad, empresa, antiguedad, direccion_empresa, telefono_1, telefono_2, vive_candidato, observacion) 
+                        VALUES (:id_cedula, :cedula, :id_tipo_documentos, :cedula_expedida, :nombres, :edad, :id_genero, :id_nivel_academico, :actividad, :empresa, :antiguedad, :direccion_empresa, :telefono_1, :telefono_2, :vive_candidato, :observacion)";
                 $stmt = $this->db->prepare($sql);
                 $stmt->bindParam(':id_cedula', $id_cedula);
-                $stmt->bindParam(':ced', $ced);
+                $stmt->bindParam(':cedula', $cedula);
                 $stmt->bindParam(':id_tipo_documentos', $id_tipo_documentos);
                 $stmt->bindParam(':cedula_expedida', $cedula_expedida);
                 $stmt->bindParam(':nombres', $nombres);

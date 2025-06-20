@@ -207,11 +207,11 @@ try {
                     
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="ced" class="form-label">
+                            <label for="cedula" class="form-label">
                                 <i class="bi bi-card-text me-1"></i>Cédula:
                             </label>
-                            <input type="number" class="form-control" id="ced" name="ced" 
-                                   value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['ced']) : ''; ?>">
+                            <input type="number" class="form-control" id="cedula" name="cedula" 
+                                   value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['cedula']) : ''; ?>">
                             <div class="invalid-feedback">La cédula debe ser numérica.</div>
                         </div>
                         <div class="col-md-4 mb-3">
@@ -449,7 +449,7 @@ document.getElementById('formTienePareja').addEventListener('submit', function(e
     // Validar campos de la pareja solo si se seleccionó "Sí"
     if (tieneParejaSelect.value === '2') {
         const camposObligatorios = [
-            'ced', 'id_tipo_documentos', 'cedula_expedida', 'nombres', 'edad', 
+            'cedula', 'id_tipo_documentos', 'cedula_expedida', 'nombres', 'edad', 
             'id_genero', 'id_nivel_academico', 'actividad', 'empresa', 
             'antiguedad', 'direccion_empresa', 'telefono_1', 'vive_candidato'
         ];
