@@ -280,7 +280,7 @@ if ($result_evaluados) {
                                         <span class="input-group-text">
                                             <i class="fas fa-search"></i>
                                         </span>
-                                        <input type="text" class="form-control" placeholder="Buscar evaluado por cédula o nombre...">
+                                        <input type="text" id="searchInput" class="form-control" placeholder="Buscar evaluado por cédula o nombre...">
                                     </div>
                                 </div>
                                 <div class="col-md-6 text-end">
@@ -295,7 +295,7 @@ if ($result_evaluados) {
 
                             <!-- Table -->
                             <div class="table-responsive">
-                                <table class="table table-hover">
+                                <table class="table table-hover" id="evaluadosTable">
                                     <thead class="table-dark">
                                         <tr>
                                             <th>Cédula</th>
@@ -341,15 +341,25 @@ if ($result_evaluados) {
                                                     <td><?php echo htmlspecialchars(isset($evaluado['fecha_evaluacion']) ? date('d/m/Y', strtotime($evaluado['fecha_evaluacion'])) : 'N/A'); ?></td>
                                                     <td>
                                                         <div class="btn-group" role="group">
-                                                            <button type="button" class="btn btn-sm btn-outline-primary" title="Ver informe">
-                                                                <i class="fas fa-file-pdf"></i>
-                                                            </button>
-                                                            <button type="button" class="btn btn-sm btn-outline-warning" title="Continuar evaluación">
-                                                                <i class="fas fa-play"></i>
-                                                            </button>
-                                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
+                                                            <?php if ($evaluado['estado'] === 'Completada'): ?>
+                                                                <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                                        onclick="verInforme('<?php echo htmlspecialchars($evaluado['id_cedula']); ?>')" 
+                                                                        title="Ver informe">
+                                                                    <i class="fas fa-file-pdf"></i>
+                                                                </button>
+                                                            <?php elseif ($evaluado['estado'] === 'En Proceso'): ?>
+                                                                <button type="button" class="btn btn-sm btn-outline-warning" 
+                                                                        onclick="continuarEvaluacion('<?php echo htmlspecialchars($evaluado['id_cedula']); ?>')" 
+                                                                        title="Continuar evaluación">
+                                                                    <i class="fas fa-play"></i>
+                                                                </button>
+                                                            <?php elseif ($evaluado['estado'] === 'Pendiente'): ?>
+                                                                <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                                        onclick="eliminarEvaluado('<?php echo htmlspecialchars($evaluado['id_cedula']); ?>', '<?php echo htmlspecialchars($evaluado['nombres']); ?>')" 
+                                                                        title="Eliminar">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            <?php endif; ?>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -373,5 +383,71 @@ if ($result_evaluados) {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Funcionalidad de búsqueda
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const table = document.getElementById('evaluadosTable');
+            const tbody = table.querySelector('tbody');
+            const rows = tbody.querySelectorAll('tr');
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+
+                rows.forEach(function(row) {
+                    const cells = row.querySelectorAll('td');
+                    let found = false;
+
+                    // Buscar en las columnas de cédula (índice 0) y nombre completo (índice 1)
+                    if (cells.length > 1) {
+                        const cedula = cells[0].textContent.toLowerCase();
+                        const nombres = cells[1].textContent.toLowerCase();
+
+                        if (cedula.includes(searchTerm) || nombres.includes(searchTerm)) {
+                            found = true;
+                        }
+                    }
+
+                    // Mostrar u ocultar la fila
+                    row.style.display = found ? '' : 'none';
+                });
+
+                // Mostrar mensaje si no hay resultados
+                const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
+                let noResultsRow = tbody.querySelector('.no-results');
+                
+                if (visibleRows.length === 0 && searchTerm !== '') {
+                    if (!noResultsRow) {
+                        const newRow = document.createElement('tr');
+                        newRow.className = 'no-results';
+                        newRow.innerHTML = `
+                            <td colspan="7" class="text-center text-muted">
+                                <i class="fas fa-search fa-3x mb-3"></i>
+                                <p>No se encontraron resultados para "${this.value}"</p>
+                            </td>
+                        `;
+                        tbody.appendChild(newRow);
+                    }
+                } else if (noResultsRow) {
+                    noResultsRow.remove();
+                }
+            });
+        });
+
+        // Funciones de acción (placeholders)
+        function verInforme(cedula) {
+            alert(`Funcionalidad para ver informe de la cédula: ${cedula} aún no implementada.`);
+        }
+
+        function continuarEvaluacion(cedula) {
+            alert(`Funcionalidad para continuar evaluación de la cédula: ${cedula} aún no implementada.`);
+        }
+
+        function eliminarEvaluado(cedula, nombres) {
+            if (confirm(`¿Estás seguro de que deseas eliminar al evaluado ${nombres} (Cédula: ${cedula})?`)) {
+                alert(`Funcionalidad para eliminar al evaluado con cédula: ${cedula} aún no implementada.`);
+            }
+        }
+    </script>
 </body>
 </html> 
