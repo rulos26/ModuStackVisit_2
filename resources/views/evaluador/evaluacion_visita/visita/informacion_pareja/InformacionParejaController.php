@@ -131,7 +131,7 @@ class InformacionParejaController {
                 if ($existe) {
                     // Si ya existe un registro, se actualiza para limpiar los campos
                     $sql = "UPDATE informacion_pareja SET 
-                            cedula = NULL, id_tipo_documentos = NULL, cedula_expedida = NULL, 
+                            cedula = '00', id_tipo_documentos = NULL, cedula_expedida = NULL, 
                             nombres = '', edad = NULL, id_genero = NULL, 
                             id_nivel_academico = NULL, actividad = '', empresa = '', 
                             antiguedad = '', direccion_empresa = '', telefono_1 = '', 
@@ -144,7 +144,7 @@ class InformacionParejaController {
                 } else {
                     // Si no existe, se inserta un nuevo registro con campos vacíos/nulos
                     $sql = "INSERT INTO informacion_pareja (id_cedula, cedula, id_tipo_documentos, cedula_expedida, nombres, edad, id_genero, id_nivel_academico, actividad, empresa, antiguedad, direccion_empresa, telefono_1, telefono_2, vive_candidato, observacion) 
-                            VALUES (:id_cedula, NULL, NULL, NULL, '', NULL, NULL, NULL, '', '', '', '', '', '', NULL, :observacion)";
+                            VALUES (:id_cedula, '00', NULL, NULL, '', NULL, NULL, NULL, '', '', '', '', '', '', NULL, :observacion)";
                     $stmt = $this->db->prepare($sql);
                     $stmt->bindParam(':id_cedula', $id_cedula);
                     $stmt->bindParam(':observacion', $observacion_no_pareja);
