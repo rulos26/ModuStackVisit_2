@@ -260,13 +260,17 @@ if ($result_autorizaciones) {
                                                     <td><?php echo date('d/m/Y'); ?></td>
                                                     <td>
                                                         <div class="btn-group" role="group">
-                                                            <button type="button" class="btn btn-sm btn-outline-primary" title="Ver detalles">
-                                                                <i class="fas fa-eye"></i>
-                                                            </button>
-                                                            <button type="button" class="btn btn-sm btn-outline-warning" title="Editar">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
-                                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                            <?php if ($usuario['estado'] !== 'Pendiente'): ?>
+                                                                <button type="button" class="btn btn-sm btn-outline-primary" title="Ver detalles">
+                                                                    <i class="fas fa-eye"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-sm btn-outline-warning" title="Editar">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                            <?php endif; ?>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                                    onclick="eliminarUsuario('<?php echo htmlspecialchars($usuario['cedula']); ?>', '<?php echo htmlspecialchars($usuario['nombres']); ?>')" 
+                                                                    title="Eliminar">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </div>
@@ -353,6 +357,47 @@ if ($result_autorizaciones) {
                 searchInput.dispatchEvent(new Event('input'));
             });
         });
+
+        // Función para eliminar usuario
+        function eliminarUsuario(cedula, nombres) {
+            if (confirm(`¿Estás seguro de que deseas eliminar al usuario ${nombres} (Cédula: ${cedula})?\n\nEsta acción eliminará todos los registros relacionados y no se puede deshacer.`)) {
+                // Mostrar indicador de carga
+                const btn = event.target.closest('button');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                btn.disabled = true;
+
+                // Realizar la eliminación
+                fetch('eliminar_usuario.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'cedula=' + encodeURIComponent(cedula)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Mostrar mensaje de éxito
+                        alert('Usuario eliminado exitosamente');
+                        // Recargar la página para actualizar la tabla
+                        location.reload();
+                    } else {
+                        alert('Error al eliminar usuario: ' + data.message);
+                        // Restaurar botón
+                        btn.innerHTML = originalHTML;
+                        btn.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar usuario. Por favor, inténtalo de nuevo.');
+                    // Restaurar botón
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                });
+            }
+        }
     </script>
 </body>
 </html> 
