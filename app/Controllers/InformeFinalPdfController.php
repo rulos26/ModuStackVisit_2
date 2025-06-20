@@ -352,6 +352,39 @@ class InformeFinalPdfController {
             }
         }
 
+        // Consulta de cuentas bancarias
+        $sql_cuentas = "SELECT 
+            cb.id, 
+            cb.id_cedula, 
+            cb.id_entidad, 
+            cb.id_tipo_cuenta, 
+            cb.id_ciudad, 
+            m.municipio AS ciudad,
+            cb.observaciones
+        FROM cuentas_bancarias AS cb
+        LEFT JOIN municipios AS m ON cb.id_ciudad = m.id_municipio
+        WHERE cb.id_cedula = :cedula";
+        
+        $stmt_cuentas = $db->prepare($sql_cuentas);
+        $stmt_cuentas->bindParam(':cedula', $cedula);
+        $stmt_cuentas->execute();
+        $cuentas_bancarias = $stmt_cuentas->fetchAll(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de cuentas bancarias
+        if ($cuentas_bancarias) {
+            foreach ($cuentas_bancarias as &$cuenta) {
+                // Lista de campos a procesar
+                $campos_cuenta = [
+                    'id_entidad', 'id_tipo_cuenta', 'ciudad', 'observaciones'
+                ];
+
+                // Convertir campos vacíos a N/A
+                foreach ($campos_cuenta as $campo) {
+                    $cuenta[$campo] = empty($cuenta[$campo]) ? 'N/A' : $cuenta[$campo];
+                }
+            }
+        }
+
         // Función para convertir imagen a base64
         function img_to_base64($img_path) {
             if (!file_exists($img_path)) return '';
@@ -378,7 +411,8 @@ class InformeFinalPdfController {
             'tipo_vivienda' => $tipo_vivienda,
             'inventario_enseres' => $inventario_enseres,
             'servicios_publicos' => $servicios_publicos,
-            'patrimonio' => $patrimonio
+            'patrimonio' => $patrimonio,
+            'cuentas_bancarias' => $cuentas_bancarias
         ];
         extract($data);
         ob_start();

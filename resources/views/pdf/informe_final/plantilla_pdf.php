@@ -594,6 +594,51 @@
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <?php if ($cuentas_bancarias && count($cuentas_bancarias) > 0): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            CUENTAS BANCARIAS
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">ENTIDAD</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">TIPO CUENTA</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">CIUDAD</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">OBSERVACIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($cuentas_bancarias as $cuenta): ?>
+                        <tr>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($cuenta['id_entidad']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($cuenta['id_tipo_cuenta']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($cuenta['ciudad']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($cuenta['observaciones']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            CUENTAS BANCARIAS
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre cuentas bancarias
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </body>
 </html>
