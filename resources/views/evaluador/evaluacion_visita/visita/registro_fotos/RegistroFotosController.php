@@ -79,7 +79,7 @@ class RegistroFotosController {
             $nombre_archivo = 'foto_' . $tipo . '_' . $id_cedula . '_' . time() . '.' . $extension;
             
             // Crear directorio si no existe
-            $directorio_destino = __DIR__ . "/../../../../../img/evidencia_fotografica/{$id_cedula}/";
+            $directorio_destino = __DIR__ . "/../../../../../public/images/evidencia_fotografica/{$id_cedula}/";
             if (!file_exists($directorio_destino)) {
                 if (!mkdir($directorio_destino, 0777, true)) {
                     throw new Exception("No se pudo crear el directorio para las fotos");
@@ -94,11 +94,12 @@ class RegistroFotosController {
             }
             
             // Guardar en base de datos
+            $ruta_relativa = "public/images/evidencia_fotografica/{$id_cedula}/";
             $sql = "INSERT INTO evidencia_fotografica (id_cedula, tipo, ruta, nombre) VALUES (:id_cedula, :tipo, :ruta, :nombre)";
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':id_cedula', $id_cedula);
             $stmt->bindParam(':tipo', $tipo);
-            $stmt->bindParam(':ruta', dirname($ruta_completa));
+            $stmt->bindParam(':ruta', $ruta_relativa);
             $stmt->bindParam(':nombre', $nombre_archivo);
             $ok = $stmt->execute();
             

@@ -721,7 +721,7 @@ class InformeFinalPdfController {
         if ($evidencia_fotografia) {
             foreach ($evidencia_fotografia as $evidencia) {
                 $nombre_evidencia = $evidencia['nombre'];
-                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_path = __DIR__ . '/../../public/images/evidencia_fotografica/'.$cedula.'/'.$nombre_evidencia;
                 $evidencia_fotografia_b64[] = img_to_base64($evidencia_path);
             }
         }
@@ -731,7 +731,7 @@ class InformeFinalPdfController {
         if ($evidencia_fotografia_2) {
             foreach ($evidencia_fotografia_2 as $evidencia) {
                 $nombre_evidencia = $evidencia['nombre'];
-                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_path = __DIR__ . '/../../public/images/evidencia_fotografica/'.$cedula.'/'.$nombre_evidencia;
                 $evidencia_fotografia_2_b64[] = img_to_base64($evidencia_path);
             }
         }
@@ -741,7 +741,7 @@ class InformeFinalPdfController {
         if ($evidencia_fotografia_3) {
             foreach ($evidencia_fotografia_3 as $evidencia) {
                 $nombre_evidencia = $evidencia['nombre'];
-                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_path = __DIR__ . '/../../public/images/evidencia_fotografica/'.$cedula.'/'.$nombre_evidencia;
                 $evidencia_fotografia_3_b64[] = img_to_base64($evidencia_path);
             }
         }
@@ -751,7 +751,7 @@ class InformeFinalPdfController {
         if ($evidencia_fotografia_4) {
             foreach ($evidencia_fotografia_4 as $evidencia) {
                 $nombre_evidencia = $evidencia['nombre'];
-                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_path = __DIR__ . '/../../public/images/evidencia_fotografica/'.$cedula.'/'.$nombre_evidencia;
                 $evidencia_fotografia_4_b64[] = img_to_base64($evidencia_path);
             }
         }
@@ -761,7 +761,7 @@ class InformeFinalPdfController {
         if ($evidencia_fotografia_5) {
             foreach ($evidencia_fotografia_5 as $evidencia) {
                 $nombre_evidencia = $evidencia['nombre'];
-                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_path = __DIR__ . '/../../public/images/evidencia_fotografica/'.$cedula.'/'.$nombre_evidencia;
                 $evidencia_fotografia_5_b64[] = img_to_base64($evidencia_path);
             }
         }
@@ -771,7 +771,7 @@ class InformeFinalPdfController {
         if ($evidencia_fotografia_6) {
             foreach ($evidencia_fotografia_6 as $evidencia) {
                 $nombre_evidencia = $evidencia['nombre'];
-                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_path = __DIR__ . '/../../public/images/evidencia_fotografica/'.$cedula.'/'.$nombre_evidencia;
                 $evidencia_fotografia_6_b64[] = img_to_base64($evidencia_path);
             }
         }
@@ -781,7 +781,7 @@ class InformeFinalPdfController {
         if ($evidencia_fotografia_7) {
             foreach ($evidencia_fotografia_7 as $evidencia) {
                 $nombre_evidencia = $evidencia['nombre'];
-                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_path = __DIR__ . '/../../public/images/evidencia_fotografica/'.$cedula.'/'.$nombre_evidencia;
                 $evidencia_fotografia_7_b64[] = img_to_base64($evidencia_path);
             }
         }
@@ -791,7 +791,7 @@ class InformeFinalPdfController {
         if ($evidencia_fotografia_8) {
             foreach ($evidencia_fotografia_8 as $evidencia) {
                 $nombre_evidencia = $evidencia['nombre'];
-                $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                $evidencia_path = __DIR__ . '/../../public/images/evidencia_fotografica/'.$cedula.'/'.$nombre_evidencia;
                 $evidencia_fotografia_8_b64[] = img_to_base64($evidencia_path);
             }
         }

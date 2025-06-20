@@ -269,7 +269,7 @@ try {
                             <div class="card-body text-center">
                                 <?php if ($foto_existente): ?>
                                     <div class="mb-3">
-                                        <img src="../../../../../img/evidencia_fotografica/<?php echo $id_cedula; ?>/<?php echo $foto_existente['nombre']; ?>" 
+                                        <img src="../../../../../public/images/evidencia_fotografica/<?php echo $id_cedula; ?>/<?php echo $foto_existente['nombre']; ?>" 
                                              alt="<?php echo htmlspecialchars($descripcion); ?>" 
                                              class="photo-preview">
                                     </div>

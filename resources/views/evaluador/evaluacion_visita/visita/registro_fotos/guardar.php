@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $tipo = $_POST['tipo'];
         $id_cedula = $_SESSION['id_cedula'];
         // Configurar la ubicación de carga para la foto de perfil
-        $directorio_destino = "../informe/img/Registro_fotografico/" . $id_cedula . "/";
+        $directorio_destino = "../../../../../public/images/evidencia_fotografica/" . $id_cedula . "/";
         if (!file_exists($directorio_destino)) {
             mkdir($directorio_destino, 0777, true);
             echo "Se ha creado la carpeta: $directorio_destino";
@@ -34,9 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Procesar los datos y realizar la inserción en la base de datos
                 // Aquí debes incluir la lógica para insertar los datos en tu base de datos
                 // Preparar la consulta SQL para insertar los datos del formulario
-                $directorio_destino = "../informe/img/Registro_fotografico/" . $id_cedula . "/";
+                $ruta_relativa = "public/images/evidencia_fotografica/" . $id_cedula . "/";
                 $sql = "INSERT INTO `evidencia_fotografica`(`id_cedula`, `ruta`, `nombre`, `tipo`) VALUES 
-                         ('$id_cedula', '$directorio_destino', '$nombre_foto',$tipo)";
+                         ('$id_cedula', '$ruta_relativa', '$nombre_foto',$tipo)";
                 echo $sql . '<br>';
                 // Ejecutar la consulta
                 if ($mysqli->query($sql) === TRUE) {
