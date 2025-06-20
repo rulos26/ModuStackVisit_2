@@ -42,31 +42,40 @@ class UbicacionController {
                 throw new Exception("Las coordenadas deben ser valores numéricos");
             }
 
-            // Insertar ubicación
-            $stmt = $this->db->prepare("INSERT INTO ubicacion (id_cedula, latitud, longitud) VALUES (?, ?, ?)");
-            if (!$stmt) {
-                throw new Exception("Error al preparar la consulta: " . $this->db->errorInfo()[2]);
-            }
-            
-            $stmt->execute([$id_cedula, $latitud, $longitud]);
-            $id_ubicacion = $this->db->lastInsertId();
-
             // Generar y guardar mapa
             $ruta_mapa = $this->generarMapa($id_cedula, $latitud, $longitud);
 
-            // Guardar registro de mapa
-            $stmt = $this->db->prepare("INSERT INTO ubicacion_foto (id_cedula, ruta, nombre) VALUES (?, ?, ?)");
-            if (!$stmt) {
-                throw new Exception("Error al preparar la consulta de mapa: " . $this->db->errorInfo()[2]);
+            // Verificar si ya existe un registro para esta cédula
+            $stmt_check = $this->db->prepare("SELECT id FROM ubicacion_autorizacion WHERE id_cedula = ?");
+            if (!$stmt_check) {
+                throw new Exception("Error al preparar la consulta de verificación: " . $this->db->errorInfo()[2]);
             }
             
-            $stmt->execute([$id_cedula, dirname($ruta_mapa), basename($ruta_mapa)]);
+            $stmt_check->execute([$id_cedula]);
+            $existe = $stmt_check->fetch();
+
+            if ($existe) {
+                // Actualizar registro existente
+                $stmt = $this->db->prepare("UPDATE ubicacion_autorizacion SET ruta = ?, nombre = ? WHERE id_cedula = ?");
+                if (!$stmt) {
+                    throw new Exception("Error al preparar la consulta de actualización: " . $this->db->errorInfo()[2]);
+                }
+                
+                $stmt->execute([dirname($ruta_mapa), basename($ruta_mapa), $id_cedula]);
+            } else {
+                // Insertar nuevo registro
+                $stmt = $this->db->prepare("INSERT INTO ubicacion_autorizacion (id_cedula, ruta, nombre) VALUES (?, ?, ?)");
+                if (!$stmt) {
+                    throw new Exception("Error al preparar la consulta de inserción: " . $this->db->errorInfo()[2]);
+                }
+                
+                $stmt->execute([$id_cedula, dirname($ruta_mapa), basename($ruta_mapa)]);
+            }
 
             return [
                 'success' => true,
                 'message' => 'Ubicación guardada exitosamente',
                 'data' => [
-                    'id_ubicacion' => $id_ubicacion,
                     'ruta_mapa' => $ruta_mapa
                 ]
             ];
@@ -82,14 +91,14 @@ class UbicacionController {
 
     private function generarMapa($id_cedula, $latitud, $longitud) {
         try {
-            // Token de Mapbox
+            // Token de Mapbox (debería estar en archivo de configuración)
             $token = 'pk.eyJ1IjoianVhbmRpYXo4NzAxMjYiLCJhIjoiY21hbWxueHJ1MGtlMTJrb3N3bWVwamowNSJ9.5Gsp0Q69b1z3oQijt-Aw2Q';
             
             // URL para obtener el mapa estático
             $url = "https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s+ff0000({$longitud},{$latitud})/{$longitud},{$latitud},15,0/600x300?access_token={$token}";
 
-            // Crear directorio si no existe
-            $directorio_destino = __DIR__ . "/../../informe/img/ubicacion_foto/{$id_cedula}/";
+            // Crear directorio si no existe - RUTA CORREGIDA
+            $directorio_destino = __DIR__ . "/../../public/images/ubicacion_autorizacion/{$id_cedula}/";
             if (!file_exists($directorio_destino)) {
                 if (!mkdir($directorio_destino, 0777, true)) {
                     throw new Exception("No se pudo crear el directorio para el mapa");
@@ -119,7 +128,7 @@ class UbicacionController {
 
     public function obtenerUbicacion($id_cedula) {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM ubicacion WHERE id_cedula = ? ORDER BY id DESC LIMIT 1");
+            $stmt = $this->db->prepare("SELECT * FROM ubicacion_autorizacion WHERE id_cedula = ? ORDER BY id DESC LIMIT 1");
             if (!$stmt) {
                 throw new Exception("Error al preparar la consulta: " . $this->db->errorInfo()[2]);
             }
@@ -129,6 +138,22 @@ class UbicacionController {
         } catch (Exception $e) {
             error_log("Error en UbicacionController::obtenerUbicacion: " . $e->getMessage());
             throw new Exception("Error al obtener la ubicación: " . $e->getMessage());
+        }
+    }
+
+    public function verificarUbicacion($id_cedula) {
+        try {
+            $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM ubicacion_autorizacion WHERE id_cedula = ?");
+            if (!$stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->db->errorInfo()[2]);
+            }
+            
+            $stmt->execute([$id_cedula]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'] > 0;
+        } catch (Exception $e) {
+            error_log("Error en UbicacionController::verificarUbicacion: " . $e->getMessage());
+            return false;
         }
     }
 } 
