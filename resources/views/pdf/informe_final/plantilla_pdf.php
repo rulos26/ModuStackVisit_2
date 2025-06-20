@@ -688,6 +688,47 @@
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <?php if ($aportantes && count($aportantes) > 0): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="2" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            PERSONAS QUE APORTAN ECONÓMICAMENTE AL HOGAR
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">NOMBRE</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">VALOR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($aportantes as $aportante): ?>
+                        <tr>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($aportante['nombre']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($aportante['valor']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="2" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            PERSONAS QUE APORTAN ECONÓMICAMENTE AL HOGAR
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre personas que aportan económicamente al hogar
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </body>
 </html>

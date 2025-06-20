@@ -419,6 +419,31 @@ class InformeFinalPdfController {
             }
         }
 
+        // Consulta de aportantes
+        $sql_aportantes = "SELECT id, id_cedula, nombre, valor 
+        FROM aportante 
+        WHERE id_cedula = :cedula";
+        
+        $stmt_aportantes = $db->prepare($sql_aportantes);
+        $stmt_aportantes->bindParam(':cedula', $cedula);
+        $stmt_aportantes->execute();
+        $aportantes = $stmt_aportantes->fetchAll(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de aportantes
+        if ($aportantes) {
+            foreach ($aportantes as &$aportante) {
+                // Lista de campos a procesar
+                $campos_aportante = [
+                    'nombre', 'valor'
+                ];
+
+                // Convertir campos vacíos a N/A
+                foreach ($campos_aportante as $campo) {
+                    $aportante[$campo] = empty($aportante[$campo]) ? 'N/A' : $aportante[$campo];
+                }
+            }
+        }
+
         // Función para convertir imagen a base64
         function img_to_base64($img_path) {
             if (!file_exists($img_path)) return '';
@@ -447,7 +472,8 @@ class InformeFinalPdfController {
             'servicios_publicos' => $servicios_publicos,
             'patrimonio' => $patrimonio,
             'cuentas_bancarias' => $cuentas_bancarias,
-            'pasivos' => $pasivos
+            'pasivos' => $pasivos,
+            'aportantes' => $aportantes
         ];
         extract($data);
         ob_start();
