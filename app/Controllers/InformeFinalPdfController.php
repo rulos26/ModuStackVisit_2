@@ -668,6 +668,43 @@ class InformeFinalPdfController {
             $fotoo_ubicacion_path = __DIR__ . '/../../public/images/ubicacion_autorizacion/'.$cedula.'/'.$nombre_ubicacion_foto;
             $fotoo_ubicacion_b64 = img_to_base64($fotoo_ubicacion_path);
         }
+
+        // Consulta de evidencia fotográfica
+        $sql_evidencia = "SELECT id, id_cedula, nombre, tipo, descripcion 
+        FROM evidencia_fotografica 
+        WHERE id_cedula = :cedula 
+        ORDER BY tipo, id";
+        
+        $stmt_evidencia = $db->prepare($sql_evidencia);
+        $stmt_evidencia->bindParam(':cedula', $cedula);
+        $stmt_evidencia->execute();
+        $evidencias_raw = $stmt_evidencia->fetchAll(\PDO::FETCH_ASSOC);
+
+        // Organizar evidencias por tipo
+        $evidencias_por_tipo = [];
+        for ($i = 1; $i <= 8; $i++) {
+            $evidencias_por_tipo[$i] = [];
+        }
+
+        // Procesar las evidencias y organizarlas por tipo
+        if ($evidencias_raw) {
+            foreach ($evidencias_raw as $evidencia) {
+                $tipo = (int)$evidencia['tipo'];
+                if ($tipo >= 1 && $tipo <= 8) {
+                    // Procesar la imagen
+                    $nombre_evidencia = $evidencia['nombre'];
+                    $evidencia_path = __DIR__ . '/../../resources/views/evaluador/evaluacion_visita/visita/informe/img/Registro_fotografico/'.$cedula.'/'.$nombre_evidencia;
+                    $evidencia_b64 = img_to_base64($evidencia_path);
+                    
+                    $evidencias_por_tipo[$tipo][] = [
+                        'id' => $evidencia['id'],
+                        'nombre' => $evidencia['nombre'] ?: 'N/A',
+                        'descripcion' => $evidencia['descripcion'] ?: 'N/A',
+                        'imagen_b64' => $evidencia_b64
+                    ];
+                }
+            }
+        }
         
         
         // Header - Logo
@@ -697,7 +734,8 @@ class InformeFinalPdfController {
             'informacion_judicial' => $informacion_judicial,
             'experiencia_laboral' => $experiencia_laboral,
             'concepto_final' => $concepto_final,
-            'fotoo_ubicacion_b64' => $fotoo_ubicacion_b64
+            'fotoo_ubicacion_b64' => $fotoo_ubicacion_b64,
+            'evidencias_por_tipo' => $evidencias_por_tipo
         ];
         extract($data);
         ob_start();

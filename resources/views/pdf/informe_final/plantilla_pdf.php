@@ -1169,6 +1169,86 @@
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <!-- EVIDENCIA FOTOGRÁFICA -->
+        <?php 
+        $tipos_evidencia = [
+            1 => 'Fachada de la Vivienda',
+            2 => 'Sala de Estar',
+            3 => 'Cocina',
+            4 => 'Habitación Principal',
+            5 => 'Habitación Secundaria',
+            6 => 'Baño',
+            7 => 'Patio o Zona Común',
+            8 => 'Otros'
+        ];
+        
+        $hay_evidencias = false;
+        foreach ($evidencias_por_tipo as $tipo => $evidencias) {
+            if (!empty($evidencias)) {
+                $hay_evidencias = true;
+                break;
+            }
+        }
+        ?>
+
+        <?php if ($hay_evidencias): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            EVIDENCIA FOTOGRÁFICA
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($evidencias_por_tipo as $tipo => $evidencias): ?>
+                        <?php if (!empty($evidencias)): ?>
+                            <tr>
+                                <td colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                                    <?= htmlspecialchars($tipos_evidencia[$tipo] ?? 'Tipo ' . $tipo) ?>
+                                </td>
+                            </tr>
+                            <?php foreach ($evidencias as $evidencia): ?>
+                                <tr>
+                                    <td colspan="6" style="border: 1px solid black; text-align: center;">
+                                        <?php if (!empty($evidencia['imagen_b64'])): ?>
+                                            <img src="<?= $evidencia['imagen_b64'] ?>" alt="Evidencia" style="max-width: 100%; height: auto; max-height: 300px; border: 1px solid #ccc;">
+                                        <?php else: ?>
+                                            <span style="color: #888;">Imagen no disponible</span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                                <?php if (!empty($evidencia['descripcion']) && $evidencia['descripcion'] !== 'N/A'): ?>
+                                    <tr>
+                                        <td colspan="6" style="border: 1px solid black; text-align: center; font-style: italic;">
+                                            <strong>Descripción:</strong> <?= htmlspecialchars($evidencia['descripcion']) ?>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            EVIDENCIA FOTOGRÁFICA
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;">
+                            No se encontró evidencia fotográfica registrada
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </body>
 </html>
