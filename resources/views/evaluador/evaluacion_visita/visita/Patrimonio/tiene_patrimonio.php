@@ -195,14 +195,13 @@ try {
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="tiene_patrimonio" class="form-label">
-                            <i class="bi bi-question-circle me-1"></i>¿Posee usted patrimonio?
+                            <i class="bi bi-question-circle me-1"></i>¿Posee usted patrimonio? <span class="text-danger">*</span>
                         </label>
-                        <select class="form-select" id="tiene_patrimonio" name="tiene_patrimonio" required>
+                        <select class="form-select" id="tiene_patrimonio" name="tiene_patrimonio" required onchange="toggleFormularioPatrimonio()">
                             <option value="">Seleccione una opción</option>
-                            <option value="1" <?php echo ($datos_existentes && $datos_existentes['valor_vivienda'] == 'N/A') ? 'selected' : ''; ?>>No</option>
                             <?php foreach ($parametros as $parametro): ?>
                                 <option value="<?php echo $parametro['id']; ?>" 
-                                    <?php echo ($datos_existentes && $datos_existentes['valor_vivienda'] != 'N/A' && $datos_existentes['valor_vivienda'] == $parametro['id']) ? 'selected' : ''; ?>>
+                                    <?php echo ($datos_existentes && $datos_existentes['tiene_patrimonio'] == $parametro['id']) ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
@@ -211,11 +210,112 @@ try {
                     </div>
                 </div>
                 
+                <!-- Campos de patrimonio detallado (se muestran/ocultan dinámicamente) -->
+                <div id="camposPatrimonio" class="campos-patrimonio" style="display: none;">
+                    <hr class="my-4">
+                    <h6 class="text-primary mb-3">
+                        <i class="bi bi-bank me-2"></i>Detalles del Patrimonio
+                    </h6>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4 mb-3">
+                            <label for="valor_vivienda" class="form-label">
+                                <i class="bi bi-house-dollar me-1"></i>Valor de la Vivienda:
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="text" class="form-control" id="valor_vivienda" name="valor_vivienda" 
+                                       value="<?php echo $datos_existentes && $datos_existentes['valor_vivienda'] != 'N/A' ? htmlspecialchars($datos_existentes['valor_vivienda']) : ''; ?>"
+                                       placeholder="0.00">
+                            </div>
+                            <div class="form-text">Ingrese el valor estimado de su vivienda</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="direccion" class="form-label">
+                                <i class="bi bi-geo-alt me-1"></i>Dirección:
+                            </label>
+                            <input type="text" class="form-control" id="direccion" name="direccion" 
+                                   value="<?php echo $datos_existentes && $datos_existentes['direccion'] != 'N/A' ? htmlspecialchars($datos_existentes['direccion']) : ''; ?>"
+                                   placeholder="Dirección de la vivienda" minlength="10">
+                            <div class="form-text">Mínimo 10 caracteres</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="id_vehiculo" class="form-label">
+                                <i class="bi bi-car-front me-1"></i>Vehículo:
+                            </label>
+                            <input type="text" class="form-control" id="id_vehiculo" name="id_vehiculo" 
+                                   value="<?php echo $datos_existentes && $datos_existentes['id_vehiculo'] != 'N/A' ? htmlspecialchars($datos_existentes['id_vehiculo']) : ''; ?>"
+                                   placeholder="Tipo de vehículo" minlength="3">
+                            <div class="form-text">Mínimo 3 caracteres</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4 mb-3">
+                            <label for="id_marca" class="form-label">
+                                <i class="bi bi-tag me-1"></i>Marca:
+                            </label>
+                            <input type="text" class="form-control" id="id_marca" name="id_marca" 
+                                   value="<?php echo $datos_existentes && $datos_existentes['id_marca'] != 'N/A' ? htmlspecialchars($datos_existentes['id_marca']) : ''; ?>"
+                                   placeholder="Marca del vehículo" minlength="2">
+                            <div class="form-text">Mínimo 2 caracteres</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="id_modelo" class="form-label">
+                                <i class="bi bi-gear me-1"></i>Modelo:
+                            </label>
+                            <input type="text" class="form-control" id="id_modelo" name="id_modelo" 
+                                   value="<?php echo $datos_existentes && $datos_existentes['id_modelo'] != 'N/A' ? htmlspecialchars($datos_existentes['id_modelo']) : ''; ?>"
+                                   placeholder="Modelo del vehículo" minlength="2">
+                            <div class="form-text">Mínimo 2 caracteres</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="id_ahorro" class="form-label">
+                                <i class="bi bi-piggy-bank me-1"></i>Ahorro (CDT, Inversiones):
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="text" class="form-control" id="id_ahorro" name="id_ahorro" 
+                                       value="<?php echo $datos_existentes && $datos_existentes['id_ahorro'] != 'N/A' ? htmlspecialchars($datos_existentes['id_ahorro']) : ''; ?>"
+                                       placeholder="0.00">
+                            </div>
+                            <div class="form-text">Ingrese el valor total de sus ahorros</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="otros" class="form-label">
+                                <i class="bi bi-plus-circle me-1"></i>Otros Bienes:
+                            </label>
+                            <input type="text" class="form-control" id="otros" name="otros" 
+                                   value="<?php echo $datos_existentes && $datos_existentes['otros'] != 'N/A' ? htmlspecialchars($datos_existentes['otros']) : ''; ?>"
+                                   placeholder="Otros bienes o activos">
+                            <div class="form-text">Opcional - Otros bienes o activos que posea</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-12 mb-3">
+                            <label for="observacion" class="form-label">
+                                <i class="bi bi-chat-text me-1"></i>Observación:
+                            </label>
+                            <textarea class="form-control" id="observacion" name="observacion" 
+                                      rows="4" maxlength="1000"><?php echo $datos_existentes && $datos_existentes['observacion'] != 'N/A' ? htmlspecialchars($datos_existentes['observacion']) : ''; ?></textarea>
+                            <div class="form-text">Máximo 1000 caracteres. Mínimo 10 caracteres si se llena.</div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="row">
                     <div class="col-12 text-center">
                         <button type="submit" class="btn btn-primary btn-lg me-2">
                             <i class="bi bi-check-circle me-2"></i>
-                            Continuar
+                            <?php echo $datos_existentes ? 'Actualizar' : 'Guardar'; ?>
                         </button>
                         <a href="../servicios_publicos/servicios_publicos.php" class="btn btn-secondary btn-lg">
                             <i class="bi bi-arrow-left me-2"></i>Volver
@@ -236,6 +336,82 @@ try {
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/autonumeric@4.1.0/dist/autoNumeric.min.js"></script>
+<script>
+function toggleFormularioPatrimonio() {
+    const tienePatrimonioSelect = document.getElementById('tiene_patrimonio');
+    const camposPatrimonioDiv = document.getElementById('camposPatrimonio');
+    const campos = camposPatrimonioDiv.querySelectorAll('input, select, textarea');
+
+    if (tienePatrimonioSelect.value === '2') { // '2' corresponde a "Sí"
+        camposPatrimonioDiv.style.display = 'block';
+    } else {
+        camposPatrimonioDiv.style.display = 'none';
+        // Limpiar todos los campos cuando se ocultan para no enviar datos antiguos
+        campos.forEach(campo => {
+            if (campo.type === 'select-one') {
+                campo.selectedIndex = 0; // Resetea el select
+            } else {
+                campo.value = ''; // Limpia inputs y textareas
+            }
+        });
+    }
+}
+
+// Ejecutar al cargar la página para establecer el estado inicial correcto
+document.addEventListener('DOMContentLoaded', function() {
+    toggleFormularioPatrimonio();
+    
+    // Inicializar autoNumeric para campos de dinero
+    new AutoNumeric('#valor_vivienda', {
+        currencySymbol: '$',
+        decimalCharacter: '.',
+        digitGroupSeparator: ',',
+        minimumValue: '0'
+    });
+
+    new AutoNumeric('#id_ahorro', {
+        currencySymbol: '$',
+        decimalCharacter: '.',
+        digitGroupSeparator: ',',
+        minimumValue: '0'
+    });
+});
+
+// Validación del formulario
+document.getElementById('formPatrimonio').addEventListener('submit', function(event) {
+    const tienePatrimonioSelect = document.getElementById('tiene_patrimonio');
+    
+    // Validar que se haya seleccionado una opción principal
+    if (!tienePatrimonioSelect.value || tienePatrimonioSelect.value === '') {
+        event.preventDefault();
+        alert('Por favor, seleccione si posee patrimonio.');
+        tienePatrimonioSelect.focus();
+        return;
+    }
+    
+    // Validar campos de patrimonio solo si se seleccionó "Sí"
+    if (tienePatrimonioSelect.value === '2') {
+        const camposObligatorios = [
+            'valor_vivienda', 'direccion', 'id_vehiculo', 'id_marca', 'id_modelo', 'id_ahorro'
+        ];
+        
+        for (const idCampo of camposObligatorios) {
+            const elemento = document.getElementById(idCampo);
+            if (!elemento.value || elemento.value.trim() === '') {
+                event.preventDefault();
+                // Obtener el texto de la etiqueta para un mensaje más claro
+                const label = elemento.closest('.mb-3').querySelector('label');
+                const labelText = label ? label.innerText.replace('*', '').trim() : idCampo;
+                alert(`El campo "${labelText}" es obligatorio.`);
+                elemento.focus();
+                return;
+            }
+        }
+    }
+});
+</script>
 
 <?php
 $contenido = ob_get_clean();

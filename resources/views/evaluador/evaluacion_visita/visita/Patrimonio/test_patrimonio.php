@@ -20,9 +20,8 @@ echo "<h3>🔌 1. VERIFICACIÓN DE CONEXIÓN A BASE DE DATOS</h3>";
 
 try {
     require_once __DIR__ . '/../../../../../../app/Database/Database.php';
-    use App\Database\Database;
     
-    $db = Database::getInstance()->getConnection();
+    $db = \App\Database\Database::getInstance()->getConnection();
     echo "<div class='test-result success'>✅ Conexión a base de datos exitosa</div>";
     
     // Verificar que la tabla patrimonio existe
@@ -67,9 +66,8 @@ echo "<h3>🎮 2. VERIFICACIÓN DEL CONTROLADOR</h3>";
 
 try {
     require_once __DIR__ . '/PatrimonioController.php';
-    use App\Controllers\PatrimonioController;
     
-    $controller = PatrimonioController::getInstance();
+    $controller = \App\Controllers\PatrimonioController::getInstance();
     echo "<div class='test-result success'>✅ Controlador PatrimonioController cargado correctamente</div>";
     echo "<div class='test-result success'>✅ Patrón Singleton funcionando correctamente</div>";
     

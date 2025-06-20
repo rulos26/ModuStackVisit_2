@@ -41,7 +41,7 @@ class PatrimonioController {
             $errores[] = "Debe seleccionar si tiene patrimonio o no.";
         }
         
-        // Si tiene patrimonio, validar los campos específicos
+        // Si tiene patrimonio (valor != '1'), validar los campos específicos
         if (isset($datos['tiene_patrimonio']) && $datos['tiene_patrimonio'] != '1') {
             // Validar valor de vivienda (debe ser un número positivo)
             if (!empty($datos['valor_vivienda'])) {
@@ -93,7 +93,7 @@ class PatrimonioController {
             $id_cedula = $_SESSION['id_cedula'];
             $tiene_patrimonio = $datos['tiene_patrimonio'];
             
-            // Si no tiene patrimonio, guardar con valores N/A
+            // Si no tiene patrimonio (valor = '1'), guardar con valores N/A
             if ($tiene_patrimonio == '1') {
                 $valor_vivienda = 'N/A';
                 $direccion = 'N/A';
@@ -118,12 +118,14 @@ class PatrimonioController {
             $existe = $this->obtenerPorCedula($id_cedula);
             if ($existe) {
                 $sql = "UPDATE patrimonio SET 
+                        tiene_patrimonio = :tiene_patrimonio,
                         valor_vivienda = :valor_vivienda, direccion = :direccion, 
                         id_vehiculo = :id_vehiculo, id_marca = :id_marca, 
                         id_modelo = :id_modelo, id_ahorro = :id_ahorro, 
                         otros = :otros, observacion = :observacion
                         WHERE id_cedula = :id_cedula";
                 $stmt = $this->db->prepare($sql);
+                $stmt->bindParam(':tiene_patrimonio', $tiene_patrimonio);
                 $stmt->bindParam(':valor_vivienda', $valor_vivienda);
                 $stmt->bindParam(':direccion', $direccion);
                 $stmt->bindParam(':id_vehiculo', $id_vehiculo);
@@ -135,12 +137,13 @@ class PatrimonioController {
                 $stmt->bindParam(':id_cedula', $id_cedula);
                 $ok = $stmt->execute();
             } else {
-                $sql = "INSERT INTO patrimonio (id_cedula, valor_vivienda, direccion, 
+                $sql = "INSERT INTO patrimonio (id_cedula, tiene_patrimonio, valor_vivienda, direccion, 
                         id_vehiculo, id_marca, id_modelo, id_ahorro, otros, observacion) 
-                        VALUES (:id_cedula, :valor_vivienda, :direccion, :id_vehiculo, 
+                        VALUES (:id_cedula, :tiene_patrimonio, :valor_vivienda, :direccion, :id_vehiculo, 
                         :id_marca, :id_modelo, :id_ahorro, :otros, :observacion)";
                 $stmt = $this->db->prepare($sql);
                 $stmt->bindParam(':id_cedula', $id_cedula);
+                $stmt->bindParam(':tiene_patrimonio', $tiene_patrimonio);
                 $stmt->bindParam(':valor_vivienda', $valor_vivienda);
                 $stmt->bindParam(':direccion', $direccion);
                 $stmt->bindParam(':id_vehiculo', $id_vehiculo);
