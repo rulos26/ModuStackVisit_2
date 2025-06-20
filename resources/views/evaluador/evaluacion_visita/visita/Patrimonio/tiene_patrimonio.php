@@ -201,7 +201,17 @@ try {
                             <option value="">Seleccione una opción</option>
                             <?php foreach ($parametros as $parametro): ?>
                                 <option value="<?php echo $parametro['id']; ?>" 
-                                    <?php echo ($datos_existentes && $datos_existentes['tiene_patrimonio'] == $parametro['id']) ? 'selected' : ''; ?>>
+                                    <?php 
+                                    // Determinar la selección basándose en los datos existentes
+                                    if ($datos_existentes) {
+                                        // Si existe un registro y el valor_vivienda no es 'N/A', entonces tiene patrimonio
+                                        if ($datos_existentes['valor_vivienda'] != 'N/A' && $parametro['id'] != '1') {
+                                            echo 'selected';
+                                        } elseif ($datos_existentes['valor_vivienda'] == 'N/A' && $parametro['id'] == '1') {
+                                            echo 'selected';
+                                        }
+                                    }
+                                    ?>>
                                     <?php echo htmlspecialchars($parametro['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
@@ -211,7 +221,7 @@ try {
                 </div>
                 
                 <!-- Campos de patrimonio detallado (se muestran/ocultan dinámicamente) -->
-                <div id="camposPatrimonio" class="campos-patrimonio" style="display: none;">
+                <div id="camposPatrimonio" class="campos-patrimonio" style="display: <?php echo ($datos_existentes && $datos_existentes['valor_vivienda'] != 'N/A') ? 'block' : 'none'; ?>;">
                     <hr class="my-4">
                     <h6 class="text-primary mb-3">
                         <i class="bi bi-bank me-2"></i>Detalles del Patrimonio
@@ -344,7 +354,9 @@ function toggleFormularioPatrimonio() {
     const camposPatrimonioDiv = document.getElementById('camposPatrimonio');
     const campos = camposPatrimonioDiv.querySelectorAll('input, select, textarea');
 
-    if (tienePatrimonioSelect.value === '2') { // '2' corresponde a "Sí"
+    // Determinar si debe mostrar los campos basándose en la selección
+    // Asumiendo que '1' es "No" y cualquier otro valor es "Sí"
+    if (tienePatrimonioSelect.value && tienePatrimonioSelect.value !== '1') {
         camposPatrimonioDiv.style.display = 'block';
     } else {
         camposPatrimonioDiv.style.display = 'none';
@@ -391,8 +403,8 @@ document.getElementById('formPatrimonio').addEventListener('submit', function(ev
         return;
     }
     
-    // Validar campos de patrimonio solo si se seleccionó "Sí"
-    if (tienePatrimonioSelect.value === '2') {
+    // Validar campos de patrimonio solo si se seleccionó "Sí" (cualquier valor diferente a '1')
+    if (tienePatrimonioSelect.value && tienePatrimonioSelect.value !== '1') {
         const camposObligatorios = [
             'valor_vivienda', 'direccion', 'id_vehiculo', 'id_marca', 'id_modelo', 'id_ahorro'
         ];
