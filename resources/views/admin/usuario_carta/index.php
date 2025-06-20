@@ -163,7 +163,7 @@ if ($result) {
                                         <span class="input-group-text">
                                             <i class="fas fa-search"></i>
                                         </span>
-                                        <input type="text" class="form-control" placeholder="Buscar usuario por cédula o nombre...">
+                                        <input type="text" class="form-control" id="searchInput" placeholder="Buscar usuario por cédula o nombre...">
                                     </div>
                                 </div>
                                 <div class="col-md-6 text-end">
@@ -175,7 +175,7 @@ if ($result) {
 
                             <!-- Table -->
                             <div class="table-responsive">
-                                <table class="table table-hover">
+                                <table class="table table-hover" id="usersTable">
                                     <thead class="table-dark">
                                         <tr>
                                             <th>ID</th>
@@ -233,5 +233,67 @@ if ($result) {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Funcionalidad de búsqueda
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const table = document.getElementById('usersTable');
+            const tbody = table.querySelector('tbody');
+            const rows = tbody.querySelectorAll('tr');
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+
+                rows.forEach(function(row) {
+                    const cells = row.querySelectorAll('td');
+                    let found = false;
+
+                    // Buscar en las columnas de cédula (índice 1) y nombres (índice 2)
+                    if (cells.length > 2) {
+                        const cedula = cells[1].textContent.toLowerCase();
+                        const nombres = cells[2].textContent.toLowerCase();
+
+                        if (cedula.includes(searchTerm) || nombres.includes(searchTerm)) {
+                            found = true;
+                        }
+                    }
+
+                    // Mostrar u ocultar la fila según el resultado de la búsqueda
+                    if (found) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Mostrar mensaje si no hay resultados
+                const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
+                const noResultsRow = tbody.querySelector('.no-results');
+                
+                if (visibleRows.length === 0 && searchTerm !== '') {
+                    if (!noResultsRow) {
+                        const newRow = document.createElement('tr');
+                        newRow.className = 'no-results';
+                        newRow.innerHTML = `
+                            <td colspan="7" class="text-center text-muted">
+                                <i class="fas fa-search fa-3x mb-3"></i>
+                                <p>No se encontraron resultados para "${searchTerm}"</p>
+                            </td>
+                        `;
+                        tbody.appendChild(newRow);
+                    }
+                } else if (noResultsRow) {
+                    noResultsRow.remove();
+                }
+            });
+
+            // Limpiar búsqueda al hacer clic en el ícono de búsqueda
+            document.querySelector('.input-group-text').addEventListener('click', function() {
+                searchInput.value = '';
+                searchInput.dispatchEvent(new Event('input'));
+            });
+        });
+    </script>
 </body>
 </html> 
