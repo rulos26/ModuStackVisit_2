@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Dompdf\Dompdf;
 use App\Database\Database;
+use Exception;
 
 class InformeFinalPdfController {
     
