@@ -642,7 +642,7 @@ class InformeFinalPdfController {
         }
 
         // Consulta de ubicación foto
-        $sql_ubicacion = "SELECT id, id_cedula, ruta, nombre 
+        $sql_ubicacion = "SELECT  nombre 
         FROM ubicacion_autorizacion
         WHERE id_cedula = :cedula";
         
@@ -650,28 +650,13 @@ class InformeFinalPdfController {
         $stmt_ubicacion->bindParam(':cedula', $cedula);
         $stmt_ubicacion->execute();
         $ubicacion_foto = $stmt_ubicacion->fetch(\PDO::FETCH_ASSOC);
-
-        // Procesar la imagen de ubicación
-        $ubicacion_b64 = null;
-        if ($ubicacion_foto && !empty($ubicacion_foto['ruta'])) {
-            $ruta_imagen = $ubicacion_foto['ruta'];
-            if (file_exists($ruta_imagen)) {
-                $tipo_imagen = mime_content_type($ruta_imagen);
-                $contenido_imagen = file_get_contents($ruta_imagen);
-                $ubicacion_b64 = 'data:' . $tipo_imagen . ';base64,' . base64_encode($contenido_imagen);
-            }
-        }
-
-        // Función para convertir imagen a base64
-        function img_to_base64($img_path) {
-            if (!file_exists($img_path)) return '';
-            $info = pathinfo($img_path);
-            $ext = strtolower($info['extension']);
-            $mime = ($ext === 'png') ? 'image/png' : (($ext === 'gif') ? 'image/gif' : 'image/jpeg');
-            $data = base64_encode(file_get_contents($img_path));
-            return 'data:' . $mime . ';base64,' . $data;
-        }
-
+        
+        //same  el  campo nombre  de la tabla ubicacion_autorizacion  en una variable
+        $nombre_ubicacion_foto = $ubicacion_foto['nombre'];
+        $fotoo_ubicacion_path = __DIR__ . '/../../public/images/ubicacion_autorizacion/'.$cedula.'/'.$nombre_ubicacion_foto;
+        $fotoo_ubicacion_b64 = img_to_base64($fotoo_ubicacion_path);
+        
+        
         // Header - Logo
         $logo_path = __DIR__ . '/../../public/images/header.jpg';
         $logo_b64 = img_to_base64($logo_path);
@@ -699,7 +684,7 @@ class InformeFinalPdfController {
             'informacion_judicial' => $informacion_judicial,
             'experiencia_laboral' => $experiencia_laboral,
             'concepto_final' => $concepto_final,
-            'ubicacion_b64' => $ubicacion_b64
+            'fotoo_ubicacion_b64' => $fotoo_ubicacion_b64
         ];
         extract($data);
         ob_start();

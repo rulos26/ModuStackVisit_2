@@ -1146,7 +1146,7 @@
                 <tbody>
                     <tr>
                         <td colspan="6" style="border: 1px solid black; text-align: center;">
-                            <img src="<?= $ubicacion_b64 ?>" alt="Ubicación" style="border: 2px solid black; height: 270px; width: 1006px;">
+                            <img src="<?= $fotoo_ubicacion_b64 ?>" alt="Ubicación" style="border: 2px solid black; height: 270px; width: 1006px;">
                         </td>
                     </tr>
                 </tbody>
