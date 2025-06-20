@@ -273,9 +273,37 @@ try {
                                              alt="<?php echo htmlspecialchars($descripcion); ?>" 
                                              class="photo-preview">
                                     </div>
-                                    <div class="alert alert-success">
+                                    <div class="alert alert-success mb-3">
                                         <i class="fas fa-check-circle me-2"></i>
                                         <strong>Foto registrada</strong>
+                                    </div>
+                                    <!-- Botón para cambiar foto -->
+                                    <button type="button" class="btn btn-warning btn-sm" 
+                                            onclick="mostrarFormularioCambio(<?php echo $tipo; ?>, '<?php echo htmlspecialchars($descripcion); ?>')">
+                                        <i class="fas fa-edit me-2"></i>Cambiar Foto
+                                    </button>
+                                    
+                                    <!-- Formulario oculto para cambiar foto -->
+                                    <div id="formulario-cambio-<?php echo $tipo; ?>" class="mt-3" style="display: none;">
+                                        <form action="" method="POST" enctype="multipart/form-data" class="upload-form">
+                                            <input type="hidden" name="tipo" value="<?php echo $tipo; ?>">
+                                            <div class="mb-3">
+                                                <div class="upload-area" style="border: 2px dashed #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+                                                    <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
+                                                    <p class="text-muted small">Selecciona una nueva imagen</p>
+                                                    <input type="file" class="form-control form-control-sm" name="foto" accept="image/*" required>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                                <button type="submit" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-upload me-1"></i>Actualizar
+                                                </button>
+                                                <button type="button" class="btn btn-secondary btn-sm" 
+                                                        onclick="ocultarFormularioCambio(<?php echo $tipo; ?>)">
+                                                    <i class="fas fa-times me-1"></i>Cancelar
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
                                 <?php else: ?>
                                     <form action="" method="POST" enctype="multipart/form-data" class="upload-form">
@@ -328,6 +356,28 @@ try {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+// Funciones para manejar el cambio de fotos
+function mostrarFormularioCambio(tipo, descripcion) {
+    const formulario = document.getElementById('formulario-cambio-' + tipo);
+    if (formulario) {
+        formulario.style.display = 'block';
+        // Hacer scroll suave hacia el formulario
+        formulario.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+function ocultarFormularioCambio(tipo) {
+    const formulario = document.getElementById('formulario-cambio-' + tipo);
+    if (formulario) {
+        formulario.style.display = 'none';
+        // Limpiar el input file
+        const inputFile = formulario.querySelector('input[type="file"]');
+        if (inputFile) {
+            inputFile.value = '';
+        }
+    }
+}
+
 // JavaScript para redirección después de 5 segundos cuando se genera el informe
 document.addEventListener('DOMContentLoaded', function() {
     const btnGenerarInforme = document.getElementById('btnGenerarInforme');
@@ -339,6 +389,31 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 5000);
         });
     }
+    
+    // Validación de archivos antes de subir
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    fileInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                // Validar tipo de archivo
+                const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                if (!tiposPermitidos.includes(file.type)) {
+                    alert('Por favor, selecciona una imagen válida (JPG, PNG, GIF).');
+                    this.value = '';
+                    return;
+                }
+                
+                // Validar tamaño (5MB máximo)
+                const tamanoMaximo = 5 * 1024 * 1024; // 5MB
+                if (file.size > tamanoMaximo) {
+                    alert('La imagen no puede superar los 5MB.');
+                    this.value = '';
+                    return;
+                }
+            }
+        });
+    });
 });
 </script>
 

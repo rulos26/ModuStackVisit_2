@@ -68,10 +68,7 @@ class RegistroFotosController {
             $tipo = $datos['tipo'];
             
             // Verificar si ya existe una foto de este tipo
-            $existe = $this->obtenerPorTipo($id_cedula, $tipo);
-            if ($existe) {
-                return ['success' => false, 'message' => 'Ya existe una foto de este tipo registrada.'];
-            }
+            $foto_existente = $this->obtenerPorTipo($id_cedula, $tipo);
             
             // Procesar y guardar la imagen
             $archivo = $_FILES['foto'];
@@ -88,6 +85,14 @@ class RegistroFotosController {
             
             $ruta_completa = $directorio_destino . $nombre_archivo;
             
+            // Si existe una foto anterior, eliminarla del servidor
+            if ($foto_existente) {
+                $ruta_foto_anterior = __DIR__ . "/../../../../../public/images/evidencia_fotografica/{$id_cedula}/" . $foto_existente['nombre'];
+                if (file_exists($ruta_foto_anterior)) {
+                    unlink($ruta_foto_anterior);
+                }
+            }
+            
             // Mover archivo
             if (!move_uploaded_file($archivo['tmp_name'], $ruta_completa)) {
                 throw new Exception("Error al guardar la imagen");
@@ -95,16 +100,31 @@ class RegistroFotosController {
             
             // Guardar en base de datos
             $ruta_relativa = "public/images/evidencia_fotografica/{$id_cedula}/";
-            $sql = "INSERT INTO evidencia_fotografica (id_cedula, tipo, ruta, nombre) VALUES (:id_cedula, :tipo, :ruta, :nombre)";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id_cedula', $id_cedula);
-            $stmt->bindParam(':tipo', $tipo);
-            $stmt->bindParam(':ruta', $ruta_relativa);
-            $stmt->bindParam(':nombre', $nombre_archivo);
-            $ok = $stmt->execute();
+            
+            if ($foto_existente) {
+                // Actualizar registro existente
+                $sql = "UPDATE evidencia_fotografica SET ruta = :ruta, nombre = :nombre WHERE id_cedula = :id_cedula AND tipo = :tipo";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindParam(':ruta', $ruta_relativa);
+                $stmt->bindParam(':nombre', $nombre_archivo);
+                $stmt->bindParam(':id_cedula', $id_cedula);
+                $stmt->bindParam(':tipo', $tipo);
+                $ok = $stmt->execute();
+                $mensaje = 'Foto actualizada exitosamente.';
+            } else {
+                // Insertar nuevo registro
+                $sql = "INSERT INTO evidencia_fotografica (id_cedula, tipo, ruta, nombre) VALUES (:id_cedula, :tipo, :ruta, :nombre)";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindParam(':id_cedula', $id_cedula);
+                $stmt->bindParam(':tipo', $tipo);
+                $stmt->bindParam(':ruta', $ruta_relativa);
+                $stmt->bindParam(':nombre', $nombre_archivo);
+                $ok = $stmt->execute();
+                $mensaje = 'Foto guardada exitosamente.';
+            }
             
             if ($ok) {
-                return ['success' => true, 'message' => 'Foto guardada exitosamente.'];
+                return ['success' => true, 'message' => $mensaje];
             } else {
                 return ['success' => false, 'message' => 'Error al guardar la foto en la base de datos.'];
             }

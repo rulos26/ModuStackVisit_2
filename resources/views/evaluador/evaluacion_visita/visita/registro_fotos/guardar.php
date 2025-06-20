@@ -5,57 +5,88 @@ include '../../../../../conn/conexion.php';
 // Verificar si se recibieron datos del formulario
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Verificar si se recibieron los datos necesarios
-    if ( isset($_FILES['foto'])) {
+    if (isset($_FILES['foto']) && isset($_POST['tipo'])) {
         // Recibir los datos del formulario
         $tipo = $_POST['tipo'];
         $id_cedula = $_SESSION['id_cedula'];
-        // Configurar la ubicación de carga para la foto de perfil
+        
+        // Configurar la ubicación de carga para la foto
         $directorio_destino = "../../../../../public/images/evidencia_fotografica/" . $id_cedula . "/";
         if (!file_exists($directorio_destino)) {
             mkdir($directorio_destino, 0777, true);
-            echo "Se ha creado la carpeta: $directorio_destino";
-        } else {
-            echo "La carpeta $directorio_destino ya existe";
         }
-        // Obtener información del archivo de la foto de perfil
+        
+        // Obtener información del archivo
         $nombre_archivo = $_FILES['foto']['name'];
         $tipo_archivo = $_FILES['foto']['type'];
         $tamaño_archivo = $_FILES['foto']['size'];
         $temp_archivo = $_FILES['foto']['tmp_name'];
         $error_archivo = $_FILES['foto']['error'];
 
-        // Generar un nombre único para la foto de perfil
-        $nombre_foto = uniqid() . '_' . $nombre_archivo;
+        // Generar un nombre único para la foto
+        $extension = pathinfo($nombre_archivo, PATHINFO_EXTENSION);
+        $nombre_foto = 'foto_' . $tipo . '_' . $id_cedula . '_' . time() . '.' . $extension;
+
+        // Verificar si ya existe una foto de este tipo
+        $sql_check = "SELECT * FROM evidencia_fotografica WHERE id_cedula = '$id_cedula' AND tipo = $tipo";
+        $result_check = $mysqli->query($sql_check);
+        $foto_existente = $result_check->fetch_assoc();
+
+        // Si existe una foto anterior, eliminarla del servidor
+        if ($foto_existente) {
+            $ruta_foto_anterior = $directorio_destino . $foto_existente['nombre'];
+            if (file_exists($ruta_foto_anterior)) {
+                unlink($ruta_foto_anterior);
+            }
+        }
 
         // Comprobar si la foto se cargó correctamente
         if ($error_archivo === UPLOAD_ERR_OK) {
             // Mover el archivo cargado al directorio de destino
             if (move_uploaded_file($temp_archivo, $directorio_destino . $nombre_foto)) {
-                // Procesar los datos y realizar la inserción en la base de datos
-                // Aquí debes incluir la lógica para insertar los datos en tu base de datos
-                // Preparar la consulta SQL para insertar los datos del formulario
+                // Preparar la ruta relativa
                 $ruta_relativa = "public/images/evidencia_fotografica/" . $id_cedula . "/";
-                $sql = "INSERT INTO `evidencia_fotografica`(`id_cedula`, `ruta`, `nombre`, `tipo`) VALUES 
-                         ('$id_cedula', '$ruta_relativa', '$nombre_foto',$tipo)";
-                echo $sql . '<br>';
+                
+                if ($foto_existente) {
+                    // Actualizar registro existente
+                    $sql = "UPDATE evidencia_fotografica SET ruta = '$ruta_relativa', nombre = '$nombre_foto' 
+                           WHERE id_cedula = '$id_cedula' AND tipo = $tipo";
+                    $mensaje = "Foto actualizada exitosamente.";
+                } else {
+                    // Insertar nuevo registro
+                    $sql = "INSERT INTO evidencia_fotografica (id_cedula, ruta, nombre, tipo) VALUES 
+                           ('$id_cedula', '$ruta_relativa', '$nombre_foto', $tipo)";
+                    $mensaje = "Foto registrada exitosamente.";
+                }
+                
                 // Ejecutar la consulta
                 if ($mysqli->query($sql) === TRUE) {
-                    header("Location: ../registro_fotos/registro_fotos.php");
+                    $_SESSION['success'] = $mensaje;
                 } else {
-                    echo "Error al registrar: " . $mysqli->error;
+                    $_SESSION['error'] = "Error al registrar: " . $mysqli->error;
                 }
-                // Redirigir a una página de éxito
-                //header("Location: registro_exitoso.php");
+                
+                // Redirigir de vuelta al formulario
+                header("Location: registro_fotos.php");
                 exit();
             } else {
-                echo "Error al mover el archivo.";
+                $_SESSION['error'] = "Error al mover el archivo.";
+                header("Location: registro_fotos.php");
+                exit();
             }
         } else {
-            echo "Error al cargar la foto.";
+            $_SESSION['error'] = "Error al cargar la foto.";
+            header("Location: registro_fotos.php");
+            exit();
         }
     } else {
-        echo "Faltan datos del formulario.";
+        $_SESSION['error'] = "Faltan datos del formulario.";
+        header("Location: registro_fotos.php");
+        exit();
     }
 } else {
-    echo "Acceso denegado.";
+    $_SESSION['error'] = "Acceso denegado.";
+    header("Location: registro_fotos.php");
+    exit();
 }
+?>
