@@ -15,65 +15,61 @@ $admin_username = $_SESSION['username'] ?? 'Administrador';
 // Conexión a la base de datos
 require_once __DIR__ . '/../../../../conn/conexion.php';
 
-// Consulta para obtener todos los registros de autorizaciones con verificación de completitud
-$sql = "
-    SELECT 
-        a.id,
-        a.cedula,
-        a.nombres,
-        a.correo,
-        CASE 
-            WHEN ua.id IS NOT NULL AND f.id IS NOT NULL AND fp.id IS NOT NULL 
-            THEN 'Completada'
-            WHEN ua.id IS NOT NULL OR f.id IS NOT NULL OR fp.id IS NOT NULL 
-            THEN 'En Proceso'
-            ELSE 'Pendiente'
-        END as estado,
-        CASE 
-            WHEN ua.id IS NOT NULL AND f.id IS NOT NULL AND fp.id IS NOT NULL 
-            THEN 1
-            ELSE 0
-        END as completada,
-        CASE 
-            WHEN (ua.id IS NOT NULL OR f.id IS NOT NULL OR fp.id IS NOT NULL) 
-            AND NOT (ua.id IS NOT NULL AND f.id IS NOT NULL AND fp.id IS NOT NULL)
-            THEN 1
-            ELSE 0
-        END as en_proceso,
-        CASE 
-            WHEN ua.id IS NULL AND f.id IS NULL AND fp.id IS NULL 
-            THEN 1
-            ELSE 0
-        END as pendiente
-    FROM autorizaciones a
-    LEFT JOIN ubicacion_autorizacion ua ON a.cedula = ua.id_cedula
-    LEFT JOIN firmas f ON a.cedula = f.id_cedula
-    LEFT JOIN foto_perfil_autorizacion fp ON a.cedula = fp.id_cedula
-    ORDER BY a.id DESC
-";
+// 1. Obtener todas las cédulas de autorizaciones
+$sql_autorizaciones = "SELECT id, cedula, nombres, correo FROM autorizaciones ORDER BY id DESC";
+$result_autorizaciones = $mysqli->query($sql_autorizaciones);
 
-$result = $mysqli->query($sql);
-
-// Contadores para las estadísticas
+$usuarios = [];
 $total_usuarios = 0;
 $cartas_completadas = 0;
 $en_proceso = 0;
 $pendientes = 0;
 
-if ($result) {
-    $total_usuarios = $result->num_rows;
+if ($result_autorizaciones) {
+    $total_usuarios = $result_autorizaciones->num_rows;
     
-    // Reiniciar el puntero del resultado para contar las estadísticas
-    $result->data_seek(0);
-    
-    while ($row = $result->fetch_assoc()) {
-        $cartas_completadas += $row['completada'];
-        $en_proceso += $row['en_proceso'];
-        $pendientes += $row['pendiente'];
+    while ($row = $result_autorizaciones->fetch_assoc()) {
+        $cedula = $row['cedula'];
+        
+        // 2. Verificar si existe en ubicacion_autorizacion
+        $sql_ubicacion = "SELECT id FROM ubicacion_autorizacion WHERE id_cedula = '$cedula'";
+        $result_ubicacion = $mysqli->query($sql_ubicacion);
+        $tiene_ubicacion = $result_ubicacion && $result_ubicacion->num_rows > 0;
+        
+        // 3. Verificar si existe en firmas
+        $sql_firmas = "SELECT id FROM firmas WHERE id_cedula = '$cedula'";
+        $result_firmas = $mysqli->query($sql_firmas);
+        $tiene_firmas = $result_firmas && $result_firmas->num_rows > 0;
+        
+        // 4. Verificar si existe en foto_perfil_autorizacion
+        $sql_foto = "SELECT id FROM foto_perfil_autorizacion WHERE id_cedula = '$cedula'";
+        $result_foto = $mysqli->query($sql_foto);
+        $tiene_foto = $result_foto && $result_foto->num_rows > 0;
+        
+        // 5. Determinar estado
+        if ($tiene_ubicacion && $tiene_firmas && $tiene_foto) {
+            $estado = 'Completada';
+            $cartas_completadas++;
+        } elseif ($tiene_ubicacion || $tiene_firmas || $tiene_foto) {
+            $estado = 'En Proceso';
+            $en_proceso++;
+        } else {
+            $estado = 'Pendiente';
+            $pendientes++;
+        }
+        
+        // 6. Agregar a array de usuarios
+        $usuarios[] = [
+            'id' => $row['id'],
+            'cedula' => $row['cedula'],
+            'nombres' => $row['nombres'],
+            'correo' => $row['correo'],
+            'estado' => $estado,
+            'tiene_ubicacion' => $tiene_ubicacion,
+            'tiene_firmas' => $tiene_firmas,
+            'tiene_foto' => $tiene_foto
+        ];
     }
-    
-    // Reiniciar el puntero para mostrar los datos en la tabla
-    $result->data_seek(0);
 }
 ?>
 
@@ -234,16 +230,16 @@ if ($result) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php if ($result && $result->num_rows > 0): ?>
-                                            <?php while ($row = $result->fetch_assoc()): ?>
+                                        <?php if (!empty($usuarios)): ?>
+                                            <?php foreach ($usuarios as $usuario): ?>
                                                 <tr>
-                                                    <td><?php echo htmlspecialchars($row['id']); ?></td>
-                                                    <td><?php echo htmlspecialchars($row['cedula']); ?></td>
-                                                    <td><?php echo htmlspecialchars($row['nombres']); ?></td>
-                                                    <td><?php echo htmlspecialchars($row['correo']); ?></td>
+                                                    <td><?php echo htmlspecialchars($usuario['id']); ?></td>
+                                                    <td><?php echo htmlspecialchars($usuario['cedula']); ?></td>
+                                                    <td><?php echo htmlspecialchars($usuario['nombres']); ?></td>
+                                                    <td><?php echo htmlspecialchars($usuario['correo']); ?></td>
                                                     <td>
                                                         <?php 
-                                                        $estado = $row['estado'];
+                                                        $estado = $usuario['estado'];
                                                         $badgeClass = '';
                                                         switch($estado) {
                                                             case 'Completada':
@@ -276,7 +272,7 @@ if ($result) {
                                                         </div>
                                                     </td>
                                                 </tr>
-                                            <?php endwhile; ?>
+                                            <?php endforeach; ?>
                                         <?php else: ?>
                                             <tr>
                                                 <td colspan="7" class="text-center text-muted">
