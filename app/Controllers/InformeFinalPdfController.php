@@ -444,6 +444,149 @@ class InformeFinalPdfController {
             }
         }
 
+        // Consulta de data crédito
+        $sql_data_credito = "SELECT id_cedula, entidad, cuotas, pago_mensual, deuda 
+        FROM data_credito 
+        WHERE id_cedula = :cedula";
+        
+        $stmt_data_credito = $db->prepare($sql_data_credito);
+        $stmt_data_credito->bindParam(':cedula', $cedula);
+        $stmt_data_credito->execute();
+        $data_credito = $stmt_data_credito->fetchAll(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de data crédito
+        if ($data_credito) {
+            foreach ($data_credito as &$credito) {
+                // Lista de campos a procesar
+                $campos_credito = [
+                    'entidad', 'cuotas', 'pago_mensual', 'deuda'
+                ];
+
+                // Convertir campos vacíos a N/A
+                foreach ($campos_credito as $campo) {
+                    $credito[$campo] = empty($credito[$campo]) ? 'N/A' : $credito[$campo];
+                }
+            }
+        }
+
+        // Consulta de ingresos mensuales
+        $sql_ingresos = "SELECT * FROM ingresos_mensuales WHERE id_cedula = :cedula";
+        
+        $stmt_ingresos = $db->prepare($sql_ingresos);
+        $stmt_ingresos->bindParam(':cedula', $cedula);
+        $stmt_ingresos->execute();
+        $ingresos_mensuales = $stmt_ingresos->fetch(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de ingresos mensuales
+        if ($ingresos_mensuales) {
+            // Lista de campos a procesar
+            $campos_ingresos = [
+                'salario_val', 'pension_val', 'arriendo_val', 'trabajo_independiente_val', 'otros_val'
+            ];
+
+            // Convertir campos vacíos a N/A
+            foreach ($campos_ingresos as $campo) {
+                $ingresos_mensuales[$campo] = empty($ingresos_mensuales[$campo]) ? 'N/A' : $ingresos_mensuales[$campo];
+            }
+        }
+
+        // Consulta de gastos
+        $sql_gastos = "SELECT * FROM gasto WHERE id_cedula = :cedula";
+        
+        $stmt_gastos = $db->prepare($sql_gastos);
+        $stmt_gastos->bindParam(':cedula', $cedula);
+        $stmt_gastos->execute();
+        $gastos = $stmt_gastos->fetch(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de gastos
+        if ($gastos) {
+            // Lista de campos a procesar
+            $campos_gastos = [
+                'alimentacion_val', 'educacion_val', 'salud_val', 'recreacion_val',
+                'cuota_creditos_val', 'arriendo_val', 'servicios_publicos_val', 'otros_val'
+            ];
+
+            // Convertir campos vacíos a N/A
+            foreach ($campos_gastos as $campo) {
+                $gastos[$campo] = empty($gastos[$campo]) ? 'N/A' : $gastos[$campo];
+            }
+        }
+
+        // Consulta de estudios
+        $sql_estudios = "SELECT e.id, e.id_cedula, e.centro_estudios, e.id_jornada, e.id_ciudad, e.anno, e.titulos, e.id_resultado,
+            m.id_municipio, m.municipio
+        FROM estudios e
+        LEFT JOIN municipios m ON e.id_ciudad = m.id_municipio
+        WHERE e.id_cedula = :cedula";
+        
+        $stmt_estudios = $db->prepare($sql_estudios);
+        $stmt_estudios->bindParam(':cedula', $cedula);
+        $stmt_estudios->execute();
+        $estudios = $stmt_estudios->fetchAll(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de estudios
+        if ($estudios) {
+            foreach ($estudios as &$estudio) {
+                // Lista de campos a procesar
+                $campos_estudio = [
+                    'centro_estudios', 'id_jornada', 'municipio', 'anno', 'titulos', 'id_resultado'
+                ];
+
+                // Convertir campos vacíos a N/A
+                foreach ($campos_estudio as $campo) {
+                    $estudio[$campo] = empty($estudio[$campo]) ? 'N/A' : $estudio[$campo];
+                }
+            }
+        }
+
+        // Consulta de información judicial
+        $sql_judicial = "SELECT
+            ij.id,
+            ij.id_cedula,
+            ij.denuncias_opc,
+            ij.denuncias_desc,
+            ij.procesos_judiciales_opc,
+            ij.procesos_judiciales_desc,
+            ij.preso_opc,
+            ij.preso_desc,
+            ij.familia_detenido_opc,
+            ij.familia_detenido_desc,
+            ij.centros_penitenciarios_opc,
+            ij.centros_penitenciarios_desc,
+            ij.revi_fiscal,
+            op1.nombre AS nombre_opcion1,
+            op2.nombre AS nombre_opcion2,
+            op3.nombre AS nombre_opcion3,
+            op4.nombre AS nombre_opcion4,
+            op5.nombre AS nombre_opcion5
+        FROM informacion_judicial AS ij
+        LEFT JOIN opc_parametro AS op1 ON ij.denuncias_opc = op1.id
+        LEFT JOIN opc_parametro AS op2 ON ij.procesos_judiciales_opc = op2.id
+        LEFT JOIN opc_parametro AS op3 ON ij.preso_opc = op3.id
+        LEFT JOIN opc_parametro AS op4 ON ij.familia_detenido_opc = op4.id
+        LEFT JOIN opc_parametro AS op5 ON ij.centros_penitenciarios_opc = op5.id
+        WHERE ij.id_cedula = :cedula";
+        
+        $stmt_judicial = $db->prepare($sql_judicial);
+        $stmt_judicial->bindParam(':cedula', $cedula);
+        $stmt_judicial->execute();
+        $informacion_judicial = $stmt_judicial->fetch(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de información judicial
+        if ($informacion_judicial) {
+            // Lista de campos a procesar
+            $campos_judicial = [
+                'denuncias_desc', 'procesos_judiciales_desc', 'preso_desc', 
+                'familia_detenido_desc', 'centros_penitenciarios_desc', 'revi_fiscal',
+                'nombre_opcion1', 'nombre_opcion2', 'nombre_opcion3', 'nombre_opcion4', 'nombre_opcion5'
+            ];
+
+            // Convertir campos vacíos a N/A
+            foreach ($campos_judicial as $campo) {
+                $informacion_judicial[$campo] = empty($informacion_judicial[$campo]) ? 'N/A' : $informacion_judicial[$campo];
+            }
+        }
+
         // Función para convertir imagen a base64
         function img_to_base64($img_path) {
             if (!file_exists($img_path)) return '';
@@ -473,7 +616,12 @@ class InformeFinalPdfController {
             'patrimonio' => $patrimonio,
             'cuentas_bancarias' => $cuentas_bancarias,
             'pasivos' => $pasivos,
-            'aportantes' => $aportantes
+            'aportantes' => $aportantes,
+            'data_credito' => $data_credito,
+            'ingresos_mensuales' => $ingresos_mensuales,
+            'gastos' => $gastos,
+            'estudios' => $estudios,
+            'informacion_judicial' => $informacion_judicial
         ];
         extract($data);
         ob_start();

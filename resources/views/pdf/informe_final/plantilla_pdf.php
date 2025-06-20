@@ -729,6 +729,286 @@
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <?php if ($data_credito && count($data_credito) > 0): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            DATA CRÉDITO
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">ENTIDAD</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">CUOTAS</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">PAGO MENSUAL</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">DEUDA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($data_credito as $credito): ?>
+                        <tr>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($credito['entidad']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($credito['cuotas']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($credito['pago_mensual']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($credito['deuda']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            DATA CRÉDITO
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre data crédito
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
+
+        <?php if ($ingresos_mensuales): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="12" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            INGRESOS MENSUALES DEL NÚCLEO FAMILIAR
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">SALARIO</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($ingresos_mensuales['salario_val']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">PENSIÓN</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($ingresos_mensuales['pension_val']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">ARRIENDOS</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($ingresos_mensuales['arriendo_val']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">TRABAJO INDEPENDIENTE</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($ingresos_mensuales['trabajo_independiente_val']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">OTROS</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($ingresos_mensuales['otros_val']) ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="12" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            INGRESOS MENSUALES DEL NÚCLEO FAMILIAR
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="12" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre ingresos mensuales
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
+
+        <?php if ($gastos): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="12" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            GASTOS O DEUDAS MENSUALES DEL NÚCLEO FAMILIAR
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">ALIMENTACIÓN</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['alimentacion_val']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">EDUCACIÓN</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['educacion_val']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">SALUD</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['salud_val']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">RECREACIÓN</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['recreacion_val']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">CUOT/CRÉDITOS</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['cuota_creditos_val']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">ARRIENDO</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['arriendo_val']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">SERVICIOS PÚBLICOS</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['servicios_publicos_val']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">OTROS</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['otros_val']) ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="12" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            GASTOS O DEUDAS MENSUALES DEL NÚCLEO FAMILIAR
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="12" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre gastos mensuales
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
+
+        <?php if ($estudios && count($estudios) > 0): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            EXPERIENCIA ACADÉMICA
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">CENTRO EDUCATIVO</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">JORNADA</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">CIUDAD</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">AÑO</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">TÍTULO OBTENIDO</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">RESULTADO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($estudios as $estudio): ?>
+                        <tr>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estudio['centro_estudios']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estudio['id_jornada']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estudio['municipio']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estudio['anno']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estudio['titulos']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($estudio['id_resultado']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            EXPERIENCIA ACADÉMICA
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre experiencia académica
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
+
+        <?php if ($informacion_judicial): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            INFORMACIÓN JUDICIAL
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-decoration: underline; color: #890303;">
+                            ANTECEDENTES JUDICIALES Y DISCIPLINARIOS POLICÍA Y CONTRALORÍA, PROCURADURÍA, LISTAS CLINTON, INTERPOL ORFAC
+                        </td>
+                        <td colspan="3" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_judicial['revi_fiscal']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">
+                            ¿Ha presentado denuncias o demandas a persona natural o persona jurídica?
+                        </td>
+                        <td colspan="1" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_judicial['nombre_opcion1']) ?></td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_judicial['denuncias_desc']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">
+                            ¿Presenta procesos judiciales o disciplinarios en contra?
+                        </td>
+                        <td colspan="1" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_judicial['nombre_opcion2']) ?></td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_judicial['procesos_judiciales_desc']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">
+                            ¿Ha sido privado de la libertad? (Policía, Fiscalía)
+                        </td>
+                        <td colspan="1" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_judicial['nombre_opcion3']) ?></td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_judicial['preso_desc']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">
+                            ¿Algún miembro de la familia ha sido privado de la libertad por algún delito?
+                        </td>
+                        <td colspan="1" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_judicial['nombre_opcion4']) ?></td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_judicial['familia_detenido_desc']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">
+                            ¿Ha visitado centros penitenciarios?
+                        </td>
+                        <td colspan="1" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_judicial['nombre_opcion5']) ?></td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($informacion_judicial['centros_penitenciarios_desc']) ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            INFORMACIÓN JUDICIAL
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;">
+                            No se encontró información judicial
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </body>
 </html>
