@@ -12,8 +12,43 @@ $admin_username = $_SESSION['username'] ?? 'Administrador';
 // Conexión a la base de datos
 require_once __DIR__ . '/../../../../conn/conexion.php';
 
-// Consulta para obtener todos los registros de autorizaciones
-$sql = "SELECT `id`, `cedula`, `nombres`, `correo` FROM `autorizaciones`";
+// Consulta para obtener todos los registros de autorizaciones con verificación de completitud
+$sql = "
+    SELECT 
+        a.id,
+        a.cedula,
+        a.nombres,
+        a.correo,
+        CASE 
+            WHEN ua.id IS NOT NULL AND f.id IS NOT NULL AND fp.id IS NOT NULL 
+            THEN 'Completada'
+            WHEN ua.id IS NOT NULL OR f.id IS NOT NULL OR fp.id IS NOT NULL 
+            THEN 'En Proceso'
+            ELSE 'Pendiente'
+        END as estado,
+        CASE 
+            WHEN ua.id IS NOT NULL AND f.id IS NOT NULL AND fp.id IS NOT NULL 
+            THEN 1
+            ELSE 0
+        END as completada,
+        CASE 
+            WHEN (ua.id IS NOT NULL OR f.id IS NOT NULL OR fp.id IS NOT NULL) 
+            AND NOT (ua.id IS NOT NULL AND f.id IS NOT NULL AND fp.id IS NOT NULL)
+            THEN 1
+            ELSE 0
+        END as en_proceso,
+        CASE 
+            WHEN ua.id IS NULL AND f.id IS NULL AND fp.id IS NULL 
+            THEN 1
+            ELSE 0
+        END as pendiente
+    FROM autorizaciones a
+    LEFT JOIN ubicacion_autorizacion ua ON a.cedula = ua.cedula
+    LEFT JOIN firmas f ON a.cedula = f.cedula
+    LEFT JOIN foto_perfil_autorizacion fp ON a.cedula = fp.cedula
+    ORDER BY a.id DESC
+";
+
 $result = $mysqli->query($sql);
 
 // Contadores para las estadísticas
@@ -24,10 +59,18 @@ $pendientes = 0;
 
 if ($result) {
     $total_usuarios = $result->num_rows;
-    // Aquí puedes agregar lógica para contar por estado si tienes una columna de estado
-    $cartas_completadas = $total_usuarios; // Por ahora asumimos que todos están completados
-    $en_proceso = 0;
-    $pendientes = 0;
+    
+    // Reiniciar el puntero del resultado para contar las estadísticas
+    $result->data_seek(0);
+    
+    while ($row = $result->fetch_assoc()) {
+        $cartas_completadas += $row['completada'];
+        $en_proceso += $row['en_proceso'];
+        $pendientes += $row['pendiente'];
+    }
+    
+    // Reiniciar el puntero para mostrar los datos en la tabla
+    $result->data_seek(0);
 }
 ?>
 
@@ -196,7 +239,24 @@ if ($result) {
                                                     <td><?php echo htmlspecialchars($row['nombres']); ?></td>
                                                     <td><?php echo htmlspecialchars($row['correo']); ?></td>
                                                     <td>
-                                                        <span class="badge bg-success">Completada</span>
+                                                        <?php 
+                                                        $estado = $row['estado'];
+                                                        $badgeClass = '';
+                                                        switch($estado) {
+                                                            case 'Completada':
+                                                                $badgeClass = 'bg-success';
+                                                                break;
+                                                            case 'En Proceso':
+                                                                $badgeClass = 'bg-warning';
+                                                                break;
+                                                            case 'Pendiente':
+                                                                $badgeClass = 'bg-danger';
+                                                                break;
+                                                            default:
+                                                                $badgeClass = 'bg-secondary';
+                                                        }
+                                                        ?>
+                                                        <span class="badge <?php echo $badgeClass; ?>"><?php echo $estado; ?></span>
                                                     </td>
                                                     <td><?php echo date('d/m/Y'); ?></td>
                                                     <td>
