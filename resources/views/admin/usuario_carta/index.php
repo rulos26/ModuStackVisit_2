@@ -267,24 +267,16 @@ if ($result_autorizaciones) {
                                                                     <i class="fas fa-eye"></i>
                                                                 </button>
                                                             <?php elseif ($usuario['estado'] === 'En Proceso'): ?>
-                                                                <button type="button" class="btn btn-sm btn-outline-primary" title="Ver detalles">
-                                                                    <i class="fas fa-eye"></i>
-                                                                </button>
                                                                 <button type="button" class="btn btn-sm btn-outline-warning" 
                                                                         onclick="editarUsuario('<?php echo htmlspecialchars($usuario['cedula']); ?>', '<?php echo htmlspecialchars($usuario['nombres']); ?>')" 
                                                                         title="Editar/Completar">
                                                                     <i class="fas fa-edit"></i>
                                                                 </button>
+                                                            <?php elseif ($usuario['estado'] === 'Pendiente'): ?>
                                                                 <button type="button" class="btn btn-sm btn-outline-danger" 
                                                                         onclick="eliminarUsuario('<?php echo htmlspecialchars($usuario['cedula']); ?>', '<?php echo htmlspecialchars($usuario['nombres']); ?>')" 
                                                                         title="Eliminar">
                                                                     <i class="fas fa-trash"></i>
-                                                                </button>
-                                                            <?php elseif ($usuario['estado'] === 'Pendiente'): ?>
-                                                                <button type="button" class="btn btn-sm btn-outline-warning" 
-                                                                        onclick="editarUsuario('<?php echo htmlspecialchars($usuario['cedula']); ?>', '<?php echo htmlspecialchars($usuario['nombres']); ?>')" 
-                                                                        title="Editar/Completar">
-                                                                    <i class="fas fa-edit"></i>
                                                                 </button>
                                                             <?php endif; ?>
                                                         </div>
