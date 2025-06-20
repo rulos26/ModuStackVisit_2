@@ -13,8 +13,25 @@ error_reporting(E_ALL);
 ob_start();
 class DemoPdfController {
     public static function generarEjemplo() {
+        session_start();
         $db = Database::getInstance()->getConnection();
-        $cedula = '1231211322';
+        $cedula = $_SESSION['cedula_vista'] ?? $_SESSION['id_cedula'] ?? $_SESSION['cedula_autorizacion'] ?? '1231211322';
+        
+        // Determinar el origen de la sesión
+        $origen = 'flujo_normal'; // Por defecto
+        if (isset($_SESSION['admin_viewing_user']) && $_SESSION['admin_viewing_user'] === true) {
+            $origen = 'admin_panel';
+        }
+        
+        // Verificar si viene específicamente del admin panel
+        if (isset($_SESSION['pdf_origen']) && $_SESSION['pdf_origen'] === 'admin_panel') {
+            $origen = 'admin_panel';
+            $cedula = $_SESSION['admin_cedula_vista'] ?? $cedula; // Usar la cédula específica del admin
+        }
+        
+        // Opcional: Log para debugging
+        error_log("DemoPdfController - Origen: $origen, Cédula: $cedula");
+        
         // Consulta de autorizaciones
         $sql1 = "SELECT `id`, `cedula`, `nombres`, `direccion`, `localidad`, `barrio`, `telefono`, `celular`, `fecha`, `autorizacion`, `correo` FROM `autorizaciones` WHERE cedula=:cedula LIMIT 1";
         $stmt1 = $db->prepare($sql1);

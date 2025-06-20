@@ -260,21 +260,33 @@ if ($result_autorizaciones) {
                                                     <td><?php echo date('d/m/Y'); ?></td>
                                                     <td>
                                                         <div class="btn-group" role="group">
-                                                            <?php if ($usuario['estado'] !== 'Pendiente'): ?>
+                                                            <?php if ($usuario['estado'] === 'Completada'): ?>
+                                                                <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                                        onclick="verDetallesUsuario('<?php echo htmlspecialchars($usuario['cedula']); ?>', '<?php echo htmlspecialchars($usuario['nombres']); ?>')" 
+                                                                        title="Ver detalles">
+                                                                    <i class="fas fa-eye"></i>
+                                                                </button>
+                                                            <?php elseif ($usuario['estado'] === 'En Proceso'): ?>
                                                                 <button type="button" class="btn btn-sm btn-outline-primary" title="Ver detalles">
                                                                     <i class="fas fa-eye"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-sm btn-outline-warning" 
+                                                                        onclick="editarUsuario('<?php echo htmlspecialchars($usuario['cedula']); ?>', '<?php echo htmlspecialchars($usuario['nombres']); ?>')" 
+                                                                        title="Editar/Completar">
+                                                                    <i class="fas fa-edit"></i>
                                                                 </button>
                                                                 <button type="button" class="btn btn-sm btn-outline-danger" 
                                                                         onclick="eliminarUsuario('<?php echo htmlspecialchars($usuario['cedula']); ?>', '<?php echo htmlspecialchars($usuario['nombres']); ?>')" 
                                                                         title="Eliminar">
                                                                     <i class="fas fa-trash"></i>
                                                                 </button>
+                                                            <?php elseif ($usuario['estado'] === 'Pendiente'): ?>
+                                                                <button type="button" class="btn btn-sm btn-outline-warning" 
+                                                                        onclick="editarUsuario('<?php echo htmlspecialchars($usuario['cedula']); ?>', '<?php echo htmlspecialchars($usuario['nombres']); ?>')" 
+                                                                        title="Editar/Completar">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
                                                             <?php endif; ?>
-                                                            <button type="button" class="btn btn-sm btn-outline-warning" 
-                                                                    onclick="editarUsuario('<?php echo htmlspecialchars($usuario['cedula']); ?>', '<?php echo htmlspecialchars($usuario['nombres']); ?>')" 
-                                                                    title="Editar/Completar">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -436,6 +448,20 @@ if ($result_autorizaciones) {
                 btn.innerHTML = originalHTML;
                 btn.disabled = false;
             });
+        }
+
+        // Función para ver detalles del usuario (solo para estado "Completada")
+        function verDetallesUsuario(cedula, nombres) {
+            // Abrir nueva pestaña con la página que guardará la sesión
+            const nuevaPestana = window.open(`guardar_cedula_vista.php?cedula=${encodeURIComponent(cedula)}`, '_blank');
+            
+            // Verificar si se abrió correctamente
+            if (nuevaPestana) {
+                // Opcional: Mostrar mensaje de confirmación
+                console.log('Nueva pestaña abierta para ver detalles del usuario');
+            } else {
+                alert('No se pudo abrir la nueva pestaña. Verifica que el bloqueador de ventanas emergentes esté desactivado.');
+            }
         }
 
         // Función para mostrar modal con tablas faltantes
