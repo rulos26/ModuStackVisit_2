@@ -1009,6 +1009,130 @@
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <?php if ($experiencia_laboral && count($experiencia_laboral) > 0): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="8" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            EXPERIENCIA LABORAL
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">EMPRESA</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">TIEMPO LABORADO</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">CARGO DESEMPEÑADO</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">SALARIO</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">RETIRO</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">CONCEPTO EMITIDO</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">NOMBRE CONTACTO</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">NÚMERO CONTACTO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($experiencia_laboral as $experiencia): ?>
+                        <tr>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['empresa']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['tiempo']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['cargo']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['salario']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['retiro']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['concepto']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['nombre']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['numero']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="8" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            EXPERIENCIA LABORAL
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre experiencia laboral
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
+
+        <?php if ($concepto_final): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            CONCEPTO FINAL DEL PROFESIONAL O EVALUADOR
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Actitud del evaluado y su grupo familiar</td>
+                        <td colspan="3" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($concepto_final['actitud']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Condiciones de vivienda</td>
+                        <td colspan="3" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($concepto_final['condiciones_vivienda']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Dinámica familiar</td>
+                        <td colspan="3" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($concepto_final['dinamica_familiar']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Condiciones socio económicas</td>
+                        <td colspan="3" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($concepto_final['condiciones_economicas']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Condiciones académicas</td>
+                        <td colspan="3" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($concepto_final['condiciones_academicas']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Evaluación de experiencia laboral</td>
+                        <td colspan="3" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($concepto_final['evaluacion_experiencia_laboral']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Observaciones</td>
+                        <td colspan="3" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($concepto_final['observaciones']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Concepto Final</td>
+                        <td colspan="3" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($concepto_final['estado_nombre']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">NOMBRE EVALUADOR</td>
+                        <td colspan="3" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($concepto_final['nombre_evaluador']) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">CONCEPTO DE SEGURIDAD</td>
+                        <td colspan="3" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($concepto_final['id_concepto_seguridad']) ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            CONCEPTO FINAL DEL PROFESIONAL O EVALUADOR
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre el concepto final del evaluador
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </body>
 </html>

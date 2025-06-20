@@ -587,6 +587,60 @@ class InformeFinalPdfController {
             }
         }
 
+        // Consulta de experiencia laboral
+        $sql_experiencia = "SELECT id, id_cedula, empresa, tiempo, cargo, salario, retiro, concepto,
+            nombre, numero 
+        FROM experiencia_laboral 
+        WHERE id_cedula = :cedula";
+        
+        $stmt_experiencia = $db->prepare($sql_experiencia);
+        $stmt_experiencia->bindParam(':cedula', $cedula);
+        $stmt_experiencia->execute();
+        $experiencia_laboral = $stmt_experiencia->fetchAll(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de experiencia laboral
+        if ($experiencia_laboral) {
+            foreach ($experiencia_laboral as &$experiencia) {
+                // Lista de campos a procesar
+                $campos_experiencia = [
+                    'empresa', 'tiempo', 'cargo', 'salario', 'retiro', 'concepto', 'nombre', 'numero'
+                ];
+
+                // Convertir campos vacíos a N/A
+                foreach ($campos_experiencia as $campo) {
+                    $experiencia[$campo] = empty($experiencia[$campo]) ? 'N/A' : $experiencia[$campo];
+                }
+            }
+        }
+
+        // Consulta de concepto final del evaluador
+        $sql_concepto_final = "SELECT c.id, c.id_cedula, c.actitud, c.condiciones_vivienda, c.dinamica_familiar, c.condiciones_economicas, 
+            c.condiciones_academicas, c.evaluacion_experiencia_laboral, c.observaciones, c.id_concepto_final, 
+            c.nombre_evaluador, c.id_concepto_seguridad, e.nombre AS estado_nombre
+        FROM concepto_final_evaluador AS c
+        LEFT JOIN opc_estados AS e ON c.id_concepto_final = e.id
+        WHERE c.id_cedula = :cedula";
+        
+        $stmt_concepto_final = $db->prepare($sql_concepto_final);
+        $stmt_concepto_final->bindParam(':cedula', $cedula);
+        $stmt_concepto_final->execute();
+        $concepto_final = $stmt_concepto_final->fetch(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de concepto final
+        if ($concepto_final) {
+            // Lista de campos a procesar
+            $campos_concepto = [
+                'actitud', 'condiciones_vivienda', 'dinamica_familiar', 'condiciones_economicas',
+                'condiciones_academicas', 'evaluacion_experiencia_laboral', 'observaciones', 
+                'id_concepto_final', 'nombre_evaluador', 'id_concepto_seguridad', 'estado_nombre'
+            ];
+
+            // Convertir campos vacíos a N/A
+            foreach ($campos_concepto as $campo) {
+                $concepto_final[$campo] = empty($concepto_final[$campo]) ? 'N/A' : $concepto_final[$campo];
+            }
+        }
+
         // Función para convertir imagen a base64
         function img_to_base64($img_path) {
             if (!file_exists($img_path)) return '';
@@ -621,7 +675,9 @@ class InformeFinalPdfController {
             'ingresos_mensuales' => $ingresos_mensuales,
             'gastos' => $gastos,
             'estudios' => $estudios,
-            'informacion_judicial' => $informacion_judicial
+            'informacion_judicial' => $informacion_judicial,
+            'experiencia_laboral' => $experiencia_laboral,
+            'concepto_final' => $concepto_final
         ];
         extract($data);
         ob_start();
