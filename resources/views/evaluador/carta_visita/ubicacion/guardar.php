@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['id_cedula'] = $id_cedula;
                 
                         echo '<script>
-                            window.open("../informe/index.php", "_blank");
+                            window.open("/ModuStackVisit_2/app/Controllers/DemoPdfController.php", "_blank");
                             setTimeout(function() {
                         window.location.href = "../index_carta.php";
                             }, 2000);
