@@ -858,14 +858,6 @@ class InformeFinalPdfController {
         
         // Enviar el PDF al navegador
         $dompdf->stream('informe_cedula_' . $cedula . '.pdf', ["Attachment" => false]);
-        
-        // Agregar JavaScript para redirección después de 5 segundos
-        echo '<script>
-            setTimeout(function() {
-                window.location.href = "/ModuStackVisit_2/resources/views/evaluador/evaluacion_visita/index_evaluacion.php";
-            }, 5000);
-        </script>';
-        
         exit;
     }
 }

@@ -305,7 +305,7 @@ try {
                             <i class="fas fa-check-circle me-2"></i>
                             <strong>¡Todas las fotos han sido registradas exitosamente!</strong>
                         </div>
-                        <a href="/ModuStackVisit_2/app/Controllers/InformeFinalPdfController.php?action=generarInforme" class="btn btn-success btn-lg" target="_blank">
+                        <a href="/ModuStackVisit_2/app/Controllers/InformeFinalPdfController.php?action=generarInforme" class="btn btn-success btn-lg" target="_blank" id="btnGenerarInforme">
                             <i class="fas fa-arrow-right me-2"></i>Continuar con Informe
                         </a>
                     </div>
@@ -326,6 +326,21 @@ try {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// JavaScript para redirección después de 5 segundos cuando se genera el informe
+document.addEventListener('DOMContentLoaded', function() {
+    const btnGenerarInforme = document.getElementById('btnGenerarInforme');
+    if (btnGenerarInforme) {
+        btnGenerarInforme.addEventListener('click', function() {
+            // Redirigir después de 5 segundos
+            setTimeout(function() {
+                window.location.href = "/ModuStackVisit_2/resources/views/evaluador/evaluacion_visita/index_evaluacion.php";
+            }, 5000);
+        });
+    }
+});
+</script>
 
 <?php
 $contenido = ob_get_clean();
