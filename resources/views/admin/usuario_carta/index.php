@@ -488,7 +488,7 @@ if ($result_autorizaciones) {
                                         <h6 class="mb-3">Acciones disponibles:</h6>
                                         <div class="d-grid gap-2">
                                             ${data.tablas_faltantes.map(tabla => `
-                                                <a href="${tabla.url}" class="btn btn-warning" target="_blank">
+                                                <a href="${tabla.url}" class="btn btn-warning">
                                                     <i class="fas ${tabla.icono} me-2"></i>
                                                     Completar ${tabla.nombre}
                                                 </a>

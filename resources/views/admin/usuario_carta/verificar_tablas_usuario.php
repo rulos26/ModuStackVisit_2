@@ -24,6 +24,10 @@ if (!isset($_POST['cedula']) || empty($_POST['cedula'])) {
 
 $cedula = $_POST['cedula'];
 
+// Guardar la cédula en la sesión para que las vistas puedan acceder a ella
+$_SESSION['cedula_autorizacion'] = $cedula;
+$_SESSION['id_cedula'] = $cedula; // También guardar como id_cedula para compatibilidad
+
 // Conexión a la base de datos
 require_once __DIR__ . '/../../../../conn/conexion.php';
 
