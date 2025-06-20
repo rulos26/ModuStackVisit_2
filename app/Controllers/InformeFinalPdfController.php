@@ -643,7 +643,7 @@ class InformeFinalPdfController {
 
         // Consulta de ubicación foto
         $sql_ubicacion = "SELECT id, id_cedula, ruta, nombre 
-        FROM ubicacion_foto 
+        FROM ubicacion_autorizacion
         WHERE id_cedula = :cedula";
         
         $stmt_ubicacion = $db->prepare($sql_ubicacion);
