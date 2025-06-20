@@ -75,8 +75,8 @@ class RegistroFotosController {
             $extension = pathinfo($archivo['name'], PATHINFO_EXTENSION);
             $nombre_archivo = 'foto_' . $tipo . '_' . $id_cedula . '_' . time() . '.' . $extension;
             
-            // Crear directorio si no existe
-            $directorio_destino = __DIR__ . "/../../../../../public/images/evidencia_fotografica/{$id_cedula}/";
+            // Crear directorio si no existe - Corregir ruta para guardar en public/images/
+            $directorio_destino = __DIR__ . "/../../../../../../public/images/evidencia_fotografica/{$id_cedula}/";
             if (!file_exists($directorio_destino)) {
                 if (!mkdir($directorio_destino, 0777, true)) {
                     throw new Exception("No se pudo crear el directorio para las fotos");
@@ -85,9 +85,9 @@ class RegistroFotosController {
             
             $ruta_completa = $directorio_destino . $nombre_archivo;
             
-            // Si existe una foto anterior, eliminarla del servidor
+            // Si existe una foto anterior, eliminarla del servidor - Corregir ruta
             if ($foto_existente) {
-                $ruta_foto_anterior = __DIR__ . "/../../../../../public/images/evidencia_fotografica/{$id_cedula}/" . $foto_existente['nombre'];
+                $ruta_foto_anterior = __DIR__ . "/../../../../../../public/images/evidencia_fotografica/{$id_cedula}/" . $foto_existente['nombre'];
                 if (file_exists($ruta_foto_anterior)) {
                     unlink($ruta_foto_anterior);
                 }
@@ -98,7 +98,7 @@ class RegistroFotosController {
                 throw new Exception("Error al guardar la imagen");
             }
             
-            // Guardar en base de datos
+            // Guardar en base de datos - La ruta relativa se mantiene igual
             $ruta_relativa = "public/images/evidencia_fotografica/{$id_cedula}/";
             
             if ($foto_existente) {

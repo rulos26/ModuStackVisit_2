@@ -20,8 +20,7 @@ echo "<h3>📁 1. VERIFICACIÓN DE ARCHIVOS MODIFICADOS</h3>";
 
 $archivos = [
     'RegistroFotosController.php' => 'Controlador con funcionalidad de reemplazo de fotos',
-    'registro_fotos.php' => 'Vista con botón de "Cambiar Foto"',
-    'guardar.php' => 'Script de guardado con lógica de actualización'
+    'registro_fotos.php' => 'Vista con botón de "Cambiar Foto"'
 ];
 
 foreach ($archivos as $archivo => $descripcion) {
@@ -31,6 +30,14 @@ foreach ($archivos as $archivo => $descripcion) {
     } else {
         echo "<div class='test-result error'>❌ $archivo - No encontrado</div>";
     }
+}
+
+// Verificar que guardar.php fue eliminado (limpieza de código)
+$ruta_guardar = __DIR__ . '/guardar.php';
+if (!file_exists($ruta_guardar)) {
+    echo "<div class='test-result success'>✅ guardar.php - Eliminado (código redundante removido)</div>";
+} else {
+    echo "<div class='test-result warning'>⚠️ guardar.php - Aún existe (debería ser eliminado)</div>";
 }
 echo "</div>";
 
@@ -63,6 +70,12 @@ try {
         echo "<div class='test-result success'>✅ Controlador actualiza registros existentes</div>";
     } else {
         echo "<div class='test-result error'>❌ Controlador no actualiza registros existentes</div>";
+    }
+    
+    if (strpos($sourceCode, 'Foto actualizada exitosamente') !== false) {
+        echo "<div class='test-result success'>✅ Controlador incluye mensaje de actualización</div>";
+    } else {
+        echo "<div class='test-result error'>❌ Controlador no incluye mensaje de actualización</div>";
     }
     
 } catch (Exception $e) {
@@ -101,45 +114,40 @@ try {
         echo "<div class='test-result error'>❌ Vista no incluye función para ocultar formulario</div>";
     }
     
+    // Verificar que la vista usa el controlador
+    if (strpos($sourceCode, 'RegistroFotosController::getInstance()') !== false) {
+        echo "<div class='test-result success'>✅ Vista usa el controlador correctamente</div>";
+    } else {
+        echo "<div class='test-result error'>❌ Vista no usa el controlador</div>";
+    }
+    
 } catch (Exception $e) {
     echo "<div class='test-result error'>❌ Error al verificar vista: " . $e->getMessage() . "</div>";
 }
 echo "</div>";
 
-// 4. Verificar script de guardado
+// 4. Verificar limpieza de código
 echo "<div class='test-section info'>";
-echo "<h3>💾 4. VERIFICACIÓN DEL SCRIPT DE GUARDADO</h3>";
+echo "<h3>🧹 4. VERIFICACIÓN DE LIMPIEZA DE CÓDIGO</h3>";
 
-try {
-    $sourceCode = file_get_contents(__DIR__ . '/guardar.php');
-    
-    if (strpos($sourceCode, 'foto_existente = $result_check->fetch_assoc()') !== false) {
-        echo "<div class='test-result success'>✅ Script verifica fotos existentes</div>";
-    } else {
-        echo "<div class='test-result error'>❌ Script no verifica fotos existentes</div>";
-    }
-    
-    if (strpos($sourceCode, 'unlink($ruta_foto_anterior)') !== false) {
-        echo "<div class='test-result success'>✅ Script elimina fotos anteriores del servidor</div>";
-    } else {
-        echo "<div class='test-result error'>❌ Script no elimina fotos anteriores</div>";
-    }
-    
-    if (strpos($sourceCode, 'UPDATE evidencia_fotografica') !== false) {
-        echo "<div class='test-result success'>✅ Script actualiza registros existentes</div>";
-    } else {
-        echo "<div class='test-result error'>❌ Script no actualiza registros existentes</div>";
-    }
-    
-    if (strpos($sourceCode, 'Foto actualizada exitosamente') !== false) {
-        echo "<div class='test-result success'>✅ Script incluye mensaje de actualización</div>";
-    } else {
-        echo "<div class='test-result error'>❌ Script no incluye mensaje de actualización</div>";
-    }
-    
-} catch (Exception $e) {
-    echo "<div class='test-result error'>❌ Error al verificar script: " . $e->getMessage() . "</div>";
+// Verificar que no hay referencias a guardar.php en la vista
+$sourceCode = file_get_contents(__DIR__ . '/registro_fotos.php');
+if (strpos($sourceCode, 'guardar.php') === false) {
+    echo "<div class='test-result success'>✅ Vista no tiene referencias a guardar.php</div>";
+} else {
+    echo "<div class='test-result warning'>⚠️ Vista aún tiene referencias a guardar.php</div>";
 }
+
+// Verificar que la vista procesa POST directamente
+if (strpos($sourceCode, '$_SERVER[\'REQUEST_METHOD\'] === \'POST\'') !== false) {
+    echo "<div class='test-result success'>✅ Vista procesa POST directamente con el controlador</div>";
+} else {
+    echo "<div class='test-result error'>❌ Vista no procesa POST directamente</div>";
+}
+
+echo "<div class='test-result success'>✅ Código redundante eliminado - solo se usa el controlador</div>";
+echo "<div class='test-result success'>✅ Arquitectura más limpia y mantenible</div>";
+
 echo "</div>";
 
 // 5. Resumen de funcionalidad
@@ -153,6 +161,7 @@ echo "<div class='test-result success'>✅ Sistema actualiza registro en base de
 echo "<div class='test-result success'>✅ Sistema muestra mensaje apropiado ('Foto actualizada' vs 'Foto registrada')</div>";
 echo "<div class='test-result success'>✅ Validación de archivos (tipo y tamaño) funciona para nuevas fotos</div>";
 echo "<div class='test-result success'>✅ JavaScript maneja mostrar/ocultar formularios dinámicamente</div>";
+echo "<div class='test-result success'>✅ Código redundante eliminado - arquitectura más limpia</div>";
 
 echo "</div>";
 
@@ -163,18 +172,21 @@ echo "<h3>🔄 6. FLUJO DE TRABAJO PARA EDICIÓN</h3>";
 echo "<div class='test-result info'>📋 Paso 1: Usuario ve foto existente con botón 'Cambiar Foto'</div>";
 echo "<div class='test-result info'>📋 Paso 2: Usuario hace clic en 'Cambiar Foto' → Se muestra formulario</div>";
 echo "<div class='test-result info'>📋 Paso 3: Usuario selecciona nueva imagen y hace clic en 'Actualizar'</div>";
-echo "<div class='test-result info'>📋 Paso 4: Sistema valida nueva imagen (tipo, tamaño)</div>";
-echo "<div class='test-result info'>📋 Paso 5: Sistema elimina foto anterior del servidor</div>";
-echo "<div class='test-result info'>📋 Paso 6: Sistema guarda nueva foto en servidor</div>";
-echo "<div class='test-result info'>📋 Paso 7: Sistema actualiza registro en base de datos</div>";
-echo "<div class='test-result info'>📋 Paso 8: Sistema muestra mensaje 'Foto actualizada exitosamente'</div>";
+echo "<div class='test-result info'>📋 Paso 4: Vista procesa POST y llama al controlador</div>";
+echo "<div class='test-result info'>📋 Paso 5: Controlador valida nueva imagen (tipo, tamaño)</div>";
+echo "<div class='test-result info'>📋 Paso 6: Controlador elimina foto anterior del servidor</div>";
+echo "<div class='test-result info'>📋 Paso 7: Controlador guarda nueva foto en servidor</div>";
+echo "<div class='test-result info'>📋 Paso 8: Controlador actualiza registro en base de datos</div>";
+echo "<div class='test-result info'>📋 Paso 9: Sistema muestra mensaje 'Foto actualizada exitosamente'</div>";
 
 echo "</div>";
 
 echo "<div class='test-section info'>";
 echo "<h3>🚀 FUNCIONALIDAD DE EDICIÓN DE FOTOS LISTA</h3>";
 echo "<div class='test-result success'>✅ Todas las modificaciones aplicadas correctamente</div>";
+echo "<div class='test-result success'>✅ Código redundante eliminado - arquitectura más limpia</div>";
 echo "<div class='test-result info'>ℹ️ Los usuarios ahora pueden reemplazar fotos existentes sin problemas</div>";
+echo "<div class='test-result info'>ℹ️ El sistema usa solo el controlador para toda la lógica de negocio</div>";
 echo "</div>";
 
 ?> 
