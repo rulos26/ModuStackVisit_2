@@ -350,12 +350,9 @@ try {
                         </label>
                         <select class="form-select" id="id_concepto_seguridad" name="id_concepto_seguridad" required>
                             <option value="">Seleccione un concepto</option>
-                            <?php foreach ($conceptos_seguridad as $concepto): ?>
-                                <option value="<?php echo $concepto['id']; ?>" 
-                                    <?php echo (!empty($datos_existentes) && $datos_existentes['id_concepto_seguridad'] == $concepto['id']) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($concepto['nombre']); ?>
-                                </option>
-                            <?php endforeach; ?>
+                            <option value="1" <?php echo (!empty($datos_existentes) && $datos_existentes['id_concepto_seguridad'] == '1') ? 'selected' : ''; ?>>Aptos</option>
+                            <option value="2" <?php echo (!empty($datos_existentes) && $datos_existentes['id_concepto_seguridad'] == '2') ? 'selected' : ''; ?>>No Apto</option>
+                            <option value="3" <?php echo (!empty($datos_existentes) && $datos_existentes['id_concepto_seguridad'] == '3') ? 'selected' : ''; ?>>Apto con reserva</option>
                         </select>
                     </div>
                 </div>
