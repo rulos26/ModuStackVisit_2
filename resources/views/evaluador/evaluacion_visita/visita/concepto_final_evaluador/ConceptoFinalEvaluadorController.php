@@ -46,7 +46,8 @@ class ConceptoFinalEvaluadorController {
             'evaluacion_experiencia_laboral' => 'Evaluación Experiencia Laboral',
             'observaciones' => 'Observaciones',
             'id_concepto_final' => 'Concepto Final de la Visita',
-            'nombre_evaluador' => 'Nombre del Evaluador'
+            'nombre_evaluador' => 'Nombre del Evaluador',
+            'id_concepto_seguridad' => 'Concepto de Seguridad'
         ];
         
         foreach ($campos_requeridos as $campo => $nombre) {
@@ -76,9 +77,10 @@ class ConceptoFinalEvaluadorController {
             }
         }
         
-        // Validar que los conceptos sean números válidos (solo concepto final es requerido)
+        // Validar que los conceptos sean números válidos
         $campos_concepto = [
-            'id_concepto_final' => 'Concepto Final de la Visita'
+            'id_concepto_final' => 'Concepto Final de la Visita',
+            'id_concepto_seguridad' => 'Concepto de Seguridad'
         ];
         
         foreach ($campos_concepto as $campo => $nombre) {
@@ -87,10 +89,11 @@ class ConceptoFinalEvaluadorController {
             }
         }
         
-        // Validar concepto de seguridad solo si se proporciona (opcional)
+        // Validar valores específicos para concepto de seguridad
         if (isset($datos['id_concepto_seguridad']) && !empty($datos['id_concepto_seguridad'])) {
-            if (!is_numeric($datos['id_concepto_seguridad']) || $datos['id_concepto_seguridad'] < 1) {
-                $errores[] = "El concepto de seguridad debe ser una opción válida.";
+            $valores_validos = [1, 2, 3]; // Aptos, No Apto, Apto con reserva
+            if (!in_array((int)$datos['id_concepto_seguridad'], $valores_validos)) {
+                $errores[] = "El concepto de seguridad debe ser una opción válida (Aptos, No Apto, o Apto con reserva).";
             }
         }
         
