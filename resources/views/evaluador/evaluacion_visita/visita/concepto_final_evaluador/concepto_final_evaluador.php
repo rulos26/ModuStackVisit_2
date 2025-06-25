@@ -323,12 +323,12 @@ try {
                         <label for="actitud" class="form-label">
                             <i class="bi bi-people me-1"></i>Actitud del evaluado y su grupo familiar:
                         </label>
-                        <input type="text" class="form-control <?php echo !empty($errores_campos['actitud']) ? 'is-invalid' : (!empty($datos_formulario['actitud']) ? 'is-valid' : ''); ?>" 
-                               id="actitud" name="actitud" 
-                               value="<?php echo !empty($datos_formulario['actitud']) ? htmlspecialchars($datos_formulario['actitud']) : ''; ?>"
-                               placeholder="Ej: Colaborativa, receptiva" minlength="10" required>
+                        <textarea class="form-control <?php echo !empty($errores_campos['actitud']) ? 'is-invalid' : (!empty($datos_formulario['actitud']) ? 'is-valid' : ''); ?>" 
+                                  id="actitud" name="actitud" 
+                                  rows="3" maxlength="500" minlength="10" required
+                                  placeholder="Ej: Colaborativa, receptiva"><?php echo !empty($datos_formulario['actitud']) ? htmlspecialchars($datos_formulario['actitud']) : ''; ?></textarea>
                         <div class="form-text <?php echo !empty($errores_campos['actitud']) ? 'error-message' : ''; ?>">
-                            <?php echo !empty($errores_campos['actitud']) ? htmlspecialchars($errores_campos['actitud']) : 'Mínimo 10 caracteres'; ?>
+                            <?php echo !empty($errores_campos['actitud']) ? htmlspecialchars($errores_campos['actitud']) : 'Mínimo 10 caracteres, máximo 500 caracteres'; ?>
                         </div>
                     </div>
                     
@@ -336,12 +336,12 @@ try {
                         <label for="condiciones_vivienda" class="form-label">
                             <i class="bi bi-house me-1"></i>Condiciones de Vivienda:
                         </label>
-                        <input type="text" class="form-control <?php echo !empty($errores_campos['condiciones_vivienda']) ? 'is-invalid' : (!empty($datos_formulario['condiciones_vivienda']) ? 'is-valid' : ''); ?>" 
-                               id="condiciones_vivienda" name="condiciones_vivienda" 
-                               value="<?php echo !empty($datos_formulario['condiciones_vivienda']) ? htmlspecialchars($datos_formulario['condiciones_vivienda']) : ''; ?>"
-                               placeholder="Ej: Adecuadas, buenas condiciones" minlength="10" required>
+                        <textarea class="form-control <?php echo !empty($errores_campos['condiciones_vivienda']) ? 'is-invalid' : (!empty($datos_formulario['condiciones_vivienda']) ? 'is-valid' : ''); ?>" 
+                                  id="condiciones_vivienda" name="condiciones_vivienda" 
+                                  rows="3" maxlength="500" minlength="10" required
+                                  placeholder="Ej: Adecuadas, buenas condiciones"><?php echo !empty($datos_formulario['condiciones_vivienda']) ? htmlspecialchars($datos_formulario['condiciones_vivienda']) : ''; ?></textarea>
                         <div class="form-text <?php echo !empty($errores_campos['condiciones_vivienda']) ? 'error-message' : ''; ?>">
-                            <?php echo !empty($errores_campos['condiciones_vivienda']) ? htmlspecialchars($errores_campos['condiciones_vivienda']) : 'Mínimo 10 caracteres'; ?>
+                            <?php echo !empty($errores_campos['condiciones_vivienda']) ? htmlspecialchars($errores_campos['condiciones_vivienda']) : 'Mínimo 10 caracteres, máximo 500 caracteres'; ?>
                         </div>
                     </div>
                     
@@ -349,12 +349,12 @@ try {
                         <label for="dinamica_familiar" class="form-label">
                             <i class="bi bi-heart me-1"></i>Dinámica Familiar:
                         </label>
-                        <input type="text" class="form-control <?php echo !empty($errores_campos['dinamica_familiar']) ? 'is-invalid' : (!empty($datos_formulario['dinamica_familiar']) ? 'is-valid' : ''); ?>" 
-                               id="dinamica_familiar" name="dinamica_familiar" 
-                               value="<?php echo !empty($datos_formulario['dinamica_familiar']) ? htmlspecialchars($datos_formulario['dinamica_familiar']) : ''; ?>"
-                               placeholder="Ej: Armónica, unida" minlength="10" required>
+                        <textarea class="form-control <?php echo !empty($errores_campos['dinamica_familiar']) ? 'is-invalid' : (!empty($datos_formulario['dinamica_familiar']) ? 'is-valid' : ''); ?>" 
+                                  id="dinamica_familiar" name="dinamica_familiar" 
+                                  rows="3" maxlength="500" minlength="10" required
+                                  placeholder="Ej: Armónica, unida"><?php echo !empty($datos_formulario['dinamica_familiar']) ? htmlspecialchars($datos_formulario['dinamica_familiar']) : ''; ?></textarea>
                         <div class="form-text <?php echo !empty($errores_campos['dinamica_familiar']) ? 'error-message' : ''; ?>">
-                            <?php echo !empty($errores_campos['dinamica_familiar']) ? htmlspecialchars($errores_campos['dinamica_familiar']) : 'Mínimo 10 caracteres'; ?>
+                            <?php echo !empty($errores_campos['dinamica_familiar']) ? htmlspecialchars($errores_campos['dinamica_familiar']) : 'Mínimo 10 caracteres, máximo 500 caracteres'; ?>
                         </div>
                     </div>
                 </div>
@@ -364,12 +364,12 @@ try {
                         <label for="condiciones_economicas" class="form-label">
                             <i class="bi bi-cash-stack me-1"></i>Condiciones Socio Económicas:
                         </label>
-                        <input type="text" class="form-control <?php echo !empty($errores_campos['condiciones_economicas']) ? 'is-invalid' : (!empty($datos_formulario['condiciones_economicas']) ? 'is-valid' : ''); ?>" 
-                               id="condiciones_economicas" name="condiciones_economicas" 
-                               value="<?php echo !empty($datos_formulario['condiciones_economicas']) ? htmlspecialchars($datos_formulario['condiciones_economicas']) : ''; ?>"
-                               placeholder="Ej: Estables, suficientes" minlength="10" required>
+                        <textarea class="form-control <?php echo !empty($errores_campos['condiciones_economicas']) ? 'is-invalid' : (!empty($datos_formulario['condiciones_economicas']) ? 'is-valid' : ''); ?>" 
+                                  id="condiciones_economicas" name="condiciones_economicas" 
+                                  rows="3" maxlength="500" minlength="10" required
+                                  placeholder="Ej: Estables, suficientes"><?php echo !empty($datos_formulario['condiciones_economicas']) ? htmlspecialchars($datos_formulario['condiciones_economicas']) : ''; ?></textarea>
                         <div class="form-text <?php echo !empty($errores_campos['condiciones_economicas']) ? 'error-message' : ''; ?>">
-                            <?php echo !empty($errores_campos['condiciones_economicas']) ? htmlspecialchars($errores_campos['condiciones_economicas']) : 'Mínimo 10 caracteres'; ?>
+                            <?php echo !empty($errores_campos['condiciones_economicas']) ? htmlspecialchars($errores_campos['condiciones_economicas']) : 'Mínimo 10 caracteres, máximo 500 caracteres'; ?>
                         </div>
                     </div>
                     
@@ -377,12 +377,12 @@ try {
                         <label for="condiciones_academicas" class="form-label">
                             <i class="bi bi-mortarboard me-1"></i>Condiciones Académicas:
                         </label>
-                        <input type="text" class="form-control <?php echo !empty($errores_campos['condiciones_academicas']) ? 'is-invalid' : (!empty($datos_formulario['condiciones_academicas']) ? 'is-valid' : ''); ?>" 
-                               id="condiciones_academicas" name="condiciones_academicas" 
-                               value="<?php echo !empty($datos_formulario['condiciones_academicas']) ? htmlspecialchars($datos_formulario['condiciones_academicas']) : ''; ?>"
-                               placeholder="Ej: Buenas, adecuadas" minlength="10" required>
+                        <textarea class="form-control <?php echo !empty($errores_campos['condiciones_academicas']) ? 'is-invalid' : (!empty($datos_formulario['condiciones_academicas']) ? 'is-valid' : ''); ?>" 
+                                  id="condiciones_academicas" name="condiciones_academicas" 
+                                  rows="3" maxlength="500" minlength="10" required
+                                  placeholder="Ej: Buenas, adecuadas"><?php echo !empty($datos_formulario['condiciones_academicas']) ? htmlspecialchars($datos_formulario['condiciones_academicas']) : ''; ?></textarea>
                         <div class="form-text <?php echo !empty($errores_campos['condiciones_academicas']) ? 'error-message' : ''; ?>">
-                            <?php echo !empty($errores_campos['condiciones_academicas']) ? htmlspecialchars($errores_campos['condiciones_academicas']) : 'Mínimo 10 caracteres'; ?>
+                            <?php echo !empty($errores_campos['condiciones_academicas']) ? htmlspecialchars($errores_campos['condiciones_academicas']) : 'Mínimo 10 caracteres, máximo 500 caracteres'; ?>
                         </div>
                     </div>
                     
@@ -390,12 +390,12 @@ try {
                         <label for="evaluacion_experiencia_laboral" class="form-label">
                             <i class="bi bi-briefcase me-1"></i>Evaluación Experiencia Laboral:
                         </label>
-                        <input type="text" class="form-control <?php echo !empty($errores_campos['evaluacion_experiencia_laboral']) ? 'is-invalid' : (!empty($datos_formulario['evaluacion_experiencia_laboral']) ? 'is-valid' : ''); ?>" 
-                               id="evaluacion_experiencia_laboral" name="evaluacion_experiencia_laboral" 
-                               value="<?php echo !empty($datos_formulario['evaluacion_experiencia_laboral']) ? htmlspecialchars($datos_formulario['evaluacion_experiencia_laboral']) : ''; ?>"
-                               placeholder="Ej: Positiva, estable" minlength="10" required>
+                        <textarea class="form-control <?php echo !empty($errores_campos['evaluacion_experiencia_laboral']) ? 'is-invalid' : (!empty($datos_formulario['evaluacion_experiencia_laboral']) ? 'is-valid' : ''); ?>" 
+                                  id="evaluacion_experiencia_laboral" name="evaluacion_experiencia_laboral" 
+                                  rows="3" maxlength="500" minlength="10" required
+                                  placeholder="Ej: Positiva, estable"><?php echo !empty($datos_formulario['evaluacion_experiencia_laboral']) ? htmlspecialchars($datos_formulario['evaluacion_experiencia_laboral']) : ''; ?></textarea>
                         <div class="form-text <?php echo !empty($errores_campos['evaluacion_experiencia_laboral']) ? 'error-message' : ''; ?>">
-                            <?php echo !empty($errores_campos['evaluacion_experiencia_laboral']) ? htmlspecialchars($errores_campos['evaluacion_experiencia_laboral']) : 'Mínimo 10 caracteres'; ?>
+                            <?php echo !empty($errores_campos['evaluacion_experiencia_laboral']) ? htmlspecialchars($errores_campos['evaluacion_experiencia_laboral']) : 'Mínimo 10 caracteres, máximo 500 caracteres'; ?>
                         </div>
                     </div>
                 </div>
@@ -405,12 +405,12 @@ try {
                         <label for="observaciones" class="form-label">
                             <i class="bi bi-chat-quote me-1"></i>Observaciones:
                         </label>
-                        <input type="text" class="form-control <?php echo !empty($errores_campos['observaciones']) ? 'is-invalid' : (!empty($datos_formulario['observaciones']) ? 'is-valid' : ''); ?>" 
-                               id="observaciones" name="observaciones" 
-                               value="<?php echo !empty($datos_formulario['observaciones']) ? htmlspecialchars($datos_formulario['observaciones']) : ''; ?>"
-                               placeholder="Ej: Observaciones generales de la visita" minlength="15" required>
+                        <textarea class="form-control <?php echo !empty($errores_campos['observaciones']) ? 'is-invalid' : (!empty($datos_formulario['observaciones']) ? 'is-valid' : ''); ?>" 
+                                  id="observaciones" name="observaciones" 
+                                  rows="4" maxlength="1000" minlength="15" required
+                                  placeholder="Ej: Observaciones generales de la visita"><?php echo !empty($datos_formulario['observaciones']) ? htmlspecialchars($datos_formulario['observaciones']) : ''; ?></textarea>
                         <div class="form-text <?php echo !empty($errores_campos['observaciones']) ? 'error-message' : ''; ?>">
-                            <?php echo !empty($errores_campos['observaciones']) ? htmlspecialchars($errores_campos['observaciones']) : 'Mínimo 15 caracteres'; ?>
+                            <?php echo !empty($errores_campos['observaciones']) ? htmlspecialchars($errores_campos['observaciones']) : 'Mínimo 15 caracteres, máximo 1000 caracteres'; ?>
                         </div>
                     </div>
                     
