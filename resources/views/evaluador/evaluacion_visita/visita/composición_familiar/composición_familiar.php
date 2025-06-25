@@ -18,11 +18,19 @@ if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
 require_once __DIR__ . '/ComposicionFamiliarController.php';
 use App\Controllers\ComposicionFamiliarController;
 
+// Variables para manejar errores y datos
+$errores_campos = [];
+$datos_formulario = [];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $controller = ComposicionFamiliarController::getInstance();
         $datos = $controller->sanitizarDatos($_POST);
         $errores = $controller->validarDatos($datos);
+        
+        // Guardar los datos del formulario para mantenerlos en caso de error
+        $datos_formulario = $datos;
+        
         if (empty($errores)) {
             $resultado = $controller->guardar($datos);
             if ($resultado['success']) {
@@ -33,7 +41,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['error'] = $resultado['message'];
             }
         } else {
-            $_SESSION['error'] = implode('<br>', $errores);
+            // Procesar errores para mostrarlos en campos específicos
+            foreach ($errores as $error) {
+                if (preg_match('/miembro (\d+)/', $error, $matches)) {
+                    $num_miembro = $matches[1] - 1; // Convertir a índice base 0
+                    
+                    if (strpos($error, 'nombre') !== false) {
+                        $errores_campos['nombre'][$num_miembro] = $error;
+                    } elseif (strpos($error, 'parentesco') !== false) {
+                        $errores_campos['id_parentesco'][$num_miembro] = $error;
+                    } elseif (strpos($error, 'edad') !== false) {
+                        $errores_campos['edad'][$num_miembro] = $error;
+                    } elseif (strpos($error, 'ocupación') !== false) {
+                        $errores_campos['id_ocupacion'][$num_miembro] = $error;
+                    } elseif (strpos($error, 'teléfono') !== false) {
+                        $errores_campos['telefono'][$num_miembro] = $error;
+                    } elseif (strpos($error, 'convive') !== false) {
+                        $errores_campos['id_conviven'][$num_miembro] = $error;
+                    }
+                } else {
+                    $_SESSION['error'] = $error;
+                }
+            }
         }
     } catch (Exception $e) {
         error_log("Error en composición_familiar.php: " . $e->getMessage());
@@ -45,6 +74,20 @@ try {
     $controller = ComposicionFamiliarController::getInstance();
     $id_cedula = $_SESSION['id_cedula'];
     $datos_existentes = $controller->obtenerPorCedula($id_cedula);
+    
+    // Si no hay datos del formulario (POST), usar datos existentes
+    if (empty($datos_formulario) && !empty($datos_existentes)) {
+        // Convertir datos existentes al formato del formulario
+        $datos_formulario = [
+            'nombre' => array_column($datos_existentes, 'nombre'),
+            'id_parentesco' => array_column($datos_existentes, 'id_parentesco'),
+            'edad' => array_column($datos_existentes, 'edad'),
+            'id_ocupacion' => array_column($datos_existentes, 'id_ocupacion'),
+            'telefono' => array_column($datos_existentes, 'telefono'),
+            'id_conviven' => array_column($datos_existentes, 'id_conviven'),
+            'observacion' => array_column($datos_existentes, 'observacion')
+        ];
+    }
     
     // Obtener opciones para los select
     $parentescos = $controller->obtenerOpciones('parentesco');
@@ -73,6 +116,46 @@ try {
 .miembro-familiar .miembro-title { font-weight: bold; color: #495057; margin: 0; }
 .btn-eliminar-miembro { background: #dc3545; border: none; color: white; padding: 5px 10px; border-radius: 4px; }
 .btn-eliminar-miembro:hover { background: #c82333; }
+
+/* Estilos para errores en campos */
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-control.is-valid,
+.form-select.is-valid {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+}
+
+.valid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #198754;
+}
+
+/* Estilo para mensajes de error en form-text */
+.form-text.error-message {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+.form-text.success-message {
+    color: #198754;
+    font-weight: 500;
+}
 </style>
 
 <div class="container mt-4">
@@ -175,8 +258,8 @@ try {
             
             <form action="" method="POST" id="formComposicionFamiliar" novalidate autocomplete="off">
                 <div id="miembros-container">
-                    <?php if (!empty($datos_existentes)): ?>
-                        <?php foreach ($datos_existentes as $index => $miembro): ?>
+                    <?php if (!empty($datos_formulario['nombre'])): ?>
+                        <?php foreach ($datos_formulario['nombre'] as $index => $nombre): ?>
                             <div class="miembro-familiar" data-index="<?php echo $index; ?>">
                                 <div class="miembro-header">
                                     <h6 class="miembro-title">Miembro Familiar <?php echo $index + 1; ?></h6>
@@ -191,70 +274,89 @@ try {
                                         <label for="nombre_<?php echo $index; ?>" class="form-label">
                                             <i class="bi bi-person me-1"></i>Nombre:
                                         </label>
-                                        <input type="text" class="form-control" id="nombre_<?php echo $index; ?>" name="nombre[]" 
-                                               value="<?php echo htmlspecialchars($miembro['nombre']); ?>" required>
-                                        <div class="invalid-feedback">El nombre es obligatorio.</div>
+                                        <input type="text" class="form-control <?php echo !empty($errores_campos['nombre'][$index]) ? 'is-invalid' : (!empty($nombre) ? 'is-valid' : ''); ?>" 
+                                               id="nombre_<?php echo $index; ?>" name="nombre[]" 
+                                               value="<?php echo htmlspecialchars($nombre); ?>" required>
+                                        <div class="invalid-feedback">
+                                            <?php echo !empty($errores_campos['nombre'][$index]) ? htmlspecialchars($errores_campos['nombre'][$index]) : 'El nombre es obligatorio.'; ?>
+                                        </div>
                                     </div>
                                     <div class="col-md-2 mb-3">
                                         <label for="id_parentesco_<?php echo $index; ?>" class="form-label">
                                             <i class="bi bi-diagram-3 me-1"></i>Parentesco:
                                         </label>
-                                        <select class="form-select" id="id_parentesco_<?php echo $index; ?>" name="id_parentesco[]" required>
+                                        <select class="form-select <?php echo !empty($errores_campos['id_parentesco'][$index]) ? 'is-invalid' : (!empty($datos_formulario['id_parentesco'][$index]) ? 'is-valid' : ''); ?>" 
+                                                id="id_parentesco_<?php echo $index; ?>" name="id_parentesco[]" required>
                                             <option value="">Seleccione</option>
                                             <?php foreach ($parentescos as $parentesco): ?>
                                                 <option value="<?php echo $parentesco['id']; ?>" 
-                                                    <?php echo ($miembro['id_parentesco'] == $parentesco['id']) ? 'selected' : ''; ?>>
+                                                    <?php echo ($datos_formulario['id_parentesco'][$index] == $parentesco['id']) ? 'selected' : ''; ?>>
                                                     <?php echo htmlspecialchars($parentesco['nombre']); ?>
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
-                                        <div class="invalid-feedback">Debe seleccionar el parentesco.</div>
+                                        <div class="invalid-feedback">
+                                            <?php echo !empty($errores_campos['id_parentesco'][$index]) ? htmlspecialchars($errores_campos['id_parentesco'][$index]) : 'Debe seleccionar el parentesco.'; ?>
+                                        </div>
                                     </div>
                                     <div class="col-md-2 mb-3">
                                         <label for="edad_<?php echo $index; ?>" class="form-label">
                                             <i class="bi bi-calendar me-1"></i>Edad:
                                         </label>
-                                        <input type="number" class="form-control" id="edad_<?php echo $index; ?>" name="edad[]" 
-                                               value="<?php echo htmlspecialchars($miembro['edad']); ?>" min="0" max="120" required>
-                                        <div class="invalid-feedback">La edad es obligatoria (0-120).</div>
+                                        <input type="number" class="form-control <?php echo !empty($errores_campos['edad'][$index]) ? 'is-invalid' : (!empty($datos_formulario['edad'][$index]) ? 'is-valid' : ''); ?>" 
+                                               id="edad_<?php echo $index; ?>" name="edad[]" 
+                                               value="<?php echo htmlspecialchars($datos_formulario['edad'][$index]); ?>" min="0" max="120" required>
+                                        <div class="invalid-feedback">
+                                            <?php echo !empty($errores_campos['edad'][$index]) ? htmlspecialchars($errores_campos['edad'][$index]) : 'La edad es obligatoria (0-120).'; ?>
+                                        </div>
                                     </div>
                                     <div class="col-md-2 mb-3">
                                         <label for="id_ocupacion_<?php echo $index; ?>" class="form-label">
                                             <i class="bi bi-briefcase me-1"></i>Ocupación:
                                         </label>
-                                        <select class="form-select" id="id_ocupacion_<?php echo $index; ?>" name="id_ocupacion[]">
+                                        <select class="form-select <?php echo !empty($errores_campos['id_ocupacion'][$index]) ? 'is-invalid' : (!empty($datos_formulario['id_ocupacion'][$index]) ? 'is-valid' : ''); ?>" 
+                                                id="id_ocupacion_<?php echo $index; ?>" name="id_ocupacion[]">
                                             <option value="">Seleccione</option>
                                             <?php foreach ($ocupaciones as $ocupacion): ?>
                                                 <option value="<?php echo $ocupacion['id']; ?>" 
-                                                    <?php echo ($miembro['id_ocupacion'] == $ocupacion['id']) ? 'selected' : ''; ?>>
+                                                    <?php echo ($datos_formulario['id_ocupacion'][$index] == $ocupacion['id']) ? 'selected' : ''; ?>>
                                                     <?php echo htmlspecialchars($ocupacion['nombre']); ?>
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
+                                        <?php if (!empty($errores_campos['id_ocupacion'][$index])): ?>
+                                            <div class="invalid-feedback"><?php echo htmlspecialchars($errores_campos['id_ocupacion'][$index]); ?></div>
+                                        <?php endif; ?>
                                     </div>
                                     <div class="col-md-2 mb-3">
                                         <label for="telefono_<?php echo $index; ?>" class="form-label">
                                             <i class="bi bi-telephone me-1"></i>Teléfono:
                                         </label>
-                                        <input type="text" class="form-control" id="telefono_<?php echo $index; ?>" name="telefono[]" 
-                                               value="<?php echo htmlspecialchars($miembro['telefono']); ?>" 
+                                        <input type="text" class="form-control <?php echo !empty($errores_campos['telefono'][$index]) ? 'is-invalid' : (!empty($datos_formulario['telefono'][$index]) ? 'is-valid' : ''); ?>" 
+                                               id="telefono_<?php echo $index; ?>" name="telefono[]" 
+                                               value="<?php echo htmlspecialchars($datos_formulario['telefono'][$index]); ?>" 
                                                pattern="[0-9]{7,10}" required>
-                                        <div class="invalid-feedback">El teléfono es obligatorio (7-10 dígitos).</div>
+                                        <div class="invalid-feedback">
+                                            <?php echo !empty($errores_campos['telefono'][$index]) ? htmlspecialchars($errores_campos['telefono'][$index]) : 'El teléfono es obligatorio (7-10 dígitos).'; ?>
+                                        </div>
                                     </div>
                                     <div class="col-md-2 mb-3">
                                         <label for="id_conviven_<?php echo $index; ?>" class="form-label">
                                             <i class="bi bi-house me-1"></i>Conviven:
                                         </label>
-                                        <select class="form-select" id="id_conviven_<?php echo $index; ?>" name="id_conviven[]" required>
+                                        <select class="form-select <?php echo !empty($errores_campos['id_conviven'][$index]) ? 'is-invalid' : (!empty($datos_formulario['id_conviven'][$index]) ? 'is-valid' : ''); ?>" 
+                                                id="id_conviven_<?php echo $index; ?>" name="id_conviven[]" required>
                                             <option value="">Seleccione</option>
                                             <?php foreach ($opciones_parametro as $opcion): ?>
                                                 <option value="<?php echo $opcion['id']; ?>" 
-                                                    <?php echo ($miembro['id_conviven'] == $opcion['id']) ? 'selected' : ''; ?>>
+                                                    <?php echo ($datos_formulario['id_conviven'][$index] == $opcion['id']) ? 'selected' : ''; ?>>
                                                     <?php echo htmlspecialchars($opcion['nombre']); ?>
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
-                                        <div class="invalid-feedback">Debe seleccionar si convive.</div>
+                                        <div class="invalid-feedback">
+                                            <?php echo !empty($errores_campos['id_conviven'][$index]) ? htmlspecialchars($errores_campos['id_conviven'][$index]) : 'Debe seleccionar si convive.'; ?>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -263,7 +365,7 @@ try {
                                             <i class="bi bi-chat-text me-1"></i>Observación:
                                         </label>
                                         <textarea class="form-control" id="observacion_<?php echo $index; ?>" name="observacion[]" 
-                                                  rows="3" maxlength="500"><?php echo htmlspecialchars($miembro['observacion'] ?? ''); ?></textarea>
+                                                  rows="3" maxlength="500"><?php echo htmlspecialchars($datos_formulario['observacion'][$index] ?? ''); ?></textarea>
                                         <div class="form-text">Máximo 500 caracteres</div>
                                     </div>
                                 </div>
@@ -361,7 +463,7 @@ try {
                         </button>
                         <button type="submit" class="btn btn-primary btn-lg me-2">
                             <i class="bi bi-check-circle me-2"></i>
-                            <?php echo !empty($datos_existentes) ? 'Actualizar' : 'Guardar'; ?>
+                            <?php echo !empty($datos_formulario['nombre']) ? 'Actualizar' : 'Guardar'; ?>
                         </button>
                         <a href="../salud/salud.php" class="btn btn-secondary btn-lg">
                             <i class="bi bi-arrow-left me-2"></i>Volver
@@ -372,7 +474,7 @@ try {
             
             <script>
             document.addEventListener('DOMContentLoaded', function() {
-                let miembroIndex = <?php echo !empty($datos_existentes) ? count($datos_existentes) : 1; ?>;
+                let miembroIndex = <?php echo !empty($datos_formulario['nombre']) ? count($datos_formulario['nombre']) : 1; ?>;
                 
                 document.getElementById('btnAgregarMiembro').addEventListener('click', function() {
                     agregarMiembro();

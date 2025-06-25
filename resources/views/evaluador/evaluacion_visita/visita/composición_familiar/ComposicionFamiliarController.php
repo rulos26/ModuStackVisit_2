@@ -61,14 +61,16 @@ class ComposicionFamiliarController {
             $num = $i + 1;
             
             // Validar nombre
-            if (empty($nombres[$i])) {
+            if (empty(trim($nombres[$i]))) {
                 $errores[] = "El nombre del miembro $num es obligatorio.";
-            } elseif (strlen($nombres[$i]) < 2) {
+            } elseif (strlen(trim($nombres[$i])) < 2) {
                 $errores[] = "El nombre del miembro $num debe tener al menos 2 caracteres.";
+            } elseif (strlen(trim($nombres[$i])) > 100) {
+                $errores[] = "El nombre del miembro $num no puede exceder 100 caracteres.";
             }
             
             // Validar parentesco
-            if (empty($parentescos[$i]) || $parentescos[$i] == '0') {
+            if (empty($parentescos[$i]) || $parentescos[$i] == '0' || $parentescos[$i] == '') {
                 $errores[] = "Debe seleccionar el parentesco del miembro $num.";
             }
             
@@ -79,21 +81,26 @@ class ComposicionFamiliarController {
                 $errores[] = "La edad del miembro $num debe estar entre 0 y 120 años.";
             }
             
-            // Validar ocupación (opcional)
-            if (!empty($ocupaciones[$i]) && $ocupaciones[$i] == '0') {
+            // Validar ocupación (opcional pero si se selecciona debe ser válida)
+            if (!empty($ocupaciones[$i]) && ($ocupaciones[$i] == '0' || $ocupaciones[$i] == '')) {
                 $errores[] = "Debe seleccionar una ocupación válida para el miembro $num o dejarlo vacío.";
             }
             
             // Validar teléfono
-            if (empty($telefonos[$i])) {
+            if (empty(trim($telefonos[$i]))) {
                 $errores[] = "El teléfono del miembro $num es obligatorio.";
-            } elseif (!preg_match('/^[0-9]{7,10}$/', $telefonos[$i])) {
-                $errores[] = "El teléfono del miembro $num debe tener entre 7 y 10 dígitos.";
+            } elseif (!preg_match('/^[0-9]{7,10}$/', trim($telefonos[$i]))) {
+                $errores[] = "El teléfono del miembro $num debe tener entre 7 y 10 dígitos numéricos.";
             }
             
             // Validar conviven
-            if (empty($conviven[$i]) || $conviven[$i] == '0') {
+            if (empty($conviven[$i]) || $conviven[$i] == '0' || $conviven[$i] == '') {
                 $errores[] = "Debe seleccionar si convive el miembro $num.";
+            }
+            
+            // Validar observación (opcional pero si se ingresa debe tener límite)
+            if (!empty($observaciones[$i]) && strlen(trim($observaciones[$i])) > 500) {
+                $errores[] = "La observación del miembro $num no puede exceder 500 caracteres.";
             }
         }
         
