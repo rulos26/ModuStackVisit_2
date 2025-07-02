@@ -94,7 +94,21 @@
                 <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Celular</td>
                 <td colspan="3" style="border: 1px solid black;"><?= !empty($row1['celular']) ? htmlspecialchars($row1['celular']) : 'N/A' ?></td>
                 <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Correo electrónico</td>
-                <td colspan="3" style="border: 1px solid black;"><?= !empty($row1['correo']) ? htmlspecialchars($row1['correo']) : 'N/A' ?></td>
+                <td colspan="3" style="border: 1px solid black;">
+                    <?php
+                        $correo = $row1['correo'] ?? '';
+                        if (!empty($correo)) {
+                            $atPos = strpos($correo, '@');
+                            if ($atPos !== false && $atPos >= 16) {
+                                echo htmlspecialchars(substr($correo, 0, $atPos)) . '<br>@' . htmlspecialchars(substr($correo, $atPos + 1));
+                            } else {
+                                echo htmlspecialchars($correo);
+                            }
+                        } else {
+                            echo 'N/A';
+                        }
+                    ?>
+                </td>
             </tr>
             <tr>
                 <td colspan="12" style="text-align: center; padding: 16px 0;">
