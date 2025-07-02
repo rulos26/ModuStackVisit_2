@@ -25,6 +25,7 @@
 
     .carta {
         padding: 10px;
+        border: 2px solid rgb(175, 134, 0);
     }
 
     .firmado {
@@ -32,7 +33,7 @@
         text-align: right;
     }
 </style>
-<div style="border: 2px solid rgb(0, 175, 67); padding: 12px; margin-top: 10px;">
+<div style="border: 2px solid rgb(0, 175, 67); padding: 12px; margin-top: 50px;">
     <table cellpadding="5" style="width: 100%; margin-bottom: 10px;">
         <tr>
             <td width="100%" style="border: 1px solid rgb(175,0,0); text-align: center;">
