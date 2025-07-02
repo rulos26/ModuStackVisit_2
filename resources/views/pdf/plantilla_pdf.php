@@ -8,7 +8,7 @@
         border-collapse: collapse;
         margin: 20px 0;
         font-family: Arial, sans-serif;
-        font-size: 12px !important;
+        font-size: 14px !important;
     }
 
     .customTable th,
@@ -71,21 +71,21 @@
             </tr>
             <tr>
                 <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Dirección</td>
-                <td colspan="3" style="border: 1px solid black;"><?= htmlspecialchars($row1['direccion'] ?? '') ?></td>
+                <td colspan="3" style="border: 1px solid black;"><?= !empty($row1['direccion']) ? htmlspecialchars($row1['direccion']) : 'N/A' ?></td>
                 <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Barrio</td>
-                <td colspan="3" style="border: 1px solid black;"><?= htmlspecialchars($row1['barrio'] ?? '') ?></td>
+                <td colspan="3" style="border: 1px solid black;"><?= !empty($row1['barrio']) ? htmlspecialchars($row1['barrio']) : 'N/A' ?></td>
             </tr>
             <tr>
                 <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Localidad</td>
-                <td colspan="3" style="border: 1px solid black;"><?= htmlspecialchars($row1['localidad'] ?? '') ?></td>
+                <td colspan="3" style="border: 1px solid black;"><?= !empty($row1['localidad']) ? htmlspecialchars($row1['localidad']) : 'N/A' ?></td>
                 <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Teléfono Fijo</td>
-                <td colspan="3" style="border: 1px solid black;"><?= htmlspecialchars($row1['telefono'] ?? '') ?></td>
+                <td colspan="3" style="border: 1px solid black;"><?= !empty($row1['telefono']) ? htmlspecialchars($row1['telefono']) : 'N/A' ?></td>
             </tr>
             <tr>
                 <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Celular</td>
-                <td colspan="3" style="border: 1px solid black;"><?= htmlspecialchars($row1['celular'] ?? '') ?></td>
+                <td colspan="3" style="border: 1px solid black;"><?= !empty($row1['celular']) ? htmlspecialchars($row1['celular']) : 'N/A' ?></td>
                 <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Correo electrónico</td>
-                <td colspan="3" style="border: 1px solid black;"><?= htmlspecialchars($row1['correo'] ?? '') ?></td>
+                <td colspan="3" style="border: 1px solid black;"><?= !empty($row1['correo']) ? htmlspecialchars($row1['correo']) : 'N/A' ?></td>
             </tr>
             <tr>
                 <td colspan="12" style="text-align: center; padding: 16px 0;">
