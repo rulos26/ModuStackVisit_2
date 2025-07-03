@@ -720,7 +720,11 @@ error_reporting(E_ALL);
                     <?php foreach ($aportantes as $aportante): ?>
                         <tr>
                             <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($aportante['nombre']) ?></td>
-                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($aportante['valor']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;">
+                                <?php
+                                    echo is_numeric($aportante['valor']) ? ('$' . number_format($aportante['valor'], 0, ',', '.')) : htmlspecialchars($aportante['valor']);
+                                ?>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -801,23 +805,43 @@ error_reporting(E_ALL);
                 <tbody>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">SALARIO</td>
-                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($ingresos_mensuales['salario_val']) ?></td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;">
+                            <?php
+                                echo is_numeric($ingresos_mensuales['salario_val']) ? ('$' . number_format($ingresos_mensuales['salario_val'], 0, ',', '.')) : htmlspecialchars($ingresos_mensuales['salario_val']);
+                            ?>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">PENSIÓN</td>
-                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($ingresos_mensuales['pension_val']) ?></td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;">
+                            <?php
+                                echo is_numeric($ingresos_mensuales['pension_val']) ? ('$' . number_format($ingresos_mensuales['pension_val'], 0, ',', '.')) : htmlspecialchars($ingresos_mensuales['pension_val']);
+                            ?>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">ARRIENDOS</td>
-                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($ingresos_mensuales['arriendo_val']) ?></td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;">
+                            <?php
+                                echo is_numeric($ingresos_mensuales['arriendo_val']) ? ('$' . number_format($ingresos_mensuales['arriendo_val'], 0, ',', '.')) : htmlspecialchars($ingresos_mensuales['arriendo_val']);
+                            ?>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">TRABAJO INDEPENDIENTE</td>
-                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($ingresos_mensuales['trabajo_independiente_val']) ?></td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;">
+                            <?php
+                                echo is_numeric($ingresos_mensuales['trabajo_independiente_val']) ? ('$' . number_format($ingresos_mensuales['trabajo_independiente_val'], 0, ',', '.')) : htmlspecialchars($ingresos_mensuales['trabajo_independiente_val']);
+                            ?>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">OTROS</td>
-                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($ingresos_mensuales['otros_val']) ?></td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;">
+                            <?php
+                                echo is_numeric($ingresos_mensuales['otros_val']) ? ('$' . number_format($ingresos_mensuales['otros_val'], 0, ',', '.')) : htmlspecialchars($ingresos_mensuales['otros_val']);
+                            ?>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -852,35 +876,67 @@ error_reporting(E_ALL);
                 <tbody>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">ALIMENTACIÓN</td>
-                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['alimentacion_val']) ?></td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;">
+                            <?php
+                                echo is_numeric($gastos['alimentacion_val']) ? ('$' . number_format($gastos['alimentacion_val'], 0, ',', '.')) : htmlspecialchars($gastos['alimentacion_val']);
+                            ?>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">EDUCACIÓN</td>
-                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['educacion_val']) ?></td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;">
+                            <?php
+                                echo is_numeric($gastos['educacion_val']) ? ('$' . number_format($gastos['educacion_val'], 0, ',', '.')) : htmlspecialchars($gastos['educacion_val']);
+                            ?>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">SALUD</td>
-                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['salud_val']) ?></td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;">
+                            <?php
+                                echo is_numeric($gastos['salud_val']) ? ('$' . number_format($gastos['salud_val'], 0, ',', '.')) : htmlspecialchars($gastos['salud_val']);
+                            ?>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">RECREACIÓN</td>
-                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['recreacion_val']) ?></td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;">
+                            <?php
+                                echo is_numeric($gastos['recreacion_val']) ? ('$' . number_format($gastos['recreacion_val'], 0, ',', '.')) : htmlspecialchars($gastos['recreacion_val']);
+                            ?>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">CUOT/CRÉDITOS</td>
-                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['cuota_creditos_val']) ?></td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;">
+                            <?php
+                                echo is_numeric($gastos['cuota_creditos_val']) ? ('$' . number_format($gastos['cuota_creditos_val'], 0, ',', '.')) : htmlspecialchars($gastos['cuota_creditos_val']);
+                            ?>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">ARRIENDO</td>
-                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['arriendo_val']) ?></td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;">
+                            <?php
+                                echo is_numeric($gastos['arriendo_val']) ? ('$' . number_format($gastos['arriendo_val'], 0, ',', '.')) : htmlspecialchars($gastos['arriendo_val']);
+                            ?>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">SERVICIOS PÚBLICOS</td>
-                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['servicios_publicos_val']) ?></td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;">
+                            <?php
+                                echo is_numeric($gastos['servicios_publicos_val']) ? ('$' . number_format($gastos['servicios_publicos_val'], 0, ',', '.')) : htmlspecialchars($gastos['servicios_publicos_val']);
+                            ?>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">OTROS</td>
-                        <td colspan="8" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($gastos['otros_val']) ?></td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;">
+                            <?php
+                                echo is_numeric($gastos['otros_val']) ? ('$' . number_format($gastos['otros_val'], 0, ',', '.')) : htmlspecialchars($gastos['otros_val']);
+                            ?>
+                        </td>
                     </tr>
                 </tbody>
             </table>
