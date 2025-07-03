@@ -74,13 +74,21 @@ error_reporting(E_ALL);
             <table class="customTable" style="border: 1px solid black;">
                 <thead>
                     <tr>
-                        <th colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                        <th colspan="5" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
                             INFORMACIÓN PERSONAL
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
+                        <td rowspan="13" style="border: 1px solid black; text-align: center; vertical-align: middle; min-width: 110px; max-width: 130px;">
+                            <?php if (!empty($img_perfil_b64)): ?>
+                                <img src="<?= $img_perfil_b64 ?>" alt="Foto Perfil" style="max-width: 100px; max-height: 120px; border: 1px solid #888; border-radius: 6px;">
+                            <?php else: ?>
+                                <img src="public/images/_blank.png" alt="No disponible" style="max-width: 80px; max-height: 80px; opacity: 0.5;">
+                                <div style="font-size: 10px; color: #888;">Foto no disponible</div>
+                            <?php endif; ?>
+                        </td>
                         <th style="background-color: #ABABAB;">Nombres</th>
                         <td><?= htmlspecialchars($evaluado['nombres'] ?? '') ?></td>
                         <th style="background-color: #ABABAB;">Apellidos</th>
