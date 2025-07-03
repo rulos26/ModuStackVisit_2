@@ -74,34 +74,47 @@ error_reporting(E_ALL);
             <table class="customTable" style="border: 1px solid black;">
                 <thead>
                     <tr>
-                        <th colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                        <th colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
                             INFORMACIÓN PERSONAL
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="4" style="text-align: center; padding: 12px 0;">
+                        <td rowspan="20" style="border: 1px solid black; text-align: center; vertical-align: middle; min-width: 130px; max-width: 150px;">
                             <?php if (!empty($img_perfil_b64)): ?>
-                                <img src="<?= $img_perfil_b64 ?>" alt="Foto Perfil" style="max-width: 110px; max-height: 120px; border: 1px solid #888; border-radius: 6px;">
+                                <img src="<?= $img_perfil_b64 ?>" alt="Foto Perfil" style="max-width: 120px; max-height: 160px; border: 1.5px solid #888; border-radius: 8px; margin: 8px 0;">
                             <?php else: ?>
-                                <img src="public/images/_blank.png" alt="No disponible" style="max-width: 80px; max-height: 80px; opacity: 0.5;">
+                                <img src="public/images/_blank.png" alt="No disponible" style="max-width: 90px; max-height: 120px; opacity: 0.5; margin: 8px 0;">
                                 <div style="font-size: 10px; color: #888;">Foto no disponible</div>
                             <?php endif; ?>
                         </td>
+                        <th style="background-color: #ABABAB;">Nombres</th>
+                        <td><?= htmlspecialchars($evaluado['nombres'] ?? '') ?></td>
                     </tr>
-                    <tr><th style="background-color: #ABABAB;">Nombres</th><td><?= htmlspecialchars($evaluado['nombres'] ?? '') ?></td><th style="background-color: #ABABAB;">Apellidos</th><td><?= htmlspecialchars($evaluado['apellidos'] ?? '') ?></td></tr>
-                    <tr><th style="background-color: #ABABAB;">Tipo de Documento</th><td><?= htmlspecialchars($evaluado['tipo_documento_nombre'] ?? '') ?></td><th style="background-color: #ABABAB;">No. Documento</th><td><?= htmlspecialchars($evaluado['id_cedula'] ?? '') ?></td></tr>
-                    <tr><th style="background-color: #ABABAB;">Lugar de expedición</th><td><?= htmlspecialchars($evaluado['ciudad_nombre'] ?? '') ?></td><th style="background-color: #ABABAB;">Edad</th><td><?= htmlspecialchars($evaluado['edad'] ?? '') ?></td></tr>
-                    <tr><th style="background-color: #ABABAB;">Fecha de Nacimiento</th><td><?= htmlspecialchars($evaluado['fecha_expedicion'] ?? '') ?></td><th style="background-color: #ABABAB;">Lugar de Nacimiento</th><td><?= htmlspecialchars($evaluado['lugar_nacimiento_municipio'] ?? '') ?></td></tr>
-                    <tr><th style="background-color: #ABABAB;">Grupo Sanguíneo</th><td><?= htmlspecialchars($evaluado['rh_nombre'] ?? '') ?></td><th style="background-color: #ABABAB;">Estatura</th><td><?= htmlspecialchars($evaluado['estatura_nombre'] ?? '') ?></td></tr>
-                    <tr><th style="background-color: #ABABAB;">Peso</th><td><?= htmlspecialchars($evaluado['peso_kg'] ?? '') ?> kg</td><th style="background-color: #ABABAB;">Estado Civil actual</th><td><?= htmlspecialchars($evaluado['estado_civil_nombre'] ?? '') ?></td></tr>
-                    <tr><th style="background-color: #ABABAB;">Hace cuánto tiempo</th><td><?= htmlspecialchars($evaluado['hacer_cuanto'] ?? '') ?></td><th style="background-color: #ABABAB;">N° de Hijos</th><td><?= htmlspecialchars($evaluado['numero_hijos'] ?? '') ?></td></tr>
-                    <tr><th style="background-color: #ABABAB;">Dirección de Residencia</th><td><?= htmlspecialchars($evaluado['direccion'] ?? '') ?></td><th style="background-color: #ABABAB;">Localidad</th><td><?= htmlspecialchars($evaluado['localidad'] ?? '') ?></td></tr>
-                    <tr><th style="background-color: #ABABAB;">Barrio</th><td><?= htmlspecialchars($evaluado['barrio'] ?? '') ?></td><th style="background-color: #ABABAB;">Ciudad</th><td><?= htmlspecialchars($evaluado['ciudad_nombre'] ?? '') ?></td></tr>
-                    <tr><th style="background-color: #ABABAB;">Estrato</th><td><?= htmlspecialchars($evaluado['estrato_nombre'] ?? '') ?></td><th style="background-color: #ABABAB;">Teléfono Fijo</th><td><?= !empty($evaluado['telefono']) ? htmlspecialchars($evaluado['telefono']) : 'N/A' ?></td></tr>
-                    <tr><th style="background-color: #ABABAB;">Celular</th><td><?= htmlspecialchars($evaluado['celular_1'] ?? '') ?>/<?= htmlspecialchars($evaluado['celular_2'] ?? '') ?></td><th style="background-color: #ABABAB;">E. Mail</th><td><?= htmlspecialchars($evaluado['correo'] ?? '') ?></td></tr>
-                    <tr><th style="background-color: #ABABAB;">Cargo Actual</th><td><?= htmlspecialchars($evaluado['cargo'] ?? '') ?></td><th style="background-color: #ABABAB;">Observaciones</th><td><?= htmlspecialchars($evaluado['observacion'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Apellidos</th><td><?= htmlspecialchars($evaluado['apellidos'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Tipo de Documento</th><td><?= htmlspecialchars($evaluado['tipo_documento_nombre'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">No. Documento</th><td><?= htmlspecialchars($evaluado['id_cedula'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Lugar de expedición</th><td><?= htmlspecialchars($evaluado['ciudad_nombre'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Edad</th><td><?= htmlspecialchars($evaluado['edad'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Fecha de Nacimiento</th><td><?= htmlspecialchars($evaluado['fecha_expedicion'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Lugar de Nacimiento</th><td><?= htmlspecialchars($evaluado['lugar_nacimiento_municipio'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Grupo Sanguíneo</th><td><?= htmlspecialchars($evaluado['rh_nombre'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Estatura</th><td><?= htmlspecialchars($evaluado['estatura_nombre'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Peso</th><td><?= htmlspecialchars($evaluado['peso_kg'] ?? '') ?> kg</td></tr>
+                    <tr><th style="background-color: #ABABAB;">Estado Civil actual</th><td><?= htmlspecialchars($evaluado['estado_civil_nombre'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Hace cuánto tiempo</th><td><?= htmlspecialchars($evaluado['hacer_cuanto'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">N° de Hijos</th><td><?= htmlspecialchars($evaluado['numero_hijos'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Dirección de Residencia</th><td><?= htmlspecialchars($evaluado['direccion'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Localidad</th><td><?= htmlspecialchars($evaluado['localidad'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Barrio</th><td><?= htmlspecialchars($evaluado['barrio'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Ciudad</th><td><?= htmlspecialchars($evaluado['ciudad_nombre'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Estrato</th><td><?= htmlspecialchars($evaluado['estrato_nombre'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Teléfono Fijo</th><td><?= !empty($evaluado['telefono']) ? htmlspecialchars($evaluado['telefono']) : 'N/A' ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Celular</th><td><?= htmlspecialchars($evaluado['celular_1'] ?? '') ?>/<?= htmlspecialchars($evaluado['celular_2'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">E. Mail</th><td><?= htmlspecialchars($evaluado['correo'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Cargo Actual</th><td><?= htmlspecialchars($evaluado['cargo'] ?? '') ?></td></tr>
+                    <tr><th style="background-color: #ABABAB;">Observaciones</th><td><?= htmlspecialchars($evaluado['observacion'] ?? '') ?></td></tr>
                 </tbody>
             </table>
         <?php else: ?>
