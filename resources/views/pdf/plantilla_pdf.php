@@ -8,7 +8,7 @@
         border-collapse: collapse;
         margin: 20px 0;
         font-family: Arial, sans-serif;
-        font-size: 14px !important;
+        font-size: 10px !important;
     }
 
     .customTable th,
