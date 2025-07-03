@@ -709,6 +709,13 @@ class InformeFinalPdfController {
         $stmt_evidencia_fotografia_8->execute();
         $evidencia_fotografia_8 = $stmt_evidencia_fotografia_8->fetchAll(\PDO::FETCH_ASSOC);
 
+        // Consulta de foto_perfil_autorizacion
+        $sql_foto_perfil = "SELECT nombre FROM foto_perfil_autorizacion WHERE id_cedula = :cedula LIMIT 1";
+        $stmt_foto_perfil = $db->prepare($sql_foto_perfil);
+        $stmt_foto_perfil->bindParam(':cedula', $cedula);
+        $stmt_foto_perfil->execute();
+        $row_foto_perfil = $stmt_foto_perfil->fetch(\PDO::FETCH_ASSOC);
+
         // Función para convertir imagen a base64
         function img_to_base64($img_path) {
             if (!file_exists($img_path)) return '';
@@ -717,6 +724,23 @@ class InformeFinalPdfController {
             $mime = ($ext === 'png') ? 'image/png' : (($ext === 'gif') ? 'image/gif' : 'image/jpeg');
             $data = base64_encode(file_get_contents($img_path));
             return 'data:' . $mime . ';base64,' . $data;
+        }
+
+        // Función para convertir imagen a base64
+        function img_to_base64_perfil($img_path) {
+            if (!file_exists($img_path)) return '';
+            $info = pathinfo($img_path);
+            $ext = strtolower($info['extension']);
+            $mime = ($ext === 'png') ? 'image/png' : (($ext === 'gif') ? 'image/gif' : 'image/jpeg');
+            $data = base64_encode(file_get_contents($img_path));
+            return 'data:' . $mime . ';base64,' . $data;
+        }
+
+        // Obtener la ruta de la imagen de perfil
+        $img_perfil_path = __DIR__ . "/../../public/images/registro_fotografico/{$cedula}/" . ($row_foto_perfil['nombre'] ?? '');
+        $img_perfil_b64 = '';
+        if (!empty($row_foto_perfil['nombre']) && file_exists($img_perfil_path)) {
+            $img_perfil_b64 = img_to_base64_perfil($img_perfil_path);
         }
 
         // Procesar evidencia fotográfica tipo 1
@@ -842,7 +866,8 @@ class InformeFinalPdfController {
             'evidencia_fotografia_5_b64' => $evidencia_fotografia_5_b64,
             'evidencia_fotografia_6_b64' => $evidencia_fotografia_6_b64,
             'evidencia_fotografia_7_b64' => $evidencia_fotografia_7_b64,
-            'evidencia_fotografia_8_b64' => $evidencia_fotografia_8_b64
+            'evidencia_fotografia_8_b64' => $evidencia_fotografia_8_b64,
+            'img_perfil_b64' => $img_perfil_b64
         ];
         extract($data);
         ob_start();
