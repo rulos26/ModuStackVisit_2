@@ -678,8 +678,16 @@ error_reporting(E_ALL);
                             <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($pasivo['id_entidad']) ?></td>
                             <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($pasivo['id_tipo_inversion']) ?></td>
                             <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($pasivo['municipio']) ?></td>
-                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($pasivo['deuda']) ?></td>
-                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($pasivo['cuota_mes']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;">
+                                <?php
+                                    echo is_numeric($pasivo['deuda']) ? ('$' . number_format($pasivo['deuda'], 0, ',', '.')) : htmlspecialchars($pasivo['deuda']);
+                                ?>
+                            </td>
+                            <td style="border: 1px solid black; text-align: center;">
+                                <?php
+                                    echo is_numeric($pasivo['cuota_mes']) ? ('$' . number_format($pasivo['cuota_mes'], 0, ',', '.')) : htmlspecialchars($pasivo['cuota_mes']);
+                                ?>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
