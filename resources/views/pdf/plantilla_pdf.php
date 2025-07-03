@@ -34,11 +34,11 @@
 
     .contenedor-rojo {
         border: 2px solid rgb(175, 0, 0) !important;
-        padding: 12px !important;
-        margin-top: 5px !important;
-        margin-bottom: 5px !important;
-        margin-left: 5px !important;
-        margin-right: 5px !important;
+        padding: 4px !important;
+        margin-top: 2px !important;
+        margin-bottom: 2px !important;
+        margin-left: 2px !important;
+        margin-right: 2px !important;
     }
 </style>
 <div class="contenedor-rojo">
@@ -81,7 +81,7 @@
                             exigen las leyes 1266 de 2008, 1581 de 2012 y 172 de 2014.
                             Adjuntamos en este correo el texto sugerido que puede incorporarse tal cual en el formato PDF, de
                             manera que se cumpla con los requerimientos legales.
-                            “autorizo la visita domiciliaria y manifiesto de manera libre, expresa e informada que autorizo
+                            "autorizo la visita domiciliaria y manifiesto de manera libre, expresa e informada que autorizo
                             plenamente a la empresa GRUPO DE TAREAS EMPRESARIALES, con NIT 830.142.258-3, para realizar
                             la verificación de antecedentes judiciales, penales, disciplinarios y fiscales ante las autoridades
                             competentes, incluyendo la Fiscalía General de la Nación mediante consulta en el sistema SPOA – SIJUF,

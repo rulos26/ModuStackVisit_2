@@ -126,7 +126,7 @@ class DemoPdfController {
             // Crear instancia de Dompdf
             $dompdf = new Dompdf();
             $dompdf->loadHtml($html);
-            $dompdf->setPaper('A4', 'portrait');
+            $dompdf->setPaper('legal', 'portrait');
             $dompdf->render();
             
             // Nombre dinámico del PDF
