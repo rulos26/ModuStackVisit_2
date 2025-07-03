@@ -74,83 +74,83 @@ error_reporting(E_ALL);
             <table class="customTable" style="border: 1px solid black;">
                 <thead>
                     <tr>
-                        <th colspan="12" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
-                            <center>INFORMACIÓN PERSONAL</center>
+                        <th colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            INFORMACIÓN PERSONAL
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Nombres</td>
-                        <td colspan="2" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['nombres'] ?? '') ?></td>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Apellidos</td>
-                        <td colspan="4" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['apellidos'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Nombres</th>
+                        <td><?= htmlspecialchars($evaluado['nombres'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Apellidos</th>
+                        <td><?= htmlspecialchars($evaluado['apellidos'] ?? '') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Tipo de Documento</td>
-                        <td colspan="4" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['tipo_documento_nombre'] ?? '') ?></td>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">No. Documento</td>
-                        <td colspan="2" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['id_cedula'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Tipo de Documento</th>
+                        <td><?= htmlspecialchars($evaluado['tipo_documento_nombre'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">No. Documento</th>
+                        <td><?= htmlspecialchars($evaluado['id_cedula'] ?? '') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Lugar de expedición</td>
-                        <td colspan="4" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['ciudad_nombre'] ?? '') ?></td>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Edad</td>
-                        <td colspan="3" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['edad'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Lugar de expedición</th>
+                        <td><?= htmlspecialchars($evaluado['ciudad_nombre'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Edad</th>
+                        <td><?= htmlspecialchars($evaluado['edad'] ?? '') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Fecha de Nacimiento</td>
-                        <td colspan="4" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['fecha_expedicion'] ?? '') ?></td>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Lugar de Nacimiento</td>
-                        <td colspan="3" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['lugar_nacimiento_municipio'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Fecha de Nacimiento</th>
+                        <td><?= htmlspecialchars($evaluado['fecha_expedicion'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Lugar de Nacimiento</th>
+                        <td><?= htmlspecialchars($evaluado['lugar_nacimiento_municipio'] ?? '') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Grupo Sanguíneo</td>
-                        <td colspan="1" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['rh_nombre'] ?? '') ?></td>
-                        <td colspan="2" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Estatura</td>
-                        <td colspan="2" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['estatura_nombre'] ?? '') ?></td>
-                        <td colspan="2" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Peso</td>
-                        <td colspan="2" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['peso_kg'] ?? '') ?> kg</td>
+                        <th style="background-color: #ABABAB;">Grupo Sanguíneo</th>
+                        <td><?= htmlspecialchars($evaluado['rh_nombre'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Estatura</th>
+                        <td><?= htmlspecialchars($evaluado['estatura_nombre'] ?? '') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Estado Civil actual</td>
-                        <td colspan="2" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['estado_civil_nombre'] ?? '') ?></td>
-                        <td colspan="2" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Hace cuánto tiempo</td>
-                        <td colspan="2" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['hacer_cuanto'] ?? '') ?></td>
-                        <td colspan="2" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">N° de Hijos</td>
-                        <td colspan="1" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['numero_hijos'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Peso</th>
+                        <td><?= htmlspecialchars($evaluado['peso_kg'] ?? '') ?> kg</td>
+                        <th style="background-color: #ABABAB;">Estado Civil actual</th>
+                        <td><?= htmlspecialchars($evaluado['estado_civil_nombre'] ?? '') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Dirección de Residencia</td>
-                        <td colspan="3" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['direccion'] ?? '') ?></td>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Localidad</td>
-                        <td colspan="3" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['localidad'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Hace cuánto tiempo</th>
+                        <td><?= htmlspecialchars($evaluado['hacer_cuanto'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">N° de Hijos</th>
+                        <td><?= htmlspecialchars($evaluado['numero_hijos'] ?? '') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Barrio</td>
-                        <td colspan="2" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['barrio'] ?? '') ?></td>
-                        <td colspan="2" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Ciudad</td>
-                        <td colspan="2" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['ciudad_nombre'] ?? '') ?></td>
-                        <td colspan="2" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Estrato</td>
-                        <td colspan="1" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['estrato_nombre'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Dirección de Residencia</th>
+                        <td><?= htmlspecialchars($evaluado['direccion'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Localidad</th>
+                        <td><?= htmlspecialchars($evaluado['localidad'] ?? '') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Teléfono Fijo</td>
-                        <td colspan="4" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['telefono'] ?? '') ?></td>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Celular</td>
-                        <td colspan="3" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['celular_1'] ?? '') ?>/<?= htmlspecialchars($evaluado['celular_2'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Barrio</th>
+                        <td><?= htmlspecialchars($evaluado['barrio'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Ciudad</th>
+                        <td><?= htmlspecialchars($evaluado['ciudad_nombre'] ?? '') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">E. Mail</td>
-                        <td colspan="10" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['correo'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Estrato</th>
+                        <td><?= htmlspecialchars($evaluado['estrato_nombre'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Teléfono Fijo</th>
+                        <td><?= htmlspecialchars($evaluado['telefono'] ?? '') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Cargo Actual</td>
-                        <td colspan="10" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['cargo'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Celular</th>
+                        <td><?= htmlspecialchars($evaluado['celular_1'] ?? '') ?>/<?= htmlspecialchars($evaluado['celular_2'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">E. Mail</th>
+                        <td><?= htmlspecialchars($evaluado['correo'] ?? '') ?></td>
                     </tr>
                     <tr>
-                        <td colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Observaciones</td>
-                        <td colspan="10" style="border: 1px solid black;"><?= htmlspecialchars($evaluado['observacion'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Cargo Actual</th>
+                        <td><?= htmlspecialchars($evaluado['cargo'] ?? '') ?></td>
+                        <th style="background-color: #ABABAB;">Observaciones</th>
+                        <td><?= htmlspecialchars($evaluado['observacion'] ?? '') ?></td>
                     </tr>
                 </tbody>
             </table>
