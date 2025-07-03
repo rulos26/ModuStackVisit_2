@@ -71,27 +71,32 @@ error_reporting(E_ALL);
         </div>
         
         <?php if ($evaluado): ?>
+            <!-- Tabla de la foto de perfil, 3 columnas iguales, imagen en la columna 3 -->
+            <table class="customTable" style="border: 1px solid black; margin-bottom: 10px;">
+                <tr>
+                    <td style="width: 33%; height: 110px;"></td>
+                    <td style="width: 33%; height: 110px;"></td>
+                    <td style="width: 33%; text-align: center; vertical-align: middle; height: 110px;">
+                        <?php if (!empty($img_perfil_b64)): ?>
+                            <img src="<?= $img_perfil_b64 ?>" alt="Foto Perfil" style="width: 140px; height: 100px; object-fit: cover; border: 1.5px solid #888; border-radius: 8px; margin: 8px 0;">
+                        <?php else: ?>
+                            <img src="public/images/_blank.png" alt="No disponible" style="width: 120px; height: 80px; object-fit: cover; opacity: 0.5; margin: 8px 0;">
+                            <div style="font-size: 10px; color: #888;">Foto no disponible</div>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            </table>
+            <!-- Tabla de información personal sin imagen -->
             <table class="customTable" style="border: 1px solid black;">
                 <thead>
                     <tr>
-                        <th colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                        <th colspan="2" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
                             INFORMACIÓN PERSONAL
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th style="background-color: #ABABAB;">Nombres</th>
-                        <td><?= htmlspecialchars($evaluado['nombres'] ?? '') ?></td>
-                        <td rowspan="22" style="border: 1px solid black; text-align: center; vertical-align: middle; min-width: 160px; max-width: 180px;">
-                            <?php if (!empty($img_perfil_b64)): ?>
-                                <img src="<?= $img_perfil_b64 ?>" alt="Foto Perfil" style="width: 140px; height: 100px; object-fit: cover; border: 1.5px solid #888; border-radius: 8px; margin: 8px 0;">
-                            <?php else: ?>
-                                <img src="public/images/_blank.png" alt="No disponible" style="width: 120px; height: 80px; object-fit: cover; opacity: 0.5; margin: 8px 0;">
-                                <div style="font-size: 10px; color: #888;">Foto no disponible</div>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
+                    <tr><th style="background-color: #ABABAB;">Nombres</th><td><?= htmlspecialchars($evaluado['nombres'] ?? '') ?></td></tr>
                     <tr><th style="background-color: #ABABAB;">Apellidos</th><td><?= htmlspecialchars($evaluado['apellidos'] ?? '') ?></td></tr>
                     <tr><th style="background-color: #ABABAB;">Tipo de Documento</th><td><?= htmlspecialchars($evaluado['tipo_documento_nombre'] ?? '') ?></td></tr>
                     <tr><th style="background-color: #ABABAB;">No. Documento</th><td><?= htmlspecialchars($evaluado['id_cedula'] ?? '') ?></td></tr>
