@@ -81,16 +81,16 @@ error_reporting(E_ALL);
                 </thead>
                 <tbody>
                     <tr>
-                        <td rowspan="20" style="border: 1px solid black; text-align: center; vertical-align: middle; min-width: 130px; max-width: 150px;">
+                        <th style="background-color: #ABABAB;">Nombres</th>
+                        <td><?= htmlspecialchars($evaluado['nombres'] ?? '') ?></td>
+                        <td rowspan="22" style="border: 1px solid black; text-align: center; vertical-align: middle; min-width: 160px; max-width: 180px;">
                             <?php if (!empty($img_perfil_b64)): ?>
-                                <img src="<?= $img_perfil_b64 ?>" alt="Foto Perfil" style="max-width: 120px; max-height: 160px; border: 1.5px solid #888; border-radius: 8px; margin: 8px 0;">
+                                <img src="<?= $img_perfil_b64 ?>" alt="Foto Perfil" style="width: 140px; height: 100px; object-fit: cover; border: 1.5px solid #888; border-radius: 8px; margin: 8px 0;">
                             <?php else: ?>
-                                <img src="public/images/_blank.png" alt="No disponible" style="max-width: 90px; max-height: 120px; opacity: 0.5; margin: 8px 0;">
+                                <img src="public/images/_blank.png" alt="No disponible" style="width: 120px; height: 80px; object-fit: cover; opacity: 0.5; margin: 8px 0;">
                                 <div style="font-size: 10px; color: #888;">Foto no disponible</div>
                             <?php endif; ?>
                         </td>
-                        <th style="background-color: #ABABAB;">Nombres</th>
-                        <td><?= htmlspecialchars($evaluado['nombres'] ?? '') ?></td>
                     </tr>
                     <tr><th style="background-color: #ABABAB;">Apellidos</th><td><?= htmlspecialchars($evaluado['apellidos'] ?? '') ?></td></tr>
                     <tr><th style="background-color: #ABABAB;">Tipo de Documento</th><td><?= htmlspecialchars($evaluado['tipo_documento_nombre'] ?? '') ?></td></tr>
