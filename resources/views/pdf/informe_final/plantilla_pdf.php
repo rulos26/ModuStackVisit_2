@@ -51,6 +51,13 @@ error_reporting(E_ALL);
             font-weight: bold;
             text-align: center;
         }
+        /* Mejorar visualización de la tabla de pareja */
+        .tabla-pareja td, .tabla-pareja th {
+            word-break: break-word;
+            white-space: pre-line;
+            font-size: 9px;
+            max-width: 80px;
+        }
     </style>
 </head>
 <body>
@@ -296,7 +303,7 @@ error_reporting(E_ALL);
         <?php endif; ?>
 
         <?php if ($informacion_pareja): ?>
-            <table class="customTable" style="border: 1px solid black;">
+            <table class="customTable tabla-pareja" style="border: 1px solid black;">
                 <thead>
                     <tr>
                         <th colspan="14" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
