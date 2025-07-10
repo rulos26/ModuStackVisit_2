@@ -90,15 +90,13 @@ error_reporting(E_ALL);
             <table class="customTable" style="border: 1px solid black;">
                 <thead>
                     <tr>
-                        <th colspan="5" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
-                        <th colspan="3" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                        <th colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
                             INFORMACIÓN PERSONAL
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                       
                         <th style="background-color: #ABABAB;">Nombres</th>
                         <td><?= htmlspecialchars($evaluado['nombres'] ?? '') ?></td>
                         <th style="background-color: #ABABAB;">Apellidos</th>
@@ -156,7 +154,7 @@ error_reporting(E_ALL);
                         <th style="background-color: #ABABAB;">Estrato</th>
                         <td><?= htmlspecialchars($evaluado['estrato_nombre'] ?? '') ?></td>
                         <th style="background-color: #ABABAB;">Teléfono Fijo</th>
-                        <td><?= htmlspecialchars($evaluado['telefono'] ?? '') ?></td>
+                        <td><?= !empty($evaluado['telefono']) ? htmlspecialchars($evaluado['telefono']) : 'N/A' ?></td>
                     </tr>
                     <tr>
                         <th style="background-color: #ABABAB;">Celular</th>
@@ -170,7 +168,7 @@ error_reporting(E_ALL);
                         <th style="background-color: #ABABAB;">Observaciones</th>
                         <td><?= htmlspecialchars($evaluado['observacion'] ?? '') ?></td>
                     </tr>
-                    </tbody>
+                </tbody>
             </table>
         <?php else: ?>
             <div style="text-align: center; padding: 20px; color: red; font-weight: bold;">
