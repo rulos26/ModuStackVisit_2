@@ -1081,7 +1081,11 @@ error_reporting(E_ALL);
                             <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['empresa']) ?></td>
                             <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['tiempo']) ?></td>
                             <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['cargo']) ?></td>
-                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['salario']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;">
+                                <?php
+                                    echo is_numeric($experiencia['salario']) ? ('$' . number_format($experiencia['salario'], 0, ',', '.')) : htmlspecialchars($experiencia['salario']);
+                                ?>
+                            </td>
                             <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['retiro']) ?></td>
                             <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['concepto']) ?></td>
                             <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['nombre']) ?></td>
