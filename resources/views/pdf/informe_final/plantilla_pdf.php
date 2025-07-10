@@ -98,13 +98,7 @@ error_reporting(E_ALL);
                 </thead>
                 <tbody>
                     <tr>
-                        <td rowspan="16" style="border: 1px solid black; text-align: center; vertical-align: middle; min-width: 110px; max-width: 130px;">
-                            <?php if (!empty($img_perfil_b64)): ?>
-                                <img src="<?= $img_perfil_b64 ?>" alt="Foto Perfil" style="max-width: 100px; max-height: 120px; border: 1px solid #888; border-radius: 6px;">
-                            <?php else: ?>
-                                <!-- Aquí podrías poner una imagen por defecto o dejar vacío -->
-                            <?php endif; ?>
-                        </td>
+                       
                         <th style="background-color: #ABABAB;">Nombres</th>
                         <td><?= htmlspecialchars($evaluado['nombres'] ?? '') ?></td>
                         <th style="background-color: #ABABAB;">Apellidos</th>
