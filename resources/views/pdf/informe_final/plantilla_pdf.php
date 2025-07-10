@@ -1192,7 +1192,7 @@ error_reporting(E_ALL);
                 <tbody>
                     <tr>
                         <td colspan="6" style="border: 1px solid black; text-align: center;">
-                            <img src="<?= $fotoo_ubicacion_b64 ?>" alt="Ubicación" style="border: 2px solid black; height: 270px; width: 1006px;">
+                            <img src="<?= $fotoo_ubicacion_b64 ?>" alt="Ubicación" style="max-width: 100%; height: auto; max-height: 300px; border: 1px solid #ccc;">
                         </td>
                     </tr>
                 </tbody>
