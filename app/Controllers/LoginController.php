@@ -284,9 +284,12 @@ class LoginController {
             WHERE usuario = :usuario
         ');
         
+        $maxAttempts = self::MAX_LOGIN_ATTEMPTS;
+        $lockoutDuration = self::LOCKOUT_DURATION;
+        
         $stmt->bindParam(':usuario', $usuario);
-        $stmt->bindParam(':max_attempts', self::MAX_LOGIN_ATTEMPTS, \PDO::PARAM_INT);
-        $stmt->bindParam(':lockout_duration', self::LOCKOUT_DURATION, \PDO::PARAM_INT);
+        $stmt->bindParam(':max_attempts', $maxAttempts, \PDO::PARAM_INT);
+        $stmt->bindParam(':lockout_duration', $lockoutDuration, \PDO::PARAM_INT);
         $stmt->execute();
     }
     
