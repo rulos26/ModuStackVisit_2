@@ -36,6 +36,11 @@ class LoginController {
                         $_SESSION['username'] = $user['usuario'];
                         $_SESSION['rol'] = $user['rol'];
                         header('Location: resources/views/evaluador/dashboardEavaluador.php');
+                    } elseif ($user['rol'] == 3) {
+                        $_SESSION['user_id'] = $user['cedula'];
+                        $_SESSION['username'] = $user['usuario'];
+                        $_SESSION['rol'] = $user['rol'];
+                        header('Location: resources/views/superadmin/dashboardSuperAdmin.php');
                     } else {
                         return 'Rol de usuario no válido.';
                     }

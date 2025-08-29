@@ -101,6 +101,35 @@
             </li>
         <?php
         } // Fin del bloque para el rol de Administrador
+
+        // --- MENÚ PARA EL ROL DE SUPERADMINISTRADOR (rol = 3) ---
+        // Este bloque de menú solo se mostrará si el usuario tiene el rol de "Superadministrador".
+        if ($rol == 3) {
+        ?>
+            <hr>
+            <!-- Título de la sección para el superadministrador -->
+            <li class="nav-item">
+                <span class="nav-link link-dark fw-bold text-warning">
+                    <i class="bi bi-shield-lock me-2"></i>
+                    Opciones del Superadministrador
+                </span>
+            </li>
+            <!-- Enlace al panel de superadministrador -->
+            <li>
+                <a href="/ModuStackVisit_2/resources/views/superadmin/dashboardSuperAdmin.php" class="nav-link link-dark">
+                    <i class="bi bi-shield-lock-fill me-2"></i>
+                    Panel de Superadministrador
+                </a>
+            </li>
+            <!-- Enlace a la gestión de usuarios -->
+            <li>
+                <a href="/ModuStackVisit_2/resources/views/superadmin/gestion_usuarios.php" class="nav-link link-dark">
+                    <i class="bi bi-people me-2"></i>
+                    Gestión de Usuarios
+                </a>
+            </li>
+        <?php
+        } // Fin del bloque para el rol de Superadministrador
         ?>
     </ul>
     <hr>
