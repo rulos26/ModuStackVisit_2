@@ -11,9 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nombre = 'Superadministrador';
         $cedula = '30000003';
         $rol = 3;
-        $correo = 'superadmin@empresa.com';
-        $usuario = 'superadmin';
-        $password = password_hash('SuperAdmin123!', PASSWORD_DEFAULT);
+        $correo = 'root@empresa.com';
+        $usuario = 'root';
+        $password = password_hash('root', PASSWORD_DEFAULT);
 
         // Verificar si ya existe
         $stmt = $db->prepare('SELECT id FROM usuarios WHERE usuario = ? OR cedula = ?');
@@ -57,16 +57,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </button>
                         </form>
                         <hr>
-                        <div class="alert alert-info">
-                            <h6><i class="bi bi-info-circle me-2"></i>Credenciales del Superadministrador:</h6>
-                            <ul class="mb-0">
-                                <li><strong>Usuario:</strong> superadmin</li>
-                                <li><strong>Contraseña:</strong> SuperAdmin123!</li>
-                                <li><strong>Rol:</strong> Superadministrador (3)</li>
-                                <li><strong>Cédula:</strong> 30000003</li>
-                                <li><strong>Email:</strong> superadmin@empresa.com</li>
-                            </ul>
-                        </div>
+                                                 <div class="alert alert-info">
+                             <h6><i class="bi bi-info-circle me-2"></i>Credenciales del Superadministrador:</h6>
+                             <ul class="mb-0">
+                                 <li><strong>Usuario:</strong> root</li>
+                                 <li><strong>Contraseña:</strong> root</li>
+                                 <li><strong>Rol:</strong> Superadministrador (3)</li>
+                                 <li><strong>Cédula:</strong> 30000003</li>
+                                 <li><strong>Email:</strong> root@empresa.com</li>
+                             </ul>
+                         </div>
                         <div class="alert alert-warning">
                             <h6><i class="bi bi-exclamation-triangle me-2"></i>Importante:</h6>
                             <ul class="mb-0">

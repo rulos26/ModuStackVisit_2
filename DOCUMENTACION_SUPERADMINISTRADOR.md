@@ -34,10 +34,10 @@ http://localhost/ModuStackVisit_2/tests/Unit/CrearSuperAdminTest.php
 ```
 
 ### **2. Credenciales por Defecto:**
-- **Usuario:** `superadmin`
-- **Contraseña:** `SuperAdmin123!`
+- **Usuario:** `root`
+- **Contraseña:** `root`
 - **Cédula:** `30000003`
-- **Email:** `superadmin@empresa.com`
+- **Email:** `root@empresa.com`
 
 ### **3. Acceso al Sistema:**
 1. Ir a la página de login principal
