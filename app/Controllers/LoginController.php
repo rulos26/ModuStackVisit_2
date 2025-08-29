@@ -15,7 +15,8 @@ class LoginController {
             $stmt->bindParam(':usuario', $usuario);
             $stmt->execute();
             $user = $stmt->fetch();
-
+            var_dump($user);
+            exit;
             if ($user) {
                 $hash = $user['password'];
                 $isPasswordHash = (strlen($hash) > 32); // bcrypt y otros hash modernos son más largos que 32
