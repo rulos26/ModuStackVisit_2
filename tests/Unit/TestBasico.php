@@ -9,19 +9,27 @@ echo "<hr>";
 // 1. Prueba de conexión básica
 echo "<h3>1. Prueba de Conexión Básica</h3>";
 try {
-    $host = 'localhost';
-    $dbname = 'modustackvisit';
-    $username = 'root';
-    $password = '';
-    
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "<p>✅ Conexión a base de datos exitosa</p>";
-    
-    // Verificar tabla usuarios
-    $stmt = $pdo->query("SELECT COUNT(*) as total FROM usuarios");
-    $result = $stmt->fetch();
-    echo "<p>✅ Tabla usuarios accesible - Total usuarios: " . $result['total'] . "</p>";
+    // Cargar configuración
+    $configPath = __DIR__ . '/../../app/Config/config.php';
+    if (file_exists($configPath)) {
+        $config = require $configPath;
+        $host = $config['database']['host'];
+        $dbname = $config['database']['dbname'];
+        $username = $config['database']['username'];
+        $password = $config['database']['password'];
+        
+        $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
+        $pdo = new PDO($dsn, $username, $password);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        echo "<p>✅ Conexión a base de datos exitosa</p>";
+        
+        // Verificar tabla usuarios
+        $stmt = $pdo->query("SELECT COUNT(*) as total FROM usuarios");
+        $result = $stmt->fetch();
+        echo "<p>✅ Tabla usuarios accesible - Total usuarios: " . $result['total'] . "</p>";
+    } else {
+        echo "<p>❌ Archivo de configuración no encontrado</p>";
+    }
     
 } catch (Exception $e) {
     echo "<p>❌ Error de conexión: " . $e->getMessage() . "</p>";
@@ -37,9 +45,10 @@ $files_to_test = [
 ];
 
 foreach ($files_to_test as $file) {
-    if (file_exists($file)) {
+    $fullPath = __DIR__ . '/../../' . $file;
+    if (file_exists($fullPath)) {
         try {
-            require_once $file;
+            require_once $fullPath;
             echo "<p>✅ $file cargado correctamente</p>";
         } catch (Exception $e) {
             echo "<p>❌ Error al cargar $file: " . $e->getMessage() . "</p>";
@@ -51,6 +60,16 @@ foreach ($files_to_test as $file) {
 
 // 3. Prueba de clases
 echo "<h3>3. Prueba de Instanciación de Clases</h3>";
+
+// Cargar autoloader primero
+$autoloadPath = __DIR__ . '/../../vendor/autoload.php';
+if (file_exists($autoloadPath)) {
+    require_once $autoloadPath;
+    echo "<p>✅ Autoloader de Composer cargado</p>";
+} else {
+    echo "<p>❌ Autoloader de Composer no encontrado</p>";
+}
+
 try {
     if (class_exists('App\Database\Database')) {
         $db = App\Database\Database::getInstance();
@@ -85,6 +104,9 @@ try {
         if (is_array($result) && isset($result['success'])) {
             echo "<p>✅ Método authenticate funciona correctamente</p>";
             echo "<p><strong>Resultado:</strong> " . ($result['success'] ? 'Éxito' : 'Falló') . "</p>";
+            if (!$result['success']) {
+                echo "<p><strong>Mensaje:</strong> " . $result['message'] . "</p>";
+            }
         } else {
             echo "<p>❌ Método authenticate no retorna formato esperado</p>";
         }
@@ -97,7 +119,7 @@ try {
 
 // 5. Prueba de directorio logs
 echo "<h3>5. Prueba de Directorio de Logs</h3>";
-$logs_dir = 'logs';
+$logs_dir = __DIR__ . '/../../logs';
 if (!is_dir($logs_dir)) {
     if (mkdir($logs_dir, 0755, true)) {
         echo "<p>✅ Directorio logs creado correctamente</p>";
@@ -117,9 +139,13 @@ if (is_writable($logs_dir)) {
 // 6. Prueba de escritura de logs
 echo "<h3>6. Prueba de Escritura de Logs</h3>";
 try {
-    $logger = new App\Services\LoggerService();
-    $logger->info('Prueba de escritura de logs');
-    echo "<p>✅ Escritura de logs exitosa</p>";
+    if (class_exists('App\Services\LoggerService')) {
+        $logger = new App\Services\LoggerService();
+        $logger->info('Prueba de escritura de logs');
+        echo "<p>✅ Escritura de logs exitosa</p>";
+    } else {
+        echo "<p>❌ Clase LoggerService no disponible</p>";
+    }
 } catch (Exception $e) {
     echo "<p>❌ Error al escribir logs: " . $e->getMessage() . "</p>";
 }
