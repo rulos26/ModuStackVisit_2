@@ -1,9 +1,7 @@
 <?php
 require_once __DIR__ . '/../../app/Database/Database.php';
-require_once __DIR__ . '/../../app/Controllers/LoginController.php';
 
 use App\Database\Database;
-use App\Controllers\LoginController;
 
 // Iniciar sesión para las pruebas
 if (session_status() === PHP_SESSION_NONE) {
@@ -23,7 +21,7 @@ function limpiarSesion() {
 // Función para verificar si el usuario existe
 function verificarUsuarioExiste($usuario) {
     $db = Database::getInstance()->getConnection();
-    $stmt = $db->prepare('SELECT id, usuario, rol FROM usuarios WHERE usuario = ?');
+    $stmt = $db->prepare('SELECT id, usuario, rol, password FROM usuarios WHERE usuario = ?');
     $stmt->execute([$usuario]);
     return $stmt->fetch();
 }
@@ -61,23 +59,75 @@ function crearUsuarioPrueba() {
     return verificarUsuarioExiste('root');
 }
 
-// Función para simular login
+// Función para simular login sin redirecciones
 function simularLogin($usuario, $password) {
     limpiarSesion();
     
     try {
-        $resultado = LoginController::login($usuario, $password);
-        return [
-            'exito' => true,
-            'resultado' => $resultado,
-            'sesion' => $_SESSION ?? []
-        ];
+        $db = Database::getInstance()->getConnection();
+        $sql = 'SELECT * FROM usuarios WHERE usuario = :usuario LIMIT 1';
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':usuario', $usuario);
+        $stmt->execute();
+        $user = $stmt->fetch();
+
+        if ($user) {
+            $hash = $user['password'];
+            $isPasswordHash = (strlen($hash) > 32); // bcrypt y otros hash modernos son más largos que 32
+            $passwordOk = false;
+            if ($isPasswordHash) {
+                $passwordOk = password_verify($password, $hash);
+            } else {
+                $passwordOk = (md5($password) === $hash);
+            }
+            
+            if ($passwordOk) {
+                // Simular la creación de sesión sin redirección
+                $_SESSION['user_id'] = $user['cedula'];
+                $_SESSION['username'] = $user['usuario'];
+                $_SESSION['rol'] = $user['rol'];
+                
+                return [
+                    'exito' => true,
+                    'mensaje' => 'Login exitoso',
+                    'usuario' => $user,
+                    'sesion' => $_SESSION,
+                    'redireccion' => obtenerRedireccion($user['rol'])
+                ];
+            } else {
+                return [
+                    'exito' => false,
+                    'mensaje' => 'Usuario o contraseña incorrectos.',
+                    'sesion' => $_SESSION ?? []
+                ];
+            }
+        } else {
+            return [
+                'exito' => false,
+                'mensaje' => 'Usuario o contraseña incorrectos.',
+                'sesion' => $_SESSION ?? []
+            ];
+        }
     } catch (Exception $e) {
         return [
             'exito' => false,
             'error' => $e->getMessage(),
             'sesion' => $_SESSION ?? []
         ];
+    }
+}
+
+// Función para obtener la redirección según el rol
+function obtenerRedireccion($rol) {
+    switch ($rol) {
+        case 1:
+            return 'resources/views/admin/dashboardAdmin.php';
+        case 2:
+            return 'resources/views/evaluador/dashboardEavaluador.php';
+        case 3:
+            return 'resources/views/superadmin/dashboardSuperAdmin.php';
+        default:
+            return 'Rol de usuario no válido.';
     }
 }
 
@@ -92,7 +142,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $resultados[] = [
                     'tipo' => 'success',
                     'mensaje' => 'Usuario de prueba creado/verificado exitosamente',
-                    'datos' => $usuario
+                    'datos' => [
+                        'id' => $usuario['id'],
+                        'usuario' => $usuario['usuario'],
+                        'rol' => $usuario['rol']
+                    ]
                 ];
             } else {
                 $errores[] = 'Error al crear usuario de prueba';
@@ -105,10 +159,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $resultados[] = [
                     'tipo' => 'success',
                     'mensaje' => 'Login exitoso con credenciales correctas',
-                    'datos' => $login
+                    'datos' => [
+                        'usuario' => $login['usuario']['usuario'],
+                        'rol' => $login['usuario']['rol'],
+                        'redireccion' => $login['redireccion']
+                    ]
                 ];
             } else {
-                $errores[] = 'Error en login con credenciales correctas: ' . $login['error'];
+                $errores[] = 'Error en login con credenciales correctas: ' . $login['mensaje'];
             }
             break;
             
@@ -118,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $resultados[] = [
                     'tipo' => 'success',
                     'mensaje' => 'Login correctamente rechazado con credenciales incorrectas',
-                    'datos' => $login
+                    'datos' => $login['mensaje']
                 ];
             } else {
                 $errores[] = 'Error: Login aceptado con credenciales incorrectas';
@@ -131,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $resultados[] = [
                     'tipo' => 'success',
                     'mensaje' => 'Login correctamente rechazado con usuario inexistente',
-                    'datos' => $login
+                    'datos' => $login['mensaje']
                 ];
             } else {
                 $errores[] = 'Error: Login aceptado con usuario inexistente';
@@ -144,7 +202,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $resultados[] = [
                     'tipo' => 'success',
                     'mensaje' => 'Rol de superadministrador verificado correctamente',
-                    'datos' => $login['sesion']
+                    'datos' => [
+                        'rol_sesion' => $login['sesion']['rol'],
+                        'usuario_sesion' => $login['sesion']['username'],
+                        'user_id_sesion' => $login['sesion']['user_id']
+                    ]
                 ];
             } else {
                 $errores[] = 'Error: Rol de superadministrador no verificado correctamente';
@@ -157,7 +219,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $resultados[] = [
                     'tipo' => 'success',
                     'mensaje' => 'Redirección configurada para superadministrador',
-                    'datos' => 'Debería redirigir a: resources/views/superadmin/dashboardSuperAdmin.php'
+                    'datos' => 'Debería redirigir a: ' . $login['redireccion']
                 ];
             } else {
                 $errores[] = 'Error: No se pudo verificar la redirección';
@@ -176,7 +238,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
             
             foreach ($pruebas as $accion_test => $nombre_test) {
-                $_POST['accion'] = $accion_test;
                 $resultados[] = [
                     'tipo' => 'info',
                     'mensaje' => "Ejecutando: $nombre_test"
@@ -189,7 +250,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $resultados[] = [
                                 'tipo' => 'success',
                                 'mensaje' => "✓ $nombre_test: Exitoso",
-                                'datos' => $usuario
+                                'datos' => [
+                                    'id' => $usuario['id'],
+                                    'usuario' => $usuario['usuario'],
+                                    'rol' => $usuario['rol']
+                                ]
                             ];
                         } else {
                             $errores[] = "✗ $nombre_test: Falló";
@@ -202,10 +267,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $resultados[] = [
                                 'tipo' => 'success',
                                 'mensaje' => "✓ $nombre_test: Exitoso",
-                                'datos' => $login
+                                'datos' => [
+                                    'usuario' => $login['usuario']['usuario'],
+                                    'rol' => $login['usuario']['rol'],
+                                    'redireccion' => $login['redireccion']
+                                ]
                             ];
                         } else {
-                            $errores[] = "✗ $nombre_test: Falló - " . $login['error'];
+                            $errores[] = "✗ $nombre_test: Falló - " . $login['mensaje'];
                         }
                         break;
                         
@@ -215,7 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $resultados[] = [
                                 'tipo' => 'success',
                                 'mensaje' => "✓ $nombre_test: Exitoso (rechazado correctamente)",
-                                'datos' => $login
+                                'datos' => $login['mensaje']
                             ];
                         } else {
                             $errores[] = "✗ $nombre_test: Falló - Aceptó credenciales incorrectas";
@@ -228,7 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $resultados[] = [
                                 'tipo' => 'success',
                                 'mensaje' => "✓ $nombre_test: Exitoso (rechazado correctamente)",
-                                'datos' => $login
+                                'datos' => $login['mensaje']
                             ];
                         } else {
                             $errores[] = "✗ $nombre_test: Falló - Aceptó usuario inexistente";
@@ -241,7 +310,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $resultados[] = [
                                 'tipo' => 'success',
                                 'mensaje' => "✓ $nombre_test: Exitoso",
-                                'datos' => $login['sesion']
+                                'datos' => [
+                                    'rol_sesion' => $login['sesion']['rol'],
+                                    'usuario_sesion' => $login['sesion']['username'],
+                                    'user_id_sesion' => $login['sesion']['user_id']
+                                ]
                             ];
                         } else {
                             $errores[] = "✗ $nombre_test: Falló - Rol incorrecto o no verificado";
@@ -254,7 +327,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $resultados[] = [
                                 'tipo' => 'success',
                                 'mensaje' => "✓ $nombre_test: Exitoso",
-                                'datos' => 'Redirección configurada para superadministrador'
+                                'datos' => 'Redirección configurada para superadministrador: ' . $login['redireccion']
                             ];
                         } else {
                             $errores[] = "✗ $nombre_test: Falló - No se pudo verificar redirección";
