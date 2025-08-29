@@ -16,11 +16,13 @@ class LoginController {
             $stmt->execute();
             $user = $stmt->fetch();
             var_dump($user);
-            exit;
+            //exit;
             if ($user) {
                 $hash = $user['password'];
                 $isPasswordHash = (strlen($hash) > 32); // bcrypt y otros hash modernos son más largos que 32
                 $passwordOk = false;
+                var_dump($passwordOk);
+                exit;
                 if ($isPasswordHash) {
                     $passwordOk = password_verify($password, $hash);
                 } else {
