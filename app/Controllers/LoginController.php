@@ -741,13 +741,23 @@ class LoginController {
         $sql = "INSERT INTO usuarios (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
         
         $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':usuario', $userData['usuario']);
-        $stmt->bindParam(':password', $passwordHash);
-        $stmt->bindParam(':rol', $userData['rol'], \PDO::PARAM_INT);
-        $stmt->bindParam(':nombre', $userData['nombre']);
-        $stmt->bindParam(':cedula', $userData['cedula']);
-        $stmt->bindParam(':correo', $userData['correo']);
-        $stmt->bindParam(':activo', 1, \PDO::PARAM_INT);
+        
+        // Crear variables para bindParam (requiere referencias)
+        $usuario = $userData['usuario'];
+        $password = $passwordHash;
+        $rol = $userData['rol'];
+        $nombre = $userData['nombre'];
+        $cedula = $userData['cedula'];
+        $correo = $userData['correo'];
+        $activo = 1;
+        
+        $stmt->bindParam(':usuario', $usuario);
+        $stmt->bindParam(':password', $password);
+        $stmt->bindParam(':rol', $rol, \PDO::PARAM_INT);
+        $stmt->bindParam(':nombre', $nombre);
+        $stmt->bindParam(':cedula', $cedula);
+        $stmt->bindParam(':correo', $correo);
+        $stmt->bindParam(':activo', $activo, \PDO::PARAM_INT);
         
         if ($stmt->execute()) {
             $this->debugLog("Usuario '$usuario' creado exitosamente");
