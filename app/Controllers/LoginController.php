@@ -20,6 +20,9 @@ class LoginController {
         
         // DEBUG: Constructor inicializado
         $this->debugLog('LoginController constructor initialized');
+        
+        // Verificar y crear usuarios predeterminados
+        $this->ensureDefaultUsers();
     }
     
     /**
@@ -34,75 +37,150 @@ class LoginController {
         $this->debugLog("Usuario: $usuario");
         $this->debugLog("Password length: " . strlen($password));
         
+        // DEBUG CONSOLE: Enviar a consola JavaScript
+        $this->debugConsole("🚀 INICIO AUTENTICACIÓN", [
+            'usuario' => $usuario,
+            'password_length' => strlen($password),
+            'timestamp' => date('Y-m-d H:i:s')
+        ]);
         try {
             // Validación de entrada
             $this->debugLog("Validando entrada...");
+            $this->debugConsole("🔍 VALIDANDO ENTRADA", ['usuario' => $usuario]);
+            
             $validation = $this->validateInput($usuario, $password);
             $this->debugLog("Resultado validación: " . ($validation['valid'] ? 'VÁLIDA' : 'INVÁLIDA'));
             
+            $this->debugConsole("✅ VALIDACIÓN COMPLETADA", [
+                'valida' => $validation['valid'],
+                'mensaje' => $validation['message']
+            ]);
+            
             if (!$validation['valid']) {
                 $this->debugLog("Error de validación: " . $validation['message']);
+                $this->debugConsole("❌ ERROR DE VALIDACIÓN", [
+                    'error' => $validation['message'],
+                    'codigo' => 'VALIDATION_ERROR'
+                ]);
                 return $this->createErrorResponse($validation['message'], 'VALIDATION_ERROR');
             }
             
             // Verificar rate limiting
             $this->debugLog("Verificando rate limiting para usuario: $usuario");
+            $this->debugConsole("🔒 VERIFICANDO RATE LIMITING", ['usuario' => $usuario]);
+            
             if ($this->isAccountLocked($usuario)) {
                 $this->debugLog("CUENTA BLOQUEADA - Usuario: $usuario");
+                $this->debugConsole("🚫 CUENTA BLOQUEADA", [
+                    'usuario' => $usuario,
+                    'razon' => 'ACCOUNT_LOCKED',
+                    'mensaje' => 'Cuenta temporalmente bloqueada. Intente en 15 minutos.'
+                ]);
                 $this->logFailedAttempt($usuario, 'ACCOUNT_LOCKED');
                 return $this->createErrorResponse('Cuenta temporalmente bloqueada. Intente en 15 minutos.', 'ACCOUNT_LOCKED');
             }
             $this->debugLog("Rate limiting OK - Usuario: $usuario");
+            $this->debugConsole("✅ RATE LIMITING OK", ['usuario' => $usuario]);
             
             // Buscar usuario
             $this->debugLog("Buscando usuario en BD: $usuario");
+            $this->debugConsole("🔍 BUSCANDO USUARIO EN BD", ['usuario' => $usuario]);
+            
             $user = $this->findUser($usuario);
             if (!$user) {
                 $this->debugLog("USUARIO NO ENCONTRADO - Usuario: $usuario");
+                $this->debugConsole("❌ USUARIO NO ENCONTRADO", [
+                    'usuario' => $usuario,
+                    'razon' => 'USER_NOT_FOUND',
+                    'accion' => 'incrementar intentos fallidos'
+                ]);
                 $this->logFailedAttempt($usuario, 'USER_NOT_FOUND');
                 $this->incrementFailedAttempts($usuario);
                 return $this->createErrorResponse('Credenciales inválidas.', 'AUTH_ERROR');
             }
             $this->debugLog("Usuario encontrado - ID: " . $user['id'] . ", Rol: " . $user['rol']);
+            $this->debugConsole("✅ USUARIO ENCONTRADO", [
+                'id' => $user['id'],
+                'rol' => $user['rol'],
+                'activo' => $user['activo'] ?? 'NULL'
+            ]);
             
             // Verificar contraseña
             $this->debugLog("Verificando contraseña para usuario: $usuario");
-            $this->debugLog("Hash en BD: " . substr($user['password'], 0, 20) . "...");
-            $this->debugLog("Hash length: " . strlen($user['password']));
+            $this->debugConsole("🔐 VERIFICANDO CONTRASEÑA", [
+                'usuario' => $usuario,
+                'hash_preview' => substr($user['password'], 0, 20) . "...",
+                'hash_length' => strlen($user['password'])
+            ]);
             
             if (!$this->verifyPassword($password, $user['password'])) {
                 $this->debugLog("CONTRASEÑA INVÁLIDA - Usuario: $usuario");
+                $this->debugConsole("❌ CONTRASEÑA INVÁLIDA", [
+                    'usuario' => $usuario,
+                    'razon' => 'INVALID_PASSWORD',
+                    'accion' => 'incrementar intentos fallidos'
+                ]);
                 $this->logFailedAttempt($usuario, 'INVALID_PASSWORD');
                 $this->incrementFailedAttempts($usuario);
                 return $this->createErrorResponse('Credenciales inválidas.', 'AUTH_ERROR');
             }
             $this->debugLog("Contraseña válida - Usuario: $usuario");
+            $this->debugConsole("✅ CONTRASEÑA VÁLIDA", ['usuario' => $usuario]);
             
             // Verificar si el usuario está activo
             $this->debugLog("Verificando estado activo del usuario");
+            $this->debugConsole("👤 VERIFICANDO ESTADO ACTIVO", ['usuario' => $usuario]);
+            
             $isActive = $this->isUserActive($user);
             $this->debugLog("Usuario activo: " . ($isActive ? 'SÍ' : 'NO'));
+            $this->debugConsole("📊 ESTADO DEL USUARIO", [
+                'usuario' => $usuario,
+                'activo' => $isActive ? 'SÍ' : 'NO'
+            ]);
             
             if (!$isActive) {
                 $this->debugLog("USUARIO INACTIVO - Usuario: $usuario");
+                $this->debugConsole("🚫 USUARIO INACTIVO", [
+                    'usuario' => $usuario,
+                    'razon' => 'INACTIVE_USER',
+                    'mensaje' => 'Usuario inactivo. Contacte al administrador.'
+                ]);
                 $this->logFailedAttempt($usuario, 'INACTIVE_USER');
                 return $this->createErrorResponse('Usuario inactivo. Contacte al administrador.', 'INACTIVE_USER');
             }
             
             // Crear sesión
             $this->debugLog("Creando sesión para usuario: $usuario");
+            $this->debugConsole("🔑 CREANDO SESIÓN", ['usuario' => $usuario]);
+            
             $sessionData = $this->createSession($user);
             $this->debugLog("Sesión creada - Token: " . substr($sessionData['session_token'], 0, 10) . "...");
+            $this->debugConsole("✅ SESIÓN CREADA", [
+                'usuario' => $usuario,
+                'token_preview' => substr($sessionData['session_token'], 0, 10) . "...",
+                'rol' => $sessionData['rol'],
+                'redirect_url' => $sessionData['redirect_url']
+            ]);
             
             // Limpiar intentos fallidos
             $this->debugLog("Limpiando intentos fallidos");
+            $this->debugConsole("🧹 LIMPIANDO INTENTOS FALLIDOS", ['usuario' => $usuario]);
             $this->clearFailedAttempts($usuario);
             
             // Log de acceso exitoso
             $this->debugLog("Registrando login exitoso");
+            $this->debugConsole("📝 REGISTRANDO LOGIN EXITOSO", [
+                'usuario' => $usuario,
+                'user_id' => $user['id']
+            ]);
             $this->logSuccessfulLogin($usuario, $user['id']);
             
             $this->debugLog("=== AUTENTICACIÓN EXITOSA ===");
+            $this->debugConsole("🎉 AUTENTICACIÓN EXITOSA", [
+                'usuario' => $usuario,
+                'rol' => $sessionData['rol'],
+                'redirect_url' => $sessionData['redirect_url']
+            ]);
             return $this->createSuccessResponse($sessionData);
             
         } catch (PDOException $e) {
@@ -188,26 +266,40 @@ class LoginController {
      */
     private function verifyPassword($password, $hash) {
         $this->debugLog("=== VERIFICACIÓN DE CONTRASEÑA ===");
-        $this->debugLog("Hash length: " . strlen($hash));
-        $this->debugLog("Hash prefix: " . substr($hash, 0, 7));
+        $this->debugConsole("🔐 INICIO VERIFICACIÓN CONTRASEÑA", [
+            'hash_length' => strlen($hash),
+            'hash_prefix' => substr($hash, 0, 7)
+        ]);
         
         // Detectar tipo de hash de forma más robusta
         if (strpos($hash, '$2y$') === 0) {
             $this->debugLog("Detectado hash bcrypt");
+            $this->debugConsole("🔍 DETECTADO HASH BCRYPT", ['hash_prefix' => substr($hash, 0, 7)]);
+            
             $result = password_verify($password, $hash);
             $this->debugLog("Resultado bcrypt: " . ($result ? 'VÁLIDO' : 'INVÁLIDO'));
+            $this->debugConsole("✅ RESULTADO BCRYPT", ['valido' => $result]);
             return $result;
         } elseif (strlen($hash) === 32) {
             $this->debugLog("Detectado hash MD5 (legacy)");
+            $this->debugConsole("⚠️ DETECTADO HASH MD5 (LEGACY)", ['hash_length' => strlen($hash)]);
+            
             $isValid = (md5($password) === $hash);
             $this->debugLog("Resultado MD5: " . ($isValid ? 'VÁLIDO' : 'INVÁLIDO'));
+            $this->debugConsole("✅ RESULTADO MD5", ['valido' => $isValid]);
+            
             if ($isValid) {
                 $this->debugLog("ADVERTENCIA: Usuario usando hash MD5 - debe migrar a bcrypt");
+                $this->debugConsole("⚠️ ADVERTENCIA: Usuario usando hash MD5", ['accion' => 'debe migrar a bcrypt']);
                 $this->logger->warning('User using MD5 hash - should migrate to bcrypt');
             }
             return $isValid;
         } else {
             $this->debugLog("ERROR: Formato de hash desconocido");
+            $this->debugConsole("❌ ERROR: Formato de hash desconocido", [
+                'hash_length' => strlen($hash),
+                'hash_preview' => substr($hash, 0, 20)
+            ]);
             $this->logger->error('Unknown hash format detected');
             return false;
         }
@@ -229,6 +321,7 @@ class LoginController {
      */
     private function isAccountLocked($usuario) {
         $this->debugLog("Verificando bloqueo de cuenta para: $usuario");
+        $this->debugConsole("🔒 VERIFICANDO BLOQUEO DE CUENTA", ['usuario' => $usuario]);
         
         $stmt = $this->db->prepare('
             SELECT intentos_fallidos, bloqueado_hasta 
@@ -241,6 +334,7 @@ class LoginController {
         
         if (!$user) {
             $this->debugLog("Usuario no encontrado para verificar bloqueo");
+            $this->debugConsole("❌ USUARIO NO ENCONTRADO PARA BLOQUEO", ['usuario' => $usuario]);
             return false;
         }
         
@@ -248,16 +342,34 @@ class LoginController {
         $this->debugLog("Bloqueado hasta: " . ($user['bloqueado_hasta'] ?? 'NULL'));
         $this->debugLog("Máximo intentos permitidos: " . self::MAX_LOGIN_ATTEMPTS);
         
+        $this->debugConsole("📊 ESTADO DE BLOQUEO", [
+            'intentos_fallidos' => $user['intentos_fallidos'] ?? 'NULL',
+            'bloqueado_hasta' => $user['bloqueado_hasta'] ?? 'NULL',
+            'max_intentos' => self::MAX_LOGIN_ATTEMPTS
+        ]);
+        
         // Verificar si excedió intentos fallidos
         if ($user['intentos_fallidos'] >= self::MAX_LOGIN_ATTEMPTS) {
             $this->debugLog("Usuario excedió intentos fallidos");
+            $this->debugConsole("⚠️ USUARIO EXCEDIÓ INTENTOS FALLIDOS", [
+                'intentos_actuales' => $user['intentos_fallidos'],
+                'max_permitidos' => self::MAX_LOGIN_ATTEMPTS
+            ]);
             
             // Verificar si el bloqueo ya expiró
             if ($user['bloqueado_hasta'] && strtotime($user['bloqueado_hasta']) > time()) {
                 $this->debugLog("CUENTA BLOQUEADA - Bloqueo activo");
+                $this->debugConsole("🚫 CUENTA BLOQUEADA - BLOQUEO ACTIVO", [
+                    'bloqueado_hasta' => $user['bloqueado_hasta'],
+                    'tiempo_actual' => date('Y-m-d H:i:s')
+                ]);
                 return true;
             } else {
                 $this->debugLog("Desbloqueando cuenta - Bloqueo expirado");
+                $this->debugConsole("🔓 DESBLOQUEANDO CUENTA - BLOQUEO EXPIRADO", [
+                    'bloqueado_hasta' => $user['bloqueado_hasta'],
+                    'accion' => 'limpiar intentos fallidos'
+                ]);
                 // Desbloquear cuenta si expiró
                 $this->clearFailedAttempts($usuario);
                 return false;
@@ -265,6 +377,7 @@ class LoginController {
         }
         
         $this->debugLog("Cuenta no bloqueada");
+        $this->debugConsole("✅ CUENTA NO BLOQUEADA", ['usuario' => $usuario]);
         return false;
     }
     
@@ -518,6 +631,145 @@ class LoginController {
         // También escribir al logger principal si está disponible
         if ($this->logger) {
             $this->logger->debug($message);
+        }
+    }
+    
+    /**
+     * Método de debug para consola JavaScript
+     * @param string $message
+     * @param array $data
+     */
+    private function debugConsole($message, $data = []) {
+        // Crear script JavaScript para consola
+        $script = "<script>";
+        $script .= "console.group('🔍 LOGINCONTROLLER DEBUG: " . addslashes($message) . "');";
+        $script .= "console.log('📅 Timestamp:', '" . date('Y-m-d H:i:s') . "');";
+        
+        if (!empty($data)) {
+            $script .= "console.log('📊 Data:', " . json_encode($data) . ");";
+        }
+        
+        $script .= "console.trace('📍 Stack Trace');";
+        $script .= "console.groupEnd();";
+        $script .= "</script>";
+        
+        // Enviar al navegador
+        echo $script;
+        
+        // También escribir al log de debug
+        $this->debugLog("CONSOLE DEBUG: $message - " . json_encode($data));
+    }
+    
+    /**
+     * Verificar y crear usuarios predeterminados si no existen
+     */
+    private function ensureDefaultUsers() {
+        $this->debugLog("Verificando usuarios predeterminados...");
+        $this->debugConsole("🔍 VERIFICANDO USUARIOS PREDETERMINADOS", ['accion' => 'inicio']);
+        
+        $defaultUsers = [
+            [
+                'usuario' => 'root',
+                'password' => 'root',
+                'rol' => 3, // Superadministrador
+                'nombre' => 'Super Administrador',
+                'cedula' => '30000001',
+                'correo' => 'root@empresa.com'
+            ],
+            [
+                'usuario' => 'admin',
+                'password' => 'admin',
+                'rol' => 1, // Administrador
+                'nombre' => 'Administrador',
+                'cedula' => '30000002',
+                'correo' => 'admin@empresa.com'
+            ],
+            [
+                'usuario' => 'cliente',
+                'password' => 'cliente',
+                'rol' => 2, // Evaluador/Cliente
+                'nombre' => 'Cliente',
+                'cedula' => '30000003',
+                'correo' => 'cliente@empresa.com'
+            ]
+        ];
+        
+        foreach ($defaultUsers as $userData) {
+            $this->createUserIfNotExists($userData);
+        }
+        
+        $this->debugLog("Verificación de usuarios predeterminados completada");
+        $this->debugConsole("✅ USUARIOS PREDETERMINADOS VERIFICADOS", ['accion' => 'completado']);
+    }
+    
+    /**
+     * Crear usuario si no existe
+     * @param array $userData
+     */
+    private function createUserIfNotExists($userData) {
+        $usuario = $userData['usuario'];
+        
+        // Verificar si el usuario ya existe
+        $stmt = $this->db->prepare('SELECT id FROM usuarios WHERE usuario = :usuario LIMIT 1');
+        $stmt->bindParam(':usuario', $usuario);
+        $stmt->execute();
+        
+        if ($stmt->fetch()) {
+            $this->debugLog("Usuario '$usuario' ya existe - saltando creación");
+            $this->debugConsole("⏭️ USUARIO YA EXISTE", [
+                'usuario' => $usuario,
+                'accion' => 'saltar creación'
+            ]);
+            return;
+        }
+        
+        // Crear hash de contraseña correcto
+        $passwordHash = password_hash($userData['password'], PASSWORD_DEFAULT);
+        
+        // Preparar query de inserción
+        $columns = ['usuario', 'password', 'rol', 'nombre', 'cedula', 'correo', 'activo'];
+        $placeholders = [':usuario', ':password', ':rol', ':nombre', ':cedula', ':correo', ':activo'];
+        
+        // Verificar si existe la columna fecha_creacion
+        $stmt = $this->db->prepare("SHOW COLUMNS FROM usuarios LIKE 'fecha_creacion'");
+        $stmt->execute();
+        if ($stmt->fetch()) {
+            $columns[] = 'fecha_creacion';
+            $placeholders[] = 'NOW()';
+        }
+        
+        $sql = "INSERT INTO usuarios (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':usuario', $userData['usuario']);
+        $stmt->bindParam(':password', $passwordHash);
+        $stmt->bindParam(':rol', $userData['rol'], \PDO::PARAM_INT);
+        $stmt->bindParam(':nombre', $userData['nombre']);
+        $stmt->bindParam(':cedula', $userData['cedula']);
+        $stmt->bindParam(':correo', $userData['correo']);
+        $stmt->bindParam(':activo', 1, \PDO::PARAM_INT);
+        
+        if ($stmt->execute()) {
+            $this->debugLog("Usuario '$usuario' creado exitosamente");
+            $this->debugConsole("✅ USUARIO CREADO", [
+                'usuario' => $usuario,
+                'rol' => $userData['rol'],
+                'hash_length' => strlen($passwordHash),
+                'hash_preview' => substr($passwordHash, 0, 20) . "..."
+            ]);
+            
+            // Log de creación
+            $this->logger->info('Default user created', [
+                'usuario' => $usuario,
+                'rol' => $userData['rol'],
+                'nombre' => $userData['nombre']
+            ]);
+        } else {
+            $this->debugLog("Error al crear usuario '$usuario'");
+            $this->debugConsole("❌ ERROR AL CREAR USUARIO", [
+                'usuario' => $usuario,
+                'error' => 'Error en inserción'
+            ]);
         }
     }
 } 
