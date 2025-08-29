@@ -22,6 +22,7 @@ class LoginController {
                 $isPasswordHash = (strlen($hash) > 32); // bcrypt y otros hash modernos son más largos que 32
                 $passwordOk = false;
                 var_dump($isPasswordHash);
+                var_dump(password_verify($password, $hash));
                 exit;
                 if ($isPasswordHash) {
                     $passwordOk = password_verify($password, $hash);
