@@ -22,8 +22,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->fetch()) {
             $mensaje = '<div class="alert alert-warning">El usuario superadministrador ya existe.</div>';
         } else {
-            $stmt = $db->prepare('INSERT INTO usuarios (nombre, cedula, rol, correo, usuario, password, fecha_creacion) VALUES (?, ?, ?, ?, ?, ?, NOW())');
-            $stmt->execute([$nombre, $cedula, $rol, $correo, $usuario, $password]);
+            // Verificar si existe la columna fecha_creacion
+            $stmt = $db->prepare("SHOW COLUMNS FROM usuarios LIKE 'fecha_creacion'");
+            $stmt->execute();
+            
+            if ($stmt->fetch()) {
+                // Si existe la columna, incluirla en el INSERT
+                $stmt = $db->prepare('INSERT INTO usuarios (nombre, cedula, rol, correo, usuario, password, fecha_creacion) VALUES (?, ?, ?, ?, ?, ?, NOW())');
+                $stmt->execute([$nombre, $cedula, $rol, $correo, $usuario, $password]);
+            } else {
+                // Si no existe la columna, hacer INSERT sin ella
+                $stmt = $db->prepare('INSERT INTO usuarios (nombre, cedula, rol, correo, usuario, password) VALUES (?, ?, ?, ?, ?, ?)');
+                $stmt->execute([$nombre, $cedula, $rol, $correo, $usuario, $password]);
+            }
 
             $mensaje = '<div class="alert alert-success">Usuario superadministrador creado exitosamente.</div>';
         }

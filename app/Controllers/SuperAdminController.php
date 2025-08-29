@@ -90,12 +90,25 @@ class SuperAdminController {
      * Crear nuevo usuario
      */
     private function crearUsuario($datos) {
-        $stmt = $this->db->prepare("
-            INSERT INTO usuarios (nombre, cedula, rol, correo, usuario, password, fecha_creacion)
-            VALUES (?, ?, ?, ?, ?, ?, NOW())
-        ");
+        // Verificar si existe la columna fecha_creacion
+        $stmt = $this->db->prepare("SHOW COLUMNS FROM usuarios LIKE 'fecha_creacion'");
+        $stmt->execute();
         
         $password_hash = password_hash($datos['password'], PASSWORD_DEFAULT);
+        
+        if ($stmt->fetch()) {
+            // Si existe la columna, incluirla en el INSERT
+            $stmt = $this->db->prepare("
+                INSERT INTO usuarios (nombre, cedula, rol, correo, usuario, password, fecha_creacion)
+                VALUES (?, ?, ?, ?, ?, ?, NOW())
+            ");
+        } else {
+            // Si no existe la columna, hacer INSERT sin ella
+            $stmt = $this->db->prepare("
+                INSERT INTO usuarios (nombre, cedula, rol, correo, usuario, password)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+        }
         
         $stmt->execute([
             $datos['nombre'],
@@ -145,17 +158,38 @@ class SuperAdminController {
      * Listar todos los usuarios
      */
     private function listarUsuarios() {
-        $stmt = $this->db->prepare("
-            SELECT id, nombre, cedula, rol, correo, usuario, fecha_creacion,
-                   CASE 
-                       WHEN rol = 1 THEN 'Administrador'
-                       WHEN rol = 2 THEN 'Evaluador'
-                       WHEN rol = 3 THEN 'Superadministrador'
-                       ELSE 'Desconocido'
-                   END as rol_nombre
-            FROM usuarios 
-            ORDER BY fecha_creacion DESC
-        ");
+        // Verificar si existe la columna fecha_creacion
+        $stmt = $this->db->prepare("SHOW COLUMNS FROM usuarios LIKE 'fecha_creacion'");
+        $stmt->execute();
+        
+        if ($stmt->fetch()) {
+            // Si existe la columna, incluirla en el SELECT
+            $stmt = $this->db->prepare("
+                SELECT id, nombre, cedula, rol, correo, usuario, fecha_creacion,
+                       CASE 
+                           WHEN rol = 1 THEN 'Administrador'
+                           WHEN rol = 2 THEN 'Evaluador'
+                           WHEN rol = 3 THEN 'Superadministrador'
+                           ELSE 'Desconocido'
+                       END as rol_nombre
+                FROM usuarios 
+                ORDER BY fecha_creacion DESC
+            ");
+        } else {
+            // Si no existe la columna, hacer SELECT sin ella
+            $stmt = $this->db->prepare("
+                SELECT id, nombre, cedula, rol, correo, usuario, 'N/A' as fecha_creacion,
+                       CASE 
+                           WHEN rol = 1 THEN 'Administrador'
+                           WHEN rol = 2 THEN 'Evaluador'
+                           WHEN rol = 3 THEN 'Superadministrador'
+                           ELSE 'Desconocido'
+                       END as rol_nombre
+                FROM usuarios 
+                ORDER BY id DESC
+            ");
+        }
+        
         $stmt->execute();
         return $stmt->fetchAll();
     }
