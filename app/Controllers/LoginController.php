@@ -7,56 +7,420 @@ use App\Database\Database;
 use PDOException;
 
 class LoginController {
-    public static function login($usuario, $password) {
-        $db = Database::getInstance()->getConnection();
+    private const MAX_LOGIN_ATTEMPTS = 5;
+    private const LOCKOUT_DURATION = 900; // 15 minutos
+    private const SESSION_TIMEOUT = 3600; // 1 hora
+    
+    private $db;
+    private $logger;
+    
+    public function __construct() {
+        $this->db = Database::getInstance()->getConnection();
+        $this->logger = new \App\Services\LoggerService();
+    }
+    
+    /**
+     * Método principal de autenticación
+     * @param string $usuario
+     * @param string $password
+     * @return array
+     */
+    public function authenticate($usuario, $password) {
         try {
-            $sql = 'SELECT * FROM usuarios WHERE usuario = :usuario LIMIT 1';
-            $stmt = $db->prepare($sql);
-            $stmt->bindParam(':usuario', $usuario);
-            $stmt->execute();
-            $user = $stmt->fetch();
-            var_dump($user);
-            //exit;
-            if ($user) {
-                $hash = $user['password'];
-                $isPasswordHash = (strlen($hash) > 32); // bcrypt y otros hash modernos son más largos que 32
-                $passwordOk = false;
-                var_dump($isPasswordHash);
-                var_dump(password_verify($password, $hash));
-                exit;
-                if ($isPasswordHash) {
-                    $passwordOk = password_verify($password, $hash);
-                } else {
-                    $passwordOk = (md5($password) === $hash);
-                }
-                if ($passwordOk) {
-                    if ($user['rol'] == 1) {
-                        $_SESSION['user_id'] = $user['cedula'];
-                        $_SESSION['username'] = $user['usuario'];
-                        $_SESSION['rol'] = $user['rol'];
-                        header('Location: resources/views/admin/dashboardAdmin.php');
-                    } elseif ($user['rol'] == 2) {
-                        $_SESSION['user_id'] = $user['cedula'];
-                        $_SESSION['username'] = $user['usuario'];
-                        $_SESSION['rol'] = $user['rol'];
-                        header('Location: resources/views/evaluador/dashboardEavaluador.php');
-                    } elseif ($user['rol'] == 3) {
-                        $_SESSION['user_id'] = $user['cedula'];
-                        $_SESSION['username'] = $user['usuario'];
-                        $_SESSION['rol'] = $user['rol'];
-                        header('Location: resources/views/superadmin/dashboardSuperAdmin.php');
-                    } else {
-                        return 'Rol de usuario no válido.';
-                    }
-                    exit();
-                } else {
-                    return 'Usuario o contraseña incorrectos.';
-                }
-            } else {
-                return 'Usuario o contraseña incorrectos.';
+            // Validación de entrada
+            $validation = $this->validateInput($usuario, $password);
+            if (!$validation['valid']) {
+                return $this->createErrorResponse($validation['message'], 'VALIDATION_ERROR');
             }
+            
+            // Verificar rate limiting
+            if ($this->isAccountLocked($usuario)) {
+                $this->logFailedAttempt($usuario, 'ACCOUNT_LOCKED');
+                return $this->createErrorResponse('Cuenta temporalmente bloqueada. Intente en 15 minutos.', 'ACCOUNT_LOCKED');
+            }
+            
+            // Buscar usuario
+            $user = $this->findUser($usuario);
+            if (!$user) {
+                $this->logFailedAttempt($usuario, 'USER_NOT_FOUND');
+                $this->incrementFailedAttempts($usuario);
+                return $this->createErrorResponse('Credenciales inválidas.', 'AUTH_ERROR');
+            }
+            
+            // Verificar contraseña
+            if (!$this->verifyPassword($password, $user['password'])) {
+                $this->logFailedAttempt($usuario, 'INVALID_PASSWORD');
+                $this->incrementFailedAttempts($usuario);
+                return $this->createErrorResponse('Credenciales inválidas.', 'AUTH_ERROR');
+            }
+            
+            // Verificar si el usuario está activo
+            if (!$this->isUserActive($user)) {
+                $this->logFailedAttempt($usuario, 'INACTIVE_USER');
+                return $this->createErrorResponse('Usuario inactivo. Contacte al administrador.', 'INACTIVE_USER');
+            }
+            
+            // Crear sesión
+            $sessionData = $this->createSession($user);
+            
+            // Limpiar intentos fallidos
+            $this->clearFailedAttempts($usuario);
+            
+            // Log de acceso exitoso
+            $this->logSuccessfulLogin($usuario, $user['id']);
+            
+            return $this->createSuccessResponse($sessionData);
+            
         } catch (PDOException $e) {
-            return 'Error en la base de datos: ' . htmlspecialchars($e->getMessage());
+            $this->logger->error('Database error during login', [
+                'usuario' => $usuario,
+                'error' => $e->getMessage()
+            ]);
+            return $this->createErrorResponse('Error interno del sistema.', 'SYSTEM_ERROR');
+        } catch (\Exception $e) {
+            $this->logger->error('Unexpected error during login', [
+                'usuario' => $usuario,
+                'error' => $e->getMessage()
+            ]);
+            return $this->createErrorResponse('Error interno del sistema.', 'SYSTEM_ERROR');
         }
+    }
+    
+    /**
+     * Validar entrada del usuario
+     * @param string $usuario
+     * @param string $password
+     * @return array
+     */
+    private function validateInput($usuario, $password) {
+        // Validar que no estén vacíos
+        if (empty($usuario) || empty($password)) {
+            return ['valid' => false, 'message' => 'Usuario y contraseña son requeridos.'];
+        }
+        
+        // Validar longitud
+        if (strlen($usuario) > 50 || strlen($password) > 255) {
+            return ['valid' => false, 'message' => 'Datos de entrada demasiado largos.'];
+        }
+        
+        // Validar caracteres permitidos (solo alfanuméricos y algunos símbolos)
+        if (!preg_match('/^[a-zA-Z0-9@._-]+$/', $usuario)) {
+            return ['valid' => false, 'message' => 'Usuario contiene caracteres no permitidos.'];
+        }
+        
+        return ['valid' => true, 'message' => ''];
+    }
+    
+    /**
+     * Buscar usuario en la base de datos
+     * @param string $usuario
+     * @return array|false
+     */
+    private function findUser($usuario) {
+        $stmt = $this->db->prepare('
+            SELECT id, usuario, password, rol, cedula, nombre, 
+                   activo, ultimo_acceso, intentos_fallidos, 
+                   bloqueado_hasta
+            FROM usuarios 
+            WHERE usuario = :usuario 
+            LIMIT 1
+        ');
+        $stmt->bindParam(':usuario', $usuario, \PDO::PARAM_STR);
+        $stmt->execute();
+        
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Verificar contraseña de forma segura
+     * @param string $password
+     * @param string $hash
+     * @return bool
+     */
+    private function verifyPassword($password, $hash) {
+        // Detectar tipo de hash de forma más robusta
+        if (strpos($hash, '$2y$') === 0) {
+            // Hash bcrypt
+            return password_verify($password, $hash);
+        } elseif (strlen($hash) === 32) {
+            // Hash MD5 (legacy) - migrar a bcrypt
+            $isValid = (md5($password) === $hash);
+            if ($isValid) {
+                $this->logger->warning('User using MD5 hash - should migrate to bcrypt');
+            }
+            return $isValid;
+        } else {
+            // Hash desconocido
+            $this->logger->error('Unknown hash format detected');
+            return false;
+        }
+    }
+    
+    /**
+     * Verificar si el usuario está activo
+     * @param array $user
+     * @return bool
+     */
+    private function isUserActive($user) {
+        return isset($user['activo']) ? (bool)$user['activo'] : true;
+    }
+    
+    /**
+     * Verificar si la cuenta está bloqueada
+     * @param string $usuario
+     * @return bool
+     */
+    private function isAccountLocked($usuario) {
+        $stmt = $this->db->prepare('
+            SELECT intentos_fallidos, bloqueado_hasta 
+            FROM usuarios 
+            WHERE usuario = :usuario
+        ');
+        $stmt->bindParam(':usuario', $usuario);
+        $stmt->execute();
+        $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+        
+        if (!$user) {
+            return false;
+        }
+        
+        // Verificar si excedió intentos fallidos
+        if ($user['intentos_fallidos'] >= self::MAX_LOGIN_ATTEMPTS) {
+            // Verificar si el bloqueo ya expiró
+            if ($user['bloqueado_hasta'] && strtotime($user['bloqueado_hasta']) > time()) {
+                return true;
+            } else {
+                // Desbloquear cuenta si expiró
+                $this->clearFailedAttempts($usuario);
+                return false;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Incrementar contador de intentos fallidos
+     * @param string $usuario
+     */
+    private function incrementFailedAttempts($usuario) {
+        $stmt = $this->db->prepare('
+            UPDATE usuarios 
+            SET intentos_fallidos = COALESCE(intentos_fallidos, 0) + 1,
+                bloqueado_hasta = CASE 
+                    WHEN COALESCE(intentos_fallidos, 0) + 1 >= :max_attempts 
+                    THEN DATE_ADD(NOW(), INTERVAL :lockout_duration SECOND)
+                    ELSE bloqueado_hasta 
+                END
+            WHERE usuario = :usuario
+        ');
+        
+        $stmt->bindParam(':usuario', $usuario);
+        $stmt->bindParam(':max_attempts', self::MAX_LOGIN_ATTEMPTS, \PDO::PARAM_INT);
+        $stmt->bindParam(':lockout_duration', self::LOCKOUT_DURATION, \PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    
+    /**
+     * Limpiar intentos fallidos
+     * @param string $usuario
+     */
+    private function clearFailedAttempts($usuario) {
+        $stmt = $this->db->prepare('
+            UPDATE usuarios 
+            SET intentos_fallidos = 0, 
+                bloqueado_hasta = NULL 
+            WHERE usuario = :usuario
+        ');
+        $stmt->bindParam(':usuario', $usuario);
+        $stmt->execute();
+    }
+    
+    /**
+     * Crear sesión de usuario
+     * @param array $user
+     * @return array
+     */
+    private function createSession($user) {
+        // Generar token de sesión único
+        $sessionToken = bin2hex(random_bytes(32));
+        
+        // Configurar datos de sesión
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['usuario'];
+        $_SESSION['rol'] = $user['rol'];
+        $_SESSION['cedula'] = $user['cedula'];
+        $_SESSION['nombre'] = $user['nombre'];
+        $_SESSION['session_token'] = $sessionToken;
+        $_SESSION['login_time'] = time();
+        $_SESSION['last_activity'] = time();
+        
+        // Actualizar último acceso en BD
+        $this->updateLastAccess($user['id']);
+        
+        // Determinar redirección según rol
+        $redirectUrl = $this->getRedirectUrl($user['rol']);
+        
+        return [
+            'user_id' => $user['id'],
+            'username' => $user['usuario'],
+            'rol' => $user['rol'],
+            'nombre' => $user['nombre'],
+            'session_token' => $sessionToken,
+            'redirect_url' => $redirectUrl
+        ];
+    }
+    
+    /**
+     * Obtener URL de redirección según rol
+     * @param int $rol
+     * @return string
+     */
+    private function getRedirectUrl($rol) {
+        switch ($rol) {
+            case 1:
+                return 'resources/views/admin/dashboardAdmin.php';
+            case 2:
+                return 'resources/views/evaluador/dashboardEavaluador.php';
+            case 3:
+                return 'resources/views/superadmin/dashboardSuperAdmin.php';
+            default:
+                throw new \InvalidArgumentException('Rol de usuario no válido: ' . $rol);
+        }
+    }
+    
+    /**
+     * Actualizar último acceso del usuario
+     * @param int $userId
+     */
+    private function updateLastAccess($userId) {
+        $stmt = $this->db->prepare('
+            UPDATE usuarios 
+            SET ultimo_acceso = NOW() 
+            WHERE id = :user_id
+        ');
+        $stmt->bindParam(':user_id', $userId, \PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    
+    /**
+     * Log de intento fallido
+     * @param string $usuario
+     * @param string $reason
+     */
+    private function logFailedAttempt($usuario, $reason) {
+        $this->logger->warning('Failed login attempt', [
+            'usuario' => $usuario,
+            'reason' => $reason,
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
+        ]);
+    }
+    
+    /**
+     * Log de login exitoso
+     * @param string $usuario
+     * @param int $userId
+     */
+    private function logSuccessfulLogin($usuario, $userId) {
+        $this->logger->info('Successful login', [
+            'usuario' => $usuario,
+            'user_id' => $userId,
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
+        ]);
+    }
+    
+    /**
+     * Crear respuesta de éxito
+     * @param array $data
+     * @return array
+     */
+    private function createSuccessResponse($data) {
+        return [
+            'success' => true,
+            'message' => 'Login exitoso',
+            'data' => $data,
+            'timestamp' => time()
+        ];
+    }
+    
+    /**
+     * Crear respuesta de error
+     * @param string $message
+     * @param string $code
+     * @return array
+     */
+    private function createErrorResponse($message, $code) {
+        return [
+            'success' => false,
+            'message' => $message,
+            'error_code' => $code,
+            'timestamp' => time()
+        ];
+    }
+    
+    /**
+     * Método estático para compatibilidad (deprecated)
+     * @param string $usuario
+     * @param string $password
+     * @return string|array
+     * @deprecated Use authenticate() method instead
+     */
+    public static function login($usuario, $password) {
+        $controller = new self();
+        $result = $controller->authenticate($usuario, $password);
+        
+        if ($result['success']) {
+            // Redirigir según el rol
+            header('Location: ' . $result['data']['redirect_url']);
+            exit();
+        } else {
+            return $result['message'];
+        }
+    }
+    
+    /**
+     * Verificar si la sesión es válida
+     * @return bool
+     */
+    public static function isSessionValid() {
+        if (!isset($_SESSION['user_id']) || !isset($_SESSION['session_token'])) {
+            return false;
+        }
+        
+        // Verificar timeout de sesión
+        if (isset($_SESSION['last_activity']) && 
+            (time() - $_SESSION['last_activity']) > self::SESSION_TIMEOUT) {
+            session_destroy();
+            return false;
+        }
+        
+        // Actualizar última actividad
+        $_SESSION['last_activity'] = time();
+        
+        return true;
+    }
+    
+    /**
+     * Cerrar sesión
+     */
+    public static function logout() {
+        // Log de logout
+        if (isset($_SESSION['username'])) {
+            $logger = new \App\Services\LoggerService();
+            $logger->info('User logout', [
+                'usuario' => $_SESSION['username'],
+                'user_id' => $_SESSION['user_id'] ?? null
+            ]);
+        }
+        
+        // Destruir sesión
+        session_unset();
+        session_destroy();
+        
+        // Redirigir al login
+        header('Location: index.php');
+        exit();
     }
 } 
