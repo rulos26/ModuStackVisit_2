@@ -8,17 +8,50 @@ $resultados = [];
 
 // Función para verificar si una columna existe
 function columnExists($db, $table, $column) {
-    $stmt = $db->prepare("SHOW COLUMNS FROM `$table` LIKE '$column'");
-    $stmt->execute();
-    return $stmt->fetch() !== false;
+    try {
+        $sql = "SHOW COLUMNS FROM `$table` LIKE '$column'";
+        $stmt = $db->query($sql);
+        return $stmt->fetch() !== false;
+    } catch (PDOException $e) {
+        return false;
+    }
 }
 
 // Función para agregar columna si no existe
 function addColumnIfNotExists($db, $table, $column, $definition) {
     if (!columnExists($db, $table, $column)) {
-        $stmt = $db->prepare("ALTER TABLE `$table` ADD COLUMN `$column` $definition");
-        $stmt->execute();
-        return true;
+        try {
+            $sql = "ALTER TABLE `$table` ADD COLUMN `$column` $definition";
+            $db->exec($sql);
+            return true;
+        } catch (PDOException $e) {
+            throw new Exception("Error al agregar columna $column: " . $e->getMessage());
+        }
+    }
+    return false;
+}
+
+// Función para verificar si un índice existe
+function indexExists($db, $table, $indexName) {
+    try {
+        $sql = "SHOW INDEX FROM `$table` WHERE Key_name = '$indexName'";
+        $stmt = $db->query($sql);
+        return $stmt->fetch() !== false;
+    } catch (PDOException $e) {
+        return false;
+    }
+}
+
+// Función para crear índice si no existe
+function createIndexIfNotExists($db, $table, $indexName, $column) {
+    if (!indexExists($db, $table, $indexName)) {
+        try {
+            $sql = "CREATE INDEX `$indexName` ON `$table` (`$column`)";
+            $db->exec($sql);
+            return true;
+        } catch (PDOException $e) {
+            throw new Exception("Error al crear índice $indexName: " . $e->getMessage());
+        }
     }
     return false;
 }
@@ -65,13 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 $addedIndexes = [];
                 foreach ($indexes as $indexName => $column) {
-                    // Verificar si el índice existe
-                    $stmt = $db->prepare("SHOW INDEX FROM usuarios WHERE Key_name = '$indexName'");
-                    $stmt->execute();
-                    
-                    if (!$stmt->fetch()) {
-                        $stmt = $db->prepare("CREATE INDEX `$indexName` ON usuarios (`$column`)");
-                        $stmt->execute();
+                    if (createIndexIfNotExists($db, 'usuarios', $indexName, $column)) {
                         $addedIndexes[] = $indexName;
                     }
                 }
@@ -88,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ]
                 ];
                 
-            } catch (PDOException $e) {
+            } catch (Exception $e) {
                 $db->rollBack();
                 $resultados[] = [
                     'tipo' => 'error',
@@ -102,13 +129,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             try {
                 // Obtener estructura actual de la tabla
-                $stmt = $db->prepare("DESCRIBE usuarios");
-                $stmt->execute();
+                $stmt = $db->query("DESCRIBE usuarios");
                 $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 
                 // Obtener índices
-                $stmt = $db->prepare("SHOW INDEX FROM usuarios");
-                $stmt->execute();
+                $stmt = $db->query("SHOW INDEX FROM usuarios");
                 $indexes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 
                 $resultados[] = [
@@ -163,6 +188,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ];
             }
             break;
+            
+        case 'ejecutar_todo':
+            $db = Database::getInstance()->getConnection();
+            
+            try {
+                $db->beginTransaction();
+                
+                // 1. Agregar columnas
+                $columns = [
+                    'activo' => 'TINYINT(1) DEFAULT 1 COMMENT "Estado activo del usuario"',
+                    'ultimo_acceso' => 'TIMESTAMP NULL COMMENT "Último acceso del usuario"',
+                    'intentos_fallidos' => 'INT DEFAULT 0 COMMENT "Contador de intentos fallidos"',
+                    'bloqueado_hasta' => 'TIMESTAMP NULL COMMENT "Fecha hasta cuando está bloqueado"',
+                    'fecha_creacion' => 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT "Fecha de creación del usuario"',
+                    'fecha_actualizacion' => 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Fecha de última actualización"'
+                ];
+                
+                $addedColumns = [];
+                foreach ($columns as $column => $definition) {
+                    if (addColumnIfNotExists($db, 'usuarios', $column, $definition)) {
+                        $addedColumns[] = $column;
+                    }
+                }
+                
+                // 2. Crear índices
+                $indexes = [
+                    'idx_usuarios_activo' => 'activo',
+                    'idx_usuarios_ultimo_acceso' => 'ultimo_acceso',
+                    'idx_usuarios_intentos_fallidos' => 'intentos_fallidos',
+                    'idx_usuarios_bloqueado_hasta' => 'bloqueado_hasta'
+                ];
+                
+                $addedIndexes = [];
+                foreach ($indexes as $indexName => $column) {
+                    if (createIndexIfNotExists($db, 'usuarios', $indexName, $column)) {
+                        $addedIndexes[] = $indexName;
+                    }
+                }
+                
+                // 3. Migrar usuarios existentes
+                $stmt = $db->prepare("
+                    UPDATE usuarios 
+                    SET activo = 1,
+                        fecha_creacion = COALESCE(fecha_creacion, NOW()),
+                        fecha_actualizacion = NOW()
+                    WHERE activo IS NULL
+                ");
+                $stmt->execute();
+                $updatedRows = $stmt->rowCount();
+                
+                $db->commit();
+                
+                $resultados[] = [
+                    'tipo' => 'success',
+                    'mensaje' => 'Proceso completo ejecutado exitosamente',
+                    'datos' => [
+                        'columnas_agregadas' => $addedColumns,
+                        'indices_agregados' => $addedIndexes,
+                        'usuarios_migrados' => $updatedRows
+                    ]
+                ];
+                
+            } catch (Exception $e) {
+                $db->rollBack();
+                $resultados[] = [
+                    'tipo' => 'error',
+                    'mensaje' => 'Error en proceso completo: ' . $e->getMessage()
+                ];
+            }
+            break;
     }
 }
 
@@ -170,8 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $db = Database::getInstance()->getConnection();
 $currentColumns = [];
 try {
-    $stmt = $db->prepare("DESCRIBE usuarios");
-    $stmt->execute();
+    $stmt = $db->query("DESCRIBE usuarios");
     $currentColumns = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $mensaje = 'Error al verificar estructura: ' . $e->getMessage();
@@ -182,7 +276,7 @@ try {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Actualizar Tabla Usuarios</title>
+    <title>Actualizar Tabla Usuarios V2</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
@@ -202,7 +296,7 @@ try {
             <div class="col-lg-10">
                 <div class="card shadow">
                     <div class="card-header bg-primary text-white text-center">
-                        <h4><i class="bi bi-database-gear me-2"></i>Actualizar Tabla Usuarios</h4>
+                        <h4><i class="bi bi-database-gear me-2"></i>Actualizar Tabla Usuarios V2</h4>
                     </div>
                     <div class="card-body">
                         <!-- Estado actual -->
@@ -231,7 +325,7 @@ try {
                             <div class="col-12">
                                 <h6><i class="bi bi-tools me-2"></i>Acciones:</h6>
                             </div>
-                            <div class="col-md-4 mb-2">
+                            <div class="col-md-3 mb-2">
                                 <form method="POST" class="d-inline">
                                     <input type="hidden" name="accion" value="verificar_estructura">
                                     <button type="submit" class="btn btn-outline-info btn-sm w-100">
@@ -239,7 +333,7 @@ try {
                                     </button>
                                 </form>
                             </div>
-                            <div class="col-md-4 mb-2">
+                            <div class="col-md-3 mb-2">
                                 <form method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de que quieres actualizar la tabla usuarios?');">
                                     <input type="hidden" name="accion" value="actualizar_tabla">
                                     <button type="submit" class="btn btn-primary w-100">
@@ -247,11 +341,19 @@ try {
                                     </button>
                                 </form>
                             </div>
-                            <div class="col-md-4 mb-2">
+                            <div class="col-md-3 mb-2">
                                 <form method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de que quieres migrar usuarios existentes?');">
                                     <input type="hidden" name="accion" value="migrar_usuarios_existentes">
                                     <button type="submit" class="btn btn-success w-100">
                                         <i class="bi bi-people me-2"></i>Migrar Usuarios
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <form method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de que quieres ejecutar todo el proceso?');">
+                                    <input type="hidden" name="accion" value="ejecutar_todo">
+                                    <button type="submit" class="btn btn-warning w-100">
+                                        <i class="bi bi-play-circle me-2"></i>Ejecutar Todo
                                     </button>
                                 </form>
                             </div>
@@ -279,10 +381,10 @@ try {
                         <div class="alert alert-success">
                             <h6><i class="bi bi-lightbulb me-2"></i>Información:</h6>
                             <ul class="mb-0">
-                                <li>Este script agrega columnas necesarias para el sistema de seguridad mejorado</li>
-                                <li>Las columnas incluyen control de intentos fallidos y bloqueo de cuentas</li>
-                                <li>Se crean índices para mejorar el rendimiento de las consultas</li>
-                                <li>Los usuarios existentes se marcan como activos por defecto</li>
+                                <li>Esta versión corrige los errores de sintaxis SQL</li>
+                                <li>Usa <code>exec()</code> en lugar de <code>prepare()</code> para comandos DDL</li>
+                                <li>Maneja mejor los errores y excepciones</li>
+                                <li>Incluye opción "Ejecutar Todo" para proceso completo</li>
                                 <li>Después de la actualización, el LoginController optimizado funcionará correctamente</li>
                             </ul>
                         </div>
