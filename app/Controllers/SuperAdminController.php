@@ -633,6 +633,37 @@ class SuperAdminController {
     }
     
     /**
+     * Verificar si un usuario por ID está protegido (es predefinido)
+     * @param int $id
+     * @return bool
+     */
+    public function esUsuarioProtegido($id) {
+        return $this->obtenerUsuarioPredefinidoPorId($id) !== false;
+    }
+    
+    /**
+     * Obtener información de protección de usuario por ID
+     * @param int $id
+     * @return array
+     */
+    public function getInfoProteccionUsuarioPorId($id) {
+        $usuarioPredefinido = $this->obtenerUsuarioPredefinidoPorId($id);
+        
+        if ($usuarioPredefinido) {
+            return [
+                'protegido' => true,
+                'usuario' => $usuarioPredefinido['usuario'],
+                'rol' => $usuarioPredefinido['rol'],
+                'descripcion' => $usuarioPredefinido['descripcion'],
+                'proteccion' => $usuarioPredefinido['proteccion'],
+                'mensaje' => "Este usuario es una cuenta maestra del sistema y NO puede ser modificada, eliminada o desactivada."
+            ];
+        }
+        
+        return ['protegido' => false];
+    }
+    
+    /**
      * Obtener información de protección de usuario predefinido
      * @param string $usuario
      * @return array|false

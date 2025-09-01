@@ -69,6 +69,16 @@ if (isset($_GET['mensaje'])) {
             border: none;
             background: transparent;
         }
+        .btn-action:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .usuario-protegido {
+            background-color: rgba(255, 193, 7, 0.1);
+        }
+        .badge-protegido {
+            font-size: 0.75em;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -295,6 +305,17 @@ if (isset($_GET['mensaje'])) {
                         </h6>
                     </div>
                     <div class="card-body">
+                        <!-- Información sobre usuarios protegidos -->
+                        <div class="alert alert-warning alert-dismissible fade show mb-3" role="alert">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>Usuarios Protegidos:</strong> Los usuarios marcados con 
+                            <span class="badge bg-warning text-dark">
+                                <i class="bi bi-shield-lock me-1"></i>
+                                Protegido
+                            </span> 
+                            son cuentas maestras del sistema que NO pueden ser modificadas, eliminadas o desactivadas por seguridad.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover" id="tablaUsuarios">
                                 <thead class="table-dark">
@@ -313,10 +334,18 @@ if (isset($_GET['mensaje'])) {
                                 <tbody>
                                     <?php if (is_array($usuarios) && !empty($usuarios)): ?>
                                         <?php foreach ($usuarios as $user): ?>
-                                            <tr>
+                                            <?php $esProtegido = $superAdmin->esUsuarioProtegido($user['id']); ?>
+                                            <tr class="<?php echo $esProtegido ? 'usuario-protegido' : ''; ?>">
                                                 <td><?php echo $user['id']; ?></td>
                                                 <td>
                                                     <strong><?php echo htmlspecialchars($user['usuario']); ?></strong>
+                                                    <?php if ($esProtegido): ?>
+                                                        <br>
+                                                        <span class="badge bg-warning text-dark badge-protegido">
+                                                            <i class="bi bi-shield-lock me-1"></i>
+                                                            Protegido
+                                                        </span>
+                                                    <?php endif; ?>
                                                 </td>
                                                 <td><?php echo htmlspecialchars($user['nombre']); ?></td>
                                                 <td><?php echo htmlspecialchars($user['cedula']); ?></td>
@@ -366,22 +395,56 @@ if (isset($_GET['mensaje'])) {
                                                     ?>
                                                 </td>
                                                 <td>
-                                                    <div class="btn-group" role="group">
-                                                        <button type="button" class="btn btn-sm btn-outline-primary btn-action" 
-                                                                onclick="editarUsuario(<?php echo htmlspecialchars(json_encode($user)); ?>)">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-sm btn-outline-warning btn-action" 
-                                                                onclick="cambiarEstadoUsuario(<?php echo $user['id']; ?>, '<?php echo $user['activo'] ? 'desactivar' : 'activar'; ?>')">
-                                                            <i class="bi bi-<?php echo $user['activo'] ? 'pause' : 'play'; ?>"></i>
-                                                        </button>
-                                                        <?php if ($user['rol'] != 3): // No permitir eliminar superadministradores ?>
-                                                            <button type="button" class="btn btn-sm btn-outline-danger btn-action" 
-                                                                    onclick="confirmarEliminarUsuario(<?php echo $user['id']; ?>, '<?php echo htmlspecialchars($user['usuario']); ?>')">
-                                                                <i class="bi bi-trash"></i>
+                                                    <?php
+                                                    // Verificar si el usuario está protegido
+                                                    $esProtegido = $superAdmin->esUsuarioProtegido($user['id']);
+                                                    $infoProteccion = $superAdmin->getInfoProteccionUsuarioPorId($user['id']);
+                                                    ?>
+                                                    
+                                                    <?php if ($esProtegido): ?>
+                                                        <!-- Usuario protegido - mostrar indicador y botones deshabilitados -->
+                                                        <div class="text-center">
+                                                            <span class="badge bg-warning text-dark mb-2">
+                                                                <i class="bi bi-shield-lock me-1"></i>
+                                                                Usuario Protegido
+                                                            </span>
+                                                            <div class="btn-group" role="group">
+                                                                <button type="button" class="btn btn-sm btn-outline-secondary btn-action" disabled 
+                                                                        title="<?php echo htmlspecialchars($infoProteccion['mensaje'] ?? 'Usuario protegido del sistema'); ?>">
+                                                                    <i class="bi bi-pencil"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-sm btn-outline-secondary btn-action" disabled 
+                                                                        title="<?php echo htmlspecialchars($infoProteccion['mensaje'] ?? 'Usuario protegido del sistema'); ?>">
+                                                                    <i class="bi bi-<?php echo $user['activo'] ? 'pause' : 'play'; ?>"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-sm btn-outline-secondary btn-action" disabled 
+                                                                        title="<?php echo htmlspecialchars($infoProteccion['mensaje'] ?? 'Usuario protegido del sistema'); ?>">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
+                                                            </div>
+                                                            <div class="small text-muted mt-1">
+                                                                <?php echo htmlspecialchars($infoProteccion['mensaje'] ?? 'Usuario protegido del sistema'); ?>
+                                                            </div>
+                                                        </div>
+                                                    <?php else: ?>
+                                                        <!-- Usuario normal - mostrar botones habilitados -->
+                                                        <div class="btn-group" role="group">
+                                                            <button type="button" class="btn btn-sm btn-outline-primary btn-action" 
+                                                                    onclick="editarUsuario(<?php echo htmlspecialchars(json_encode($user)); ?>)">
+                                                                <i class="bi bi-pencil"></i>
                                                             </button>
-                                                        <?php endif; ?>
-                                                    </div>
+                                                            <button type="button" class="btn btn-sm btn-outline-warning btn-action" 
+                                                                    onclick="cambiarEstadoUsuario(<?php echo $user['id']; ?>, '<?php echo $user['activo'] ? 'desactivar' : 'activar'; ?>')">
+                                                                <i class="bi bi-<?php echo $user['activo'] ? 'pause' : 'play'; ?>"></i>
+                                                            </button>
+                                                            <?php if ($user['rol'] != 3): // No permitir eliminar superadministradores ?>
+                                                                <button type="button" class="btn btn-sm btn-outline-danger btn-action" 
+                                                                        onclick="confirmarEliminarUsuario(<?php echo $user['id']; ?>, '<?php echo htmlspecialchars($user['usuario']); ?>')">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    <?php endif; ?>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
