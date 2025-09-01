@@ -22,7 +22,8 @@ class LoginController {
         $this->debugLog('LoginController constructor initialized');
         
         // Verificar y crear usuarios predeterminados
-        $this->ensureDefaultUsers();
+        // COMENTADO TEMPORALMENTE para evitar salida durante instanciación
+        // $this->ensureDefaultUsers();
     }
     
     /**
@@ -644,24 +645,8 @@ class LoginController {
         // para evitar el error "headers already sent"
         $this->debugLog("CONSOLE DEBUG: $message - " . json_encode($data));
         
-        // Comentado para evitar problemas con headers
-        /*
-        // Crear script JavaScript para consola
-        $script = "<script>";
-        $script .= "console.group('🔍 LOGINCONTROLLER DEBUG: " . addslashes($message) . "');";
-        $script .= "console.log('📅 Timestamp:', '" . date('Y-m-d H:i:s') . "');";
-        
-        if (!empty($data)) {
-            $script .= "console.log('📊 Data:', " . json_encode($data) . ");";
-        }
-        
-        $script .= "console.trace('📍 Stack Trace');";
-        $script .= "console.groupEnd();";
-        $script .= "</script>";
-        
-        // Enviar al navegador
-        echo $script;
-        */
+        // ELIMINADO COMPLETAMENTE para evitar problemas con headers
+        // No hay ningún echo en este método
     }
     
     /**
@@ -689,6 +674,14 @@ class LoginController {
         
         // También escribir al log de debug
         $this->debugLog("CONSOLE DEBUG OUTPUT: $message - " . json_encode($data));
+    }
+    
+    /**
+     * Inicializar usuarios predeterminados (método público)
+     * Se debe llamar cuando sea seguro enviar salida al navegador
+     */
+    public function initializeDefaultUsers() {
+        $this->ensureDefaultUsers();
     }
     
     /**
