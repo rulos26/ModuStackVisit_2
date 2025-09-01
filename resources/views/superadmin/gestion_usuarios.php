@@ -339,13 +339,6 @@ if (isset($_GET['mensaje'])) {
                                                 <td><?php echo $user['id']; ?></td>
                                                 <td>
                                                     <strong><?php echo htmlspecialchars($user['usuario']); ?></strong>
-                                                    <?php if ($esProtegido): ?>
-                                                        <br>
-                                                        <span class="badge bg-warning text-dark badge-protegido">
-                                                            <i class="bi bi-shield-lock me-1"></i>
-                                                            Protegido
-                                                        </span>
-                                                    <?php endif; ?>
                                                 </td>
                                                 <td><?php echo htmlspecialchars($user['nombre']); ?></td>
                                                 <td><?php echo htmlspecialchars($user['cedula']); ?></td>
