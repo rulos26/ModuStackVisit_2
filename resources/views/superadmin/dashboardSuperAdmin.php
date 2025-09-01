@@ -9,7 +9,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] != 3) {
     exit();
 }
 
-require_once __DIR__ . '/../../app/Controllers/SuperAdminController.php';
+require_once __DIR__ . '/../../../app/Controllers/SuperAdminController.php';
 use App\Controllers\SuperAdminController;
 
 $superAdmin = new SuperAdminController();
@@ -100,7 +100,7 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
                     <strong><?php echo htmlspecialchars($usuario); ?></strong>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                    <li><a class="dropdown-item" href="../../../public/cerrar_sesion.php">Cerrar sesión</a></li>
+                    <li><a class="dropdown-item" href="../../../logout.php">Cerrar sesión</a></li>
                 </ul>
             </div>
         </div>
@@ -119,7 +119,7 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
                             <i class="bi bi-clock"></i>
                             <?php echo date('d/m/Y H:i'); ?>
                         </span>
-                        <a href="../../../public/cerrar_sesion.php" class="btn btn-outline-light btn-sm">
+                        <a href="../../../logout.php" class="btn btn-outline-light btn-sm">
                             <i class="bi bi-box-arrow-right me-1"></i>
                             Salir
                         </a>
