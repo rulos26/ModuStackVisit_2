@@ -1,8 +1,17 @@
 <?php
+// Habilitar reporte de errores para debug
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Iniciar sesión
 session_start();
 
-require_once __DIR__ . '/app/Controllers/LoginController.php';
-use App\Controllers\LoginController;
+// Cargar el autoloader de Composer
+$autoloadPath = __DIR__ . '/vendor/autoload.php';
+if (!file_exists($autoloadPath)) {
+    die('❌ ERROR: No se encontró el autoloader de Composer. Ejecuta: composer install');
+}
+require_once $autoloadPath;
 
 // Verificar si ya hay una sesión activa
 if (isset($_SESSION['user_id'])) {
@@ -10,11 +19,41 @@ if (isset($_SESSION['user_id'])) {
     exit();
 }
 
+$error = null;
+
 // Procesar el formulario cuando se envía
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $usuario = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
-    $error = LoginController::login($usuario, $password);
+    try {
+        $usuario = $_POST['username'] ?? '';
+        $password = $_POST['password'] ?? '';
+        
+        // Validar que no estén vacíos
+        if (empty($usuario) || empty($password)) {
+            $error = 'Usuario y contraseña son requeridos.';
+        } else {
+            // Crear instancia del LoginController
+            $loginController = new \App\Controllers\LoginController();
+            
+            // Llamar al método authenticate
+            $result = $loginController->authenticate($usuario, $password);
+            
+            if ($result['success']) {
+                // Login exitoso - redirigir según el rol
+                header('Location: ' . $result['data']['redirect_url']);
+                exit();
+            } else {
+                // Login fallido - mostrar error
+                $error = $result['message'];
+            }
+        }
+    } catch (Exception $e) {
+        // Capturar cualquier error y mostrarlo
+        $error = 'Error del sistema: ' . $e->getMessage();
+        
+        // Log del error para debug
+        error_log('Error en login: ' . $e->getMessage());
+        error_log('Stack trace: ' . $e->getTraceAsString());
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -39,11 +78,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <img src="public/images/logo.jpg" alt="Logo" class="mb-3" style="max-width: 180px; width: 100%; height: auto;">
                         <h1 class="h3 mb-3 fw-normal">Iniciar Sesión</h1>
                     </div>
-                    <?php if (isset($error) && $error): ?>
+                    
+                    <!-- Mostrar errores -->
+                    <?php if ($error): ?>
                         <div class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
                             <?php echo htmlspecialchars($error); ?>
                         </div>
                     <?php endif; ?>
+                    
+                    <!-- Mostrar información de debug si hay problemas -->
+                    <?php if (!file_exists($autoloadPath)): ?>
+                        <div class="alert alert-warning" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <strong>Problema detectado:</strong> No se encontró el autoloader de Composer.
+                            <br>Ejecuta: <code>composer install</code> en la terminal.
+                        </div>
+                    <?php endif; ?>
+                    
                     <form method="POST" action="">
                         <div class="form-floating">
                             <input type="text" class="form-control" id="username" name="username" 
@@ -64,20 +116,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </label>
                         </div>
                         <button class="btn btn-primary w-100 py-2 btn-login" type="submit">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>
                             Iniciar Sesión
                         </button>
-                        <div class="forgot-password mt-3">
+                        <div class="forgot-password mt-3 text-center">
                             <a href="#" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
                         </div>
                     </form>
+                    
+                    <!-- Información de debug -->
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <small class="text-muted">
+                            <strong>Debug Info:</strong><br>
+                            Autoloader: <?php echo file_exists($autoloadPath) ? '✅ Cargado' : '❌ No encontrado'; ?><br>
+                            LoginController: <?php echo class_exists('\App\Controllers\LoginController') ? '✅ Disponible' : '❌ No disponible'; ?><br>
+                            PHP Version: <?php echo PHP_VERSION; ?><br>
+                            Session: <?php echo session_status() === PHP_SESSION_ACTIVE ? '✅ Activa' : '❌ Inactiva'; ?>
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
+    
     <!-- Bootstrap 5.3 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
     <script src="public/js/theme.js"></script>
     <script src="public/js/show-password.js"></script>
+    
+    <!-- Script para mostrar/ocultar contraseña -->
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const password = document.getElementById('password');
+            const icon = this;
+            
+            if (password.type === 'password') {
+                password.type = 'text';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            } else {
+                password.type = 'password';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            }
+        });
+    </script>
 </body>
 </html> 
