@@ -32,6 +32,8 @@ class LoginController {
      * @return array
      */
     public function authenticate($usuario, $password) {
+        var_dump($usuario, $password);
+        die();
         // DEBUG: Inicio de autenticación
         $this->debugLog("=== INICIO AUTENTICACIÓN ===");
         $this->debugLog("Usuario: $usuario");
