@@ -2,15 +2,19 @@
 namespace App\Controllers;
 
 require_once __DIR__ . '/../Database/Database.php';
+require_once __DIR__ . '/../Services/LoggerService.php';
 
 use App\Database\Database;
+use App\Services\LoggerService;
 use PDOException;
 
 class SuperAdminController {
     private $db;
+    private $logger;
 
     public function __construct() {
         $this->db = Database::getInstance()->getConnection();
+        $this->logger = new LoggerService();
     }
 
     /**
@@ -91,42 +95,148 @@ class SuperAdminController {
     }
 
     /**
-     * Crear nuevo usuario
+     * Crear nuevo usuario con validaciones estrictas de roles
      */
     private function crearUsuario($datos) {
-        // Verificar si el usuario ya existe
-        $stmt = $this->db->prepare("SELECT id FROM usuarios WHERE usuario = ? OR cedula = ? OR correo = ?");
-        $stmt->execute([$datos['usuario'], $datos['cedula'], $datos['correo']]);
-        
-        if ($stmt->fetch()) {
-            return ['error' => 'Ya existe un usuario con ese nombre de usuario, cédula o correo'];
+        try {
+            // 1. VALIDACIÓN DE DATOS REQUERIDOS
+            $campos_requeridos = ['nombre', 'cedula', 'rol', 'correo', 'usuario', 'password'];
+            foreach ($campos_requeridos as $campo) {
+                if (empty(trim($datos[$campo]))) {
+                    return ['error' => "El campo '$campo' es obligatorio"];
+                }
+            }
+
+            // 2. VALIDACIÓN DE FORMATO DE EMAIL
+            if (!filter_var($datos['correo'], FILTER_VALIDATE_EMAIL)) {
+                return ['error' => 'El formato del correo electrónico no es válido'];
+            }
+
+            // 3. VALIDACIÓN DE LONGITUD DE CONTRASEÑA
+            if (strlen($datos['password']) < 6) {
+                return ['error' => 'La contraseña debe tener al menos 6 caracteres'];
+            }
+
+            // 4. VALIDACIÓN DE ROLES ÚNICOS (CRÍTICA)
+            $rol = (int)$datos['rol'];
+            
+            // Verificar si se está intentando crear un Administrador (rol 1)
+            if ($rol == 1) {
+                $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM usuarios WHERE rol = 1 AND activo = 1");
+                $stmt->execute();
+                $resultado = $stmt->fetch();
+                
+                if ($resultado['total'] >= 1) {
+                    return [
+                        'error' => 'NO SE PUEDE CREAR UN SEGUNDO ADMINISTRADOR. El sistema solo permite un (1) Administrador activo.',
+                        'error_code' => 'ADMIN_LIMIT_EXCEEDED',
+                        'current_count' => $resultado['total'],
+                        'max_allowed' => 1
+                    ];
+                }
+            }
+            
+            // Verificar si se está intentando crear un Superadministrador (rol 3)
+            if ($rol == 3) {
+                $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM usuarios WHERE rol = 3 AND activo = 1");
+                $stmt->execute();
+                $resultado = $stmt->fetch();
+                
+                if ($resultado['total'] >= 1) {
+                    return [
+                        'error' => 'NO SE PUEDE CREAR UN SEGUNDO SUPERADMINISTRADOR. El sistema solo permite un (1) Superadministrador activo.',
+                        'error_code' => 'SUPERADMIN_LIMIT_EXCEEDED',
+                        'current_count' => $resultado['total'],
+                        'max_allowed' => 1
+                    ];
+                }
+            }
+
+            // 5. VALIDACIÓN DE ROLES PERMITIDOS
+            $roles_permitidos = [1, 2, 3]; // 1=Admin, 2=Cliente/Evaluador, 3=Superadmin
+            if (!in_array($rol, $roles_permitidos)) {
+                return ['error' => 'El rol especificado no es válido. Roles permitidos: Administrador (1), Cliente/Evaluador (2), Superadministrador (3)'];
+            }
+
+            // 6. VERIFICACIÓN DE USUARIO DUPLICADO
+            $stmt = $this->db->prepare("SELECT id, usuario, cedula, correo FROM usuarios WHERE usuario = ? OR cedula = ? OR correo = ?");
+            $stmt->execute([$datos['usuario'], $datos['cedula'], $datos['correo']]);
+            $usuario_existente = $stmt->fetch();
+            
+            if ($usuario_existente) {
+                $campos_duplicados = [];
+                if ($usuario_existente['usuario'] === $datos['usuario']) $campos_duplicados[] = 'nombre de usuario';
+                if ($usuario_existente['cedula'] === $datos['cedula']) $campos_duplicados[] = 'cédula';
+                if ($usuario_existente['correo'] === $datos['correo']) $campos_duplicados[] = 'correo electrónico';
+                
+                return [
+                    'error' => 'Ya existe un usuario con: ' . implode(', ', $campos_duplicados),
+                    'error_code' => 'DUPLICATE_USER_DATA',
+                    'duplicate_fields' => $campos_duplicados
+                ];
+            }
+
+            // 7. VALIDACIÓN DE CÉDULA (solo números, mínimo 8 dígitos)
+            if (!preg_match('/^\d{8,}$/', $datos['cedula'])) {
+                return ['error' => 'La cédula debe contener solo números y tener al menos 8 dígitos'];
+            }
+
+            // 8. VALIDACIÓN DE NOMBRE DE USUARIO (solo alfanumérico y guiones bajos)
+            if (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $datos['usuario'])) {
+                return ['error' => 'El nombre de usuario debe contener solo letras, números y guiones bajos, entre 3 y 20 caracteres'];
+            }
+
+            // 9. CREACIÓN DEL USUARIO (si pasa todas las validaciones)
+            $password_hash = password_hash($datos['password'], PASSWORD_DEFAULT);
+            
+            $stmt = $this->db->prepare("
+                INSERT INTO usuarios (nombre, cedula, rol, correo, usuario, password, activo, fecha_creacion)
+                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+            ");
+            
+            $resultado = $stmt->execute([
+                trim($datos['nombre']),
+                $datos['cedula'],
+                $rol,
+                strtolower(trim($datos['correo'])),
+                strtolower(trim($datos['usuario'])),
+                $password_hash,
+                isset($datos['activo']) ? (int)$datos['activo'] : 1
+            ]);
+
+            if (!$resultado) {
+                return ['error' => 'Error al crear el usuario en la base de datos'];
+            }
+
+            $usuario_id = $this->db->lastInsertId();
+
+            // 10. ENVÍO DE CREDENCIALES (si se solicitó)
+            if (isset($datos['enviar_credenciales']) && $datos['enviar_credenciales']) {
+                $this->enviarCredencialesPorCorreo($datos['correo'], $datos['usuario'], $datos['password'], $datos['nombre']);
+            }
+
+            // 11. LOG DE AUDITORÍA
+            $this->logger->info("Usuario creado exitosamente", [
+                'usuario_id' => $usuario_id,
+                'nombre' => $datos['nombre'],
+                'rol' => $rol,
+                'creado_por' => $_SESSION['user_id'] ?? 'sistema'
+            ]);
+
+            return [
+                'success' => 'Usuario creado exitosamente',
+                'usuario_id' => $usuario_id,
+                'rol_creado' => $rol,
+                'mensaje_detallado' => $this->getMensajeRol($rol)
+            ];
+
+        } catch (PDOException $e) {
+            $this->logger->error("Error al crear usuario", [
+                'error' => $e->getMessage(),
+                'datos' => array_diff_key($datos, ['password' => '***'])
+            ]);
+            return ['error' => 'Error interno del sistema al crear el usuario'];
         }
-
-        // Crear hash de contraseña
-        $password_hash = password_hash($datos['password'], PASSWORD_DEFAULT);
-
-        // Insertar usuario con todos los campos necesarios
-        $stmt = $this->db->prepare("
-            INSERT INTO usuarios (nombre, cedula, rol, correo, usuario, password, activo)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ");
-        
-        $stmt->execute([
-            $datos['nombre'],
-            $datos['cedula'],
-            $datos['rol'],
-            $datos['correo'],
-            $datos['usuario'],
-            $password_hash,
-            $datos['activo']
-        ]);
-
-        // Si se solicitó enviar credenciales por correo
-        if (isset($datos['enviar_credenciales']) && $datos['enviar_credenciales']) {
-            $this->enviarCredencialesPorCorreo($datos['correo'], $datos['usuario'], $datos['password'], $datos['nombre']);
-        }
-
-        return ['success' => 'Usuario creado exitosamente'];
     }
 
     /**
@@ -382,6 +492,22 @@ class SuperAdminController {
         } catch (\Exception $e) {
             error_log("Error en SuperAdminController::enviarCredencialesPorCorreo: " . $e->getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Obtener mensaje descriptivo del rol creado
+     */
+    private function getMensajeRol($rol) {
+        switch ($rol) {
+            case 1:
+                return "Usuario Administrador creado exitosamente. Este es el único Administrador permitido en el sistema.";
+            case 2:
+                return "Usuario Cliente/Evaluador creado exitosamente. Pueden crearse múltiples usuarios con este rol.";
+            case 3:
+                return "Usuario Superadministrador creado exitosamente. Este es el único Superadministrador permitido en el sistema.";
+            default:
+                return "Usuario creado exitosamente.";
         }
     }
 }
