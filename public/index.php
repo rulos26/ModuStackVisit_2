@@ -42,31 +42,31 @@ switch ($request) {
     case '':
     case 'index.php':
         // Redirigir al login principal
-        header('Location: /index.php');
+        header('Location: ../index.php');
         exit();
         break;
         
     case 'login':
         // Redirigir al login
-        header('Location: /index.php');
+        header('Location: ../index.php');
         exit();
         break;
         
     case 'admin':
         // Redirigir al dashboard de admin
-        header('Location: /resources/views/admin/dashboardAdmin.php');
+        header('Location: ../resources/views/admin/dashboardAdmin.php');
         exit();
         break;
         
     case 'evaluador':
         // Redirigir al dashboard de evaluador
-        header('Location: /resources/views/evaluador/dashboardEavaluador.php');
+        header('Location: ../resources/views/evaluador/dashboardEavaluador.php');
         exit();
         break;
         
     case 'superadmin':
         // Redirigir al dashboard de superadmin
-        header('Location: /resources/views/superadmin/dashboardSuperAdmin.php');
+        header('Location: ../resources/views/superadmin/dashboardSuperAdmin.php');
         exit();
         break;
         
@@ -85,7 +85,7 @@ switch ($request) {
             echo '<h1 style="color: #dc3545;">404</h1>';
             echo '<h2>Página No Encontrada</h2>';
             echo '<p>La página <strong>' . htmlspecialchars($request) . '</strong> no existe.</p>';
-            echo '<p><a href="/index.php" style="color: #007bff;">🏠 Ir al Inicio</a></p>';
+            echo '<p><a href="../index.php" style="color: #007bff;">🏠 Ir al Inicio</a></p>';
             echo '</body></html>';
         }
         break;
