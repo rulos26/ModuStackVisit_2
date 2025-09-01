@@ -14,9 +14,30 @@ if (!file_exists($autoloadPath)) {
 require_once $autoloadPath;
 
 // Verificar si ya hay una sesión activa
-if (isset($_SESSION['user_id'])) {
-    header('Location: dashboard.php');
-    exit();
+if (isset($_SESSION['user_id']) && isset($_SESSION['rol'])) {
+    // Determinar redirección según el rol
+    $redirectUrl = '';
+    switch ($_SESSION['rol']) {
+        case 1:
+            $redirectUrl = 'resources/views/admin/dashboardAdmin.php';
+            break;
+        case 2:
+            $redirectUrl = 'resources/views/evaluador/dashboardEavaluador.php';
+            break;
+        case 3:
+            $redirectUrl = 'resources/views/superadmin/dashboardSuperAdmin.php';
+            break;
+        default:
+            // Si el rol no es válido, destruir la sesión
+            session_destroy();
+            break;
+    }
+    
+    // Redirigir si se determinó una URL válida
+    if ($redirectUrl && file_exists($redirectUrl)) {
+        header('Location: ' . $redirectUrl);
+        exit();
+    }
 }
 
 $error = null;
@@ -131,7 +152,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             Autoloader: <?php echo file_exists($autoloadPath) ? '✅ Cargado' : '❌ No encontrado'; ?><br>
                             LoginController: <?php echo class_exists('\App\Controllers\LoginController') ? '✅ Disponible' : '❌ No disponible'; ?><br>
                             PHP Version: <?php echo PHP_VERSION; ?><br>
-                            Session: <?php echo session_status() === PHP_SESSION_ACTIVE ? '✅ Activa' : '❌ Inactiva'; ?>
+                            Session: <?php echo session_status() === PHP_SESSION_ACTIVE ? '✅ Activa' : '❌ Inactiva'; ?><br>
+                            Session User ID: <?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'No establecido'; ?><br>
+                            Session Rol: <?php echo isset($_SESSION['rol']) ? $_SESSION['rol'] : 'No establecido'; ?>
                         </small>
                     </div>
                 </div>
