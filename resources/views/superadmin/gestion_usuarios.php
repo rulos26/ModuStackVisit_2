@@ -104,6 +104,12 @@ if (isset($_GET['mensaje'])) {
                     </a>
                 </li>
                 <li>
+                    <a href="gestion_opciones.php" class="nav-link text-white">
+                        <i class="bi bi-gear-wide-connected me-2"></i>
+                        Gestión de Opciones
+                    </a>
+                </li>
+                <li>
                     <a href="configuracion_sistema.php" class="nav-link text-white">
                         <i class="bi bi-gear me-2"></i>
                         Configuración
