@@ -44,16 +44,38 @@
         // Si `$_SESSION['rol']` no existe, `$rol` será `null`.
         $rol = $_SESSION['rol'] ?? null;
 
-        // --- MENÚ PARA EL ROL DE EVALUADOR (rol = 2) ---
-        // Este bloque de menú solo se mostrará si el usuario tiene el rol de "Evaluador".
+        // --- MENÚ PARA EL ROL DE CLIENTE (rol = 2) ---
+        // Este bloque de menú solo se mostrará si el usuario tiene el rol de "Cliente".
         if ($rol == 2) {
+        ?>
+            <hr>
+            <!-- Título de la sección para el cliente -->
+            <li class="nav-item">
+                <span class="nav-link link-dark fw-bold text-success">
+                    <i class="bi bi-person-check me-2"></i>
+                    Opciones del Cliente
+                </span>
+            </li>
+            <!-- Enlace al dashboard del cliente -->
+            <li class="nav-item">
+                <a href="/ModuStackVisit_2/resources/views/cliente/dashboardCliente.php" class="nav-link link-dark">
+                    <i class="bi bi-house-door me-2"></i>
+                    Dashboard Cliente
+                </a>
+            </li>
+        <?php
+        } // Fin del bloque para el rol de Cliente
+
+        // --- MENÚ PARA EL ROL DE EVALUADOR (rol = 4) ---
+        // Este bloque de menú solo se mostrará si el usuario tiene el rol de "Evaluador".
+        if ($rol == 4) {
         ?>
             <hr>
             <!-- Título de la sección para el evaluador -->
             <li class="nav-item">
                 <span class="nav-link link-dark fw-bold text-primary">
-                    <i class="bi bi-shield-lock me-2"></i>
-                    Opciones del evaluador
+                    <i class="bi bi-clipboard-check me-2"></i>
+                    Opciones del Evaluador
                 </span>
             </li>
             <!-- Enlace a la sección "Carta de autorización" -->

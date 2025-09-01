@@ -92,7 +92,7 @@ try {
         }
         
         // Validar rol
-        if (!in_array($datosUsuario['rol'], [1, 2, 3])) {
+        if (!in_array($datosUsuario['rol'], [1, 2, 3, 4])) {
             throw new Exception('El rol seleccionado no es válido');
         }
         

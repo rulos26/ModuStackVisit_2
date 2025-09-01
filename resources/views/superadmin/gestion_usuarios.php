@@ -331,8 +331,12 @@ if (isset($_GET['mensaje'])) {
                                                             $rolClass = 'badge bg-primary';
                                                             break;
                                                         case 2:
-                                                            $rolText = 'Evaluador';
+                                                            $rolText = 'Cliente';
                                                             $rolClass = 'badge bg-success';
+                                                            break;
+                                                        case 4:
+                                                            $rolText = 'Evaluador';
+                                                            $rolClass = 'badge bg-info';
                                                             break;
                                                         case 3:
                                                             $rolText = 'Superadministrador';

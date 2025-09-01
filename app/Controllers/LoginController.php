@@ -467,9 +467,11 @@ class LoginController {
             case 1:
                 return 'resources/views/admin/dashboardAdmin.php';
             case 2:
-                return 'resources/views/evaluador/dashboardEavaluador.php';
+                return 'resources/views/cliente/dashboardCliente.php';
             case 3:
                 return 'resources/views/superadmin/dashboardSuperAdmin.php';
+            case 4:
+                return 'resources/views/evaluador/dashboardEvaluador.php';
             default:
                 throw new \InvalidArgumentException('Rol de usuario no válido: ' . $rol);
         }
@@ -711,10 +713,18 @@ class LoginController {
             [
                 'usuario' => 'cliente',
                 'password' => 'cliente',
-                'rol' => 2, // Evaluador/Cliente
+                'rol' => 2, // Cliente
                 'nombre' => 'Cliente',
                 'cedula' => '30000003',
                 'correo' => 'cliente@empresa.com'
+            ],
+            [
+                'usuario' => 'evaluador',
+                'password' => 'evaluador',
+                'rol' => 4, // Evaluador
+                'nombre' => 'Evaluador',
+                'cedula' => '30000004',
+                'correo' => 'evaluador@empresa.com'
             ]
         ];
         

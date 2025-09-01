@@ -58,9 +58,15 @@ switch ($request) {
         exit();
         break;
         
+    case 'cliente':
+        // Redirigir al dashboard de cliente
+        header('Location: ../resources/views/cliente/dashboardCliente.php');
+        exit();
+        break;
+        
     case 'evaluador':
         // Redirigir al dashboard de evaluador
-        header('Location: ../resources/views/evaluador/dashboardEavaluador.php');
+        header('Location: ../resources/views/evaluador/dashboardEvaluador.php');
         exit();
         break;
         

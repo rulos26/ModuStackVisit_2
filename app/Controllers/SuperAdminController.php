@@ -177,9 +177,9 @@ class SuperAdminController {
             }
 
             // 5. VALIDACIÓN DE ROLES PERMITIDOS
-            $roles_permitidos = [1, 2, 3]; // 1=Admin, 2=Cliente/Evaluador, 3=Superadmin
+            $roles_permitidos = [1, 2, 3, 4]; // 1=Admin, 2=Cliente, 3=Superadmin, 4=Evaluador
             if (!in_array($rol, $roles_permitidos)) {
-                return ['error' => 'El rol especificado no es válido. Roles permitidos: Administrador (1), Cliente/Evaluador (2), Superadministrador (3)'];
+                return ['error' => 'El rol especificado no es válido. Roles permitidos: Administrador (1), Cliente (2), Superadministrador (3), Evaluador (4)'];
             }
 
             // 6. VERIFICACIÓN DE USUARIO DUPLICADO
@@ -389,8 +389,9 @@ class SuperAdminController {
             SELECT id, nombre, cedula, rol, correo, usuario, activo, ultimo_acceso,
                    CASE 
                        WHEN rol = 1 THEN 'Administrador'
-                       WHEN rol = 2 THEN 'Evaluador'
+                       WHEN rol = 2 THEN 'Cliente'
                        WHEN rol = 3 THEN 'Superadministrador'
+                       WHEN rol = 4 THEN 'Evaluador'
                        ELSE 'Desconocido'
                    END as rol_nombre
             FROM usuarios 
@@ -595,7 +596,9 @@ class SuperAdminController {
             case 1:
                 return "Usuario Administrador creado exitosamente. Este es el único Administrador permitido en el sistema.";
             case 2:
-                return "Usuario Cliente/Evaluador creado exitosamente. Pueden crearse múltiples usuarios con este rol.";
+                return "Usuario Cliente creado exitosamente. Pueden crearse múltiples usuarios con este rol.";
+            case 4:
+                return "Usuario Evaluador creado exitosamente. Pueden crearse múltiples usuarios con este rol.";
             case 3:
                 return "Usuario Superadministrador creado exitosamente. Este es el único Superadministrador permitido en el sistema.";
             default:

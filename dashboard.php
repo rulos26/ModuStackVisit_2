@@ -16,10 +16,13 @@ switch ($_SESSION['rol']) {
         $redirectUrl = 'resources/views/admin/dashboardAdmin.php';
         break;
     case 2:
-        $redirectUrl = 'resources/views/evaluador/dashboardEavaluador.php';
+        $redirectUrl = 'resources/views/cliente/dashboardCliente.php';
         break;
     case 3:
         $redirectUrl = 'resources/views/superadmin/dashboardSuperAdmin.php';
+        break;
+    case 4:
+        $redirectUrl = 'resources/views/evaluador/dashboardEvaluador.php';
         break;
     default:
         // Rol inválido, destruir sesión y redirigir al login
