@@ -75,6 +75,10 @@ class SuperAdminController {
                     return $this->actualizarUsuario($datos);
                 case 'eliminar':
                     return $this->eliminarUsuario($datos['id']);
+                case 'activar':
+                    return $this->activarUsuario($datos['id']);
+                case 'desactivar':
+                    return $this->desactivarUsuario($datos['id']);
                 case 'listar':
                     return $this->listarUsuarios();
                 default:
@@ -90,25 +94,22 @@ class SuperAdminController {
      * Crear nuevo usuario
      */
     private function crearUsuario($datos) {
-        // Verificar si existe la columna fecha_creacion
-        $stmt = $this->db->prepare("SHOW COLUMNS FROM usuarios LIKE 'fecha_creacion'");
-        $stmt->execute();
-        
-        $password_hash = password_hash($datos['password'], PASSWORD_DEFAULT);
+        // Verificar si el usuario ya existe
+        $stmt = $this->db->prepare("SELECT id FROM usuarios WHERE usuario = ? OR cedula = ? OR correo = ?");
+        $stmt->execute([$datos['usuario'], $datos['cedula'], $datos['correo']]);
         
         if ($stmt->fetch()) {
-            // Si existe la columna, incluirla en el INSERT
-            $stmt = $this->db->prepare("
-                INSERT INTO usuarios (nombre, cedula, rol, correo, usuario, password, fecha_creacion)
-                VALUES (?, ?, ?, ?, ?, ?, NOW())
-            ");
-        } else {
-            // Si no existe la columna, hacer INSERT sin ella
-            $stmt = $this->db->prepare("
-                INSERT INTO usuarios (nombre, cedula, rol, correo, usuario, password)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ");
+            return ['error' => 'Ya existe un usuario con ese nombre de usuario, cédula o correo'];
         }
+
+        // Crear hash de contraseña
+        $password_hash = password_hash($datos['password'], PASSWORD_DEFAULT);
+
+        // Insertar usuario con todos los campos necesarios
+        $stmt = $this->db->prepare("
+            INSERT INTO usuarios (nombre, cedula, rol, correo, usuario, password, activo)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ");
         
         $stmt->execute([
             $datos['nombre'],
@@ -116,8 +117,14 @@ class SuperAdminController {
             $datos['rol'],
             $datos['correo'],
             $datos['usuario'],
-            $password_hash
+            $password_hash,
+            $datos['activo']
         ]);
+
+        // Si se solicitó enviar credenciales por correo
+        if (isset($datos['enviar_credenciales']) && $datos['enviar_credenciales']) {
+            $this->enviarCredencialesPorCorreo($datos['correo'], $datos['usuario'], $datos['password'], $datos['nombre']);
+        }
 
         return ['success' => 'Usuario creado exitosamente'];
     }
@@ -126,8 +133,8 @@ class SuperAdminController {
      * Actualizar usuario existente
      */
     private function actualizarUsuario($datos) {
-        $sql = "UPDATE usuarios SET nombre = ?, cedula = ?, rol = ?, correo = ?, usuario = ?";
-        $params = [$datos['nombre'], $datos['cedula'], $datos['rol'], $datos['correo'], $datos['usuario']];
+        $sql = "UPDATE usuarios SET nombre = ?, cedula = ?, rol = ?, correo = ?, usuario = ?, activo = ?";
+        $params = [$datos['nombre'], $datos['cedula'], $datos['rol'], $datos['correo'], $datos['usuario'], $datos['activo']];
 
         // Si se proporciona nueva contraseña, actualizarla
         if (!empty($datos['password'])) {
@@ -148,6 +155,15 @@ class SuperAdminController {
      * Eliminar usuario
      */
     private function eliminarUsuario($id) {
+        // Verificar que no sea un superadministrador
+        $stmt = $this->db->prepare("SELECT rol FROM usuarios WHERE id = ?");
+        $stmt->execute([$id]);
+        $usuario = $stmt->fetch();
+        
+        if ($usuario && $usuario['rol'] == 3) {
+            return ['error' => 'No se puede eliminar un superadministrador'];
+        }
+        
         $stmt = $this->db->prepare("DELETE FROM usuarios WHERE id = ?");
         $stmt->execute([$id]);
 
@@ -155,40 +171,49 @@ class SuperAdminController {
     }
 
     /**
+     * Activar usuario
+     */
+    private function activarUsuario($id) {
+        $stmt = $this->db->prepare("UPDATE usuarios SET activo = 1 WHERE id = ?");
+        $stmt->execute([$id]);
+
+        return ['success' => 'Usuario activado exitosamente'];
+    }
+
+    /**
+     * Desactivar usuario
+     */
+    private function desactivarUsuario($id) {
+        // Verificar que no sea un superadministrador
+        $stmt = $this->db->prepare("SELECT rol FROM usuarios WHERE id = ?");
+        $stmt->execute([$id]);
+        $usuario = $stmt->fetch();
+        
+        if ($usuario && $usuario['rol'] == 3) {
+            return ['error' => 'No se puede desactivar un superadministrador'];
+        }
+        
+        $stmt = $this->db->prepare("UPDATE usuarios SET activo = 0 WHERE id = ?");
+        $stmt->execute([$id]);
+
+        return ['success' => 'Usuario desactivado exitosamente'];
+    }
+
+    /**
      * Listar todos los usuarios
      */
     private function listarUsuarios() {
-        // Verificar si existe la columna fecha_creacion
-        $stmt = $this->db->prepare("SHOW COLUMNS FROM usuarios LIKE 'fecha_creacion'");
-        $stmt->execute();
-        
-        if ($stmt->fetch()) {
-            // Si existe la columna, incluirla en el SELECT
-            $stmt = $this->db->prepare("
-                SELECT id, nombre, cedula, rol, correo, usuario, fecha_creacion,
-                       CASE 
-                           WHEN rol = 1 THEN 'Administrador'
-                           WHEN rol = 2 THEN 'Evaluador'
-                           WHEN rol = 3 THEN 'Superadministrador'
-                           ELSE 'Desconocido'
-                       END as rol_nombre
-                FROM usuarios 
-                ORDER BY fecha_creacion DESC
-            ");
-        } else {
-            // Si no existe la columna, hacer SELECT sin ella
-            $stmt = $this->db->prepare("
-                SELECT id, nombre, cedula, rol, correo, usuario, 'N/A' as fecha_creacion,
-                       CASE 
-                           WHEN rol = 1 THEN 'Administrador'
-                           WHEN rol = 2 THEN 'Evaluador'
-                           WHEN rol = 3 THEN 'Superadministrador'
-                           ELSE 'Desconocido'
-                       END as rol_nombre
-                FROM usuarios 
-                ORDER BY id DESC
-            ");
-        }
+        $stmt = $this->db->prepare("
+            SELECT id, nombre, cedula, rol, correo, usuario, activo, ultimo_acceso,
+                   CASE 
+                       WHEN rol = 1 THEN 'Administrador'
+                       WHEN rol = 2 THEN 'Evaluador'
+                       WHEN rol = 3 THEN 'Superadministrador'
+                       ELSE 'Desconocido'
+                   END as rol_nombre
+            FROM usuarios 
+            ORDER BY id DESC
+        ");
         
         $stmt->execute();
         return $stmt->fetchAll();
@@ -311,6 +336,52 @@ class SuperAdminController {
         } catch (\Exception $e) {
             error_log("Error en SuperAdminController::respaldarBaseDatos: " . $e->getMessage());
             return ['error' => 'Error al crear el respaldo'];
+        }
+    }
+
+    /**
+     * Enviar credenciales por correo electrónico
+     */
+    private function enviarCredencialesPorCorreo($correo, $usuario, $password, $nombre) {
+        try {
+            // Configurar headers para envío de correo
+            $headers = "From: sistema@empresa.com\r\n";
+            $headers .= "Reply-To: sistema@empresa.com\r\n";
+            $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+            
+            $asunto = "Credenciales de Acceso - Sistema de Visitas";
+            
+            $mensaje = "
+            <html>
+            <head>
+                <title>Credenciales de Acceso</title>
+            </head>
+            <body>
+                <h2>Bienvenido al Sistema de Visitas</h2>
+                <p>Hola <strong>$nombre</strong>,</p>
+                <p>Se han creado tus credenciales de acceso al sistema:</p>
+                <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;'>
+                    <p><strong>Usuario:</strong> $usuario</p>
+                    <p><strong>Contraseña:</strong> $password</p>
+                </div>
+                <p><strong>Importante:</strong> Por seguridad, te recomendamos cambiar tu contraseña después del primer acceso.</p>
+                <p>Saludos,<br>Equipo de Sistemas</p>
+            </body>
+            </html>
+            ";
+            
+            // Intentar enviar el correo
+            if (mail($correo, $asunto, $mensaje, $headers)) {
+                error_log("Credenciales enviadas por correo a: $correo");
+                return true;
+            } else {
+                error_log("Error al enviar credenciales por correo a: $correo");
+                return false;
+            }
+            
+        } catch (\Exception $e) {
+            error_log("Error en SuperAdminController::enviarCredencialesPorCorreo: " . $e->getMessage());
+            return false;
         }
     }
 }

@@ -9,53 +9,20 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] != 3) {
     exit();
 }
 
-require_once __DIR__ . '/../../app/Controllers/SuperAdminController.php';
+require_once __DIR__ . '/../../../app/Controllers/SuperAdminController.php';
 use App\Controllers\SuperAdminController;
 
 $superAdmin = new SuperAdminController();
-$mensaje = '';
-$usuarios = [];
-
-// Procesar acciones
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $accion = $_POST['accion'] ?? '';
-    
-    switch ($accion) {
-        case 'crear':
-            $resultado = $superAdmin->gestionarUsuarios('crear', [
-                'nombre' => $_POST['nombre'],
-                'cedula' => $_POST['cedula'],
-                'rol' => $_POST['rol'],
-                'correo' => $_POST['correo'],
-                'usuario' => $_POST['usuario'],
-                'password' => $_POST['password']
-            ]);
-            $mensaje = $resultado['success'] ?? $resultado['error'];
-            break;
-            
-        case 'actualizar':
-            $resultado = $superAdmin->gestionarUsuarios('actualizar', [
-                'id' => $_POST['id'],
-                'nombre' => $_POST['nombre'],
-                'cedula' => $_POST['cedula'],
-                'rol' => $_POST['rol'],
-                'correo' => $_POST['correo'],
-                'usuario' => $_POST['usuario'],
-                'password' => $_POST['password'] ?? ''
-            ]);
-            $mensaje = $resultado['success'] ?? $resultado['error'];
-            break;
-            
-        case 'eliminar':
-            $resultado = $superAdmin->gestionarUsuarios('eliminar', ['id' => $_POST['id']]);
-            $mensaje = $resultado['success'] ?? $resultado['error'];
-            break;
-    }
-}
-
-// Obtener lista de usuarios
 $usuarios = $superAdmin->gestionarUsuarios('listar');
 $usuario = $_SESSION['username'] ?? 'Superadministrador';
+
+// Procesar mensajes de respuesta
+$mensaje = '';
+$tipoMensaje = '';
+if (isset($_GET['mensaje'])) {
+    $mensaje = $_GET['mensaje'];
+    $tipoMensaje = $_GET['tipo'] ?? 'info';
+}
 ?>
 
 <!DOCTYPE html>
@@ -68,9 +35,39 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../../../public/css/styles.css">
     <style>
+        .stats-card {
+            transition: transform 0.2s;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
         .table-responsive {
-            max-height: 600px;
-            overflow-y: auto;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .btn-action {
+            margin: 2px;
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+        .password-toggle {
+            position: relative;
+        }
+        .password-toggle .form-control {
+            padding-right: 50px;
+        }
+        .password-toggle .btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            border: none;
+            background: transparent;
         }
     </style>
 </head>
@@ -134,7 +131,7 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
                     <strong><?php echo htmlspecialchars($usuario); ?></strong>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                    <li><a class="dropdown-item" href="../../../public/cerrar_sesion.php">Cerrar sesión</a></li>
+                    <li><a class="dropdown-item" href="../../../logout.php">Cerrar sesión</a></li>
                 </ul>
             </div>
         </div>
@@ -145,11 +142,15 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
             <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
                 <div class="container-fluid">
                     <span class="navbar-brand">
-                        <i class="bi bi-people me-2"></i>
+                        <i class="bi bi-people-fill me-2"></i>
                         Gestión de Usuarios
                     </span>
                     <div class="d-flex align-items-center">
-                        <a href="../../../public/cerrar_sesion.php" class="btn btn-outline-light btn-sm">
+                        <span class="text-white me-3">
+                            <i class="bi bi-clock"></i>
+                            <?php echo date('d/m/Y H:i'); ?>
+                        </span>
+                        <a href="../../../logout.php" class="btn btn-outline-light btn-sm">
                             <i class="bi bi-box-arrow-right me-1"></i>
                             Salir
                         </a>
@@ -157,19 +158,128 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
                 </div>
             </nav>
 
-            <!-- Contenido -->
+            <!-- Contenido principal -->
             <div class="container-fluid py-4">
+                <!-- Mensajes de respuesta -->
                 <?php if ($mensaje): ?>
-                    <div class="alert alert-<?php echo strpos($mensaje, 'exitosamente') !== false ? 'success' : 'danger'; ?> alert-dismissible fade show" role="alert">
+                    <div class="alert alert-<?php echo $tipoMensaje; ?> alert-dismissible fade show" role="alert">
+                        <i class="bi bi-info-circle me-2"></i>
                         <?php echo htmlspecialchars($mensaje); ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 <?php endif; ?>
 
+                <!-- Tarjetas de estadísticas -->
+                <div class="row mb-4">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2 stats-card">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Total Usuarios
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <?php echo is_array($usuarios) ? count($usuarios) : 0; ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="bi bi-people-fill fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2 stats-card">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Usuarios Activos
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <?php 
+                                            $activos = 0;
+                                            if (is_array($usuarios)) {
+                                                foreach ($usuarios as $user) {
+                                                    if ($user['activo']) $activos++;
+                                                }
+                                            }
+                                            echo $activos;
+                                            ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="bi bi-person-check fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-warning shadow h-100 py-2 stats-card">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            Administradores
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <?php 
+                                            $admins = 0;
+                                            if (is_array($usuarios)) {
+                                                foreach ($usuarios as $user) {
+                                                    if ($user['rol'] == 1) $admins++;
+                                                }
+                                            }
+                                            echo $admins;
+                                            ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="bi bi-shield-fill-check fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-info shadow h-100 py-2 stats-card">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            Evaluadores
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <?php 
+                                            $evaluadores = 0;
+                                            if (is_array($usuarios)) {
+                                                foreach ($usuarios as $user) {
+                                                    if ($user['rol'] == 2) $evaluadores++;
+                                                }
+                                            }
+                                            echo $evaluadores;
+                                            ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="bi bi-person-badge fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Botón para crear nuevo usuario -->
                 <div class="row mb-4">
                     <div class="col-12">
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearUsuarioModal">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearUsuario">
                             <i class="bi bi-person-plus me-2"></i>
                             Crear Nuevo Usuario
                         </button>
@@ -178,60 +288,105 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
 
                 <!-- Tabla de usuarios -->
                 <div class="card shadow">
-                    <div class="card-header">
-                        <h5 class="mb-0">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
                             <i class="bi bi-table me-2"></i>
                             Lista de Usuarios del Sistema
-                        </h5>
+                        </h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover">
+                            <table class="table table-bordered table-hover" id="tablaUsuarios">
                                 <thead class="table-dark">
                                     <tr>
                                         <th>ID</th>
+                                        <th>Usuario</th>
                                         <th>Nombre</th>
                                         <th>Cédula</th>
-                                        <th>Usuario</th>
                                         <th>Correo</th>
                                         <th>Rol</th>
-                                        <th>Fecha Creación</th>
+                                        <th>Estado</th>
+                                        <th>Último Acceso</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if (is_array($usuarios)): ?>
+                                    <?php if (is_array($usuarios) && !empty($usuarios)): ?>
                                         <?php foreach ($usuarios as $user): ?>
                                             <tr>
-                                                <td><?php echo htmlspecialchars($user['id']); ?></td>
+                                                <td><?php echo $user['id']; ?></td>
+                                                <td>
+                                                    <strong><?php echo htmlspecialchars($user['usuario']); ?></strong>
+                                                </td>
                                                 <td><?php echo htmlspecialchars($user['nombre']); ?></td>
                                                 <td><?php echo htmlspecialchars($user['cedula']); ?></td>
-                                                <td><?php echo htmlspecialchars($user['usuario']); ?></td>
                                                 <td><?php echo htmlspecialchars($user['correo']); ?></td>
                                                 <td>
-                                                    <span class="badge bg-<?php 
-                                                        echo $user['rol'] == 1 ? 'primary' : 
-                                                            ($user['rol'] == 2 ? 'success' : 'warning'); 
-                                                    ?>">
-                                                        <?php echo htmlspecialchars($user['rol_nombre']); ?>
-                                                    </span>
+                                                    <?php
+                                                    $rolText = '';
+                                                    $rolClass = '';
+                                                    switch ($user['rol']) {
+                                                        case 1:
+                                                            $rolText = 'Administrador';
+                                                            $rolClass = 'badge bg-primary';
+                                                            break;
+                                                        case 2:
+                                                            $rolText = 'Evaluador';
+                                                            $rolClass = 'badge bg-success';
+                                                            break;
+                                                        case 3:
+                                                            $rolText = 'Superadministrador';
+                                                            $rolClass = 'badge bg-danger';
+                                                            break;
+                                                        default:
+                                                            $rolText = 'Desconocido';
+                                                            $rolClass = 'badge bg-secondary';
+                                                    }
+                                                    ?>
+                                                    <span class="<?php echo $rolClass; ?>"><?php echo $rolText; ?></span>
                                                 </td>
-                                                <td><?php echo htmlspecialchars($user['fecha_creacion']); ?></td>
                                                 <td>
-                                                    <button class="btn btn-sm btn-outline-primary" 
-                                                            onclick="editarUsuario(<?php echo htmlspecialchars(json_encode($user)); ?>)">
-                                                        <i class="bi bi-pencil"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm btn-outline-danger" 
-                                                            onclick="eliminarUsuario(<?php echo $user['id']; ?>, '<?php echo htmlspecialchars($user['nombre']); ?>')">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
+                                                    <?php if ($user['activo']): ?>
+                                                        <span class="badge bg-success">Activo</span>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-danger">Inactivo</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <?php 
+                                                    if ($user['ultimo_acceso']) {
+                                                        echo date('d/m/Y H:i', strtotime($user['ultimo_acceso']));
+                                                    } else {
+                                                        echo '<span class="text-muted">Nunca</span>';
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <button type="button" class="btn btn-sm btn-outline-primary btn-action" 
+                                                                onclick="editarUsuario(<?php echo htmlspecialchars(json_encode($user)); ?>)">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-outline-warning btn-action" 
+                                                                onclick="cambiarEstadoUsuario(<?php echo $user['id']; ?>, '<?php echo $user['activo'] ? 'desactivar' : 'activar'; ?>')">
+                                                            <i class="bi bi-<?php echo $user['activo'] ? 'pause' : 'play'; ?>"></i>
+                                                        </button>
+                                                        <?php if ($user['rol'] != 3): // No permitir eliminar superadministradores ?>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger btn-action" 
+                                                                    onclick="confirmarEliminarUsuario(<?php echo $user['id']; ?>, '<?php echo htmlspecialchars($user['usuario']); ?>')">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        <?php endif; ?>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="8" class="text-center">No hay usuarios registrados</td>
+                                            <td colspan="9" class="text-center text-muted">
+                                                <i class="bi bi-inbox me-2"></i>
+                                                No hay usuarios registrados
+                                            </td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>
@@ -243,162 +398,226 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
         </div>
     </div>
 
-    <!-- Modal Crear Usuario -->
-    <div class="modal fade" id="crearUsuarioModal" tabindex="-1">
-        <div class="modal-dialog">
+    <!-- Modal para crear/editar usuario -->
+    <div class="modal fade" id="modalCrearUsuario" tabindex="-1" aria-labelledby="modalCrearUsuarioLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Crear Nuevo Usuario</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="modalCrearUsuarioLabel">
+                        <i class="bi bi-person-plus me-2"></i>
+                        Crear Nuevo Usuario
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <form method="POST">
+                <form id="formUsuario" action="procesar_usuario.php" method="POST">
                     <div class="modal-body">
-                        <input type="hidden" name="accion" value="crear">
+                        <input type="hidden" id="usuario_id" name="usuario_id" value="">
+                        <input type="hidden" id="accion" name="accion" value="crear">
                         
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre Completo</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" required>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="usuario" name="usuario" 
+                                           placeholder="Usuario" required maxlength="50">
+                                    <label for="usuario">Usuario *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="nombre" name="nombre" 
+                                           placeholder="Nombre completo" required maxlength="100">
+                                    <label for="nombre">Nombre completo *</label>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="mb-3">
-                            <label for="cedula" class="form-label">Cédula</label>
-                            <input type="text" class="form-control" id="cedula" name="cedula" required>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="cedula" name="cedula" 
+                                           placeholder="Cédula" required maxlength="20">
+                                    <label for="cedula">Cédula *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="correo" name="correo" 
+                                           placeholder="Correo electrónico" required maxlength="100">
+                                    <label for="correo">Correo electrónico *</label>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="mb-3">
-                            <label for="usuario" class="form-label">Usuario</label>
-                            <input type="text" class="form-control" id="usuario" name="usuario" required>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="rol" name="rol" required>
+                                        <option value="">Seleccionar rol</option>
+                                        <option value="1">Administrador</option>
+                                        <option value="2">Evaluador</option>
+                                        <option value="3">Superadministrador</option>
+                                    </select>
+                                    <label for="rol">Rol *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating password-toggle">
+                                    <input type="password" class="form-control" id="password" name="password" 
+                                           placeholder="Contraseña" required maxlength="255">
+                                    <label for="password">Contraseña *</label>
+                                    <button type="button" class="btn" onclick="togglePassword('password')">
+                                        <i class="bi bi-eye-slash" id="password-icon"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="mb-3">
-                            <label for="correo" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="correo" name="correo" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="rol" class="form-label">Rol</label>
-                            <select class="form-select" id="rol" name="rol" required>
-                                <option value="">Seleccionar rol</option>
-                                <option value="1">Administrador</option>
-                                <option value="2">Evaluador</option>
-                                <option value="3">Superadministrador</option>
-                            </select>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="activo" name="activo" required>
+                                        <option value="1">Activo</option>
+                                        <option value="0">Inactivo</option>
+                                    </select>
+                                    <label for="activo">Estado</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mt-4 pt-3">
+                                    <input class="form-check-input" type="checkbox" id="enviar_credenciales" name="enviar_credenciales" value="1">
+                                    <label class="form-check-label" for="enviar_credenciales">
+                                        Enviar credenciales por correo
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Crear Usuario</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-2"></i>
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-2"></i>
+                            Guardar Usuario
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Modal Editar Usuario -->
-    <div class="modal fade" id="editarUsuarioModal" tabindex="-1">
+    <!-- Modal de confirmación para eliminar -->
+    <div class="modal fade" id="modalConfirmarEliminar" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar Usuario</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form method="POST">
-                    <div class="modal-body">
-                        <input type="hidden" name="accion" value="actualizar">
-                        <input type="hidden" name="id" id="edit_id">
-                        
-                        <div class="mb-3">
-                            <label for="edit_nombre" class="form-label">Nombre Completo</label>
-                            <input type="text" class="form-control" id="edit_nombre" name="nombre" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="edit_cedula" class="form-label">Cédula</label>
-                            <input type="text" class="form-control" id="edit_cedula" name="cedula" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="edit_usuario" class="form-label">Usuario</label>
-                            <input type="text" class="form-control" id="edit_usuario" name="usuario" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="edit_correo" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="edit_correo" name="correo" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="edit_rol" class="form-label">Rol</label>
-                            <select class="form-select" id="edit_rol" name="rol" required>
-                                <option value="1">Administrador</option>
-                                <option value="2">Evaluador</option>
-                                <option value="3">Superadministrador</option>
-                            </select>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="edit_password" class="form-label">Nueva Contraseña (dejar vacío para mantener la actual)</label>
-                            <input type="password" class="form-control" id="edit_password" name="password">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Actualizar Usuario</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Confirmar Eliminación -->
-    <div class="modal fade" id="eliminarUsuarioModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirmar Eliminación</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Confirmar Eliminación
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>¿Está seguro de que desea eliminar al usuario <strong id="nombre_usuario_eliminar"></strong>?</p>
-                    <p class="text-danger">Esta acción no se puede deshacer.</p>
+                    <p>¿Estás seguro de que deseas eliminar al usuario <strong id="usuarioEliminar"></strong>?</p>
+                    <p class="text-danger"><small>Esta acción no se puede deshacer.</small></p>
                 </div>
-                <form method="POST">
-                    <input type="hidden" name="accion" value="eliminar">
-                    <input type="hidden" name="id" id="id_usuario_eliminar">
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-danger">Eliminar Usuario</button>
-                    </div>
-                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" onclick="eliminarUsuario()">
+                        <i class="bi bi-trash me-2"></i>
+                        Eliminar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        let usuarioAEliminar = null;
+
+        // Función para editar usuario
         function editarUsuario(usuario) {
-            document.getElementById('edit_id').value = usuario.id;
-            document.getElementById('edit_nombre').value = usuario.nombre;
-            document.getElementById('edit_cedula').value = usuario.cedula;
-            document.getElementById('edit_usuario').value = usuario.usuario;
-            document.getElementById('edit_correo').value = usuario.correo;
-            document.getElementById('edit_rol').value = usuario.rol;
-            document.getElementById('edit_password').value = '';
+            document.getElementById('usuario_id').value = usuario.id;
+            document.getElementById('accion').value = 'actualizar';
+            document.getElementById('usuario').value = usuario.usuario;
+            document.getElementById('nombre').value = usuario.nombre;
+            document.getElementById('cedula').value = usuario.cedula;
+            document.getElementById('correo').value = usuario.correo;
+            document.getElementById('rol').value = usuario.rol;
+            document.getElementById('activo').value = usuario.activo ? '1' : '0';
+            document.getElementById('password').required = false;
+            document.getElementById('password').placeholder = 'Dejar en blanco para mantener la actual';
             
-            new bootstrap.Modal(document.getElementById('editarUsuarioModal')).show();
+            document.getElementById('modalCrearUsuarioLabel').innerHTML = '<i class="bi bi-pencil me-2"></i>Editar Usuario';
+            document.querySelector('#modalCrearUsuario .btn-primary').innerHTML = '<i class="bi bi-check-circle me-2"></i>Actualizar Usuario';
+            
+            const modal = new bootstrap.Modal(document.getElementById('modalCrearUsuario'));
+            modal.show();
         }
 
-        function eliminarUsuario(id, nombre) {
-            document.getElementById('id_usuario_eliminar').value = id;
-            document.getElementById('nombre_usuario_eliminar').textContent = nombre;
-            
-            new bootstrap.Modal(document.getElementById('eliminarUsuarioModal')).show();
+        // Función para cambiar estado del usuario
+        function cambiarEstadoUsuario(id, accion) {
+            if (confirm(`¿Estás seguro de que deseas ${accion} este usuario?`)) {
+                window.location.href = `procesar_usuario.php?accion=${accion}&usuario_id=${id}`;
+            }
         }
+
+        // Función para confirmar eliminación
+        function confirmarEliminarUsuario(id, nombre) {
+            usuarioAEliminar = id;
+            document.getElementById('usuarioEliminar').textContent = nombre;
+            const modal = new bootstrap.Modal(document.getElementById('modalConfirmarEliminar'));
+            modal.show();
+        }
+
+        // Función para eliminar usuario
+        function eliminarUsuario() {
+            if (usuarioAEliminar) {
+                window.location.href = `procesar_usuario.php?accion=eliminar&usuario_id=${usuarioAEliminar}`;
+            }
+        }
+
+        // Función para mostrar/ocultar contraseña
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(inputId + '-icon');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            }
+        }
+
+        // Resetear modal al cerrar
+        document.getElementById('modalCrearUsuario').addEventListener('hidden.bs.modal', function () {
+            document.getElementById('formUsuario').reset();
+            document.getElementById('usuario_id').value = '';
+            document.getElementById('accion').value = 'crear';
+            document.getElementById('password').required = true;
+            document.getElementById('password').placeholder = 'Contraseña';
+            document.getElementById('modalCrearUsuarioLabel').innerHTML = '<i class="bi bi-person-plus me-2"></i>Crear Nuevo Usuario';
+            document.querySelector('#modalCrearUsuario .btn-primary').innerHTML = '<i class="bi bi-check-circle me-2"></i>Guardar Usuario';
+        });
+
+        // Validación del formulario
+        document.getElementById('formUsuario').addEventListener('submit', function(e) {
+            const password = document.getElementById('password');
+            const accion = document.getElementById('accion').value;
+            
+            if (accion === 'crear' && password.value.length < 6) {
+                e.preventDefault();
+                alert('La contraseña debe tener al menos 6 caracteres.');
+                password.focus();
+                return false;
+            }
+        });
     </script>
 </body>
 </html>
