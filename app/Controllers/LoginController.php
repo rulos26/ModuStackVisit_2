@@ -635,11 +635,42 @@ class LoginController {
     }
     
     /**
-     * Método de debug para consola JavaScript
+     * Método de debug para consola JavaScript (versión segura)
      * @param string $message
      * @param array $data
      */
     private function debugConsole($message, $data = []) {
+        // Solo escribir al log de debug, NO enviar al navegador
+        // para evitar el error "headers already sent"
+        $this->debugLog("CONSOLE DEBUG: $message - " . json_encode($data));
+        
+        // Comentado para evitar problemas con headers
+        /*
+        // Crear script JavaScript para consola
+        $script = "<script>";
+        $script .= "console.group('🔍 LOGINCONTROLLER DEBUG: " . addslashes($message) . "');";
+        $script .= "console.log('📅 Timestamp:', '" . date('Y-m-d H:i:s') . "');";
+        
+        if (!empty($data)) {
+            $script .= "console.log('📊 Data:', " . json_encode($data) . ");";
+        }
+        
+        $script .= "console.trace('📍 Stack Trace');";
+        $script .= "console.groupEnd();";
+        $script .= "</script>";
+        
+        // Enviar al navegador
+        echo $script;
+        */
+    }
+    
+    /**
+     * Método de debug para consola JavaScript (versión con salida)
+     * Solo usar cuando sea seguro enviar salida al navegador
+     * @param string $message
+     * @param array $data
+     */
+    public function debugConsoleOutput($message, $data = []) {
         // Crear script JavaScript para consola
         $script = "<script>";
         $script .= "console.group('🔍 LOGINCONTROLLER DEBUG: " . addslashes($message) . "');";
@@ -657,7 +688,7 @@ class LoginController {
         echo $script;
         
         // También escribir al log de debug
-        $this->debugLog("CONSOLE DEBUG: $message - " . json_encode($data));
+        $this->debugLog("CONSOLE DEBUG OUTPUT: $message - " . json_encode($data));
     }
     
     /**
