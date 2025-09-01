@@ -11,6 +11,30 @@ use PDOException;
 class SuperAdminController {
     private $db;
     private $logger;
+    
+    // Usuarios predefinidos del sistema que NO pueden ser modificados
+    private const USUARIOS_PREDEFINIDOS = [
+        'root' => [
+            'rol' => 3,
+            'descripcion' => 'Superadministrador del Sistema',
+            'proteccion' => 'PROTEGIDO - Cuenta maestra del sistema'
+        ],
+        'admin' => [
+            'rol' => 1,
+            'descripcion' => 'Administrador del Sistema',
+            'proteccion' => 'PROTEGIDO - Cuenta administrativa maestra'
+        ],
+        'cliente' => [
+            'rol' => 2,
+            'descripcion' => 'Cliente/Evaluador del Sistema',
+            'proteccion' => 'PROTEGIDO - Cuenta de cliente maestra'
+        ],
+        'evaluador' => [
+            'rol' => 2,
+            'descripcion' => 'Evaluador del Sistema',
+            'proteccion' => 'PROTEGIDO - Cuenta de evaluador maestra'
+        ]
+    ];
 
     public function __construct() {
         $this->db = Database::getInstance()->getConnection();
@@ -243,6 +267,18 @@ class SuperAdminController {
      * Actualizar usuario existente
      */
     private function actualizarUsuario($datos) {
+        // Verificar que no sea un usuario predefinido del sistema
+        $usuario_predefinido = $this->obtenerUsuarioPredefinidoPorId($datos['id']);
+        if ($usuario_predefinido) {
+            return [
+                'error' => 'NO SE PUEDE MODIFICAR UN USUARIO PREDEFINIDO DEL SISTEMA',
+                'error_code' => 'PROTECTED_USER_UPDATE',
+                'usuario' => $usuario_predefinido['descripcion'],
+                'proteccion' => $usuario_predefinido['proteccion'],
+                'mensaje_detallado' => 'Este usuario es una cuenta maestra del sistema y NO puede ser modificada bajo ninguna circunstancia.'
+            ];
+        }
+        
         $sql = "UPDATE usuarios SET nombre = ?, cedula = ?, rol = ?, correo = ?, usuario = ?, activo = ?";
         $params = [$datos['nombre'], $datos['cedula'], $datos['rol'], $datos['correo'], $datos['usuario'], $datos['activo']];
 
@@ -265,7 +301,19 @@ class SuperAdminController {
      * Eliminar usuario
      */
     private function eliminarUsuario($id) {
-        // Verificar que no sea un superadministrador
+        // Verificar que no sea un usuario predefinido del sistema
+        $usuario_predefinido = $this->obtenerUsuarioPredefinidoPorId($id);
+        if ($usuario_predefinido) {
+            return [
+                'error' => 'NO SE PUEDE ELIMINAR UN USUARIO PREDEFINIDO DEL SISTEMA',
+                'error_code' => 'PROTECTED_USER_DELETE',
+                'usuario' => $usuario_predefinido['descripcion'],
+                'proteccion' => $usuario_predefinido['proteccion'],
+                'mensaje_detallado' => 'Este usuario es una cuenta maestra del sistema y NO puede ser eliminada bajo ninguna circunstancia.'
+            ];
+        }
+        
+        // Verificar que no sea un superadministrador (protección adicional)
         $stmt = $this->db->prepare("SELECT rol FROM usuarios WHERE id = ?");
         $stmt->execute([$id]);
         $usuario = $stmt->fetch();
@@ -284,6 +332,18 @@ class SuperAdminController {
      * Activar usuario
      */
     private function activarUsuario($id) {
+        // Verificar que no sea un usuario predefinido del sistema
+        $usuario_predefinido = $this->obtenerUsuarioPredefinidoPorId($id);
+        if ($usuario_predefinido) {
+            return [
+                'error' => 'NO SE PUEDE MODIFICAR EL ESTADO DE UN USUARIO PREDEFINIDO DEL SISTEMA',
+                'error_code' => 'PROTECTED_USER_ACTIVATE',
+                'usuario' => $usuario_predefinido['descripcion'],
+                'proteccion' => $usuario_predefinido['proteccion'],
+                'mensaje_detallado' => 'Este usuario es una cuenta maestra del sistema y su estado NO puede ser modificado bajo ninguna circunstancia.'
+            ];
+        }
+        
         $stmt = $this->db->prepare("UPDATE usuarios SET activo = 1 WHERE id = ?");
         $stmt->execute([$id]);
 
@@ -294,7 +354,19 @@ class SuperAdminController {
      * Desactivar usuario
      */
     private function desactivarUsuario($id) {
-        // Verificar que no sea un superadministrador
+        // Verificar que no sea un usuario predefinido del sistema
+        $usuario_predefinido = $this->obtenerUsuarioPredefinidoPorId($id);
+        if ($usuario_predefinido) {
+            return [
+                'error' => 'NO SE PUEDE DESACTIVAR UN USUARIO PREDEFINIDO DEL SISTEMA',
+                'error_code' => 'PROTECTED_USER_DEACTIVATE',
+                'usuario' => $usuario_predefinido['descripcion'],
+                'proteccion' => $usuario_predefinido['proteccion'],
+                'mensaje_detallado' => 'Este usuario es una cuenta maestra del sistema y NO puede ser desactivada bajo ninguna circunstancia.'
+            ];
+        }
+        
+        // Verificar que no sea un superadministrador (protección adicional)
         $stmt = $this->db->prepare("SELECT rol FROM usuarios WHERE id = ?");
         $stmt->execute([$id]);
         $usuario = $stmt->fetch();
@@ -326,7 +398,27 @@ class SuperAdminController {
         ");
         
         $stmt->execute();
-        return $stmt->fetchAll();
+        $usuarios = $stmt->fetchAll();
+        
+        // Agregar información de protección para usuarios predefinidos
+        foreach ($usuarios as &$usuario) {
+            if ($this->esUsuarioPredefinido($usuario['usuario'])) {
+                $info_proteccion = self::USUARIOS_PREDEFINIDOS[strtolower($usuario['usuario'])];
+                $usuario['protegido'] = true;
+                $usuario['descripcion'] = $info_proteccion['descripcion'];
+                $usuario['proteccion'] = $info_proteccion['proteccion'];
+                $usuario['estado_proteccion'] = '🔒 PROTEGIDO - NO MODIFICABLE';
+                $usuario['acciones_permitidas'] = ['ver'];
+                $usuario['acciones_bloqueadas'] = ['editar', 'eliminar', 'activar', 'desactivar'];
+            } else {
+                $usuario['protegido'] = false;
+                $usuario['estado_proteccion'] = '📝 EDITABLE';
+                $usuario['acciones_permitidas'] = ['ver', 'editar', 'eliminar', 'activar', 'desactivar'];
+                $usuario['acciones_bloqueadas'] = [];
+            }
+        }
+        
+        return $usuarios;
     }
 
     /**
@@ -508,6 +600,103 @@ class SuperAdminController {
                 return "Usuario Superadministrador creado exitosamente. Este es el único Superadministrador permitido en el sistema.";
             default:
                 return "Usuario creado exitosamente.";
+        }
+    }
+    
+    /**
+     * Verificar si un usuario es predefinido del sistema
+     * @param string $usuario
+     * @return bool
+     */
+    private function esUsuarioPredefinido($usuario) {
+        return array_key_exists(strtolower($usuario), self::USUARIOS_PREDEFINIDOS);
+    }
+    
+    /**
+     * Verificar si un usuario por ID es predefinido
+     * @param int $id
+     * @return array|false
+     */
+    private function obtenerUsuarioPredefinidoPorId($id) {
+        $stmt = $this->db->prepare("SELECT usuario FROM usuarios WHERE id = ?");
+        $stmt->execute([$id]);
+        $resultado = $stmt->fetch();
+        
+        if ($resultado && $this->esUsuarioPredefinido($resultado['usuario'])) {
+            return self::USUARIOS_PREDEFINIDOS[strtolower($resultado['usuario'])];
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Obtener información de protección de usuario predefinido
+     * @param string $usuario
+     * @return array|false
+     */
+    public function getInfoProteccionUsuario($usuario) {
+        if ($this->esUsuarioPredefinido($usuario)) {
+            $info = self::USUARIOS_PREDEFINIDOS[strtolower($usuario)];
+            return [
+                'protegido' => true,
+                'usuario' => $usuario,
+                'rol' => $info['rol'],
+                'descripcion' => $info['descripcion'],
+                'proteccion' => $info['proteccion'],
+                'mensaje' => "Este usuario es una cuenta maestra del sistema y NO puede ser modificada, eliminada o desactivada."
+            ];
+        }
+        
+        return ['protegido' => false];
+    }
+    
+    /**
+     * Listar usuarios predefinidos del sistema
+     * @return array
+     */
+    public function listarUsuariosPredefinidos() {
+        $usuarios_predefinidos = [];
+        
+        foreach (self::USUARIOS_PREDEFINIDOS as $usuario => $info) {
+            $stmt = $this->db->prepare("
+                SELECT id, nombre, cedula, rol, correo, usuario, activo, ultimo_acceso
+                FROM usuarios 
+                WHERE usuario = ?
+            ");
+            $stmt->execute([$usuario]);
+            $usuario_bd = $stmt->fetch();
+            
+            if ($usuario_bd) {
+                $usuarios_predefinidos[] = [
+                    'id' => $usuario_bd['id'],
+                    'usuario' => $usuario_bd['usuario'],
+                    'nombre' => $usuario_bd['nombre'],
+                    'rol' => $usuario_bd['rol'],
+                    'rol_nombre' => $this->getNombreRol($usuario_bd['rol']),
+                    'activo' => $usuario_bd['activo'],
+                    'ultimo_acceso' => $usuario_bd['ultimo_acceso'],
+                    'protegido' => true,
+                    'descripcion' => $info['descripcion'],
+                    'proteccion' => $info['proteccion'],
+                    'estado_proteccion' => '🔒 PROTEGIDO - NO MODIFICABLE'
+                ];
+            }
+        }
+        
+        return $usuarios_predefinidos;
+    }
+    
+    /**
+     * Obtener nombre del rol
+     * @param int $rol
+     * @return string
+     */
+    private function getNombreRol($rol) {
+        switch ($rol) {
+            case 1: return 'Administrador';
+            case 2: return 'Evaluador';
+            case 3: return 'Superadministrador';
+            default: return 'Desconocido';
         }
     }
 }
