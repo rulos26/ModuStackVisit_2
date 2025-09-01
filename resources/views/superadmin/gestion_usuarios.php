@@ -402,28 +402,25 @@ if (isset($_GET['mensaje'])) {
                                                     ?>
                                                     
                                                     <?php if ($esProtegido): ?>
-                                                        <!-- Usuario protegido - mostrar indicador y botones deshabilitados -->
+                                                        <!-- Usuario protegido - mostrar solo badge y botones deshabilitados -->
                                                         <div class="text-center">
                                                             <span class="badge bg-warning text-dark mb-2">
                                                                 <i class="bi bi-shield-lock me-1"></i>
-                                                                Usuario Protegido
+                                                                Protegido
                                                             </span>
                                                             <div class="btn-group" role="group">
                                                                 <button type="button" class="btn btn-sm btn-outline-secondary btn-action" disabled 
-                                                                        title="<?php echo htmlspecialchars($infoProteccion['mensaje'] ?? 'Usuario protegido del sistema'); ?>">
+                                                                        title="Usuario protegido del sistema">
                                                                     <i class="bi bi-pencil"></i>
                                                                 </button>
                                                                 <button type="button" class="btn btn-sm btn-outline-secondary btn-action" disabled 
-                                                                        title="<?php echo htmlspecialchars($infoProteccion['mensaje'] ?? 'Usuario protegido del sistema'); ?>">
+                                                                        title="Usuario protegido del sistema">
                                                                     <i class="bi bi-<?php echo $user['activo'] ? 'pause' : 'play'; ?>"></i>
                                                                 </button>
                                                                 <button type="button" class="btn btn-sm btn-outline-secondary btn-action" disabled 
-                                                                        title="<?php echo htmlspecialchars($infoProteccion['mensaje'] ?? 'Usuario protegido del sistema'); ?>">
+                                                                        title="Usuario protegido del sistema">
                                                                     <i class="bi bi-trash"></i>
                                                                 </button>
-                                                            </div>
-                                                            <div class="small text-muted mt-1">
-                                                                <?php echo htmlspecialchars($infoProteccion['mensaje'] ?? 'Usuario protegido del sistema'); ?>
                                                             </div>
                                                         </div>
                                                     <?php else: ?>
