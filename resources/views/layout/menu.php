@@ -150,6 +150,20 @@
                     Gestión de Usuarios
                 </a>
             </li>
+            <!-- Enlace a la gestión de opciones del sistema -->
+            <li>
+                <a href="/ModuStackVisit_2/resources/views/superadmin/gestion_opciones.php" class="nav-link link-dark">
+                    <i class="bi bi-gear me-2"></i>
+                    Gestión de Opciones
+                </a>
+            </li>
+            <!-- Enlace a la gestión de tablas principales -->
+            <li>
+                <a href="/ModuStackVisit_2/resources/views/superadmin/gestion_tablas_principales.php" class="nav-link link-dark">
+                    <i class="bi bi-database me-2"></i>
+                    Tablas Principales
+                </a>
+            </li>
         <?php
         } // Fin del bloque para el rol de Superadministrador
         ?>
