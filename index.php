@@ -1,7 +1,7 @@
 <?php
-// Habilitar reporte de errores para debug
+// Configuración de errores (ocultar detalles en la UI)
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 
 // Iniciar sesión
 session_start();
@@ -111,14 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     <?php endif; ?>
                     
-                    <!-- Mostrar información de debug si hay problemas -->
-                    <?php if (!file_exists($autoloadPath)): ?>
-                        <div class="alert alert-warning" role="alert">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                            <strong>Problema detectado:</strong> No se encontró el autoloader de Composer.
-                            <br>Ejecuta: <code>composer install</code> en la terminal.
-                        </div>
-                    <?php endif; ?>
+                    <!-- Info de diagnóstico deshabilitada en producción -->
                     
                     <form method="POST" action="">
                         <div class="form-floating">
@@ -147,19 +140,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <a href="#" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
                         </div>
                     </form>
-                    
-                    <!-- Información de debug -->
-                    <div class="mt-4 p-3 bg-light rounded">
-                        <small class="text-muted">
-                            <strong>Debug Info:</strong><br>
-                            Autoloader: <?php echo file_exists($autoloadPath) ? '✅ Cargado' : '❌ No encontrado'; ?><br>
-                            LoginController: <?php echo class_exists('\App\Controllers\LoginController') ? '✅ Disponible' : '❌ No disponible'; ?><br>
-                            PHP Version: <?php echo PHP_VERSION; ?><br>
-                            Session: <?php echo session_status() === PHP_SESSION_ACTIVE ? '✅ Activa' : '❌ Inactiva'; ?><br>
-                            Session User ID: <?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'No establecido'; ?><br>
-                            Session Rol: <?php echo isset($_SESSION['rol']) ? $_SESSION['rol'] : 'No establecido'; ?>
-                        </small>
-                    </div>
                 </div>
             </div>
         </div>
@@ -170,23 +150,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Custom JS -->
     <script src="public/js/theme.js"></script>
     <script src="public/js/show-password.js"></script>
-    
-    <!-- Script para mostrar/ocultar contraseña -->
-    <script>
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const password = document.getElementById('password');
-            const icon = this;
-            
-            if (password.type === 'password') {
-                password.type = 'text';
-                icon.classList.remove('bi-eye-slash');
-                icon.classList.add('bi-eye');
-            } else {
-                password.type = 'password';
-                icon.classList.remove('bi-eye');
-                icon.classList.add('bi-eye-slash');
-            }
-        });
-    </script>
 </body>
 </html> 
