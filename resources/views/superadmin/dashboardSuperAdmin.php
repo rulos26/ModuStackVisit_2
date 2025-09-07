@@ -92,6 +92,12 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
                         Reportes
                     </a>
                 </li>
+                <li>
+                    <a href="gestion_tablas_principales.php" class="nav-link text-white">
+                        <i class="bi bi-database me-2"></i>
+                        Tablas Principales
+                    </a>
+                </li>
             </ul>
             <hr>
             <div class="dropdown">
@@ -291,6 +297,14 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
                                         <a href="configuracion_sistema.php" class="btn btn-warning w-100">
                                             <i class="bi bi-gear me-2"></i>
                                             Configuración
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 mb-3">
+                                        <a href="gestion_tablas_principales.php" class="btn btn-danger w-100">
+                                            <i class="bi bi-database me-2"></i>
+                                            Tablas Principales
                                         </a>
                                     </div>
                                 </div>

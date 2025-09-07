@@ -195,6 +195,12 @@ $tablasValidas = array_keys($nombresTablas);
                         Reportes
                     </a>
                 </li>
+                <li>
+                    <a href="gestion_tablas_principales.php" class="nav-link text-white">
+                        <i class="bi bi-database me-2"></i>
+                        Tablas Principales
+                    </a>
+                </li>
             </ul>
             <hr>
             <div class="dropdown">
