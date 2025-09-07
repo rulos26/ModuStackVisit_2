@@ -1,224 +1,187 @@
-# Módulo de Explorador de Imágenes
+# Módulo Explorador de Imágenes
 
 ## Descripción
-Módulo completo para la exploración y gestión de imágenes en el servidor, con interfaz similar al explorador de Windows.
+Módulo completo para explorar y gestionar imágenes en el servidor, con interfaz similar al explorador de Windows. Solo accesible para superadministradores.
 
-## Características
+## Características Implementadas
 
-### 🗂️ **Exploración de Carpetas**
-- Navegación por carpetas y subcarpetas dentro de `public/images`
-- Vista tipo explorador de Windows con carpetas y archivos
-- Navegación con doble clic o botón "entrar"
-- Listado ordenado: carpetas primero, luego archivos
+### ✅ Navegación
+- **Vista tipo explorador de Windows**: Interfaz intuitiva con cuadrícula de archivos
+- **Navegación por carpetas**: Doble clic para entrar a carpetas
+- **Breadcrumb**: Muestra la ruta actual (public/images > eventos > enero)
+- **Botón Atrás**: Navegación hacia carpetas anteriores
+- **Botón Recargar**: Actualiza el contenido de la carpeta actual
 
-### 🖼️ **Visualización de Imágenes**
-- Miniaturas (thumbnails) para imágenes
-- Soporte para formatos: JPG, JPEG, PNG, GIF, BMP, WEBP
-- Iconos para archivos que no son imágenes
-- Nombres de archivos debajo de cada elemento
+### ✅ Visualización
+- **Miniaturas de imágenes**: Las imágenes se muestran como thumbnails
+- **Iconos por tipo**: Carpetas (verde), imágenes (azul), archivos (gris)
+- **Información de archivos**: Tamaño y fecha de modificación
+- **Vista de cuadrícula**: Layout responsivo tipo Windows Explorer
 
-### 🛠️ **Acciones Disponibles**
-- **Navegación**: Entrar a carpetas con doble clic
-- **Regresar**: Botón "Regresar" a carpeta anterior
-- **Eliminar**: Botón eliminar en cada imagen
-- **Recargar**: Botón para refrescar contenido
+### ✅ Gestión de Archivos
+- **Eliminación de imágenes**: Botón eliminar con confirmación
+- **Confirmación de eliminación**: Modal de confirmación antes de borrar
+- **Eliminación AJAX**: Sin recargar la página
+- **Feedback visual**: Mensajes de éxito/error
 
-### 🔒 **Seguridad**
-- Solo usuarios autenticados con rol **Administrador (rol = 1)** pueden acceder
-- Validación de rutas para evitar acceso fuera de `public/images`
-- Protección contra ataques de path traversal (`../`)
+### ✅ Seguridad
+- **Autenticación requerida**: Solo usuarios logueados
+- **Validación de rol**: Solo superadministradores (rol = 3)
+- **Validación de rutas**: Previene acceso fuera de public/images
+- **Sanitización de entrada**: Protección contra path traversal
+- **Logging**: Registro de todas las operaciones
 
-### 🎨 **Experiencia de Usuario**
-- Interfaz similar al explorador de Windows
-- Breadcrumb para mostrar ubicación actual
-- Vista en cuadrícula para carpetas y archivos
-- Confirmación antes de eliminar imágenes
-- Eliminación sin recargar página (AJAX)
+### ✅ Experiencia de Usuario
+- **Interfaz moderna**: Bootstrap 5 con iconos
+- **Responsive**: Funciona en desktop y móvil
+- **Animaciones**: Transiciones suaves y hover effects
+- **Mensajes informativos**: Feedback claro al usuario
+- **Estadísticas**: Contador de elementos por carpeta
 
-## Estructura de Archivos
+## Archivos Creados
+
+### 1. Controlador Principal
+**`app/Controllers/ExploradorImagenesController.php`**
+- Maneja toda la lógica del explorador
+- Validaciones de seguridad
+- Operaciones de archivos
+- Generación de breadcrumbs
+
+### 2. Vista Principal
+**`explorador_imagenes.php`**
+- Interfaz completa del explorador
+- JavaScript para navegación y AJAX
+- Estilos CSS personalizados
+- Integración con Bootstrap
+
+### 3. Procesador AJAX
+**`procesar_explorador_ajax.php`**
+- Maneja peticiones AJAX
+- Eliminación de archivos
+- Validaciones de seguridad
+- Respuestas JSON
+
+### 4. Integración en Menú
+**`resources/views/layout/menu.php`**
+- Enlace agregado al menú de superadministrador
+- Removido del menú de administrador
+
+## Estructura de Carpetas
 
 ```
-ModuStackVisit_2/
-├── app/Controllers/
-│   └── ExploradorImagenesController.php    # Controlador principal
-├── resources/views/
-│   ├── explorador_imagenes.php             # Vista principal
-│   └── procesar_explorador.php             # Procesador AJAX
-├── public/images/                          # Directorio base de imágenes
-│   ├── eventos/
-│   │   ├── enero/
-│   │   └── febrero/
-│   ├── productos/
-│   └── usuarios/
-├── explorador_imagenes.php                 # Punto de entrada
-└── procesar_explorador_ajax.php            # Punto de entrada AJAX
+public/images/
+├── eventos/
+│   ├── enero/
+│   │   └── evento1.txt
+│   └── febrero/
+│       └── evento2.txt
+├── productos/
+│   └── producto1.txt
+├── usuarios/
+├── header.jpg
+├── logo.jpg
+└── README.md
 ```
 
-## Instalación
+## Funcionalidades Técnicas
 
-### 1. **Crear Directorio Base**
-```bash
-mkdir -p public/images
-```
-
-### 2. **Configurar Permisos**
-Asegurar que el directorio `public/images` tenga permisos de escritura:
-```bash
-chmod 755 public/images
-```
-
-### 3. **Crear Estructura de Ejemplo**
-```bash
-mkdir -p public/images/eventos/enero
-mkdir -p public/images/eventos/febrero
-mkdir -p public/images/productos
-mkdir -p public/images/usuarios
-```
-
-## Uso
-
-### **Acceso al Módulo**
-1. Iniciar sesión como usuario con rol **Administrador (rol = 1)**
-2. En el menú lateral, hacer clic en **"Explorador de Imágenes"**
-3. Se abrirá la interfaz del explorador
-
-### **Navegación**
-- **Doble clic** en una carpeta para entrar
-- **Breadcrumb** para navegar a carpetas anteriores
-- **Botón Recargar** para refrescar el contenido
-
-### **Gestión de Imágenes**
-- **Eliminar**: Hacer clic en el botón de eliminar (🗑️) en cualquier imagen
-- **Confirmar**: Escribir la confirmación requerida
-- **Resultado**: La imagen se elimina del servidor y desaparece de la vista
-
-## API Endpoints
-
-### **GET** `/procesar_explorador.php?accion=obtener_contenido&ruta={ruta}`
-Obtiene el contenido de una carpeta.
-
-**Parámetros:**
-- `ruta`: Ruta relativa desde `public/images`
-
-**Respuesta:**
-```json
-{
-    "success": true,
-    "contenido": {
-        "carpetas": [
-            {
-                "nombre": "eventos",
-                "ruta": "eventos",
-                "tipo": "carpeta"
-            }
-        ],
-        "archivos": [
-            {
-                "nombre": "imagen.jpg",
-                "ruta": "imagen.jpg",
-                "tipo": "imagen",
-                "extension": "jpg",
-                "tamaño": 1024,
-                "fecha_modificacion": 1640995200
-            }
-        ]
-    },
-    "breadcrumb": [
-        {"nombre": "public/images", "ruta": ""},
-        {"nombre": "eventos", "ruta": "eventos"}
-    ],
-    "ruta_actual": "eventos"
-}
-```
-
-### **POST** `/procesar_explorador.php`
-Elimina una imagen del servidor.
-
-**Parámetros:**
-- `accion`: "eliminar_imagen"
-- `ruta`: Ruta relativa de la imagen a eliminar
-
-**Respuesta:**
-```json
-{
-    "success": true,
-    "mensaje": "Imagen eliminada correctamente"
-}
-```
-
-## Seguridad
-
-### **Validación de Rutas**
-- Todas las rutas se validan para asegurar que estén dentro de `public/images`
-- Se eliminan intentos de path traversal (`../`)
-- Se utiliza `realpath()` para normalizar rutas
-
-### **Control de Acceso**
-- Verificación de sesión activa
-- Validación de rol de usuario (solo Administrador)
-- Respuestas HTTP apropiadas para errores
-
-### **Sanitización**
-- Escape de caracteres especiales en nombres de archivos
-- Validación de extensiones de archivos
-- Limpieza de rutas de entrada
-
-## Personalización
-
-### **Formatos de Imagen Soportados**
-Modificar en `ExploradorImagenesController.php`:
+### Validaciones de Seguridad
 ```php
-$esImagen = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp']);
-```
+// Validación de rol
+if (!isset($_SESSION['rol']) || $_SESSION['rol'] != 3) {
+    throw new Exception('Acceso denegado');
+}
 
-### **Tamaño de Miniaturas**
-Modificar en `explorador_imagenes.php`:
-```css
-.thumbnail {
-    width: 100px;
-    height: 100px;
+// Validación de ruta
+private function validatePath($path) {
+    $fullPath = realpath($this->basePath . '/' . $path);
+    return strpos($fullPath, $this->basePath) === 0;
 }
 ```
 
-### **Directorio Base**
-Modificar en `ExploradorImagenesController.php`:
+### Tipos de Archivo Soportados
+- **Imágenes**: jpg, jpeg, png, gif, bmp, webp, svg
+- **Carpetas**: Navegación completa
+- **Otros archivos**: Visualización con icono genérico
+
+### Operaciones AJAX
+```javascript
+// Eliminación de archivo
+fetch('procesar_explorador_ajax.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'action=delete&path=' + encodeURIComponent(path)
+})
+```
+
+## Uso del Módulo
+
+### Acceso
+1. Iniciar sesión como superadministrador (rol = 3)
+2. Ir al menú lateral
+3. Hacer clic en "Explorador de Imágenes"
+
+### Navegación
+1. **Entrar a carpeta**: Doble clic en la carpeta
+2. **Volver atrás**: Botón "Atrás" o breadcrumb
+3. **Recargar**: Botón "Recargar"
+
+### Eliminación de Imágenes
+1. Hacer hover sobre la imagen
+2. Hacer clic en el botón rojo de eliminar
+3. Confirmar en el modal
+4. La imagen se elimina sin recargar la página
+
+## Configuración
+
+### Ruta Base
+La ruta base está configurada en el controlador:
 ```php
 $this->basePath = realpath(__DIR__ . '/../../public/images');
 ```
 
-## Solución de Problemas
+### Extensiones Permitidas
+```php
+$this->allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
+```
 
-### **Error: "Directorio de imágenes no encontrado"**
-- Verificar que existe el directorio `public/images`
-- Verificar permisos del directorio
+## Logs y Monitoreo
 
-### **Error: "Ruta no válida"**
-- Verificar que la ruta no contenga `../`
-- Verificar que la ruta esté dentro de `public/images`
+Todas las operaciones se registran en los logs del sistema:
+- Accesos al módulo
+- Eliminaciones de archivos
+- Errores de validación
+- Intentos de acceso no autorizado
 
-### **Error: "Acceso denegado"**
-- Verificar que el usuario esté autenticado
-- Verificar que el usuario tenga rol de Administrador (rol = 1)
+## Consideraciones de Seguridad
 
-### **Imágenes no se muestran**
-- Verificar que las imágenes estén en formatos soportados
-- Verificar permisos de lectura de archivos
-- Verificar que las rutas sean correctas
+1. **Path Traversal**: Prevenido con validación de rutas
+2. **Autenticación**: Verificación de sesión activa
+3. **Autorización**: Solo superadministradores
+4. **Sanitización**: Escape de HTML en nombres de archivos
+5. **Logging**: Registro de todas las operaciones
 
-## Mantenimiento
+## Mejoras Futuras Posibles
 
-### **Limpieza de Archivos**
-- El módulo no incluye funcionalidad de limpieza automática
-- Se recomienda implementar limpieza periódica de archivos huérfanos
+- [ ] Subida de archivos
+- [ ] Renombrado de archivos
+- [ ] Creación de carpetas
+- [ ] Vista previa de imágenes en modal
+- [ ] Búsqueda de archivos
+- [ ] Filtros por tipo de archivo
+- [ ] Ordenamiento por nombre/fecha/tamaño
+- [ ] Selección múltiple
+- [ ] Operaciones en lote
 
-### **Backup**
-- Realizar respaldos regulares del directorio `public/images`
-- Considerar implementar versionado de imágenes
+## Compatibilidad
 
-### **Monitoreo**
-- Monitorear el uso de espacio en disco
-- Implementar logs de eliminación de archivos
-- Monitorear accesos no autorizados
+- **PHP**: 7.4+
+- **Navegadores**: Chrome, Firefox, Safari, Edge
+- **Responsive**: Desktop, tablet, móvil
+- **Dependencias**: Bootstrap 5, Bootstrap Icons
 
-## Versión
-**v1.0** - Versión inicial con funcionalidades básicas de exploración y eliminación.
+---
+
+**Desarrollado por**: Sistema de Visitas  
+**Versión**: 1.0  
+**Fecha**: 2024

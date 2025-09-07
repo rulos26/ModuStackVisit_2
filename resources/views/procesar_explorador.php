@@ -197,3 +197,4 @@ function generarBreadcrumb($rutaActual) {
     return $breadcrumb;
 }
 ?>
+

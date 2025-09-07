@@ -1,256 +1,295 @@
 <?php
+/**
+ * CONTROLADOR DEL EXPLORADOR DE IMÁGENES
+ * Módulo para explorar y gestionar imágenes en el servidor
+ * 
+ * @author Sistema de Visitas
+ * @version 1.0
+ * @date 2024
+ */
 
-namespace App\Controllers;
+require_once __DIR__ . '/Logger.php';
 
-use App\Database\Database;
-use App\Services\LoggerService;
-
-class ExploradorImagenesController
-{
-    private $db;
+class ExploradorImagenesController {
     private $logger;
     private $basePath;
-
-    public function __construct()
-    {
-        $this->db = Database::getInstance();
-        $this->logger = new LoggerService();
+    private $allowedExtensions;
+    
+    public function __construct() {
+        $this->logger = new Logger();
         $this->basePath = realpath(__DIR__ . '/../../public/images');
+        $this->allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
+        
+        // Validar que la ruta base existe
+        if (!$this->basePath) {
+            throw new Exception('La ruta base de imágenes no existe');
+        }
     }
-
+    
     /**
-     * Mostrar la vista principal del explorador
+     * Validar que el usuario tiene permisos de superadministrador
      */
-    public function index()
-    {
-        session_start();
-        
-        // Verificar autenticación y rol administrador
-        if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 2) {
-            header('Location: ../../index.php');
-            exit();
+    private function validateSuperAdminAccess() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
-
-        $rutaActual = $_GET['ruta'] ?? '';
-        $rutaCompleta = $this->validarRuta($rutaActual);
         
-        $contenido = $this->obtenerContenidoCarpeta($rutaCompleta);
-        $breadcrumb = $this->generarBreadcrumb($rutaActual);
-        
-        include __DIR__ . '/../../resources/views/explorador_imagenes.php';
+        if (!isset($_SESSION['rol']) || $_SESSION['rol'] != 3) {
+            throw new Exception('Acceso denegado. Solo superadministradores pueden acceder a este módulo.');
+        }
     }
-
+    
     /**
-     * Obtener contenido de una carpeta via AJAX
+     * Validar que la ruta está dentro del directorio permitido
      */
-    public function obtenerContenido()
-    {
-        session_start();
+    private function validatePath($path) {
+        $fullPath = realpath($this->basePath . '/' . $path);
         
-        // Verificar autenticación y rol administrador
-        if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 2) {
-            http_response_code(403);
-            echo json_encode(['error' => 'Acceso denegado']);
-            exit();
+        if ($fullPath === false) {
+            return false;
         }
-
-        header('Content-Type: application/json; charset=utf-8');
-
-        try {
-            $rutaActual = $_GET['ruta'] ?? '';
-            $rutaCompleta = $this->validarRuta($rutaActual);
-            
-            $contenido = $this->obtenerContenidoCarpeta($rutaCompleta);
-            $breadcrumb = $this->generarBreadcrumb($rutaActual);
-            
-            echo json_encode([
-                'success' => true,
-                'contenido' => $contenido,
-                'breadcrumb' => $breadcrumb,
-                'ruta_actual' => $rutaActual
-            ], JSON_UNESCAPED_UNICODE);
-            
-        } catch (Exception $e) {
-            $this->logger->log('Error en obtenerContenido: ' . $e->getMessage(), 'error');
-            http_response_code(500);
-            echo json_encode(['error' => 'Error interno del servidor']);
-        }
+        
+        // Verificar que la ruta está dentro del directorio base
+        return strpos($fullPath, $this->basePath) === 0;
     }
-
-    /**
-     * Eliminar una imagen
-     */
-    public function eliminarImagen()
-    {
-        session_start();
-        
-        // Verificar autenticación y rol administrador
-        if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 2) {
-            http_response_code(403);
-            echo json_encode(['error' => 'Acceso denegado']);
-            exit();
-        }
-
-        header('Content-Type: application/json; charset=utf-8');
-
-        try {
-            $rutaImagen = $_POST['ruta'] ?? '';
-            
-            if (empty($rutaImagen)) {
-                http_response_code(400);
-                echo json_encode(['error' => 'Ruta de imagen no especificada']);
-                exit();
-            }
-
-            $rutaCompleta = $this->validarRuta($rutaImagen);
-            
-            if (!file_exists($rutaCompleta)) {
-                http_response_code(404);
-                echo json_encode(['error' => 'La imagen no existe']);
-                exit();
-            }
-
-            if (unlink($rutaCompleta)) {
-                $this->logger->log("Imagen eliminada: $rutaCompleta", 'info');
-                echo json_encode(['success' => true, 'mensaje' => 'Imagen eliminada correctamente']);
-            } else {
-                http_response_code(500);
-                echo json_encode(['error' => 'No se pudo eliminar la imagen']);
-            }
-            
-        } catch (Exception $e) {
-            $this->logger->log('Error en eliminarImagen: ' . $e->getMessage(), 'error');
-            http_response_code(500);
-            echo json_encode(['error' => 'Error interno del servidor']);
-        }
-    }
-
-    /**
-     * Validar que la ruta esté dentro de public/images
-     */
-    private function validarRuta($ruta)
-    {
-        // Limpiar la ruta
-        $ruta = trim($ruta, '/');
-        $ruta = str_replace('..', '', $ruta); // Eliminar intentos de salir del directorio
-        
-        $rutaCompleta = $this->basePath;
-        
-        if (!empty($ruta)) {
-            $rutaCompleta .= DIRECTORY_SEPARATOR . $ruta;
-        }
-        
-        // Verificar que la ruta esté dentro del directorio base
-        $rutaReal = realpath($rutaCompleta);
-        if ($rutaReal === false || strpos($rutaReal, $this->basePath) !== 0) {
-            throw new Exception('Ruta no válida');
-        }
-        
-        return $rutaReal;
-    }
-
+    
     /**
      * Obtener contenido de una carpeta
      */
-    private function obtenerContenidoCarpeta($rutaCompleta)
-    {
-        if (!is_dir($rutaCompleta)) {
-            throw new Exception('La carpeta no existe');
-        }
-
-        $contenido = [
-            'carpetas' => [],
-            'archivos' => []
-        ];
-
-        $items = scandir($rutaCompleta);
-        
-        foreach ($items as $item) {
-            if ($item === '.' || $item === '..') {
-                continue;
-            }
-
-            $rutaItem = $rutaCompleta . DIRECTORY_SEPARATOR . $item;
+    public function getFolderContent($relativePath = '') {
+        try {
+            $this->validateSuperAdminAccess();
             
-            if (is_dir($rutaItem)) {
-                $contenido['carpetas'][] = [
-                    'nombre' => $item,
-                    'ruta' => $this->obtenerRutaRelativa($rutaItem),
-                    'tipo' => 'carpeta'
-                ];
-            } else {
-                $extension = strtolower(pathinfo($item, PATHINFO_EXTENSION));
-                $esImagen = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp']);
+            // Limpiar la ruta
+            $relativePath = ltrim($relativePath, '/\\');
+            
+            // Validar la ruta
+            if (!$this->validatePath($relativePath)) {
+                throw new Exception('Ruta no válida o fuera del directorio permitido');
+            }
+            
+            $fullPath = $this->basePath . ($relativePath ? '/' . $relativePath : '');
+            
+            if (!is_dir($fullPath)) {
+                throw new Exception('La carpeta no existe');
+            }
+            
+            $items = [];
+            $directories = [];
+            $files = [];
+            
+            // Leer el contenido del directorio
+            $contents = scandir($fullPath);
+            
+            foreach ($contents as $item) {
+                if ($item === '.' || $item === '..') {
+                    continue;
+                }
                 
-                $contenido['archivos'][] = [
-                    'nombre' => $item,
-                    'ruta' => $this->obtenerRutaRelativa($rutaItem),
-                    'tipo' => $esImagen ? 'imagen' : 'archivo',
-                    'extension' => $extension,
-                    'tamaño' => filesize($rutaItem),
-                    'fecha_modificacion' => filemtime($rutaItem)
-                ];
-            }
-        }
-
-        // Ordenar: carpetas primero, luego archivos
-        usort($contenido['carpetas'], function($a, $b) {
-            return strcmp($a['nombre'], $b['nombre']);
-        });
-        
-        usort($contenido['archivos'], function($a, $b) {
-            return strcmp($a['nombre'], $b['nombre']);
-        });
-
-        return $contenido;
-    }
-
-    /**
-     * Obtener ruta relativa desde public/images
-     */
-    private function obtenerRutaRelativa($rutaCompleta)
-    {
-        $rutaRelativa = str_replace($this->basePath . DIRECTORY_SEPARATOR, '', $rutaCompleta);
-        return str_replace(DIRECTORY_SEPARATOR, '/', $rutaRelativa);
-    }
-
-    /**
-     * Generar breadcrumb
-     */
-    private function generarBreadcrumb($rutaActual)
-    {
-        $breadcrumb = [
-            ['nombre' => 'public/images', 'ruta' => '']
-        ];
-
-        if (!empty($rutaActual)) {
-            $partes = explode('/', trim($rutaActual, '/'));
-            $rutaAcumulada = '';
-            
-            foreach ($partes as $parte) {
-                if (!empty($parte)) {
-                    $rutaAcumulada .= ($rutaAcumulada ? '/' : '') . $parte;
-                    $breadcrumb[] = [
-                        'nombre' => $parte,
-                        'ruta' => $rutaAcumulada
+                $itemPath = $fullPath . '/' . $item;
+                $relativeItemPath = $relativePath ? $relativePath . '/' . $item : $item;
+                
+                if (is_dir($itemPath)) {
+                    $directories[] = [
+                        'name' => $item,
+                        'type' => 'directory',
+                        'path' => $relativeItemPath,
+                        'size' => $this->getDirectorySize($itemPath),
+                        'modified' => filemtime($itemPath)
+                    ];
+                } else {
+                    $extension = strtolower(pathinfo($item, PATHINFO_EXTENSION));
+                    $isImage = in_array($extension, $this->allowedExtensions);
+                    
+                    $files[] = [
+                        'name' => $item,
+                        'type' => $isImage ? 'image' : 'file',
+                        'path' => $relativeItemPath,
+                        'size' => filesize($itemPath),
+                        'modified' => filemtime($itemPath),
+                        'extension' => $extension,
+                        'isImage' => $isImage
                     ];
                 }
             }
+            
+            // Ordenar: carpetas primero, luego archivos
+            usort($directories, function($a, $b) {
+                return strcmp($a['name'], $b['name']);
+            });
+            
+            usort($files, function($a, $b) {
+                return strcmp($a['name'], $b['name']);
+            });
+            
+            $items = array_merge($directories, $files);
+            
+            return [
+                'success' => true,
+                'currentPath' => $relativePath,
+                'breadcrumb' => $this->generateBreadcrumb($relativePath),
+                'items' => $items,
+                'totalItems' => count($items)
+            ];
+            
+        } catch (Exception $e) {
+            $this->logger->logError('Error en getFolderContent: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
         }
-
+    }
+    
+    /**
+     * Eliminar un archivo
+     */
+    public function deleteFile($relativePath) {
+        try {
+            $this->validateSuperAdminAccess();
+            
+            // Limpiar la ruta
+            $relativePath = ltrim($relativePath, '/\\');
+            
+            // Validar la ruta
+            if (!$this->validatePath($relativePath)) {
+                throw new Exception('Ruta no válida o fuera del directorio permitido');
+            }
+            
+            $fullPath = $this->basePath . '/' . $relativePath;
+            
+            if (!file_exists($fullPath)) {
+                throw new Exception('El archivo no existe');
+            }
+            
+            if (is_dir($fullPath)) {
+                throw new Exception('No se puede eliminar carpetas con este método');
+            }
+            
+            // Eliminar el archivo
+            if (unlink($fullPath)) {
+                $this->logger->logInfo('Archivo eliminado: ' . $relativePath);
+                return [
+                    'success' => true,
+                    'message' => 'Archivo eliminado correctamente'
+                ];
+            } else {
+                throw new Exception('No se pudo eliminar el archivo');
+            }
+            
+        } catch (Exception $e) {
+            $this->logger->logError('Error en deleteFile: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+    
+    /**
+     * Generar breadcrumb
+     */
+    private function generateBreadcrumb($relativePath) {
+        $breadcrumb = [
+            ['name' => 'public/images', 'path' => '']
+        ];
+        
+        if ($relativePath) {
+            $parts = explode('/', $relativePath);
+            $currentPath = '';
+            
+            foreach ($parts as $part) {
+                $currentPath .= ($currentPath ? '/' : '') . $part;
+                $breadcrumb[] = [
+                    'name' => $part,
+                    'path' => $currentPath
+                ];
+            }
+        }
+        
         return $breadcrumb;
     }
-
+    
+    /**
+     * Obtener tamaño de directorio
+     */
+    private function getDirectorySize($path) {
+        $size = 0;
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
+        
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                $size += $file->getSize();
+            }
+        }
+        
+        return $size;
+    }
+    
     /**
      * Formatear tamaño de archivo
      */
-    public static function formatearTamaño($bytes)
-    {
-        $unidades = ['B', 'KB', 'MB', 'GB'];
+    public function formatFileSize($bytes) {
+        $units = ['B', 'KB', 'MB', 'GB'];
         $bytes = max($bytes, 0);
-        $potencia = floor(($bytes ? log($bytes) : 0) / log(1024));
-        $potencia = min($potencia, count($unidades) - 1);
-        $bytes /= pow(1024, $potencia);
-        return round($bytes, 2) . ' ' . $unidades[$potencia];
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        
+        $bytes /= pow(1024, $pow);
+        
+        return round($bytes, 2) . ' ' . $units[$pow];
+    }
+    
+    /**
+     * Obtener información de una imagen
+     */
+    public function getImageInfo($relativePath) {
+        try {
+            $this->validateSuperAdminAccess();
+            
+            $relativePath = ltrim($relativePath, '/\\');
+            
+            if (!$this->validatePath($relativePath)) {
+                throw new Exception('Ruta no válida');
+            }
+            
+            $fullPath = $this->basePath . '/' . $relativePath;
+            
+            if (!file_exists($fullPath) || !is_file($fullPath)) {
+                throw new Exception('El archivo no existe');
+            }
+            
+            $extension = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+            
+            if (!in_array($extension, $this->allowedExtensions)) {
+                throw new Exception('El archivo no es una imagen válida');
+            }
+            
+            $imageInfo = getimagesize($fullPath);
+            
+            if ($imageInfo === false) {
+                throw new Exception('No se pudo obtener información de la imagen');
+            }
+            
+            return [
+                'success' => true,
+                'info' => [
+                    'width' => $imageInfo[0],
+                    'height' => $imageInfo[1],
+                    'type' => $imageInfo[2],
+                    'mime' => $imageInfo['mime'],
+                    'size' => filesize($fullPath),
+                    'modified' => filemtime($fullPath)
+                ]
+            ];
+            
+        } catch (Exception $e) {
+            $this->logger->logError('Error en getImageInfo: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
     }
 }
+?>

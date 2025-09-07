@@ -577,3 +577,4 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 2) {
     </script>
 </body>
 </html>
+
