@@ -232,9 +232,17 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                 <div class="row mb-4">
                     <div class="col-12">
                         <div class="d-flex justify-content-between">
-                            <a href="diagnostico_tablas.php" class="btn btn-info">
-                                <i class="bi bi-search"></i> Diagnóstico de Base de Datos
-                            </a>
+                            <div>
+                                <a href="diagnostico_tablas.php" class="btn btn-info me-2">
+                                    <i class="bi bi-search"></i> Diagnóstico de Base de Datos
+                                </a>
+                                <a href="test_conexion.php" class="btn btn-warning me-2">
+                                    <i class="bi bi-tools"></i> Test de Conexión
+                                </a>
+                                <a href="test_simple.php" class="btn btn-secondary">
+                                    <i class="bi bi-gear"></i> Test Simple
+                                </a>
+                            </div>
                             <button class="btn btn-danger btn-lg" onclick="confirmarVaciarTablas()">
                                 <i class="bi bi-trash3"></i> Vaciar Tablas
                             </button>

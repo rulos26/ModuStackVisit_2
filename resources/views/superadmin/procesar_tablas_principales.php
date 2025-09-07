@@ -1,4 +1,8 @@
 <?php
+// Habilitar reporte de errores para debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 0); // No mostrar errores en la respuesta JSON
+
 session_start();
 
 // Verificar que el usuario esté autenticado y sea Superadministrador
@@ -8,14 +12,29 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
     exit();
 }
 
-require_once __DIR__ . '/../../app/Controllers/TablasPrincipalesController.php';
-require_once __DIR__ . '/../../app/Services/LoggerService.php';
-
-use App\Controllers\TablasPrincipalesController;
-use App\Services\LoggerService;
-
-$controller = new TablasPrincipalesController();
-$logger = new LoggerService();
+try {
+    // Cargar autoloader primero
+    require_once __DIR__ . '/../../vendor/autoload.php';
+    
+    // Cargar clases específicas
+    require_once __DIR__ . '/../../app/Controllers/TablasPrincipalesController.php';
+    require_once __DIR__ . '/../../app/Services/LoggerService.php';
+    
+    use App\Controllers\TablasPrincipalesController;
+    use App\Services\LoggerService;
+    
+    $controller = new TablasPrincipalesController();
+    $logger = new LoggerService();
+    
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'error' => 'Error cargando clases: ' . $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine()
+    ]);
+    exit();
+}
 
 // Obtener la acción solicitada
 $accion = $_POST['accion'] ?? '';
