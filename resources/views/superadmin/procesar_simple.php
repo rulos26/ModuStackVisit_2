@@ -96,16 +96,22 @@ try {
             
             // Verificar en tablas relacionadas
             foreach ($tablasRelacionadas as $tabla) {
-                // Verificar si la tabla existe
-                $stmt = $pdo->query("SHOW TABLES LIKE '$tabla'");
-                if ($stmt->rowCount() > 0) {
-                    // Verificar si tiene datos para este id_cedula
-                    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM $tabla WHERE id_cedula = ?");
-                    $stmt->execute([$idCedula]);
-                    $result = $stmt->fetch();
-                    if ($result['count'] > 0) {
-                        $tablasConDatos[] = $tabla;
+                try {
+                    // Verificar si la tabla existe
+                    $stmt = $pdo->query("SHOW TABLES LIKE '$tabla'");
+                    if ($stmt->rowCount() > 0) {
+                        // Verificar si tiene datos para este id_cedula
+                        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM `$tabla` WHERE id_cedula = ?");
+                        $stmt->execute([$idCedula]);
+                        $result = $stmt->fetch();
+                        if ($result['count'] > 0) {
+                            $tablasConDatos[] = $tabla;
+                        }
                     }
+                } catch (Exception $e) {
+                    // Si hay error con una tabla específica, continuar con las demás
+                    error_log("Error verificando tabla $tabla: " . $e->getMessage());
+                    continue;
                 }
             }
             

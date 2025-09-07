@@ -236,6 +236,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                                 <a href="gestion_tablas_simple.php" class="btn btn-success me-2">
                                     <i class="bi bi-lightning"></i> Versión Simple
                                 </a>
+                                <a href="test_tablas_relacionadas.php" class="btn btn-warning me-2">
+                                    <i class="bi bi-table"></i> Test Tablas
+                                </a>
                                 <a href="test_funcionalidad.php" class="btn btn-primary me-2">
                                     <i class="bi bi-play-circle"></i> Test Funcionalidad
                                 </a>
@@ -561,7 +564,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
             })
             .catch(error => {
                 console.error('Error:', error);
-                mostrarError('Error al verificar las tablas');
+                mostrarError('Error al verificar las tablas: ' + error.message + '<br><br>Haz clic en "Test Tablas" para diagnosticar el problema.');
             });
         }
         
