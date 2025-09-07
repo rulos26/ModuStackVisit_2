@@ -2,6 +2,8 @@
 // Habilitar reporte de errores para debugging
 error_reporting(E_ALL);
 ini_set('display_errors', 0); // No mostrar errores en la respuesta JSON
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/../../logs/php_errors.log');
 
 session_start();
 
@@ -29,13 +31,17 @@ try {
     $logger = new LoggerService();
     
 } catch (Exception $e) {
+    // Log del error
+    error_log("Error cargando clases en procesar_tablas_principales.php: " . $e->getMessage() . " en línea " . $e->getLine());
+    
     // Si falla la carga de clases, usar procesador simple como fallback
     http_response_code(500);
+    header('Content-Type: application/json; charset=utf-8');
     echo json_encode([
         'error' => 'Error cargando clases del framework. Usando procesador simple como fallback.',
         'fallback' => true,
         'original_error' => $e->getMessage()
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
     exit();
 }
 
@@ -105,15 +111,22 @@ try {
     }
     
 } catch (Exception $e) {
-    $logger->error('Error en procesar_tablas_principales', [
-        'accion' => $accion,
-        'error' => $e->getMessage(),
-        'usuario' => $_SESSION['username'] ?? 'unknown'
-    ]);
+    // Log del error
+    error_log("Error en procesar_tablas_principales.php: " . $e->getMessage() . " en línea " . $e->getLine());
     
-    http_response_code(400);
+    if (isset($logger)) {
+        $logger->error('Error en procesar_tablas_principales', [
+            'accion' => $accion,
+            'error' => $e->getMessage(),
+            'usuario' => $_SESSION['username'] ?? 'unknown'
+        ]);
+    }
+    
+    http_response_code(500);
+    header('Content-Type: application/json; charset=utf-8');
     echo json_encode([
-        'error' => $e->getMessage(),
-        'accion' => $accion
-    ]);
+        'error' => 'Error interno del servidor: ' . $e->getMessage(),
+        'accion' => $accion,
+        'fallback' => true
+    ], JSON_UNESCAPED_UNICODE);
 }
