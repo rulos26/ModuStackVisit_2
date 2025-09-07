@@ -125,6 +125,18 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
                                 Configuración
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../layout/dashboard.php">
+                                <i class="bi bi-layout-text-sidebar me-2"></i>
+                                Layout Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../../dashboard.php">
+                                <i class="bi bi-speedometer2 me-2"></i>
+                                Demo Dashboard raíz
+                            </a>
+                        </li>
                         <li class="nav-item mt-4">
                             <a class="nav-link text-warning" href="../../../logout.php">
                                 <i class="bi bi-box-arrow-right me-2"></i>

@@ -57,6 +57,18 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
                     </a>
                 </li>
                 <li>
+                    <a href="../layout/dashboard.php" class="nav-link text-white">
+                        <i class="bi bi-layout-text-sidebar me-2"></i>
+                        Layout Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="../../../dashboard.php" class="nav-link text-white">
+                        <i class="bi bi-speedometer2 me-2"></i>
+                        Demo Dashboard raíz
+                    </a>
+                </li>
+                <li>
                     <a href="gestion_usuarios.php" class="nav-link text-white">
                         <i class="bi bi-people me-2"></i>
                         Gestión de Usuarios
