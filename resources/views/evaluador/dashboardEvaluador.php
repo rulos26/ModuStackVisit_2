@@ -126,7 +126,7 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
                             </a>
                         </li>
                         <li class="nav-item mt-4">
-                            <a class="nav-link text-warning" href="../../logout.php">
+                            <a class="nav-link text-warning" href="../../../logout.php">
                                 <i class="bi bi-box-arrow-right me-2"></i>
                                 Cerrar Sesión
                             </a>

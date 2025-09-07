@@ -28,7 +28,7 @@
 
             <!-- Botón de cerrar sesión -->
             <form class="d-flex">
-                <a href="../../login/logout.php" class="btn btn-outline-danger me-2" type="submit">Cerrar Sesión</a>
+                <a href="../../../../../../logout.php" class="btn btn-outline-danger me-2" type="submit">Cerrar Sesión</a>
             </form>
 
             <!-- Menú desplegable -->
