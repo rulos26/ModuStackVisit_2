@@ -189,6 +189,100 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                 </li>
             </ul>
             <hr>
+            <h6 class="text-white-50 mb-3">Herramientas de Diagnóstico</h6>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li>
+                    <a href="gestion_tablas_simple.php" class="nav-link text-white">
+                        <i class="bi bi-lightning me-2"></i>
+                        Versión Simple
+                    </a>
+                </li>
+                <li>
+                    <a href="test_final.php" class="nav-link text-white">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Test Final
+                    </a>
+                </li>
+                <li>
+                    <a href="test_funcionamiento.php" class="nav-link text-white">
+                        <i class="bi bi-check2-circle me-2"></i>
+                        Test Funcionamiento
+                    </a>
+                </li>
+                <li>
+                    <a href="test_estructura_real.php" class="nav-link text-white">
+                        <i class="bi bi-folder-open me-2"></i>
+                        Test Estructura Real
+                    </a>
+                </li>
+                <li>
+                    <a href="test_estructura_servidor.php" class="nav-link text-white">
+                        <i class="bi bi-folder me-2"></i>
+                        Test Estructura
+                    </a>
+                </li>
+                <li>
+                    <a href="test_configuracion.php" class="nav-link text-white">
+                        <i class="bi bi-gear-fill me-2"></i>
+                        Test Configuración
+                    </a>
+                </li>
+                <li>
+                    <a href="test_basico_error.php" class="nav-link text-white">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        Test Básico Error
+                    </a>
+                </li>
+                <li>
+                    <a href="test_error_500.php" class="nav-link text-white">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Test Error 500
+                    </a>
+                </li>
+                <li>
+                    <a href="test_procesador_simple.php" class="nav-link text-white">
+                        <i class="bi bi-bug me-2"></i>
+                        Test Procesador
+                    </a>
+                </li>
+                <li>
+                    <a href="test_tablas_relacionadas.php" class="nav-link text-white">
+                        <i class="bi bi-table me-2"></i>
+                        Test Tablas
+                    </a>
+                </li>
+                <li>
+                    <a href="test_funcionalidad.php" class="nav-link text-white">
+                        <i class="bi bi-play-circle me-2"></i>
+                        Test Funcionalidad
+                    </a>
+                </li>
+                <li>
+                    <a href="test_basico.php" class="nav-link text-white">
+                        <i class="bi bi-check-circle me-2"></i>
+                        Test Básico
+                    </a>
+                </li>
+                <li>
+                    <a href="diagnostico_tablas.php" class="nav-link text-white">
+                        <i class="bi bi-search me-2"></i>
+                        Diagnóstico de Base de Datos
+                    </a>
+                </li>
+                <li>
+                    <a href="test_conexion.php" class="nav-link text-white">
+                        <i class="bi bi-tools me-2"></i>
+                        Test de Conexión
+                    </a>
+                </li>
+                <li>
+                    <a href="test_simple.php" class="nav-link text-white">
+                        <i class="bi bi-gear me-2"></i>
+                        Test Simple
+                    </a>
+                </li>
+            </ul>
+            <hr>
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-person-circle me-2"></i>
@@ -231,58 +325,11 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                 <!-- Botones de Acción -->
                     <div class="row mb-4">
                         <div class="col-12">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <a href="gestion_tablas_simple.php" class="btn btn-success me-2">
-                                    <i class="bi bi-lightning"></i> Versión Simple
-                                </a>
-                                <a href="test_funcionamiento.php" class="btn btn-success me-2">
-                                    <i class="bi bi-check2-circle"></i> Test Funcionamiento
-                                </a>
-                                <a href="test_final.php" class="btn btn-success me-2">
-                                    <i class="bi bi-check-circle-fill"></i> Test Final
-                                </a>
-                                <a href="test_estructura_real.php" class="btn btn-info me-2">
-                                    <i class="bi bi-folder-open"></i> Test Estructura Real
-                                </a>
-                                <a href="test_estructura_servidor.php" class="btn btn-info me-2">
-                                    <i class="bi bi-folder"></i> Test Estructura
-                                </a>
-                                <a href="test_configuracion.php" class="btn btn-warning me-2">
-                                    <i class="bi bi-gear-fill"></i> Test Configuración
-                                </a>
-                                <a href="test_basico_error.php" class="btn btn-danger me-2">
-                                    <i class="bi bi-exclamation-circle"></i> Test Básico Error
-                                </a>
-                                <a href="test_error_500.php" class="btn btn-danger me-2">
-                                    <i class="bi bi-exclamation-triangle"></i> Test Error 500
-                                </a>
-                                <a href="test_procesador_simple.php" class="btn btn-danger me-2">
-                                    <i class="bi bi-bug"></i> Test Procesador
-                                </a>
-                                <a href="test_tablas_relacionadas.php" class="btn btn-warning me-2">
-                                    <i class="bi bi-table"></i> Test Tablas
-                                </a>
-                                <a href="test_funcionalidad.php" class="btn btn-primary me-2">
-                                    <i class="bi bi-play-circle"></i> Test Funcionalidad
-                                </a>
-                                <a href="test_basico.php" class="btn btn-success me-2">
-                                    <i class="bi bi-check-circle"></i> Test Básico
-                                </a>
-                                <a href="diagnostico_tablas.php" class="btn btn-info me-2">
-                                    <i class="bi bi-search"></i> Diagnóstico de Base de Datos
-                                </a>
-                                <a href="test_conexion.php" class="btn btn-warning me-2">
-                                    <i class="bi bi-tools"></i> Test de Conexión
-                                </a>
-                                <a href="test_simple.php" class="btn btn-secondary">
-                                    <i class="bi bi-gear"></i> Test Simple
-                                </a>
-                            </div>
+                        <div class="d-flex justify-content-end">
                             <button class="btn btn-danger btn-lg" onclick="confirmarVaciarTablas()">
                                 <i class="bi bi-trash3"></i> Vaciar Tablas
-                                                        </button>
-                                                </div>
+                            </button>
+                        </div>
                                             </div>
                                         </div>
                                         
