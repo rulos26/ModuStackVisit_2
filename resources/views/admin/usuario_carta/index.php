@@ -128,7 +128,7 @@ if ($result_autorizaciones) {
                             <i class="fas fa-clipboard-check me-2"></i>Usuarios Evaluación
                         </a>
                         <hr class="text-white">
-                        <a class="nav-link text-white" href="/ModuStackVisit_2/public/logout.php">
+                        <a class="nav-link text-white" href="/ModuStackVisit_2/logout.php">
                             <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
                         </a>
                     </nav>

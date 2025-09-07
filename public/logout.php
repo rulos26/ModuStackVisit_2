@@ -18,6 +18,6 @@ if (ini_get("session.use_cookies")) {
 // Finalmente, destruir la sesión
 session_destroy();
 
-// Redirigir al login
-header('Location: /ModuStackVisit_2/public/login.php');
+// Redirigir al logout principal de la raíz
+header('Location: /ModuStackVisit_2/logout.php');
 exit(); 

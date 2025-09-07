@@ -26,6 +26,6 @@ if (ini_get("session.use_cookies")) {
 session_destroy();
 
 // Redirigir al login
-header('Location: index.php');
+header('Location: /ModuStackVisit_2/index.php');
 exit();
 ?>
