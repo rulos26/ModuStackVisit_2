@@ -14,7 +14,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
 
 try {
     // Cargar autoloader primero
-    require_once __DIR__ . '/../../vendor/autoload.php';
+    if (file_exists(__DIR__ . '/../../vendor/autoload.php')) {
+        require_once __DIR__ . '/../../vendor/autoload.php';
+    }
     
     // Cargar clases específicas
     require_once __DIR__ . '/../../app/Controllers/TablasPrincipalesController.php';
@@ -27,11 +29,12 @@ try {
     $logger = new LoggerService();
     
 } catch (Exception $e) {
+    // Si falla la carga de clases, usar procesador simple como fallback
     http_response_code(500);
     echo json_encode([
-        'error' => 'Error cargando clases: ' . $e->getMessage(),
-        'file' => $e->getFile(),
-        'line' => $e->getLine()
+        'error' => 'Error cargando clases del framework. Usando procesador simple como fallback.',
+        'fallback' => true,
+        'original_error' => $e->getMessage()
     ]);
     exit();
 }

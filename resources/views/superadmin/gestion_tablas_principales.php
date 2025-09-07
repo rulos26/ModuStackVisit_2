@@ -418,36 +418,78 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
             })
             .then(data => {
                 if (data.error) {
+                    if (data.fallback) {
+                        // Si hay error del framework, usar procesador simple
+                        console.log('Usando procesador simple como fallback');
+                        cargarUsuariosConProcesadorSimple();
+                        return;
+                    }
                     mostrarError(`Error: ${data.error}<br><br>Haz clic en "Diagnóstico de Base de Datos" para más información.`);
                     return;
                 }
                 
-                const tbody = document.getElementById('tbodyUsuarios');
-                tbody.innerHTML = '';
-                
-                if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No hay usuarios evaluados</td></tr>';
+                mostrarUsuarios(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Si falla completamente, intentar con procesador simple
+                console.log('Error en procesador principal, intentando con procesador simple');
+                cargarUsuariosConProcesadorSimple();
+            });
+        }
+        
+        // Cargar usuarios con procesador simple
+        function cargarUsuariosConProcesadorSimple() {
+            fetch('procesar_simple.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'accion=obtener_usuarios_evaluados'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    mostrarError(`Error: ${data.error}<br><br>Haz clic en "Test Básico" para más información.`);
                     return;
                 }
                 
-                data.forEach(usuario => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${usuario.id_cedula}</td>
-                        <td>${usuario.nombres}</td>
-                        <td>${usuario.apellidos}</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm" onclick="confirmarEliminarUsuario(${usuario.id_cedula}, '${usuario.nombres} ${usuario.apellidos}')">
-                                <i class="bi bi-trash"></i> Eliminar
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
+                mostrarUsuarios(data);
             })
             .catch(error => {
                 console.error('Error:', error);
                 mostrarError(`Error de conexión: ${error.message}<br><br>Verifica la conexión a la base de datos.`);
+            });
+        }
+        
+        // Mostrar usuarios en la tabla
+        function mostrarUsuarios(data) {
+            const tbody = document.getElementById('tbodyUsuarios');
+            tbody.innerHTML = '';
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No hay usuarios evaluados</td></tr>';
+                return;
+            }
+            
+            data.forEach(usuario => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${usuario.id_cedula}</td>
+                    <td>${usuario.nombres}</td>
+                    <td>${usuario.apellidos}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="confirmarEliminarUsuario(${usuario.id_cedula}, '${usuario.nombres} ${usuario.apellidos}')">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
             });
         }
         
@@ -470,21 +512,49 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
             })
             .then(response => response.json())
             .then(data => {
+                if (data.error && data.fallback) {
+                    // Si hay error del framework, usar procesador simple
+                    return fetch('procesar_simple.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `accion=verificar_tablas_con_datos&id_cedula=${idCedula}`
+                    }).then(response => response.json());
+                }
+                return data;
+            })
+            .then(data => {
                 if (data.error) {
                     mostrarError(data.error);
                     return;
                 }
                 
                 const tablasConDatos = document.getElementById('tablasConDatos');
-                if (Object.keys(data).length === 0) {
-                    tablasConDatos.innerHTML = '<p class="text-muted">No se encontraron datos asociados a este usuario.</p>';
+                if (Array.isArray(data)) {
+                    // Formato del procesador simple (array de strings)
+                    if (data.length === 0) {
+                        tablasConDatos.innerHTML = '<p class="text-muted">No se encontraron datos asociados a este usuario.</p>';
+                    } else {
+                        let html = '<h6>Tablas que contienen datos:</h6><ul class="list-group">';
+                        data.forEach(tabla => {
+                            html += `<li class="list-group-item">${tabla}</li>`;
+                        });
+                        html += '</ul>';
+                        tablasConDatos.innerHTML = html;
+                    }
                 } else {
-                    let html = '<h6>Tablas que contienen datos:</h6><ul class="list-group">';
-                    Object.entries(data).forEach(([tabla, cantidad]) => {
-                        html += `<li class="list-group-item d-flex justify-content-between"><span>${tabla}</span><span class="badge bg-primary">${cantidad} registros</span></li>`;
-                    });
-                    html += '</ul>';
-                    tablasConDatos.innerHTML = html;
+                    // Formato del procesador original (objeto con cantidades)
+                    if (Object.keys(data).length === 0) {
+                        tablasConDatos.innerHTML = '<p class="text-muted">No se encontraron datos asociados a este usuario.</p>';
+                    } else {
+                        let html = '<h6>Tablas que contienen datos:</h6><ul class="list-group">';
+                        Object.entries(data).forEach(([tabla, cantidad]) => {
+                            html += `<li class="list-group-item d-flex justify-content-between"><span>${tabla}</span><span class="badge bg-primary">${cantidad} registros</span></li>`;
+                        });
+                        html += '</ul>';
+                        tablasConDatos.innerHTML = html;
+                    }
                 }
                 
                 modalEliminarUsuario.show();
