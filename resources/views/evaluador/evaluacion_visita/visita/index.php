@@ -46,7 +46,10 @@ ob_start();
         <h5 class="card-title">VISITA DOMICILIARÍA</h5>
         <div class="alert alert-info">
             <strong>PROTECCIÓN DE DATOS PERSONALES:</strong>
-            Al suministrar sus datos personales en este formulario AUTORIZA su tratamiento de forma expresa y voluntaria a la empresa Grupo de Tareas Empresariales. Le informamos que estos serán tratados conforme a lo previsto en la ley 1581 del 2012 y serán incluidos en una base de datos cuyo responsable es Grupo de Tareas Empresariales. La finalidad de la recolección es la gestión de siniestros y el trámite de reclamos ante las compañías de seguros. Usted podrá revocar su autorización en cualquier momento, consultar su información personal y ejercer sus derechos de conocer, actualizar, rectificar, corregir, suprimir o revocar su autorización enviando un email a: grpte@hotmail.com
+            Al suministrar sus datos personales en este formulario AUTORIZA su tratamiento de forma expresa y voluntaria a la empresa Grupo de Tareas Empresariales. 
+            Le informamos que estos serán tratados conforme a lo previsto en la ley 1581 del 2012 y 
+            serán incluidos en una base de datos cuyo responsable es Grupo de Tareas Empresariales. 
+            La finalidad de la recolección es para proceso que llevaen curso con la entidad. Usted podrá revocar su autorización en cualquier momento, consultar su información personal y ejercer sus derechos de conocer, actualizar, rectificar, corregir, suprimir o revocar su autorización enviando un email a: grpte@hotmail.com
         </div>
         <form action="session.php" method="POST" id="formDocumento" autocomplete="off">
             <div class="mb-3">
