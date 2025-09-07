@@ -228,229 +228,138 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
 
             <!-- Contenido del dashboard -->
             <div class="container-fluid py-4">
-                    
-                    <!-- Estadísticas Generales -->
-                    <div class="row mb-4" id="estadisticasGenerales" style="display: none;">
-                        <div class="col-12">
-                            <div class="card stats-card">
-                                <div class="card-body">
-                                    <div class="row text-center">
-                                        <div class="col-md-4">
-                                            <div class="stats-number" id="totalTablas">0</div>
-                                            <small>Total de Tablas</small>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="stats-number" id="totalRegistros">0</div>
-                                            <small>Total de Registros</small>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="stats-number" id="tablasConCedula">0</div>
-                                            <small>Tablas con Cédula</small>
-                                        </div>
-                                    </div>
+                <!-- Botón Vaciar Tablas -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-danger btn-lg" onclick="confirmarVaciarTablas()">
+                                <i class="bi bi-trash3"></i> Vaciar Tablas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tabla de Usuarios Evaluados -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-people"></i> Usuarios Evaluados
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover" id="tablaUsuarios">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>ID Cédula</th>
+                                                <th>Nombres</th>
+                                                <th>Apellidos</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodyUsuarios">
+                                            <!-- Los usuarios se cargarán aquí -->
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Selector de Tabla -->
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title">
-                                        <i class="bi bi-table"></i> Seleccionar Tabla
-                                    </h6>
-                                    <select class="form-select" id="selectorTabla" onchange="cargarEstadisticasTabla()">
-                                        <option value="">Selecciona una tabla...</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title">
-                                        <i class="bi bi-info-circle"></i> Información de la Tabla
-                                    </h6>
-                                    <div id="infoTabla">
-                                        <p class="text-muted mb-0">Selecciona una tabla para ver su información</p>
-                                    </div>
+                </div>
+                
+                <!-- Resultados -->
+                <div class="row mt-4" id="resultados" style="display: none;">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="bi bi-clipboard-check"></i> Resultados de la Operación
+                                </h6>
+                                <div id="contenidoResultados">
+                                    <!-- Los resultados se mostrarán aquí -->
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Estadísticas de Tabla Seleccionada -->
-                    <div class="row mb-4" id="estadisticasTabla" style="display: none;">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title">
-                                        <i class="bi bi-bar-chart"></i> Estadísticas de la Tabla
-                                    </h6>
-                                    <div class="row" id="statsTabla">
-                                        <!-- Las estadísticas se cargarán aquí -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Acciones -->
-                    <div class="row mb-4" id="accionesTabla" style="display: none;">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title">
-                                        <i class="bi bi-tools"></i> Acciones Disponibles
-                                    </h6>
-                                    
-                                    <!-- Eliminar por Cédula -->
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <div class="card border-warning">
-                                                <div class="card-body">
-                                                    <h6 class="card-title text-warning">
-                                                        <i class="bi bi-person-x"></i> Eliminar por Cédula
-                                                    </h6>
-                                                    <p class="card-text small">Elimina todos los registros asociados a una cédula específica en esta tabla.</p>
-                                                    
-                                                    <div class="input-group mb-2">
-                                                        <input type="number" class="form-control" id="cedulaEliminar" placeholder="Número de cédula">
-                                                        <button class="btn btn-warning" onclick="eliminarPorCedula()">
-                                                            <i class="bi bi-trash"></i> Eliminar
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-6">
-                                            <div class="card border-danger">
-                                                <div class="card-body">
-                                                    <h6 class="card-title text-danger">
-                                                        <i class="bi bi-trash"></i> Truncar Tabla
-                                                    </h6>
-                                                    <p class="card-text small">Elimina TODOS los registros de esta tabla. Esta acción no se puede deshacer.</p>
-                                                    
-                                                    <button class="btn btn-danger" onclick="confirmarTruncarTabla()">
-                                                        <i class="bi bi-exclamation-triangle"></i> Truncar Tabla
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Eliminación Masiva -->
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="card border-danger">
-                                                <div class="card-body">
-                                                    <h6 class="card-title text-danger">
-                                                        <i class="bi bi-exclamation-triangle"></i> Eliminación Masiva por Cédula
-                                                    </h6>
-                                                    <p class="card-text small">
-                                                        <strong>⚠️ ADVERTENCIA:</strong> Esta acción eliminará TODOS los registros asociados a una cédula 
-                                                        en TODAS las tablas del sistema. Esta operación es irreversible.
-                                                    </p>
-                                                    
-                                                    <div class="input-group">
-                                                        <input type="number" class="form-control" id="cedulaEliminacionMasiva" placeholder="Número de cédula">
-                                                        <button class="btn btn-danger" onclick="confirmarEliminacionMasiva()">
-                                                            <i class="bi bi-exclamation-triangle"></i> Eliminación Masiva
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Resultados -->
-                    <div class="row" id="resultados" style="display: none;">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title">
-                                        <i class="bi bi-clipboard-check"></i> Resultados de la Operación
-                                    </h6>
-                                    <div id="contenidoResultados">
-                                        <!-- Los resultados se mostrarán aquí -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Modal de Confirmación para Truncar -->
-    <div class="modal fade" id="modalTruncarTabla" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="bi bi-exclamation-triangle"></i> Confirmar Truncamiento
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-danger">
-                        <strong>⚠️ ADVERTENCIA CRÍTICA:</strong>
-                        <p class="mb-0">Estás a punto de eliminar TODOS los registros de la tabla <strong id="nombreTablaTruncar"></strong>.</p>
-                        <p class="mb-0">Esta acción es <strong>IRREVERSIBLE</strong> y no se puede deshacer.</p>
-                    </div>
-                    
-                    <p>Para confirmar, escribe exactamente: <code>TRUNCAR_TABLA_COMPLETA</code></p>
-                    
-                    <input type="text" class="form-control" id="confirmacionTruncar" placeholder="Escribe la confirmación">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" onclick="truncarTabla()">
-                        <i class="bi bi-trash"></i> Truncar Tabla
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Modal de Confirmación para Eliminación Masiva -->
-    <div class="modal fade" id="modalEliminacionMasiva" tabindex="-1">
+    <!-- Modal de Confirmación para Eliminar Usuario -->
+    <div class="modal fade" id="modalEliminarUsuario" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación Masiva
+                        <i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación de Usuario
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-danger">
                         <strong>🚨 ADVERTENCIA CRÍTICA:</strong>
-                        <p class="mb-0">Estás a punto de eliminar TODOS los registros asociados a la cédula <strong id="cedulaEliminacionMasivaModal"></strong> en TODAS las tablas del sistema.</p>
-                        <p class="mb-0">Esta acción es <strong>IRREVERSIBLE</strong> y afectará múltiples tablas.</p>
+                        <p class="mb-0">Estás a punto de eliminar completamente al usuario <strong id="nombreUsuarioEliminar"></strong> (Cédula: <strong id="cedulaUsuarioEliminar"></strong>).</p>
+                        <p class="mb-0">Esta acción eliminará TODOS los registros y archivos asociados. Es <strong>IRREVERSIBLE</strong>.</p>
                     </div>
                     
-                    <p>Para confirmar, escribe exactamente: <code>ELIMINAR_TODOS_LOS_REGISTROS</code></p>
+                    <div id="tablasConDatos">
+                        <!-- Se mostrarán las tablas que contienen datos -->
+                    </div>
                     
-                    <input type="text" class="form-control" id="confirmacionEliminacionMasiva" placeholder="Escribe la confirmación">
+                    <p class="mt-3">Para confirmar, escribe exactamente: <code>ELIMINAR_USUARIO_COMPLETO</code></p>
+                    
+                    <input type="text" class="form-control" id="confirmacionEliminarUsuario" placeholder="Escribe la confirmación">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" onclick="ejecutarEliminacionMasiva()">
-                        <i class="bi bi-exclamation-triangle"></i> Eliminación Masiva
+                    <button type="button" class="btn btn-danger" onclick="ejecutarEliminacionUsuario()">
+                        <i class="bi bi-trash"></i> Eliminar Usuario
                     </button>
                 </div>
             </div>
         </div>
+    </div>
+    
+    <!-- Modal de Confirmación para Vaciar Tablas -->
+    <div class="modal fade" id="modalVaciarTablas" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle"></i> Confirmar Vaciar Todas las Tablas
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <strong>🚨 ADVERTENCIA CRÍTICA MÁXIMA:</strong>
+                        <p class="mb-0">Estás a punto de <strong>VACIAR COMPLETAMENTE</strong> todas las tablas del sistema.</p>
+                        <p class="mb-0">Esta acción eliminará:</p>
+                        <ul class="mb-0">
+                            <li>Todos los registros de la tabla <strong>evaluados</strong></li>
+                            <li>Todos los registros de <strong>26 tablas relacionadas</strong></li>
+                            <li>Todos los <strong>archivos físicos</strong> asociados</li>
+                        </ul>
+                        <p class="mb-0 mt-2"><strong>ESTA ACCIÓN ES COMPLETAMENTE IRREVERSIBLE</strong></p>
+                    </div>
+                    
+                    <p>Para confirmar, escribe exactamente: <code>VACIAR_TODAS_LAS_TABLAS</code></p>
+                    
+                    <input type="text" class="form-control" id="confirmacionVaciarTablas" placeholder="Escribe la confirmación">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" onclick="ejecutarVaciarTablas()">
+                        <i class="bi bi-trash3"></i> Vaciar Todas las Tablas
+                    </button>
+                </div>
             </div>
+        </div>
+    </div>
         </div>
     </div>
     
@@ -461,25 +370,25 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     
     <script>
-        let tablaSeleccionada = '';
-        let modalTruncar = null;
-        let modalEliminacionMasiva = null;
+        let modalEliminarUsuario = null;
+        let modalVaciarTablas = null;
+        let usuarioSeleccionado = null;
         
         // Inicializar cuando se carga la página
         document.addEventListener('DOMContentLoaded', function() {
-            cargarTablas();
-            modalTruncar = new bootstrap.Modal(document.getElementById('modalTruncarTabla'));
-            modalEliminacionMasiva = new bootstrap.Modal(document.getElementById('modalEliminacionMasiva'));
+            cargarUsuariosEvaluados();
+            modalEliminarUsuario = new bootstrap.Modal(document.getElementById('modalEliminarUsuario'));
+            modalVaciarTablas = new bootstrap.Modal(document.getElementById('modalVaciarTablas'));
         });
         
-        // Cargar lista de tablas
-        function cargarTablas() {
+        // Cargar usuarios evaluados
+        function cargarUsuariosEvaluados() {
             fetch('procesar_tablas_principales.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: 'accion=obtener_tablas'
+                body: 'accion=obtener_usuarios_evaluados'
             })
             .then(response => response.json())
             .then(data => {
@@ -488,38 +397,51 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                     return;
                 }
                 
-                const selector = document.getElementById('selectorTabla');
-                selector.innerHTML = '<option value="">Selecciona una tabla...</option>';
+                const tbody = document.getElementById('tbodyUsuarios');
+                tbody.innerHTML = '';
                 
-                Object.keys(data).forEach(nombreTabla => {
-                    const option = document.createElement('option');
-                    option.value = nombreTabla;
-                    option.textContent = data[nombreTabla].nombre;
-                    selector.appendChild(option);
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No hay usuarios evaluados</td></tr>';
+                    return;
+                }
+                
+                data.forEach(usuario => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${usuario.id_cedula}</td>
+                        <td>${usuario.nombres}</td>
+                        <td>${usuario.apellidos}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="confirmarEliminarUsuario(${usuario.id_cedula}, '${usuario.nombres} ${usuario.apellidos}')">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
                 });
             })
             .catch(error => {
                 console.error('Error:', error);
-                mostrarError('Error al cargar las tablas');
+                mostrarError('Error al cargar los usuarios evaluados');
             });
         }
         
-        // Cargar estadísticas de una tabla específica
-        function cargarEstadisticasTabla() {
-            const selector = document.getElementById('selectorTabla');
-            tablaSeleccionada = selector.value;
+        // Confirmar eliminación de usuario
+        function confirmarEliminarUsuario(idCedula, nombreCompleto) {
+            usuarioSeleccionado = idCedula;
             
-            if (!tablaSeleccionada) {
-                ocultarSecciones();
-                return;
-            }
+            // Mostrar información del usuario
+            document.getElementById('cedulaUsuarioEliminar').textContent = idCedula;
+            document.getElementById('nombreUsuarioEliminar').textContent = nombreCompleto;
+            document.getElementById('confirmacionEliminarUsuario').value = '';
             
+            // Verificar tablas con datos
             fetch('procesar_tablas_principales.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `accion=obtener_estadisticas&tabla=${tablaSeleccionada}`
+                body: `accion=verificar_tablas_con_datos&id_cedula=${idCedula}`
             })
             .then(response => response.json())
             .then(data => {
@@ -528,175 +450,38 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                     return;
                 }
                 
-                mostrarInformacionTabla(data);
-                mostrarEstadisticasTabla(data);
-                mostrarAccionesTabla();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                mostrarError('Error al cargar las estadísticas de la tabla');
-            });
-        }
-        
-        // Mostrar información de la tabla
-        function mostrarInformacionTabla(data) {
-            const infoTabla = document.getElementById('infoTabla');
-            infoTabla.innerHTML = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Nombre:</strong> ${data.nombre}</p>
-                        <p><strong>Descripción:</strong> ${data.descripcion}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Columna Cédula:</strong> ${data.columna_cedula || 'No aplica'}</p>
-                        <p><strong>Total Registros:</strong> ${data.total_registros}</p>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Mostrar estadísticas de la tabla
-        function mostrarEstadisticasTabla(data) {
-            const statsTabla = document.getElementById('statsTabla');
-            let html = '';
-            
-            if (data.tiene_cedula) {
-                html = `
-                    <div class="col-md-3 text-center">
-                        <div class="stats-card">
-                            <div class="card-body">
-                                <div class="stats-number">${data.total_registros}</div>
-                                <small>Total Registros</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <div class="stats-card">
-                            <div class="card-body">
-                                <div class="stats-number">${data.cedulas_unicas || 0}</div>
-                                <small>Cédulas Únicas</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <div class="stats-card">
-                            <div class="card-body">
-                                <div class="stats-number">${data.registros_sin_cedula || 0}</div>
-                                <small>Sin Cédula</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <div class="stats-card">
-                            <div class="card-body">
-                                <div class="stats-number">${data.columna_cedula}</div>
-                                <small>Columna Cédula</small>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                html = `
-                    <div class="col-md-6 text-center">
-                        <div class="stats-card">
-                            <div class="card-body">
-                                <div class="stats-number">${data.total_registros}</div>
-                                <small>Total Registros</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 text-center">
-                        <div class="stats-card">
-                            <div class="card-body">
-                                <div class="stats-number">-</div>
-                                <small>Sin Columna Cédula</small>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            statsTabla.innerHTML = html;
-            document.getElementById('estadisticasTabla').style.display = 'block';
-        }
-        
-        // Mostrar acciones disponibles
-        function mostrarAccionesTabla() {
-            document.getElementById('accionesTabla').style.display = 'block';
-        }
-        
-        // Ocultar secciones
-        function ocultarSecciones() {
-            document.getElementById('estadisticasTabla').style.display = 'none';
-            document.getElementById('accionesTabla').style.display = 'none';
-            document.getElementById('resultados').style.display = 'none';
-        }
-        
-        // Eliminar registros por cédula
-        function eliminarPorCedula() {
-            const cedula = document.getElementById('cedulaEliminar').value.trim();
-            
-            if (!cedula) {
-                mostrarError('Por favor ingresa un número de cédula');
-                return;
-            }
-            
-            if (!tablaSeleccionada) {
-                mostrarError('Por favor selecciona una tabla');
-                return;
-            }
-            
-            if (!confirm(`¿Estás seguro de que quieres eliminar todos los registros de la cédula ${cedula} en la tabla ${tablaSeleccionada}?`)) {
-                return;
-            }
-            
-            const formData = new FormData();
-            formData.append('accion', 'eliminar_por_cedula');
-            formData.append('tabla', tablaSeleccionada);
-            formData.append('cedula', cedula);
-            
-            fetch('procesar_tablas_principales.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                mostrarResultado(data);
-                if (data.success) {
-                    document.getElementById('cedulaEliminar').value = '';
-                    cargarEstadisticasTabla(); // Recargar estadísticas
+                const tablasConDatos = document.getElementById('tablasConDatos');
+                if (Object.keys(data).length === 0) {
+                    tablasConDatos.innerHTML = '<p class="text-muted">No se encontraron datos asociados a este usuario.</p>';
+                } else {
+                    let html = '<h6>Tablas que contienen datos:</h6><ul class="list-group">';
+                    Object.entries(data).forEach(([tabla, cantidad]) => {
+                        html += `<li class="list-group-item d-flex justify-content-between"><span>${tabla}</span><span class="badge bg-primary">${cantidad} registros</span></li>`;
+                    });
+                    html += '</ul>';
+                    tablasConDatos.innerHTML = html;
                 }
+                
+                modalEliminarUsuario.show();
             })
             .catch(error => {
                 console.error('Error:', error);
-                mostrarError('Error al eliminar los registros');
+                mostrarError('Error al verificar las tablas');
             });
         }
         
-        // Confirmar truncamiento de tabla
-        function confirmarTruncarTabla() {
-            if (!tablaSeleccionada) {
-                mostrarError('Por favor selecciona una tabla');
-                return;
-            }
+        // Ejecutar eliminación de usuario
+        function ejecutarEliminacionUsuario() {
+            const confirmacion = document.getElementById('confirmacionEliminarUsuario').value.trim();
             
-            document.getElementById('nombreTablaTruncar').textContent = tablaSeleccionada;
-            document.getElementById('confirmacionTruncar').value = '';
-            modalTruncar.show();
-        }
-        
-        // Truncar tabla
-        function truncarTabla() {
-            const confirmacion = document.getElementById('confirmacionTruncar').value.trim();
-            
-            if (confirmacion !== 'TRUNCAR_TABLA_COMPLETA') {
-                mostrarError('Confirmación incorrecta. Por favor escribe exactamente: TRUNCAR_TABLA_COMPLETA');
+            if (confirmacion !== 'ELIMINAR_USUARIO_COMPLETO') {
+                mostrarError('Confirmación incorrecta. Por favor escribe exactamente: ELIMINAR_USUARIO_COMPLETO');
                 return;
             }
             
             const formData = new FormData();
-            formData.append('accion', 'truncar_tabla');
-            formData.append('tabla', tablaSeleccionada);
+            formData.append('accion', 'eliminar_usuario_completo');
+            formData.append('id_cedula', usuarioSeleccionado);
             formData.append('confirmacion', confirmacion);
             
             fetch('procesar_tablas_principales.php', {
@@ -705,45 +490,35 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
             })
             .then(response => response.json())
             .then(data => {
-                modalTruncar.hide();
+                modalEliminarUsuario.hide();
                 mostrarResultado(data);
                 if (data.success) {
-                    cargarEstadisticasTabla(); // Recargar estadísticas
+                    cargarUsuariosEvaluados(); // Recargar tabla
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                mostrarError('Error al truncar la tabla');
+                mostrarError('Error al eliminar el usuario');
             });
         }
         
-        // Confirmar eliminación masiva
-        function confirmarEliminacionMasiva() {
-            const cedula = document.getElementById('cedulaEliminacionMasiva').value.trim();
-            
-            if (!cedula) {
-                mostrarError('Por favor ingresa un número de cédula');
-                return;
-            }
-            
-            document.getElementById('cedulaEliminacionMasivaModal').textContent = cedula;
-            document.getElementById('confirmacionEliminacionMasiva').value = '';
-            modalEliminacionMasiva.show();
+        // Confirmar vaciar tablas
+        function confirmarVaciarTablas() {
+            document.getElementById('confirmacionVaciarTablas').value = '';
+            modalVaciarTablas.show();
         }
         
-        // Ejecutar eliminación masiva
-        function ejecutarEliminacionMasiva() {
-            const confirmacion = document.getElementById('confirmacionEliminacionMasiva').value.trim();
-            const cedula = document.getElementById('cedulaEliminacionMasiva').value.trim();
+        // Ejecutar vaciar tablas
+        function ejecutarVaciarTablas() {
+            const confirmacion = document.getElementById('confirmacionVaciarTablas').value.trim();
             
-            if (confirmacion !== 'ELIMINAR_TODOS_LOS_REGISTROS') {
-                mostrarError('Confirmación incorrecta. Por favor escribe exactamente: ELIMINAR_TODOS_LOS_REGISTROS');
+            if (confirmacion !== 'VACIAR_TODAS_LAS_TABLAS') {
+                mostrarError('Confirmación incorrecta. Por favor escribe exactamente: VACIAR_TODAS_LAS_TABLAS');
                 return;
             }
             
             const formData = new FormData();
-            formData.append('accion', 'eliminar_por_cedula_todas_tablas');
-            formData.append('cedula', cedula);
+            formData.append('accion', 'vaciar_todas_las_tablas');
             formData.append('confirmacion', confirmacion);
             
             fetch('procesar_tablas_principales.php', {
@@ -752,52 +527,15 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
             })
             .then(response => response.json())
             .then(data => {
-                modalEliminacionMasiva.hide();
+                modalVaciarTablas.hide();
                 mostrarResultado(data);
                 if (data.success) {
-                    document.getElementById('cedulaEliminacionMasiva').value = '';
-                    cargarEstadisticasTabla(); // Recargar estadísticas
+                    cargarUsuariosEvaluados(); // Recargar tabla
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                mostrarError('Error al ejecutar la eliminación masiva');
-            });
-        }
-        
-        // Cargar estadísticas generales
-        function cargarEstadisticasGenerales() {
-            fetch('procesar_tablas_principales.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'accion=obtener_estadisticas_generales'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    mostrarError(data.error);
-                    return;
-                }
-                
-                document.getElementById('totalTablas').textContent = data.total_tablas;
-                document.getElementById('totalRegistros').textContent = data.total_registros_sistema;
-                
-                // Contar tablas con cédula
-                let tablasConCedula = 0;
-                Object.values(data.estadisticas_por_tabla).forEach(tabla => {
-                    if (tabla.tiene_cedula) {
-                        tablasConCedula++;
-                    }
-                });
-                document.getElementById('tablasConCedula').textContent = tablasConCedula;
-                
-                document.getElementById('estadisticasGenerales').style.display = 'block';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                mostrarError('Error al cargar las estadísticas generales');
+                mostrarError('Error al vaciar las tablas');
             });
         }
         
@@ -807,23 +545,41 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
             const contenido = document.getElementById('contenidoResultados');
             
             if (data.success) {
-                contenido.innerHTML = `
+                let html = `
                     <div class="alert alert-success">
                         <i class="bi bi-check-circle"></i> ${data.mensaje}
                     </div>
                     <div class="row">
                         <div class="col-md-6">
-                            <p><strong>Operación:</strong> ${data.accion || 'Completada'}</p>
-                            ${data.tabla ? `<p><strong>Tabla:</strong> ${data.tabla}</p>` : ''}
-                            ${data.cedula ? `<p><strong>Cédula:</strong> ${data.cedula}</p>` : ''}
+                            ${data.id_cedula ? `<p><strong>Usuario:</strong> ${data.id_cedula}</p>` : ''}
+                            ${data.registros_eliminados ? `<p><strong>Registros Eliminados:</strong> ${data.registros_eliminados}</p>` : ''}
+                            ${data.tablas_procesadas ? `<p><strong>Tablas Procesadas:</strong> ${Object.keys(data.tablas_procesadas).length}</p>` : ''}
+                            ${data.tablas_truncadas ? `<p><strong>Tablas Truncadas:</strong> ${data.tablas_truncadas.length}</p>` : ''}
                         </div>
                         <div class="col-md-6">
-                            ${data.registros_eliminados ? `<p><strong>Registros Eliminados:</strong> ${data.registros_eliminados}</p>` : ''}
-                            ${data.tablas_procesadas ? `<p><strong>Tablas Procesadas:</strong> ${data.tablas_procesadas}</p>` : ''}
-                            ${data.total_registros_eliminados ? `<p><strong>Total Eliminados:</strong> ${data.total_registros_eliminados}</p>` : ''}
+                            ${data.archivos_eliminados ? `<p><strong>Archivos Eliminados:</strong> ${data.archivos_eliminados.length}</p>` : ''}
+                            ${data.errores_archivos && data.errores_archivos.length > 0 ? `<p><strong>Errores:</strong> ${data.errores_archivos.length}</p>` : ''}
                         </div>
                     </div>
                 `;
+                
+                if (data.archivos_eliminados && data.archivos_eliminados.length > 0) {
+                    html += '<h6>Archivos eliminados:</h6><ul class="list-group">';
+                    data.archivos_eliminados.forEach(archivo => {
+                        html += `<li class="list-group-item">${archivo}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                if (data.errores_archivos && data.errores_archivos.length > 0) {
+                    html += '<h6>Errores al eliminar archivos:</h6><ul class="list-group">';
+                    data.errores_archivos.forEach(error => {
+                        html += `<li class="list-group-item text-danger">${error}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                contenido.innerHTML = html;
             } else {
                 contenido.innerHTML = `
                     <div class="alert alert-danger">
@@ -834,10 +590,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
             
             resultados.style.display = 'block';
             
-            // Ocultar después de 10 segundos
+            // Ocultar después de 15 segundos
             setTimeout(() => {
                 resultados.style.display = 'none';
-            }, 10000);
+            }, 15000);
         }
         
         // Mostrar error

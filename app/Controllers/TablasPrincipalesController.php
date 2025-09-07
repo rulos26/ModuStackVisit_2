@@ -13,118 +13,46 @@ class TablasPrincipalesController {
     private $db;
     private $logger;
     
-    // Tablas principales del sistema
-    private const TABLAS_PRINCIPALES = [
-        'usuarios' => [
-            'nombre' => 'Usuarios del Sistema',
-            'columna_cedula' => 'cedula',
-            'descripcion' => 'Tabla principal de usuarios y autenticación'
-        ],
-        'aportante' => [
-            'nombre' => 'Aportantes',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Información de aportantes del usuario'
-        ],
-        'autorizaciones' => [
-            'nombre' => 'Autorizaciones',
-            'columna_cedula' => 'cedula',
-            'descripcion' => 'Autorizaciones del usuario'
-        ],
-        'camara_comercio' => [
-            'nombre' => 'Cámara de Comercio',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Información de cámara de comercio'
-        ],
-        'composicion_familiar' => [
-            'nombre' => 'Composición Familiar',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Composición familiar del usuario'
-        ],
-        'concepto_final_evaluador' => [
-            'nombre' => 'Concepto Final Evaluador',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Concepto final del evaluador'
-        ],
-        'cuentas_bancarias' => [
-            'nombre' => 'Cuentas Bancarias',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Cuentas bancarias del usuario'
-        ],
-        'data_credito' => [
-            'nombre' => 'Data Crédito',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Datos de crédito del usuario'
-        ],
-        'evidencia_fotografica' => [
-            'nombre' => 'Evidencia Fotográfica',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Evidencia fotográfica del usuario'
-        ],
-        'experiencia_laboral' => [
-            'nombre' => 'Experiencia Laboral',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Experiencia laboral del usuario'
-        ],
-        'firmas' => [
-            'nombre' => 'Firmas',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Firmas del usuario'
-        ],
-        'formularios' => [
-            'nombre' => 'Formularios',
-            'columna_cedula' => null,
-            'descripcion' => 'Formularios del sistema (sin cédula)'
-        ],
-        'foto_perfil_autorizacion' => [
-            'nombre' => 'Fotos Perfil Autorización',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Fotos de perfil para autorización'
-        ],
-        'foto_perfil_visita' => [
-            'nombre' => 'Fotos Perfil Visita',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Fotos de perfil para visita'
-        ],
-        'gasto' => [
-            'nombre' => 'Gastos',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Gastos del usuario'
-        ],
-        'informacion_judicial' => [
-            'nombre' => 'Información Judicial',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Información judicial del usuario'
-        ],
-        'informacion_pareja' => [
-            'nombre' => 'Información de Pareja',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Información de pareja del usuario'
-        ],
-        'ingresos_mensuales' => [
-            'nombre' => 'Ingresos Mensuales',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Ingresos mensuales del usuario'
-        ],
-        'inventario_enseres' => [
-            'nombre' => 'Inventario de Enseres',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Inventario de enseres del usuario'
-        ],
-        'ubicacion' => [
-            'nombre' => 'Ubicación',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Ubicación del usuario'
-        ],
-        'ubicacion_autorizacion' => [
-            'nombre' => 'Ubicación Autorización',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Ubicación para autorización'
-        ],
-        'ubicacion_foto' => [
-            'nombre' => 'Fotos de Ubicación',
-            'columna_cedula' => 'id_cedula',
-            'descripcion' => 'Fotos de ubicación del usuario'
-        ]
+    // Tabla principal de usuarios evaluados
+    private const TABLA_EVALUADOS = 'evaluados';
+    
+    // Tablas relacionadas que se verifican al eliminar un usuario
+    private const TABLAS_RELACIONADAS = [
+        'autorizaciones',
+        'camara_comercio', 
+        'composicion_familiar',
+        'concepto_final_evaluador',
+        'cuentas_bancarias',
+        'data_credito',
+        'estados_salud',
+        'estado_vivienda',
+        'estudios',
+        'evidencia_fotografica',
+        'experiencia_laboral',
+        'firmas',
+        'foto_perfil_autorizacion',
+        'gasto',
+        'informacion_judicial',
+        'informacion_pareja',
+        'ingresos_mensuales',
+        'inventario_enseres',
+        'pasivos',
+        'patrimonio',
+        'servicios_publicos',
+        'tipo_vivienda',
+        'ubicacion',
+        'ubicacion_autorizacion',
+        'ubicacion_foto',
+        'foto_perfil_visita'
+    ];
+    
+    // Tablas que contienen archivos físicos
+    private const TABLAS_CON_ARCHIVOS = [
+        'firmas' => ['ruta', 'nombre'],
+        'foto_perfil_autorizacion' => ['ruta', 'nombre'],
+        'foto_perfil_visita' => ['ruta', 'nombre'],
+        'ubicacion_autorizacion' => ['ruta', 'nombre'],
+        'ubicacion_foto' => ['ruta', 'nombre']
     ];
     
     public function __construct() {
@@ -133,257 +61,250 @@ class TablasPrincipalesController {
     }
     
     /**
-     * Obtener todas las tablas principales
+     * Obtener todos los usuarios evaluados
      * @return array
      */
-    public function obtenerTablasPrincipales() {
-        return self::TABLAS_PRINCIPALES;
-    }
-    
-    /**
-     * Obtener estadísticas de una tabla específica
-     * @param string $nombreTabla
-     * @return array
-     */
-    public function obtenerEstadisticasTabla($nombreTabla) {
-        if (!isset(self::TABLAS_PRINCIPALES[$nombreTabla])) {
-            return ['error' => 'Tabla no encontrada'];
-        }
-        
+    public function obtenerUsuariosEvaluados() {
         try {
-            $tabla = self::TABLAS_PRINCIPALES[$nombreTabla];
-            $columnaCedula = $tabla['columna_cedula'];
-            
-            // Contar total de registros
-            $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM `$nombreTabla`");
+            $stmt = $this->db->prepare("SELECT id_cedula, nombres, apellidos FROM " . self::TABLA_EVALUADOS . " ORDER BY nombres, apellidos");
             $stmt->execute();
-            $totalRegistros = $stmt->fetch(\PDO::FETCH_ASSOC)['total'];
-            
-            $estadisticas = [
-                'tabla' => $nombreTabla,
-                'nombre' => $tabla['nombre'],
-                'total_registros' => $totalRegistros,
-                'tiene_cedula' => !is_null($columnaCedula),
-                'columna_cedula' => $columnaCedula,
-                'descripcion' => $tabla['descripcion']
-            ];
-            
-            // Si tiene columna de cédula, obtener estadísticas adicionales
-            if ($columnaCedula) {
-                // Contar cédulas únicas
-                $stmt = $this->db->prepare("SELECT COUNT(DISTINCT `$columnaCedula`) as cedulas_unicas FROM `$nombreTabla` WHERE `$columnaCedula` IS NOT NULL");
-                $stmt->execute();
-                $cedulasUnicas = $stmt->fetch(\PDO::FETCH_ASSOC)['cedulas_unicas'];
-                
-                $estadisticas['cedulas_unicas'] = $cedulasUnicas;
-                $estadisticas['registros_sin_cedula'] = $totalRegistros - $cedulasUnicas;
-            }
-            
-            return $estadisticas;
-            
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            $this->logger->error('Error al obtener estadísticas de tabla', [
-                'tabla' => $nombreTabla,
+            $this->logger->error('Error al obtener usuarios evaluados', [
                 'error' => $e->getMessage()
             ]);
-            return ['error' => 'Error al obtener estadísticas: ' . $e->getMessage()];
+            return ['error' => 'Error al obtener usuarios evaluados: ' . $e->getMessage()];
         }
     }
     
     /**
-     * Eliminar registros por cédula en una tabla específica
-     * @param string $nombreTabla
-     * @param int $cedula
+     * Verificar en qué tablas existe información para un id_cedula
+     * @param int $idCedula
      * @return array
      */
-    public function eliminarRegistrosPorCedula($nombreTabla, $cedula) {
-        if (!isset(self::TABLAS_PRINCIPALES[$nombreTabla])) {
-            return ['error' => 'Tabla no encontrada'];
-        }
-        
-        $tabla = self::TABLAS_PRINCIPALES[$nombreTabla];
-        $columnaCedula = $tabla['columna_cedula'];
-        
-        if (!$columnaCedula) {
-            return ['error' => 'Esta tabla no tiene columna de cédula'];
-        }
+    public function verificarTablasConDatos($idCedula) {
+        $tablasConDatos = [];
         
         try {
-            // Verificar si existen registros
-            $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM `$nombreTabla` WHERE `$columnaCedula` = :cedula");
-            $stmt->bindParam(':cedula', $cedula, \PDO::PARAM_INT);
+            // Verificar tabla evaluados
+            $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM " . self::TABLA_EVALUADOS . " WHERE id_cedula = :id_cedula");
+            $stmt->bindParam(':id_cedula', $idCedula, \PDO::PARAM_INT);
             $stmt->execute();
-            $totalRegistros = $stmt->fetch(\PDO::FETCH_ASSOC)['total'];
-            
-            if ($totalRegistros == 0) {
-                return ['error' => 'No se encontraron registros para la cédula especificada'];
+            $total = $stmt->fetch(\PDO::FETCH_ASSOC)['total'];
+            if ($total > 0) {
+                $tablasConDatos['evaluados'] = $total;
             }
             
-            // Eliminar registros
-            $stmt = $this->db->prepare("DELETE FROM `$nombreTabla` WHERE `$columnaCedula` = :cedula");
-            $stmt->bindParam(':cedula', $cedula, \PDO::PARAM_INT);
+            // Verificar tablas relacionadas
+            foreach (self::TABLAS_RELACIONADAS as $tabla) {
+                $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM `$tabla` WHERE id_cedula = :id_cedula");
+                $stmt->bindParam(':id_cedula', $idCedula, \PDO::PARAM_INT);
+                $stmt->execute();
+                $total = $stmt->fetch(\PDO::FETCH_ASSOC)['total'];
+                if ($total > 0) {
+                    $tablasConDatos[$tabla] = $total;
+                }
+            }
+            
+            return $tablasConDatos;
+            
+        } catch (PDOException $e) {
+            $this->logger->error('Error al verificar tablas con datos', [
+                'id_cedula' => $idCedula,
+                'error' => $e->getMessage()
+            ]);
+            return ['error' => 'Error al verificar tablas: ' . $e->getMessage()];
+        }
+    }
+    
+    /**
+     * Eliminar archivos físicos asociados a un id_cedula
+     * @param int $idCedula
+     * @return array
+     */
+    private function eliminarArchivosFisicos($idCedula) {
+        $archivosEliminados = [];
+        $errores = [];
+        
+        try {
+            foreach (self::TABLAS_CON_ARCHIVOS as $tabla => $columnas) {
+                $rutaCol = $columnas[0];
+                $nombreCol = $columnas[1];
+                
+                $stmt = $this->db->prepare("SELECT `$rutaCol`, `$nombreCol` FROM `$tabla` WHERE id_cedula = :id_cedula");
+                $stmt->bindParam(':id_cedula', $idCedula, \PDO::PARAM_INT);
+                $stmt->execute();
+                $archivos = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+                
+                foreach ($archivos as $archivo) {
+                    $rutaCompleta = $archivo[$rutaCol] . '/' . $archivo[$nombreCol];
+                    $rutaAbsoluta = $_SERVER['DOCUMENT_ROOT'] . '/ModuStackVisit_2/' . $rutaCompleta;
+                    
+                    if (file_exists($rutaAbsoluta)) {
+                        if (unlink($rutaAbsoluta)) {
+                            $archivosEliminados[] = $rutaCompleta;
+                        } else {
+                            $errores[] = "No se pudo eliminar: $rutaCompleta";
+                        }
+                    }
+                }
+            }
+            
+            return [
+                'archivos_eliminados' => $archivosEliminados,
+                'errores' => $errores
+            ];
+            
+        } catch (\Exception $e) {
+            $this->logger->error('Error al eliminar archivos físicos', [
+                'id_cedula' => $idCedula,
+                'error' => $e->getMessage()
+            ]);
+            return ['error' => 'Error al eliminar archivos: ' . $e->getMessage()];
+        }
+    }
+    
+    /**
+     * Eliminar usuario y todos sus datos relacionados
+     * @param int $idCedula
+     * @return array
+     */
+    public function eliminarUsuarioCompleto($idCedula) {
+        try {
+            // Primero eliminar archivos físicos
+            $resultadoArchivos = $this->eliminarArchivosFisicos($idCedula);
+            
+            // Iniciar transacción
+            $this->db->beginTransaction();
+            
+            $registrosEliminados = 0;
+            $tablasProcesadas = [];
+            
+            // Eliminar de tabla evaluados
+            $stmt = $this->db->prepare("DELETE FROM " . self::TABLA_EVALUADOS . " WHERE id_cedula = :id_cedula");
+            $stmt->bindParam(':id_cedula', $idCedula, \PDO::PARAM_INT);
             $stmt->execute();
+            $eliminados = $stmt->rowCount();
+            if ($eliminados > 0) {
+                $registrosEliminados += $eliminados;
+                $tablasProcesadas['evaluados'] = $eliminados;
+            }
             
-            $registrosEliminados = $stmt->rowCount();
+            // Eliminar de tablas relacionadas
+            foreach (self::TABLAS_RELACIONADAS as $tabla) {
+                $stmt = $this->db->prepare("DELETE FROM `$tabla` WHERE id_cedula = :id_cedula");
+                $stmt->bindParam(':id_cedula', $idCedula, \PDO::PARAM_INT);
+                $stmt->execute();
+                $eliminados = $stmt->rowCount();
+                if ($eliminados > 0) {
+                    $registrosEliminados += $eliminados;
+                    $tablasProcesadas[$tabla] = $eliminados;
+                }
+            }
             
-            $this->logger->info('Registros eliminados por cédula', [
-                'tabla' => $nombreTabla,
-                'cedula' => $cedula,
-                'registros_eliminados' => $registrosEliminados
+            // Confirmar transacción
+            $this->db->commit();
+            
+            $this->logger->info('Usuario eliminado completamente', [
+                'id_cedula' => $idCedula,
+                'registros_eliminados' => $registrosEliminados,
+                'tablas_procesadas' => $tablasProcesadas,
+                'archivos_eliminados' => count($resultadoArchivos['archivos_eliminados'] ?? [])
             ]);
             
             return [
                 'success' => true,
-                'mensaje' => "Se eliminaron $registrosEliminados registros de la tabla '$nombreTabla' para la cédula $cedula",
-                'tabla' => $nombreTabla,
-                'cedula' => $cedula,
-                'registros_eliminados' => $registrosEliminados
+                'mensaje' => "Usuario eliminado exitosamente. Se eliminaron $registrosEliminados registros y " . count($resultadoArchivos['archivos_eliminados'] ?? []) . " archivos.",
+                'id_cedula' => $idCedula,
+                'registros_eliminados' => $registrosEliminados,
+                'tablas_procesadas' => $tablasProcesadas,
+                'archivos_eliminados' => $resultadoArchivos['archivos_eliminados'] ?? [],
+                'errores_archivos' => $resultadoArchivos['errores'] ?? []
             ];
             
         } catch (PDOException $e) {
-            $this->logger->error('Error al eliminar registros por cédula', [
-                'tabla' => $nombreTabla,
-                'cedula' => $cedula,
+            $this->db->rollBack();
+            $this->logger->error('Error al eliminar usuario completo', [
+                'id_cedula' => $idCedula,
                 'error' => $e->getMessage()
             ]);
-            return ['error' => 'Error al eliminar registros: ' . $e->getMessage()];
+            return ['error' => 'Error al eliminar usuario: ' . $e->getMessage()];
         }
     }
     
     /**
-     * Eliminar registros por cédula en TODAS las tablas relacionadas
-     * @param int $cedula
+     * Vaciar todas las tablas (TRUNCATE)
      * @return array
      */
-    public function eliminarRegistrosPorCedulaEnTodasLasTablas($cedula) {
-        $resultados = [];
-        $totalRegistrosEliminados = 0;
-        $tablasProcesadas = 0;
-        
-        foreach (self::TABLAS_PRINCIPALES as $nombreTabla => $tabla) {
-            if ($tabla['columna_cedula']) {
-                $resultado = $this->eliminarRegistrosPorCedula($nombreTabla, $cedula);
-                $resultados[$nombreTabla] = $resultado;
-                
-                if (isset($resultado['registros_eliminados'])) {
-                    $totalRegistrosEliminados += $resultado['registros_eliminados'];
-                }
-                
-                $tablasProcesadas++;
-            }
-        }
-        
-        $this->logger->info('Eliminación masiva por cédula completada', [
-            'cedula' => $cedula,
-            'tablas_procesadas' => $tablasProcesadas,
-            'total_registros_eliminados' => $totalRegistrosEliminados
-        ]);
-        
-        return [
-            'success' => true,
-            'mensaje' => "Proceso completado. Se eliminaron $totalRegistrosEliminados registros en $tablasProcesadas tablas para la cédula $cedula",
-            'cedula' => $cedula,
-            'tablas_procesadas' => $tablasProcesadas,
-            'total_registros_eliminados' => $totalRegistrosEliminados,
-            'resultados_por_tabla' => $resultados
-        ];
-    }
-    
-    /**
-     * Truncar una tabla específica
-     * @param string $nombreTabla
-     * @return array
-     */
-    public function truncarTabla($nombreTabla) {
-        if (!isset(self::TABLAS_PRINCIPALES[$nombreTabla])) {
-            return ['error' => 'Tabla no encontrada'];
-        }
-        
+    public function vaciarTodasLasTablas() {
         try {
-            // Obtener estadísticas antes de truncar
-            $estadisticas = $this->obtenerEstadisticasTabla($nombreTabla);
-            $totalRegistros = $estadisticas['total_registros'] ?? 0;
+            // Primero eliminar todos los archivos físicos
+            $archivosEliminados = [];
+            $errores = [];
             
-            // Truncar tabla
-            $stmt = $this->db->prepare("TRUNCATE TABLE `$nombreTabla`");
+            foreach (self::TABLAS_CON_ARCHIVOS as $tabla => $columnas) {
+                $rutaCol = $columnas[0];
+                $nombreCol = $columnas[1];
+                
+                $stmt = $this->db->prepare("SELECT `$rutaCol`, `$nombreCol` FROM `$tabla`");
+                $stmt->execute();
+                $archivos = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+                
+                foreach ($archivos as $archivo) {
+                    $rutaCompleta = $archivo[$rutaCol] . '/' . $archivo[$nombreCol];
+                    $rutaAbsoluta = $_SERVER['DOCUMENT_ROOT'] . '/ModuStackVisit_2/' . $rutaCompleta;
+                    
+                    if (file_exists($rutaAbsoluta)) {
+                        if (unlink($rutaAbsoluta)) {
+                            $archivosEliminados[] = $rutaCompleta;
+                        } else {
+                            $errores[] = "No se pudo eliminar: $rutaCompleta";
+                        }
+                    }
+                }
+            }
+            
+            // Iniciar transacción
+            $this->db->beginTransaction();
+            
+            $tablasTruncadas = [];
+            
+            // Truncar tabla evaluados
+            $stmt = $this->db->prepare("TRUNCATE TABLE " . self::TABLA_EVALUADOS);
             $stmt->execute();
+            $tablasTruncadas[] = self::TABLA_EVALUADOS;
             
-            $this->logger->warning('Tabla truncada', [
-                'tabla' => $nombreTabla,
-                'registros_eliminados' => $totalRegistros,
+            // Truncar tablas relacionadas
+            foreach (self::TABLAS_RELACIONADAS as $tabla) {
+                $stmt = $this->db->prepare("TRUNCATE TABLE `$tabla`");
+                $stmt->execute();
+                $tablasTruncadas[] = $tabla;
+            }
+            
+            // Confirmar transacción
+            $this->db->commit();
+            
+            $this->logger->warning('Todas las tablas vaciadas', [
+                'tablas_truncadas' => $tablasTruncadas,
+                'archivos_eliminados' => count($archivosEliminados),
                 'usuario' => $_SESSION['username'] ?? 'unknown'
             ]);
             
             return [
                 'success' => true,
-                'mensaje' => "Tabla '$nombreTabla' truncada exitosamente. Se eliminaron $totalRegistros registros.",
-                'tabla' => $nombreTabla,
-                'registros_eliminados' => $totalRegistros
+                'mensaje' => "Todas las tablas han sido vaciadas exitosamente. Se eliminaron " . count($archivosEliminados) . " archivos físicos.",
+                'tablas_truncadas' => $tablasTruncadas,
+                'archivos_eliminados' => $archivosEliminados,
+                'errores_archivos' => $errores
             ];
             
         } catch (PDOException $e) {
-            $this->logger->error('Error al truncar tabla', [
-                'tabla' => $nombreTabla,
-                'error' => $e->getMessage()
+            $this->db->rollBack();
+            $this->logger->error('Error al vaciar todas las tablas', [
+                'error' => $e->getMessage(),
+                'usuario' => $_SESSION['username'] ?? 'unknown'
             ]);
-            return ['error' => 'Error al truncar tabla: ' . $e->getMessage()];
+            return ['error' => 'Error al vaciar tablas: ' . $e->getMessage()];
         }
-    }
-    
-    /**
-     * Obtener estadísticas generales del sistema
-     * @return array
-     */
-    public function obtenerEstadisticasGenerales() {
-        $estadisticas = [];
-        $totalRegistrosSistema = 0;
-        
-        foreach (self::TABLAS_PRINCIPALES as $nombreTabla => $tabla) {
-            $estadisticasTabla = $this->obtenerEstadisticasTabla($nombreTabla);
-            
-            if (!isset($estadisticasTabla['error'])) {
-                $estadisticas[$nombreTabla] = $estadisticasTabla;
-                $totalRegistrosSistema += $estadisticasTabla['total_registros'];
-            }
-        }
-        
-        return [
-            'total_tablas' => count(self::TABLAS_PRINCIPALES),
-            'total_registros_sistema' => $totalRegistrosSistema,
-            'estadisticas_por_tabla' => $estadisticas
-        ];
-    }
-    
-    /**
-     * Verificar si una tabla existe
-     * @param string $nombreTabla
-     * @return bool
-     */
-    public function tablaExiste($nombreTabla) {
-        try {
-            $stmt = $this->db->prepare("SHOW TABLES LIKE :tabla");
-            $stmt->bindParam(':tabla', $nombreTabla);
-            $stmt->execute();
-            return $stmt->rowCount() > 0;
-        } catch (PDOException $e) {
-            return false;
-        }
-    }
-    
-    /**
-     * Obtener información de una tabla específica
-     * @param string $nombreTabla
-     * @return array
-     */
-    public function obtenerInformacionTabla($nombreTabla) {
-        if (!isset(self::TABLAS_PRINCIPALES[$nombreTabla])) {
-            return ['error' => 'Tabla no encontrada'];
-        }
-        
-        if (!$this->tablaExiste($nombreTabla)) {
-            return ['error' => 'La tabla no existe en la base de datos'];
-        }
-        
-        return self::TABLAS_PRINCIPALES[$nombreTabla];
     }
 }

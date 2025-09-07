@@ -22,77 +22,55 @@ $accion = $_POST['accion'] ?? '';
 
 try {
     switch ($accion) {
-        case 'obtener_estadisticas':
-            $nombreTabla = $_POST['tabla'] ?? '';
-            if (empty($nombreTabla)) {
-                throw new Exception('Nombre de tabla requerido');
-            }
-            
-            $resultado = $controller->obtenerEstadisticasTabla($nombreTabla);
+        case 'obtener_usuarios_evaluados':
+            $resultado = $controller->obtenerUsuariosEvaluados();
             echo json_encode($resultado);
             break;
             
-        case 'obtener_estadisticas_generales':
-            $resultado = $controller->obtenerEstadisticasGenerales();
+        case 'verificar_tablas_con_datos':
+            $idCedula = $_POST['id_cedula'] ?? '';
+            
+            if (empty($idCedula)) {
+                throw new Exception('ID de cédula es requerido');
+            }
+            
+            if (!is_numeric($idCedula)) {
+                throw new Exception('El ID de cédula debe ser un número válido');
+            }
+            
+            $resultado = $controller->verificarTablasConDatos((int)$idCedula);
             echo json_encode($resultado);
             break;
             
-        case 'eliminar_por_cedula':
-            $nombreTabla = $_POST['tabla'] ?? '';
-            $cedula = $_POST['cedula'] ?? '';
+        case 'eliminar_usuario_completo':
+            $idCedula = $_POST['id_cedula'] ?? '';
             
-            if (empty($nombreTabla) || empty($cedula)) {
-                throw new Exception('Nombre de tabla y cédula son requeridos');
+            if (empty($idCedula)) {
+                throw new Exception('ID de cédula es requerido');
             }
             
-            if (!is_numeric($cedula)) {
-                throw new Exception('La cédula debe ser un número válido');
+            if (!is_numeric($idCedula)) {
+                throw new Exception('El ID de cédula debe ser un número válido');
             }
             
-            $resultado = $controller->eliminarRegistrosPorCedula($nombreTabla, (int)$cedula);
-            echo json_encode($resultado);
-            break;
-            
-        case 'eliminar_por_cedula_todas_tablas':
-            $cedula = $_POST['cedula'] ?? '';
-            
-            if (empty($cedula)) {
-                throw new Exception('Cédula es requerida');
-            }
-            
-            if (!is_numeric($cedula)) {
-                throw new Exception('La cédula debe ser un número válido');
-            }
-            
-            // Confirmación adicional para eliminación masiva
+            // Confirmación adicional para eliminación completa
             $confirmacion = $_POST['confirmacion'] ?? '';
-            if ($confirmacion !== 'ELIMINAR_TODOS_LOS_REGISTROS') {
-                throw new Exception('Se requiere confirmación explícita para esta operación');
+            if ($confirmacion !== 'ELIMINAR_USUARIO_COMPLETO') {
+                throw new Exception('Se requiere confirmación explícita para eliminar el usuario');
             }
             
-            $resultado = $controller->eliminarRegistrosPorCedulaEnTodasLasTablas((int)$cedula);
+            $resultado = $controller->eliminarUsuarioCompleto((int)$idCedula);
             echo json_encode($resultado);
             break;
             
-        case 'truncar_tabla':
-            $nombreTabla = $_POST['tabla'] ?? '';
-            
-            if (empty($nombreTabla)) {
-                throw new Exception('Nombre de tabla requerido');
-            }
-            
-            // Confirmación adicional para truncamiento
+        case 'vaciar_todas_las_tablas':
+            // Confirmación adicional para vaciar todas las tablas
             $confirmacion = $_POST['confirmacion'] ?? '';
-            if ($confirmacion !== 'TRUNCAR_TABLA_COMPLETA') {
-                throw new Exception('Se requiere confirmación explícita para truncar la tabla');
+            if ($confirmacion !== 'VACIAR_TODAS_LAS_TABLAS') {
+                throw new Exception('Se requiere confirmación explícita para vaciar todas las tablas');
             }
             
-            $resultado = $controller->truncarTabla($nombreTabla);
-            echo json_encode($resultado);
-            break;
-            
-        case 'obtener_tablas':
-            $resultado = $controller->obtenerTablasPrincipales();
+            $resultado = $controller->vaciarTodasLasTablas();
             echo json_encode($resultado);
             break;
             
