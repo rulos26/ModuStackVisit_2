@@ -239,6 +239,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                                 <a href="test_funcionamiento.php" class="btn btn-success me-2">
                                     <i class="bi bi-check2-circle"></i> Test Funcionamiento
                                 </a>
+                                <a href="test_final.php" class="btn btn-success me-2">
+                                    <i class="bi bi-check-circle-fill"></i> Test Final
+                                </a>
                                 <a href="test_estructura_real.php" class="btn btn-info me-2">
                                     <i class="bi bi-folder-open"></i> Test Estructura Real
                                 </a>
@@ -580,11 +583,23 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
             formData.append('id_cedula', usuarioSeleccionado);
             formData.append('confirmacion', confirmacion);
             
-            fetch('procesar_tablas_principales.php', {
+            fetch('procesar_simple.php', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(text => {
+                try {
+                    return JSON.parse(text);
+                } catch (parseError) {
+                    throw new Error(`Error parseando JSON: ${parseError.message}. Respuesta: ${text}`);
+                }
+            })
             .then(data => {
                 modalEliminarUsuario.hide();
                 mostrarResultado(data);
@@ -617,11 +632,23 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
             formData.append('accion', 'vaciar_todas_las_tablas');
             formData.append('confirmacion', confirmacion);
             
-            fetch('procesar_tablas_principales.php', {
+            fetch('procesar_simple.php', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(text => {
+                try {
+                    return JSON.parse(text);
+                } catch (parseError) {
+                    throw new Error(`Error parseando JSON: ${parseError.message}. Respuesta: ${text}`);
+                }
+            })
             .then(data => {
                 modalVaciarTablas.hide();
                 mostrarResultado(data);

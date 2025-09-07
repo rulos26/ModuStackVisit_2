@@ -157,6 +157,228 @@ try {
             enviarRespuesta($tablasConDatos);
             break;
             
+        case 'eliminar_usuario_completo':
+            $idCedula = $_POST['id_cedula'] ?? '';
+            $confirmacion = $_POST['confirmacion'] ?? '';
+            
+            if (empty($idCedula) || !is_numeric($idCedula)) {
+                manejarError('ID de cédula inválido', 400);
+            }
+            
+            if ($confirmacion !== 'ELIMINAR_USUARIO_COMPLETO') {
+                manejarError('Confirmación incorrecta', 400);
+            }
+            
+            // Lista de tablas relacionadas con sus campos de identificación
+            $tablasRelacionadas = [
+                'autorizaciones' => 'cedula',
+                'camara_comercio' => 'id_cedula',
+                'composicion_familiar' => 'id_cedula',
+                'concepto_final_evaluador' => 'id_cedula',
+                'cuentas_bancarias' => 'id_cedula',
+                'data_credito' => 'id_cedula',
+                'estados_salud' => 'id_cedula',
+                'estado_vivienda' => 'id_cedula',
+                'estudios' => 'id_cedula',
+                'evidencia_fotografica' => 'id_cedula',
+                'experiencia_laboral' => 'id_cedula',
+                'firmas' => 'id_cedula',
+                'foto_perfil_autorizacion' => 'id_cedula',
+                'gasto' => 'id_cedula',
+                'informacion_judicial' => 'id_cedula',
+                'informacion_pareja' => 'id_cedula',
+                'ingresos_mensuales' => 'id_cedula',
+                'inventario_enseres' => 'id_cedula',
+                'pasivos' => 'id_cedula',
+                'patrimonio' => 'id_cedula',
+                'servicios_publicos' => 'id_cedula',
+                'tipo_vivienda' => 'id_cedula',
+                'ubicacion' => 'id_cedula',
+                'ubicacion_autorizacion' => 'id_cedula',
+                'ubicacion_foto' => 'id_cedula',
+                'foto_perfil_visita' => 'id_cedula'
+            ];
+            
+            // Tablas que contienen archivos físicos
+            $tablasConArchivos = ['firmas', 'foto_perfil_autorizacion', 'foto_perfil_visita', 'ubicacion_autorizacion', 'ubicacion_foto'];
+            
+            $pdo->beginTransaction();
+            
+            try {
+                $archivosEliminados = [];
+                $erroresArchivos = [];
+                $registrosEliminados = 0;
+                
+                // Eliminar archivos físicos primero
+                foreach ($tablasConArchivos as $tabla) {
+                    try {
+                        $stmt = $pdo->query("SHOW TABLES LIKE '$tabla'");
+                        if ($stmt->rowCount() > 0) {
+                            $campo = $tablasRelacionadas[$tabla];
+                            $stmt = $pdo->prepare("SELECT ruta, nombre FROM `$tabla` WHERE `$campo` = ?");
+                            $stmt->execute([$idCedula]);
+                            $archivos = $stmt->fetchAll();
+                            
+                            foreach ($archivos as $archivo) {
+                                if (!empty($archivo['ruta']) && !empty($archivo['nombre'])) {
+                                    $rutaCompleta = $archivo['ruta'] . '/' . $archivo['nombre'];
+                                    if (file_exists($rutaCompleta)) {
+                                        if (unlink($rutaCompleta)) {
+                                            $archivosEliminados[] = $rutaCompleta;
+                                        } else {
+                                            $erroresArchivos[] = "No se pudo eliminar: $rutaCompleta";
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception $e) {
+                        $erroresArchivos[] = "Error procesando tabla $tabla: " . $e->getMessage();
+                    }
+                }
+                
+                // Eliminar registros de tablas relacionadas
+                foreach ($tablasRelacionadas as $tabla => $campo) {
+                    try {
+                        $stmt = $pdo->query("SHOW TABLES LIKE '$tabla'");
+                        if ($stmt->rowCount() > 0) {
+                            $stmt = $pdo->prepare("DELETE FROM `$tabla` WHERE `$campo` = ?");
+                            $stmt->execute([$idCedula]);
+                            $registrosEliminados += $stmt->rowCount();
+                        }
+                    } catch (Exception $e) {
+                        error_log("Error eliminando de tabla $tabla: " . $e->getMessage());
+                    }
+                }
+                
+                // Eliminar de la tabla evaluados
+                $stmt = $pdo->prepare("DELETE FROM evaluados WHERE id_cedula = ?");
+                $stmt->execute([$idCedula]);
+                $registrosEliminados += $stmt->rowCount();
+                
+                $pdo->commit();
+                
+                enviarRespuesta([
+                    'success' => true,
+                    'mensaje' => 'Usuario eliminado completamente del sistema',
+                    'id_cedula' => $idCedula,
+                    'registros_eliminados' => $registrosEliminados,
+                    'archivos_eliminados' => $archivosEliminados,
+                    'errores_archivos' => $erroresArchivos
+                ]);
+                
+            } catch (Exception $e) {
+                $pdo->rollBack();
+                throw $e;
+            }
+            break;
+            
+        case 'vaciar_todas_las_tablas':
+            $confirmacion = $_POST['confirmacion'] ?? '';
+            
+            if ($confirmacion !== 'VACIAR_TODAS_LAS_TABLAS') {
+                manejarError('Confirmación incorrecta', 400);
+            }
+            
+            // Lista de tablas relacionadas
+            $tablasRelacionadas = [
+                'autorizaciones',
+                'camara_comercio',
+                'composicion_familiar',
+                'concepto_final_evaluador',
+                'cuentas_bancarias',
+                'data_credito',
+                'estados_salud',
+                'estado_vivienda',
+                'estudios',
+                'evidencia_fotografica',
+                'experiencia_laboral',
+                'firmas',
+                'foto_perfil_autorizacion',
+                'gasto',
+                'informacion_judicial',
+                'informacion_pareja',
+                'ingresos_mensuales',
+                'inventario_enseres',
+                'pasivos',
+                'patrimonio',
+                'servicios_publicos',
+                'tipo_vivienda',
+                'ubicacion',
+                'ubicacion_autorizacion',
+                'ubicacion_foto',
+                'foto_perfil_visita'
+            ];
+            
+            // Tablas que contienen archivos físicos
+            $tablasConArchivos = ['firmas', 'foto_perfil_autorizacion', 'foto_perfil_visita', 'ubicacion_autorizacion', 'ubicacion_foto'];
+            
+            $pdo->beginTransaction();
+            
+            try {
+                $archivosEliminados = [];
+                $erroresArchivos = [];
+                $tablasTruncadas = [];
+                
+                // Eliminar archivos físicos primero
+                foreach ($tablasConArchivos as $tabla) {
+                    try {
+                        $stmt = $pdo->query("SHOW TABLES LIKE '$tabla'");
+                        if ($stmt->rowCount() > 0) {
+                            $stmt = $pdo->query("SELECT ruta, nombre FROM `$tabla`");
+                            $archivos = $stmt->fetchAll();
+                            
+                            foreach ($archivos as $archivo) {
+                                if (!empty($archivo['ruta']) && !empty($archivo['nombre'])) {
+                                    $rutaCompleta = $archivo['ruta'] . '/' . $archivo['nombre'];
+                                    if (file_exists($rutaCompleta)) {
+                                        if (unlink($rutaCompleta)) {
+                                            $archivosEliminados[] = $rutaCompleta;
+                                        } else {
+                                            $erroresArchivos[] = "No se pudo eliminar: $rutaCompleta";
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception $e) {
+                        $erroresArchivos[] = "Error procesando tabla $tabla: " . $e->getMessage();
+                    }
+                }
+                
+                // Truncar tablas relacionadas
+                foreach ($tablasRelacionadas as $tabla) {
+                    try {
+                        $stmt = $pdo->query("SHOW TABLES LIKE '$tabla'");
+                        if ($stmt->rowCount() > 0) {
+                            $pdo->exec("TRUNCATE TABLE `$tabla`");
+                            $tablasTruncadas[] = $tabla;
+                        }
+                    } catch (Exception $e) {
+                        error_log("Error truncando tabla $tabla: " . $e->getMessage());
+                    }
+                }
+                
+                // Truncar tabla evaluados
+                $pdo->exec("TRUNCATE TABLE evaluados");
+                $tablasTruncadas[] = 'evaluados';
+                
+                $pdo->commit();
+                
+                enviarRespuesta([
+                    'success' => true,
+                    'mensaje' => 'Todas las tablas han sido vaciadas completamente',
+                    'tablas_truncadas' => $tablasTruncadas,
+                    'archivos_eliminados' => $archivosEliminados,
+                    'errores_archivos' => $erroresArchivos
+                ]);
+                
+            } catch (Exception $e) {
+                $pdo->rollBack();
+                throw $e;
+            }
+            break;
+            
         default:
             manejarError('Acción no válida', 400);
     }
