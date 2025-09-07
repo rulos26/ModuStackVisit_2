@@ -344,6 +344,11 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
                                         <div class="file-info">
                                             <?php echo $explorador->formatFileSize($item['size']); ?>
                                         </div>
+                                        <div class="file-actions">
+                                            <button class="btn btn-delete" onclick="deleteFile('<?php echo htmlspecialchars($item['path']); ?>', '<?php echo htmlspecialchars($item['name']); ?>', 'carpeta')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
                                     <?php elseif ($item['type'] === 'image'): ?>
                                         <img src="public/images/<?php echo htmlspecialchars($item['path']); ?>" 
                                              alt="<?php echo htmlspecialchars($item['name']); ?>"
@@ -357,7 +362,7 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
                                             <?php echo $explorador->formatFileSize($item['size']); ?>
                                         </div>
                                         <div class="file-actions">
-                                            <button class="btn btn-delete" onclick="deleteFile('<?php echo htmlspecialchars($item['path']); ?>', '<?php echo htmlspecialchars($item['name']); ?>')">
+                                            <button class="btn btn-delete" onclick="deleteFile('<?php echo htmlspecialchars($item['path']); ?>', '<?php echo htmlspecialchars($item['name']); ?>', 'imagen')">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </div>
@@ -433,8 +438,13 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
             btnBack.disabled = pathParts.length === 0;
         }
         
-        function deleteFile(path, name) {
-            if (confirm('¿Seguro que desea eliminar la imagen "' + name + '"?\n\nEsta acción no se puede deshacer.')) {
+        function deleteFile(path, name, type = 'archivo') {
+            const tipoTexto = type === 'carpeta' ? 'carpeta' : 'imagen';
+            const mensaje = type === 'carpeta' 
+                ? `¿Seguro que desea eliminar la carpeta "${name}"?\n\nEsta acción eliminará la carpeta y todo su contenido.\nEsta acción no se puede deshacer.`
+                : `¿Seguro que desea eliminar la imagen "${name}"?\n\nEsta acción no se puede deshacer.`;
+                
+            if (confirm(mensaje)) {
                 // Mostrar loading
                 const fileItem = document.querySelector(`[data-path="${path}"]`);
                 if (fileItem) {
@@ -459,12 +469,14 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
                         }
                         
                         // Mostrar mensaje de éxito
-                        showMessage('success', 'Imagen eliminada correctamente');
+                        const mensajeExito = type === 'carpeta' ? 'Carpeta eliminada correctamente' : 'Imagen eliminada correctamente';
+                        showMessage('success', mensajeExito);
                         
                         // Actualizar contador
                         updateStats();
                     } else {
-                        showMessage('error', 'Error al eliminar la imagen: ' + data.error);
+                        const mensajeError = type === 'carpeta' ? 'Error al eliminar la carpeta: ' : 'Error al eliminar la imagen: ';
+                        showMessage('error', mensajeError + data.error);
                         
                         // Restaurar el elemento
                         if (fileItem) {

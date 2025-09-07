@@ -142,7 +142,7 @@ class ExploradorImagenesController {
     }
     
     /**
-     * Eliminar un archivo
+     * Eliminar un archivo o carpeta
      */
     public function deleteFile($relativePath) {
         try {
@@ -159,22 +159,31 @@ class ExploradorImagenesController {
             $fullPath = $this->basePath . '/' . $relativePath;
             
             if (!file_exists($fullPath)) {
-                throw new Exception('El archivo no existe');
+                throw new Exception('El elemento no existe');
             }
             
             if (is_dir($fullPath)) {
-                throw new Exception('No se puede eliminar carpetas con este método');
-            }
-            
-            // Eliminar el archivo
-            if (unlink($fullPath)) {
-                $this->logger->logInfo('Archivo eliminado: ' . $relativePath);
-                return [
-                    'success' => true,
-                    'message' => 'Archivo eliminado correctamente'
-                ];
+                // Eliminar carpeta y todo su contenido
+                if ($this->deleteDirectory($fullPath)) {
+                    $this->logger->logInfo('Carpeta eliminada: ' . $relativePath);
+                    return [
+                        'success' => true,
+                        'message' => 'Carpeta eliminada correctamente'
+                    ];
+                } else {
+                    throw new Exception('No se pudo eliminar la carpeta');
+                }
             } else {
-                throw new Exception('No se pudo eliminar el archivo');
+                // Eliminar archivo
+                if (unlink($fullPath)) {
+                    $this->logger->logInfo('Archivo eliminado: ' . $relativePath);
+                    return [
+                        'success' => true,
+                        'message' => 'Archivo eliminado correctamente'
+                    ];
+                } else {
+                    throw new Exception('No se pudo eliminar el archivo');
+                }
             }
             
         } catch (Exception $e) {
@@ -184,6 +193,28 @@ class ExploradorImagenesController {
                 'error' => $e->getMessage()
             ];
         }
+    }
+    
+    /**
+     * Eliminar directorio recursivamente
+     */
+    private function deleteDirectory($dir) {
+        if (!is_dir($dir)) {
+            return false;
+        }
+        
+        $files = array_diff(scandir($dir), array('.', '..'));
+        
+        foreach ($files as $file) {
+            $path = $dir . DIRECTORY_SEPARATOR . $file;
+            if (is_dir($path)) {
+                $this->deleteDirectory($path);
+            } else {
+                unlink($path);
+            }
+        }
+        
+        return rmdir($dir);
     }
     
     /**
