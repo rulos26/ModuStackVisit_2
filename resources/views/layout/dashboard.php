@@ -3,6 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 $usuario = $_SESSION['username'] ?? 'Invitado';
+$theme = $theme ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -13,12 +14,21 @@ $usuario = $_SESSION['username'] ?? 'Invitado';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../public/css/styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <?php if ($theme === 'evaluador'): ?>
+    <style>
+        .sidebar-evaluador {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: #ffffff;
+        }
+    </style>
+    <?php endif; ?>
 </head>
 <body class="bg-light">
     <div class="d-flex">
         <?php include __DIR__ . '/menu.php'; ?>
         <div class="flex-grow-1">
-            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <?php $navbarClass = ($theme === 'evaluador') ? 'navbar navbar-expand-lg navbar-dark bg-success' : 'navbar navbar-expand-lg navbar-dark bg-primary'; ?>
+            <nav class="<?php echo $navbarClass; ?>">
                 <div class="container-fluid">
                     <a class="navbar-brand" href="#">Mi Dashboard</a>
                     <div class="d-flex align-items-center ms-auto">

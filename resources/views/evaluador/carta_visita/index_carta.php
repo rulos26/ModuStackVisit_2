@@ -21,5 +21,6 @@ ob_start();
 </div>
 <?php
 $contenido = ob_get_clean();
+$theme = 'evaluador';
 include dirname(__DIR__, 2) . '/layout/dashboard.php';
 ?>
