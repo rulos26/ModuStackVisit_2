@@ -7,6 +7,23 @@
 4. [Cámara de Comercio](#cámara-de-comercio)
 5. [Salud](#salud)
 6. [Composición Familiar](#composición-familiar)
+7. [Tipo de Vivienda](#tipo-de-vivienda)
+8. [Estado de Vivienda](#estado-de-vivienda)
+9. [Inventario de Enseres](#inventario-de-enseres)
+10. [Servicios Públicos](#servicios-públicos)
+11. [Cuentas Bancarias](#cuentas-bancarias)
+12. [Tiene Pasivo](#tiene-pasivo)
+13. [Pasivos](#pasivos)
+14. [Aportante](#aportante)
+15. [Data Crédito](#data-crédito)
+16. [Reportado](#reportado)
+17. [Ingresos Mensuales](#ingresos-mensuales)
+18. [Gasto](#gasto)
+19. [Estudios](#estudios)
+20. [Información Judicial](#información-judicial)
+21. [Experiencia Laboral](#experiencia-laboral)
+22. [Concepto Final del Evaluador](#concepto-final-del-evaluador)
+23. [Registro de Fotos](#registro-de-fotos)
 
 ---
 
@@ -330,6 +347,737 @@ CREATE TABLE composicion_familiar (
 
 ---
 
+## 🏡 TIPO DE VIVIENDA
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/tipo_vivienda/tipo_vivienda.php`
+- **Acción**: Formulario POST con datos sobre el tipo de vivienda del evaluado
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\TipoViviendaController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: tipo_vivienda, tenencia, servicios, observaciones, etc.)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `tipo_vivienda`
+- **Campos**: `id_cedula`, `tipo_vivienda`, `tenencia`, `servicios`, `observaciones`, etc.
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a tipo_vivienda.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → TipoViviendaController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'tipo_vivienda'
+   ↓
+6a. Si NO existe: INSERT en tabla 'tipo_vivienda'
+6b. Si existe: UPDATE en tabla 'tipo_vivienda'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../servicios_publicos/servicios_publicos.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista tipo_vivienda.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../servicios_publicos/servicios_publicos.php` (o la siguiente vista definida en el flujo)
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## 🏚️ ESTADO DE VIVIENDA
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/estado_vivienda/estado_vivienda.php`
+- **Acción**: Formulario POST con datos sobre el estado físico y condiciones de la vivienda.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\EstadoViviendaController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: estado_paredes, estado_techo, estado_pisos, iluminación, ventilación, observaciones, etc.)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `estado_vivienda`
+- **Campos**: `id_cedula`, `estado_paredes`, `estado_techo`, `estado_pisos`, `iluminacion`, `ventilacion`, `observaciones`, etc.
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a estado_vivienda.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → EstadoViviendaController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'estado_vivienda'
+   ↓
+6a. Si NO existe: INSERT en tabla 'estado_vivienda'
+6b. Si existe: UPDATE en tabla 'estado_vivienda'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../servicios_publicos/servicios_publicos.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista estado_vivienda.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../servicios_publicos/servicios_publicos.php` (o la siguiente vista definida en el flujo)
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## 🪑 INVENTARIO DE ENSERES
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/inventario_enseres/inventario_enseres.php`
+- **Acción**: Formulario POST con datos sobre los enseres y bienes del hogar.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\InventarioEnseresController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: lista de enseres, cantidad, estado, observaciones, etc.)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `inventario_enseres`
+- **Campos**: `id_cedula`, `enser`, `cantidad`, `estado`, `observaciones`, etc.
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a inventario_enseres.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → InventarioEnseresController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'inventario_enseres'
+   ↓
+6a. Si NO existe: INSERT en tabla 'inventario_enseres'
+6b. Si existe: UPDATE en tabla 'inventario_enseres'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../servicios_publicos/servicios_publicos.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista inventario_enseres.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../servicios_publicos/servicios_publicos.php` (o la siguiente vista definida en el flujo)
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## 💡 SERVICIOS PÚBLICOS
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/servicios_publicos/servicios_publicos.php`
+- **Acción**: Formulario POST con datos sobre los servicios públicos disponibles en la vivienda.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\ServiciosPublicosController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: agua, luz, gas, alcantarillado, recoleccion_basura, internet, observaciones, etc.)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `servicios_publicos`
+- **Campos**: `id_cedula`, `agua`, `luz`, `gas`, `alcantarillado`, `recoleccion_basura`, `internet`, `observaciones`, etc.
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a servicios_publicos.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → ServiciosPublicosController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'servicios_publicos'
+   ↓
+6a. Si NO existe: INSERT en tabla 'servicios_publicos'
+6b. Si existe: UPDATE en tabla 'servicios_publicos'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../cuentas_bancarias/cuentas_bancarias.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista servicios_publicos.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../cuentas_bancarias/cuentas_bancarias.php` (o la siguiente vista definida en el flujo)
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## 🏦 CUENTAS BANCARIAS
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/cuentas_bancarias/cuentas_bancarias.php`
+- **Acción**: Formulario POST con datos de cuentas bancarias del evaluado.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\CuentasBancariasController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: banco, tipo_cuenta, numero_cuenta, saldo, observaciones, etc.)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `cuentas_bancarias`
+- **Campos**: `id_cedula`, `banco`, `tipo_cuenta`, `numero_cuenta`, `saldo`, `observaciones`, etc.
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a cuentas_bancarias.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → CuentasBancariasController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'cuentas_bancarias'
+   ↓
+6a. Si NO existe: INSERT en tabla 'cuentas_bancarias'
+6b. Si existe: UPDATE en tabla 'cuentas_bancarias'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../tiene_pasivo/tiene_pasivo.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista cuentas_bancarias.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../tiene_pasivo/tiene_pasivo.php`
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## 📝 TIENE PASIVO
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/tiene_pasivo/tiene_pasivo.php`
+- **Acción**: Formulario POST para indicar si el evaluado tiene pasivos.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\TienePasivoController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: tiene_pasivo, observaciones)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `tiene_pasivo`
+- **Campos**: `id_cedula`, `tiene_pasivo`, `observaciones`
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a tiene_pasivo.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → TienePasivoController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'tiene_pasivo'
+   ↓
+6a. Si NO existe: INSERT en tabla 'tiene_pasivo'
+6b. Si existe: UPDATE en tabla 'tiene_pasivo'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../pasivos/pasivos.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista tiene_pasivo.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../pasivos/pasivos.php`
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## 💳 PASIVOS
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/pasivos/pasivos.php`
+- **Acción**: Formulario POST con datos de los pasivos del evaluado.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\PasivosController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: tipo_pasivo, entidad, valor, saldo, observaciones, etc.)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `pasivos`
+- **Campos**: `id_cedula`, `tipo_pasivo`, `entidad`, `valor`, `saldo`, `observaciones`, etc.
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a pasivos.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → PasivosController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'pasivos'
+   ↓
+6a. Si NO existe: INSERT en tabla 'pasivos'
+6b. Si existe: UPDATE en tabla 'pasivos'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../aportante/aportante.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista pasivos.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../aportante/aportante.php`
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## 👤 APORTANTE
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/aportante/aportante.php`
+- **Acción**: Formulario POST con datos del aportante.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\AportanteController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: nombre_aportante, parentesco, valor_aporte, observaciones, etc.)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `aportante`
+- **Campos**: `id_cedula`, `nombre_aportante`, `parentesco`, `valor_aporte`, `observaciones`, etc.
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a aportante.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → AportanteController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'aportante'
+   ↓
+6a. Si NO existe: INSERT en tabla 'aportante'
+6b. Si existe: UPDATE en tabla 'aportante'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../data_credito/data_credito.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista aportante.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../data_credito/data_credito.php`
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## 🗂️ DATA CRÉDITO
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/data_credito/data_credito.php`
+- **Acción**: Formulario POST con información de Data Crédito.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\DataCreditoController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: estado_data_credito, observaciones)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `data_credito`
+- **Campos**: `id_cedula`, `estado_data_credito`, `observaciones`
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a data_credito.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → DataCreditoController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'data_credito'
+   ↓
+6a. Si NO existe: INSERT en tabla 'data_credito'
+6b. Si existe: UPDATE en tabla 'data_credito'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../reportado/reportado.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista data_credito.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../reportado/reportado.php`
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## 🚩 REPORTADO
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/reportado/reportado.php`
+- **Acción**: Formulario POST para indicar si el evaluado está reportado.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\ReportadoController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: esta_reportado, observaciones)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `reportado`
+- **Campos**: `id_cedula`, `esta_reportado`, `observaciones`
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a reportado.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → ReportadoController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'reportado'
+   ↓
+6a. Si NO existe: INSERT en tabla 'reportado'
+6b. Si existe: UPDATE en tabla 'reportado'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../ingresos_mensuales/ingresos_mensuales.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista reportado.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../ingresos_mensuales/ingresos_mensuales.php`
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## 💰 INGRESOS MENSUALES
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/ingresos_mensuales/ingresos_mensuales.php`
+- **Acción**: Formulario POST con datos de ingresos mensuales.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\IngresosMensualesController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: tipo_ingreso, valor, observaciones, etc.)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `ingresos_mensuales`
+- **Campos**: `id_cedula`, `tipo_ingreso`, `valor`, `observaciones`, etc.
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a ingresos_mensuales.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → IngresosMensualesController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'ingresos_mensuales'
+   ↓
+6a. Si NO existe: INSERT en tabla 'ingresos_mensuales'
+6b. Si existe: UPDATE en tabla 'ingresos_mensuales'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../gasto/gasto.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista ingresos_mensuales.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../gasto/gasto.php`
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## 💸 GASTO
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/gasto/gasto.php`
+- **Acción**: Formulario POST con datos de gastos mensuales.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\GastoController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: tipo_gasto, valor, observaciones, etc.)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `gasto`
+- **Campos**: `id_cedula`, `tipo_gasto`, `valor`, `observaciones`, etc.
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a gasto.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → GastoController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'gasto'
+   ↓
+6a. Si NO existe: INSERT en tabla 'gasto'
+6b. Si existe: UPDATE en tabla 'gasto'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../estudios/estudios.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista gasto.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../estudios/estudios.php`
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## 🎓 ESTUDIOS
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/estudios/estudios.php`
+- **Acción**: Formulario POST con datos de estudios realizados.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\EstudiosController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: nivel_estudio, institucion, año_finalizacion, observaciones, etc.)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `estudios`
+- **Campos**: `id_cedula`, `nivel_estudio`, `institucion`, `año_finalizacion`, `observaciones`, etc.
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a estudios.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → EstudiosController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'estudios'
+   ↓
+6a. Si NO existe: INSERT en tabla 'estudios'
+6b. Si existe: UPDATE en tabla 'estudios'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../informacion_judicial/informacion_judicial.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista estudios.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../informacion_judicial/informacion_judicial.php`
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## ⚖️ INFORMACIÓN JUDICIAL
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/informacion_judicial/informacion_judicial.php`
+- **Acción**: Formulario POST con datos judiciales del evaluado.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\InformacionJudicialController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: antecedentes, procesos, observaciones, etc.)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `informacion_judicial`
+- **Campos**: `id_cedula`, `antecedentes`, `procesos`, `observaciones`, etc.
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a informacion_judicial.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → InformacionJudicialController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'informacion_judicial'
+   ↓
+6a. Si NO existe: INSERT en tabla 'informacion_judicial'
+6b. Si existe: UPDATE en tabla 'informacion_judicial'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../experiencia_laboral/experiencia_laboral.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista informacion_judicial.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../experiencia_laboral/experiencia_laboral.php`
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## 💼 EXPERIENCIA LABORAL
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/experiencia_laboral/experiencia_laboral.php`
+- **Acción**: Formulario POST con datos de experiencia laboral.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\ExperienciaLaboralController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: empresa, cargo, tiempo, observaciones, etc.)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `experiencia_laboral`
+- **Campos**: `id_cedula`, `empresa`, `cargo`, `tiempo`, `observaciones`, etc.
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a experiencia_laboral.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → ExperienciaLaboralController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'experiencia_laboral'
+   ↓
+6a. Si NO existe: INSERT en tabla 'experiencia_laboral'
+6b. Si existe: UPDATE en tabla 'experiencia_laboral'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../concepto_final_evaluador/concepto_final_evaluador.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista experiencia_laboral.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../concepto_final_evaluador/concepto_final_evaluador.php`
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## 📝 CONCEPTO FINAL DEL EVALUADOR
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/concepto_final_evaluador/concepto_final_evaluador.php`
+- **Acción**: Formulario POST con el concepto final del evaluador.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\ConceptoFinalEvaluadorController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: concepto, recomendaciones, observaciones, etc.)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `concepto_final_evaluador`
+- **Campos**: `id_cedula`, `concepto`, `recomendaciones`, `observaciones`, etc.
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a concepto_final_evaluador.php
+   ↓
+2. Llena y envía el formulario (POST)
+   ↓
+3. POST → ConceptoFinalEvaluadorController::guardar()
+   ↓
+4. El controlador valida y sanitiza los datos
+   ↓
+5. Se verifica si existe registro para la cédula en 'concepto_final_evaluador'
+   ↓
+6a. Si NO existe: INSERT en tabla 'concepto_final_evaluador'
+6b. Si existe: UPDATE en tabla 'concepto_final_evaluador'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la siguiente vista del flujo (ejemplo: ../registro_fotos/registro_fotos.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista concepto_final_evaluador.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../registro_fotos/registro_fotos.php`
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
+## 📷 REGISTRO DE FOTOS
+
+### **1. VISTA INICIAL**
+- **Archivo**: `resources/views/evaluador/evaluacion_visita/visita/registro_fotos/registro_fotos.php`
+- **Acción**: Formulario POST para subir fotos de la visita.
+
+### **2. CONTROLADOR PRINCIPAL**
+- **Controlador**: `App\Controllers\RegistroFotosController`
+- **Método**: `guardar()`
+- **Parámetros**: Datos del formulario (ejemplo: archivos de imagen, descripción, fecha, etc.)
+
+### **3. BASE DE DATOS**
+- **Tabla**: `registro_fotos`
+- **Campos**: `id_cedula`, `ruta_foto`, `descripcion`, `fecha`, etc.
+
+### **4. FLUJO COMPLETO**
+```
+1. Usuario accede a registro_fotos.php
+   ↓
+2. Selecciona y sube las fotos (POST)
+   ↓
+3. POST → RegistroFotosController::guardar()
+   ↓
+4. El controlador valida y procesa los archivos
+   ↓
+5. Se verifica si existe registro para la cédula en 'registro_fotos'
+   ↓
+6a. Si NO existe: INSERT en tabla 'registro_fotos'
+6b. Si existe: UPDATE en tabla 'registro_fotos'
+   ↓
+7. Si la operación es exitosa:
+      Redirige a la vista final del flujo (ejemplo: ../finalizacion/finalizacion.php)
+   ↓
+8. Si hay error:
+      Muestra mensaje de error en la misma vista registro_fotos.php
+```
+
+### **5. REDIRECCIONES**
+- **✅ Éxito**: Redirige a `../finalizacion/finalizacion.php` (o la vista final definida en el flujo)
+- **❌ Error**: Muestra mensaje de error en la misma vista
+
+---
+
 ## 🔄 FLUJO GENERAL DEL SISTEMA
 
 ### **SECUENCIA COMPLETA**
@@ -393,3 +1141,27 @@ CREATE TABLE composicion_familiar (
 ---
 
 *Documento generado automáticamente - Sistema de Visitas Domiciliarias v2.0*
+
+---
+
+## Flujo de trabajo: Vista `tiene_pareja.php`
+
+1. **Acceso a la vista**  
+   El usuario accede a la página `tiene_pareja.php` desde el menú principal o tras completar un registro previo.
+
+2. **Verificación de pareja**  
+   El sistema verifica si el usuario tiene una pareja registrada en la base de datos.
+
+3. **Despliegue de información**  
+   - Si el usuario tiene pareja, se muestra la información relevante (nombre, datos de contacto, etc.).
+   - Si no tiene pareja, se muestra un mensaje indicando que no hay pareja registrada y se ofrece la opción de registrar una nueva.
+
+4. **Acciones disponibles**  
+   - Registrar nueva pareja.
+   - Editar información de la pareja existente.
+   - Eliminar pareja.
+
+5. **Redirección**  
+   Tras realizar alguna acción, el sistema redirige al usuario a la vista correspondiente (confirmación, edición, etc.).
+
+---
