@@ -121,6 +121,7 @@
                     Usuarios Evaluación
                 </a>
             </li>
+           
         <?php
         } // Fin del bloque para el rol de Administrador
 
@@ -162,6 +163,13 @@
                 <a href="/ModuStackVisit_2/resources/views/superadmin/gestion_tablas_principales.php" class="nav-link link-dark">
                     <i class="bi bi-database me-2"></i>
                     Tablas Principales
+                </a>
+            </li>
+             <!-- Enlace al explorador de imágenes -->
+             <li>
+                <a href="/ModuStackVisit_2/explorador_imagenes.php" class="nav-link link-dark">
+                    <i class="bi bi-images me-2"></i>
+                    Explorador de Imágenes
                 </a>
             </li>
         <?php

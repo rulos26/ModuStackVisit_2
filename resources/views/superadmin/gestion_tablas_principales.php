@@ -341,19 +341,19 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                             <button class="btn btn-danger btn-lg" onclick="confirmarVaciarTablas()">
                                 <i class="bi bi-trash3"></i> Vaciar Tablas
                             </button>
+                            </div>
                         </div>
-                                            </div>
-                                        </div>
-                                        
+                    </div>
+                    
                 <!-- Tabla de Usuarios Evaluados -->
                                     <div class="row">
-                                        <div class="col-12">
-                        <div class="card">
+                        <div class="col-12">
+                            <div class="card">
                             <div class="card-header">
                                 <h5 class="card-title mb-0">
                                     <i class="bi bi-people"></i> Usuarios Evaluados
                                 </h5>
-                            </div>
+                                        </div>
                                                 <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-striped table-hover" id="tablaUsuarios">
@@ -512,11 +512,11 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
             .then(text => {
                 try {
                     const data = JSON.parse(text);
-                    if (data.error) {
+                if (data.error) {
                         mostrarError(`Error: ${data.error}<br><br>Haz clic en "Test Básico" para más información.`);
-                        return;
-                    }
-                    
+                    return;
+                }
+                
                     mostrarUsuarios(data);
                 } catch (parseError) {
                     console.error('Error parseando JSON:', parseError);
@@ -610,7 +610,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                     // Formato del procesador original (objeto con cantidades)
                     if (Object.keys(data).length === 0) {
                         tablasConDatos.innerHTML = '<p class="text-muted">No se encontraron datos asociados a este usuario.</p>';
-                    } else {
+            } else {
                         let html = '<h6>Tablas que contienen datos:</h6><ul class="list-group">';
                         Object.entries(data).forEach(([tabla, cantidad]) => {
                             html += `<li class="list-group-item d-flex justify-content-between"><span>${tabla}</span><span class="badge bg-primary">${cantidad} registros</span></li>`;
