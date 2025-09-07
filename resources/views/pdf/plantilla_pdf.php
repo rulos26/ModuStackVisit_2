@@ -65,7 +65,7 @@
                     <div class="carta">
                         <p><strong>#Yo <?= htmlspecialchars($row1['nombres'] ?? '') ?></strong></p>
                         <p>Identificado (a) con cédula de ciudadanía No. <strong><?= htmlspecialchars($row1['cedula'] ?? '') ?></strong></p>
-                        <p>Expedida en: <strong>Bogotá D.C</strong></p>
+                        <p>Expedida en: <strong>Bogotá D.C</strong> <strong><?= htmlspecialchars($row1['fecha'] ?? '') ?></strong></p><strong><?= htmlspecialchars($row1['cedula'] ?? '') ?></strong></p></p>
                         <!-- <p></p> -->
                         <p>Manifiesto de manera libre, expresa e informada que autorizo plenamente a la empresa GRUPO DE
 TAREAS EMPRESARIALÉS, identificada con NIT 830142.258-3, para llevar a cabo la visita|
