@@ -236,6 +236,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                                 <a href="gestion_tablas_simple.php" class="btn btn-success me-2">
                                     <i class="bi bi-lightning"></i> Versión Simple
                                 </a>
+                                <a href="test_estructura_servidor.php" class="btn btn-info me-2">
+                                    <i class="bi bi-folder"></i> Test Estructura
+                                </a>
                                 <a href="test_configuracion.php" class="btn btn-warning me-2">
                                     <i class="bi bi-gear-fill"></i> Test Configuración
                                 </a>
@@ -418,39 +421,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
         
         // Cargar usuarios evaluados
         function cargarUsuariosEvaluados() {
-            const formData = new FormData();
-            formData.append('accion', 'obtener_usuarios_evaluados');
-            
-            fetch('procesar_tablas_principales.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.error) {
-                    if (data.fallback) {
-                        // Si hay error del framework, usar procesador simple
-                        console.log('Usando procesador simple como fallback');
-                        cargarUsuariosConProcesadorSimple();
-                        return;
-                    }
-                    mostrarError(`Error: ${data.error}<br><br>Haz clic en "Diagnóstico de Base de Datos" para más información.`);
-                    return;
-                }
-                
-                mostrarUsuarios(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // Si falla completamente, intentar con procesador simple
-                console.log('Error en procesador principal, intentando con procesador simple');
-                cargarUsuariosConProcesadorSimple();
-            });
+            // Usar directamente el procesador simple ya que el framework no existe en el servidor
+            console.log('Usando procesador simple directamente');
+            cargarUsuariosConProcesadorSimple();
         }
         
         // Cargar usuarios con procesador simple
@@ -524,12 +497,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
             document.getElementById('nombreUsuarioEliminar').textContent = nombreCompleto;
             document.getElementById('confirmacionEliminarUsuario').value = '';
             
-            // Verificar tablas con datos
+            // Verificar tablas con datos usando procesador simple directamente
             const formData = new FormData();
             formData.append('accion', 'verificar_tablas_con_datos');
             formData.append('id_cedula', idCedula);
             
-            fetch('procesar_tablas_principales.php', {
+            fetch('procesar_simple.php', {
                 method: 'POST',
                 body: formData
             })
@@ -545,33 +518,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                 } catch (parseError) {
                     throw new Error(`Error parseando JSON: ${parseError.message}. Respuesta: ${text}`);
                 }
-            })
-            .then(data => {
-                if (data.error && data.fallback) {
-                    // Si hay error del framework, usar procesador simple
-                    const formData = new FormData();
-                    formData.append('accion', 'verificar_tablas_con_datos');
-                    formData.append('id_cedula', idCedula);
-                    
-                    return fetch('procesar_simple.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.text();
-                    })
-                    .then(text => {
-                        try {
-                            return JSON.parse(text);
-                        } catch (parseError) {
-                            throw new Error(`Error parseando JSON: ${parseError.message}. Respuesta: ${text}`);
-                        }
-                    });
-                }
-                return data;
             })
             .then(data => {
                 if (data.error) {
