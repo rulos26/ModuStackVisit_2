@@ -1,93 +1,11 @@
 <?php
-// Mostrar errores solo en desarrollo
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
-
-ob_start();
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
-    header('Location: ../../../../../public/login.php');
-    exit();
-}
-
-require_once __DIR__ . '/ConceptoFinalEvaluadorController.php';
-use App\Controllers\ConceptoFinalEvaluadorController;
+// Redirigir al nuevo wizard
+header('Location: ../concepto_final_evaluador_wizard.php');
+exit();
 
 // Variables para manejar errores y datos
 $errores_campos = [];
 $datos_formulario = [];
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $controller = ConceptoFinalEvaluadorController::getInstance();
-        $datos = $controller->sanitizarDatos($_POST);
-        $errores = $controller->validarDatos($datos);
-        
-        // Guardar los datos del formulario para mantenerlos en caso de error
-        $datos_formulario = $datos;
-        
-        if (empty($errores)) {
-            $resultado = $controller->guardar($datos);
-            if ($resultado['success']) {
-                $_SESSION['success'] = $resultado['message'];
-                header('Location: ../registro_fotos/registro_fotos.php');
-                exit();
-            } else {
-                $_SESSION['error'] = $resultado['message'];
-            }
-        } else {
-            // Procesar errores para mostrarlos en campos específicos
-            foreach ($errores as $error) {
-                if (strpos($error, 'Actitud del evaluado') !== false) {
-                    $errores_campos['actitud'] = $error;
-                } elseif (strpos($error, 'Condiciones de Vivienda') !== false) {
-                    $errores_campos['condiciones_vivienda'] = $error;
-                } elseif (strpos($error, 'Dinámica Familiar') !== false) {
-                    $errores_campos['dinamica_familiar'] = $error;
-                } elseif (strpos($error, 'Condiciones Socio Económicas') !== false) {
-                    $errores_campos['condiciones_economicas'] = $error;
-                } elseif (strpos($error, 'Condiciones Académicas') !== false) {
-                    $errores_campos['condiciones_academicas'] = $error;
-                } elseif (strpos($error, 'Evaluación Experiencia Laboral') !== false) {
-                    $errores_campos['evaluacion_experiencia_laboral'] = $error;
-                } elseif (strpos($error, 'Observaciones') !== false) {
-                    $errores_campos['observaciones'] = $error;
-                } elseif (strpos($error, 'Concepto Final de la Visita') !== false) {
-                    $errores_campos['id_concepto_final'] = $error;
-                } elseif (strpos($error, 'Nombre del Evaluador') !== false) {
-                    $errores_campos['nombre_evaluador'] = $error;
-                } elseif (strpos($error, 'concepto de seguridad') !== false) {
-                    $errores_campos['id_concepto_seguridad'] = $error;
-                } else {
-                    $_SESSION['error'] = $error;
-                }
-            }
-        }
-    } catch (Exception $e) {
-        error_log("Error en concepto_final_evaluador.php: " . $e->getMessage());
-        $_SESSION['error'] = "Error interno del servidor: " . $e->getMessage();
-    }
-}
-
-try {
-    $controller = ConceptoFinalEvaluadorController::getInstance();
-    $id_cedula = $_SESSION['id_cedula'];
-    $datos_existentes = $controller->obtenerPorCedula($id_cedula);
-    $conceptos_finales = $controller->obtenerConceptosFinales();
-    
-    // Si no hay datos del formulario (POST), usar datos existentes
-    if (empty($datos_formulario) && !empty($datos_existentes)) {
-        $datos_formulario = $datos_existentes;
-    }
-} catch (Exception $e) {
-    error_log("Error en concepto_final_evaluador.php: " . $e->getMessage());
-    $error_message = "Error al cargar los datos: " . $e->getMessage();
-}
 ?>
 <link rel="stylesheet" href="../../../../../public/css/styles.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">

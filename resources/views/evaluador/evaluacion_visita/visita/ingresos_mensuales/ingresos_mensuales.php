@@ -1,55 +1,11 @@
 <?php
-// Mostrar errores solo en desarrollo
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
+// Redirigir al nuevo wizard
+header('Location: ../ingresos_mensuales_wizard.php');
+exit();
 
-ob_start();
-
-if (session_status() === PHP_SESSION_NONE) {
-session_start();
-}
-
-if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
-    header('Location: ../../../../../public/login.php');
-    exit();
-}
-
-require_once __DIR__ . '/IngresosMensualesController.php';
-use App\Controllers\IngresosMensualesController;
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $controller = IngresosMensualesController::getInstance();
-        $datos = $controller->sanitizarDatos($_POST);
-        $errores = $controller->validarDatos($datos);
-        
-        if (empty($errores)) {
-            $resultado = $controller->guardar($datos);
-            if ($resultado['success']) {
-                $_SESSION['success'] = $resultado['message'];
-                header('Location: ../gasto/gasto.php');
-                exit();
-            } else {
-                $_SESSION['error'] = $resultado['message'];
-            }
-        } else {
-            $_SESSION['error'] = implode('<br>', $errores);
-        }
-    } catch (Exception $e) {
-        error_log("Error en ingresos_mensuales.php: " . $e->getMessage());
-        $_SESSION['error'] = "Error interno del servidor: " . $e->getMessage();
-    }
-}
-
-try {
-    $controller = IngresosMensualesController::getInstance();
-    $id_cedula = $_SESSION['id_cedula'];
-    $datos_existentes = $controller->obtenerPorCedula($id_cedula);
-} catch (Exception $e) {
-    error_log("Error en ingresos_mensuales.php: " . $e->getMessage());
-    $error_message = "Error al cargar los datos: " . $e->getMessage();
-}
+// Variables para manejar errores y datos
+$errores_campos = [];
+$datos_formulario = [];
 ?>
 <link rel="stylesheet" href="../../../../../public/css/styles.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">

@@ -76,220 +76,177 @@ try {
     $error_message = "Error al cargar los datos: " . $e->getMessage();
 }
 ?>
-<link rel="stylesheet" href="../../../../../public/css/styles.css">
+<link rel="stylesheet" href="../../../../../public/css/wizard-styles.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<style>
-.steps-horizontal {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 2rem;
-    width: 100%;
-    gap: 0.5rem;
-}
-.step-horizontal {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    position: relative;
-}
-.step-horizontal:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    top: 24px;
-    left: 50%;
-    width: 100%;
-    height: 4px;
-    background: #e0e0e0;
-    z-index: 0;
-    transform: translateX(50%);
-}
-.step-horizontal .step-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: #e0e0e0;
-    color: #888;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    border: 2px solid #e0e0e0;
-    z-index: 1;
-    transition: all 0.3s;
-}
-.step-horizontal.active .step-icon {
-    background: #4361ee;
-    border-color: #4361ee;
-    color: #fff;
-    box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.2);
-}
-.step-horizontal.complete .step-icon {
-    background: #2ecc71;
-    border-color: #2ecc71;
-    color: #fff;
-}
-.step-horizontal .step-title {
-    font-weight: bold;
-    font-size: 1rem;
-    margin-bottom: 0.2rem;
-}
-.step-horizontal .step-description {
-    font-size: 0.85rem;
-    color: #888;
-    text-align: center;
-}
-.step-horizontal.active .step-title,
-.step-horizontal.active .step-description {
-    color: #4361ee;
-}
-.step-horizontal.complete .step-title,
-.step-horizontal.complete .step-description {
-    color: #2ecc71;
-}
-</style>
 
-<div class="container mt-4">
-    <div class="card mt-5">
-        <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">
-                <i class="bi bi-person-fill me-2"></i>
-                VISITA DOMICILIARÍA - INFORMACIÓN PERSONAL
-            </h5>
+<div class="wizard-container">
+    <div class="wizard-card">
+        <!-- Header del Wizard -->
+        <div class="wizard-header">
+            <h1><i class="fas fa-id-card me-2"></i>INFORMACIÓN PERSONAL</h1>
+            <p class="subtitle">Datos personales completos del evaluado</p>
         </div>
-        <div class="card-body">
-            <!-- Indicador de pasos -->
-            <div class="steps-horizontal mb-4">
-                <div class="step-horizontal complete">
-                    <div class="step-icon"><i class="fas fa-user"></i></div>
-                    <div class="step-title">Paso 1</div>
-                    <div class="step-description">Datos Básicos</div>
-                </div>
-                <div class="step-horizontal active">
-                    <div class="step-icon"><i class="fas fa-id-card"></i></div>
-                    <div class="step-title">Paso 2</div>
-                    <div class="step-description">Información Personal</div>
-                </div>
-                <div class="step-horizontal">
-                    <div class="step-icon"><i class="fas fa-building"></i></div>
-                    <div class="step-title">Paso 3</div>
-                    <div class="step-description">Cámara de Comercio</div>
-                </div>
-                <div class="step-horizontal">
-                    <div class="step-icon"><i class="fas fa-camera"></i></div>
-                    <div class="step-title">Paso 4</div>
-                    <div class="step-description">Registro Fotográfico</div>
-                </div>
-                <div class="step-horizontal">
-                    <div class="step-icon"><i class="fas fa-map-marker-alt"></i></div>
-                    <div class="step-title">Paso 5</div>
-                    <div class="step-description">Ubicación</div>
-                </div>
-                <div class="step-horizontal">
-                    <div class="step-icon"><i class="fas fa-flag-checkered"></i></div>
-                    <div class="step-title">Paso 6</div>
-                    <div class="step-description">Finalización</div>
-                </div>
-            </div>
 
-            <!-- Controles de navegación -->
-            <div class="controls text-center mb-4">
-                <a href="../index.php" class="btn btn-secondary me-2">
-                    <i class="fas fa-arrow-left me-1"></i>Anterior
-                </a>
-                <button class="btn btn-primary" id="nextBtn" type="button" disabled>
-                    Siguiente<i class="fas fa-arrow-right ms-1"></i>
-                </button>
+        <!-- Barra de Progreso -->
+        <div class="wizard-progress">
+            <div class="wizard-steps">
+                <div class="wizard-step completed">
+                    <div class="wizard-step-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="wizard-step-title">Paso 1</div>
+                    <div class="wizard-step-description">Datos Básicos</div>
+                </div>
+                <div class="wizard-step active">
+                    <div class="wizard-step-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <div class="wizard-step-title">Paso 2</div>
+                    <div class="wizard-step-description">Información Personal</div>
+                </div>
+                <div class="wizard-step">
+                    <div class="wizard-step-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="wizard-step-title">Paso 3</div>
+                    <div class="wizard-step-description">Cámara de Comercio</div>
+                </div>
+                <div class="wizard-step">
+                    <div class="wizard-step-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div class="wizard-step-title">Paso 4</div>
+                    <div class="wizard-step-description">Salud</div>
+                </div>
+                <div class="wizard-step">
+                    <div class="wizard-step-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="wizard-step-title">Paso 5</div>
+                    <div class="wizard-step-description">Composición Familiar</div>
+                </div>
+                <div class="wizard-step">
+                    <div class="wizard-step-icon">
+                        <i class="fas fa-flag-checkered"></i>
+                    </div>
+                    <div class="wizard-step-title">Paso 6</div>
+                    <div class="wizard-step-description">Finalización</div>
+                </div>
             </div>
+        </div>
 
-            <!-- Mensajes de sesión -->
-            <?php if (isset($_SESSION['error'])): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <?php echo $_SESSION['error']; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <?php unset($_SESSION['error']); ?>
-            <?php endif; ?>
-            
-            <?php if (isset($_SESSION['success'])): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>
-                    <?php echo $_SESSION['success']; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <?php unset($_SESSION['success']); ?>
-            <?php endif; ?>
-            
-            <?php if (isset($error_message)): ?>
-                <div class="alert alert-danger">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
-                    <?php echo htmlspecialchars($error_message); ?>
-                </div>
-            <?php endif; ?>
-            
-            <?php if ($datos_existentes): ?>
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle me-2"></i>
-                    Ya existe información registrada para esta cédula. Puede actualizar los datos.
-                </div>
-            <?php endif; ?>
-            
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 300px;">
-                </div>
-                <div class="col-md-6 text-end">
-                    <div class="text-muted">
-                        <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
-                        <small>Cédula: <?php echo htmlspecialchars($id_cedula); ?></small>
+        <!-- Contenido del Wizard -->
+        <div class="wizard-content">
+            <div class="wizard-step-content active">
+                <!-- Información del Evaluado -->
+                <div class="wizard-evaluado-info">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="wizard-logo">
+                        </div>
+                        <div class="col-md-6 wizard-evaluado-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Fecha:</span> <?php echo date('d/m/Y'); ?>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Cédula:</span> <?php echo htmlspecialchars($id_cedula); ?>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Usuario:</span> <?php echo htmlspecialchars($_SESSION['username'] ?? 'N/A'); ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <form action="" method="POST" id="formInformacionPersonal" novalidate autocomplete="off">
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label for="id_cedula" class="form-label">
-                            <i class="bi bi-card-text me-1"></i>Número de Documento:
-                        </label>
-                        <input type="number" class="form-control" id="id_cedula" name="id_cedula" 
-                               value="<?php echo htmlspecialchars($id_cedula); ?>" readonly>
-                        <div class="form-text">Documento de identidad</div>
+
+                <!-- Mensajes de sesión -->
+                <?php if (isset($_SESSION['error'])): ?>
+                    <div class="wizard-alert wizard-alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <strong>Error:</strong><br>
+                            <?php echo $_SESSION['error']; ?>
+                        </div>
                     </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <label for="id_tipo_documentos" class="form-label">
-                            <i class="bi bi-card-list me-1"></i>Tipo de Documento:
-                        </label>
-                        <select class="form-select" id="id_tipo_documentos" name="id_tipo_documentos" required>
-                            <option value="">Seleccione tipo de documento</option>
-                            <?php foreach ($opciones['tipo_documentos'] as $opcion): ?>
-                                <option value="<?php echo htmlspecialchars($opcion['id']); ?>" 
-                                        <?php echo ($datos_existentes && $datos_existentes['id_tipo_documentos'] == $opcion['id']) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($opcion['nombre']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <div class="invalid-feedback">Por favor seleccione el tipo de documento.</div>
+                    <?php unset($_SESSION['error']); ?>
+                <?php endif; ?>
+                
+                <?php if (isset($_SESSION['success'])): ?>
+                    <div class="wizard-alert wizard-alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>Éxito:</strong><br>
+                            <?php echo $_SESSION['success']; ?>
+                        </div>
                     </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <label for="cedula_expedida" class="form-label">
-                            <i class="bi bi-geo-alt me-1"></i>Cédula expedida en:
-                        </label>
-                        <select class="form-select" id="cedula_expedida" name="cedula_expedida" required>
-                            <option value="">Seleccione municipio</option>
-                            <?php foreach ($opciones['municipios'] as $opcion): ?>
-                                <option value="<?php echo htmlspecialchars($opcion['id_municipio']); ?>" 
-                                        <?php echo ($datos_existentes && $datos_existentes['cedula_expedida'] == $opcion['id_municipio']) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($opcion['municipio']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <div class="invalid-feedback">Por favor seleccione el municipio de expedición.</div>
+                    <?php unset($_SESSION['success']); ?>
+                <?php endif; ?>
+                
+                <?php if (isset($error_message)): ?>
+                    <div class="wizard-alert wizard-alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <strong>Error:</strong><br>
+                            <?php echo htmlspecialchars($error_message); ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if ($datos_existentes): ?>
+                    <div class="wizard-alert wizard-alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>Información:</strong><br>
+                            Ya existe información registrada para esta cédula. Puede actualizar los datos.
+                        </div>
+                    </div>
+                <?php endif; ?>
+                
+                <!-- Formulario -->
+                <form action="" method="POST" id="formInformacionPersonal" class="wizard-form" novalidate autocomplete="off">
+                    <div class="row">
+                        <div class="col-md-4 form-group">
+                            <label for="id_cedula" class="form-label">
+                                <i class="fas fa-id-card"></i>
+                                Número de Documento:
+                            </label>
+                            <input type="number" class="form-control" id="id_cedula" name="id_cedula" 
+                                   value="<?php echo htmlspecialchars($id_cedula); ?>" readonly>
+                            <div class="form-text">Documento de identidad</div>
+                        </div>
+                        
+                        <div class="col-md-4 form-group">
+                            <label for="id_tipo_documentos" class="form-label">
+                                <i class="fas fa-list"></i>
+                                Tipo de Documento:
+                            </label>
+                            <select class="form-select" id="id_tipo_documentos" name="id_tipo_documentos" required>
+                                <option value="">Seleccione tipo de documento</option>
+                                <?php foreach ($opciones['tipo_documentos'] as $opcion): ?>
+                                    <option value="<?php echo htmlspecialchars($opcion['id']); ?>" 
+                                            <?php echo ($datos_existentes && $datos_existentes['id_tipo_documentos'] == $opcion['id']) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($opcion['nombre']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="invalid-feedback">Por favor seleccione el tipo de documento.</div>
+                        </div>
+                        
+                        <div class="col-md-4 form-group">
+                            <label for="cedula_expedida" class="form-label">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Cédula expedida en:
+                            </label>
+                            <select class="form-select" id="cedula_expedida" name="cedula_expedida" required>
+                                <option value="">Seleccione municipio</option>
+                                <?php foreach ($opciones['municipios'] as $opcion): ?>
+                                    <option value="<?php echo htmlspecialchars($opcion['id_municipio']); ?>" 
+                                            <?php echo ($datos_existentes && $datos_existentes['cedula_expedida'] == $opcion['id_municipio']) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($opcion['municipio']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="invalid-feedback">Por favor seleccione el municipio de expedición.</div>
+                        </div>
                     </div>
                 </div>
 
@@ -570,152 +527,196 @@ try {
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-primary btn-lg me-2">
-                            <i class="bi bi-check-circle me-2"></i>
-                            <?php echo $datos_existentes ? 'Actualizar' : 'Guardar'; ?>
-                        </button>
-                        <a href="../index.php" class="btn btn-secondary btn-lg">
-                            <i class="bi bi-arrow-left me-2"></i>Volver
-                        </a>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div class="card-footer text-body-secondary">
-            <div class="row">
-                <div class="col-md-6">
-                    <small>© 2024 V0.01 - Sistema de Visitas Domiciliarias</small>
-                </div>
-                <div class="col-md-6 text-end">
-                    <small>Usuario: <?php echo htmlspecialchars($_SESSION['username'] ?? 'N/A'); ?></small>
-                </div>
+                </form>
             </div>
+        </div>
+
+        <!-- Navegación del Wizard -->
+        <div class="wizard-navigation">
+            <a href="../index.php" class="wizard-btn wizard-btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Anterior
+            </a>
+            <div class="text-center">
+                <small class="text-muted">Paso 2 de 22</small>
+            </div>
+            <button type="button" class="wizard-btn wizard-btn-primary wizard-btn-next" id="nextBtn" disabled>
+                Siguiente
+                <i class="fas fa-arrow-right"></i>
+            </button>
         </div>
     </div>
 </div>
 
-<script src="../../../../../public/js/validacionInformacionPersonal.js"></script>
+<script src="../../../../../public/js/wizard.js"></script>
 <script>
-// Validación del formulario
-(function() {
-    'use strict';
-    window.addEventListener('load', function() {
-        var forms = document.getElementsByClassName('needs-validation');
-        var validation = Array.prototype.filter.call(forms, function(form) {
-            form.addEventListener('submit', function(event) {
-                if (form.checkValidity() === false) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
-        });
-    }, false);
-})();
-
-// Validación en tiempo real
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('formInformacionPersonal');
     const inputs = form.querySelectorAll('input, select, textarea');
     const nextBtn = document.getElementById('nextBtn');
     
-    inputs.forEach(input => {
-        input.addEventListener('blur', function() {
-            validateField(this);
-        });
-        
-        input.addEventListener('input', function() {
-            if (this.classList.contains('is-invalid')) {
-                validateField(this);
-            }
-        });
-    });
-    
+    // Función de validación de campo
     function validateField(field) {
-        if (field.checkValidity()) {
-            field.classList.remove('is-invalid');
-            field.classList.add('is-valid');
-        } else {
-            field.classList.remove('is-valid');
+        const value = field.value.trim();
+        const isRequired = field.hasAttribute('required');
+        
+        // Remover clases de validación anteriores
+        field.classList.remove('is-valid', 'is-invalid');
+        
+        // Validación básica
+        if (isRequired && !value) {
             field.classList.add('is-invalid');
+            return false;
         }
         
-        // Habilitar/deshabilitar botón siguiente
-        checkFormValidity();
+        // Validaciones específicas por tipo
+        if (field.type === 'email' && value && !isValidEmail(value)) {
+            field.classList.add('is-invalid');
+            return false;
+        }
+        
+        if (field.type === 'tel' && value && !isValidPhone(value)) {
+            field.classList.add('is-invalid');
+            return false;
+        }
+        
+        if (field.type === 'number' && value && isNaN(value)) {
+            field.classList.add('is-invalid');
+            return false;
+        }
+        
+        // Validaciones por patrón
+        if (field.pattern && value) {
+            const regex = new RegExp(field.pattern);
+            if (!regex.test(value)) {
+                field.classList.add('is-invalid');
+                return false;
+            }
+        }
+        
+        // Validaciones por atributos
+        if (field.min && value && parseFloat(value) < parseFloat(field.min)) {
+            field.classList.add('is-invalid');
+            return false;
+        }
+        
+        if (field.max && value && parseFloat(value) > parseFloat(field.max)) {
+            field.classList.add('is-invalid');
+            return false;
+        }
+        
+        if (field.maxLength && value && value.length > field.maxLength) {
+            field.classList.add('is-invalid');
+            return false;
+        }
+        
+        // Si pasa todas las validaciones
+        if (value || !isRequired) {
+            field.classList.add('is-valid');
+            return true;
+        }
+        
+        return false;
     }
     
+    // Función para verificar validez del formulario
     function checkFormValidity() {
         const requiredFields = form.querySelectorAll('[required]');
         let isValid = true;
         
         requiredFields.forEach(field => {
-            if (!field.value.trim()) {
+            if (!validateField(field)) {
                 isValid = false;
             }
         });
         
         nextBtn.disabled = !isValid;
+        return isValid;
     }
     
-    // Auto-completar fecha de expedición si está vacía
-    const fechaExpedicion = document.getElementById('fecha_expedicion');
-    if (!fechaExpedicion.value) {
-        fechaExpedicion.value = new Date().toISOString().split('T')[0];
-    }
+    // Event listeners para validación en tiempo real
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            validateField(this);
+            checkFormValidity();
+        });
+        
+        input.addEventListener('input', function() {
+            if (this.classList.contains('is-invalid')) {
+                validateField(this);
+                checkFormValidity();
+            }
+        });
+    });
     
-    // Auto-calcular edad si se proporciona fecha de nacimiento
-    const edadInput = document.getElementById('edad');
-    const fechaNacimiento = document.getElementById('fecha_nacimiento');
-    if (fechaNacimiento) {
-        fechaNacimiento.addEventListener('change', function() {
-            if (this.value) {
-                const fechaNac = new Date(this.value);
-                const hoy = new Date();
-                const edad = hoy.getFullYear() - fechaNac.getFullYear();
-                const mes = hoy.getMonth() - fechaNac.getMonth();
-                if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNac.getDate())) {
-                    edad--;
-                }
-                edadInput.value = edad;
+    // Formatear campos especiales
+    const celular1 = document.getElementById('celular_1');
+    const celular2 = document.getElementById('celular_2');
+    const telefono = document.getElementById('telefono');
+    
+    if (celular1) {
+        celular1.addEventListener('input', function() {
+            if (window.wizardUtils) {
+                window.wizardUtils.formatPhone(this);
             }
         });
     }
     
-    // Verificar validez inicial
-    checkFormValidity();
-});
-
-// Confirmación antes de enviar
-document.getElementById('formInformacionPersonal').addEventListener('submit', function(e) {
-    const requiredFields = this.querySelectorAll('[required]');
-    let isValid = true;
+    if (celular2) {
+        celular2.addEventListener('input', function() {
+            if (window.wizardUtils) {
+                window.wizardUtils.formatPhone(this);
+            }
+        });
+    }
     
-    requiredFields.forEach(field => {
-        if (!field.value.trim()) {
-            isValid = false;
-            field.classList.add('is-invalid');
+    if (telefono) {
+        telefono.addEventListener('input', function() {
+            if (window.wizardUtils) {
+                window.wizardUtils.formatPhone(this);
+            }
+        });
+    }
+    
+    // Auto-completar fecha de expedición si está vacía
+    const fechaExpedicion = document.getElementById('fecha_expedicion');
+    if (fechaExpedicion && !fechaExpedicion.value) {
+        fechaExpedicion.value = new Date().toISOString().split('T')[0];
+    }
+    
+    // Navegación con el botón siguiente
+    nextBtn.addEventListener('click', function() {
+        if (checkFormValidity()) {
+            // Mostrar animación de carga
+            nextBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
+            nextBtn.disabled = true;
+            
+            // Enviar formulario
+            setTimeout(() => {
+                form.submit();
+            }, 500);
+        } else {
+            // Mostrar alerta
+            if (window.wizard) {
+                window.wizard.showAlert('Por favor complete todos los campos obligatorios antes de continuar.', 'warning');
+            } else {
+                alert('Por favor complete todos los campos obligatorios antes de continuar.');
+            }
         }
     });
     
-    if (!isValid) {
-        e.preventDefault();
-        alert('Por favor complete todos los campos obligatorios.');
-        return false;
+    // Verificar validez inicial
+    checkFormValidity();
+    
+    // Funciones de utilidad
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
     }
     
-    return confirm('¿Está seguro de que desea guardar la información?');
-});
-
-// Navegación con el botón siguiente
-document.getElementById('nextBtn').addEventListener('click', function() {
-    const form = document.getElementById('formInformacionPersonal');
-    if (form.checkValidity()) {
-        form.submit();
-    } else {
-        form.classList.add('was-validated');
-        alert('Por favor complete todos los campos obligatorios antes de continuar.');
+    function isValidPhone(phone) {
+        const phoneRegex = /^[0-9]{7,10}$/;
+        return phoneRegex.test(phone.replace(/\D/g, ''));
     }
 });
 </script>

@@ -23,4 +23,5 @@
 22. informacion_judicial.php
 23. experiencia_laboral.php
 24. concepto_final_evaluador.php
+25. registro_fotos.php
 26. reporte final html.php

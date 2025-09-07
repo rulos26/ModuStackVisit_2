@@ -1,22 +1,7 @@
 <?php
-// Mostrar errores solo en desarrollo
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
-
-ob_start();
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
-    header('Location: ../../../../../public/login.php');
-    exit();
-}
-
-require_once __DIR__ . '/EstadoViviendaController.php';
-use App\Controllers\EstadoViviendaController;
+// Redirigir al nuevo wizard
+header('Location: ../estado_vivienda_wizard.php');
+exit();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {

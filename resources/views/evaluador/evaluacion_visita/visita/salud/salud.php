@@ -54,163 +54,179 @@ try {
     $error_message = "Error al cargar los datos: " . $e->getMessage();
 }
 ?>
-<link rel="stylesheet" href="../../../../../public/css/styles.css">
+<link rel="stylesheet" href="../../../../../public/css/wizard-styles.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<style>
-.steps-horizontal { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; width: 100%; gap: 0.5rem; }
-.step-horizontal { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; }
-.step-horizontal:not(:last-child)::after { content: ''; position: absolute; top: 24px; left: 50%; width: 100%; height: 4px; background: #e0e0e0; z-index: 0; transform: translateX(50%); }
-.step-horizontal .step-icon { width: 48px; height: 48px; border-radius: 50%; background: #e0e0e0; color: #888; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 0.5rem; border: 2px solid #e0e0e0; z-index: 1; transition: all 0.3s; }
-.step-horizontal.active .step-icon { background: #4361ee; border-color: #4361ee; color: #fff; box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.2); }
-.step-horizontal.complete .step-icon { background: #2ecc71; border-color: #2ecc71; color: #fff; }
-.step-horizontal .step-title { font-weight: bold; font-size: 1rem; margin-bottom: 0.2rem; }
-.step-horizontal .step-description { font-size: 0.85rem; color: #888; text-align: center; }
-.step-horizontal.active .step-title, .step-horizontal.active .step-description { color: #4361ee; }
-.step-horizontal.complete .step-title, .step-horizontal.complete .step-description { color: #2ecc71; }
-</style>
 
-<div class="container mt-4">
-    <div class="card mt-5">
-        <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">
-                <i class="bi bi-heartbeat me-2"></i>
-                VISITA DOMICILIARÍA - SALUD
-            </h5>
+<div class="wizard-container">
+    <div class="wizard-card">
+        <!-- Header del Wizard -->
+        <div class="wizard-header">
+            <h1><i class="fas fa-heartbeat me-2"></i>SALUD</h1>
+            <p class="subtitle">Estado de salud y condiciones médicas del evaluado</p>
         </div>
-        <div class="card-body">
-            <!-- Indicador de pasos -->
-            <div class="steps-horizontal mb-4">
-                <div class="step-horizontal complete">
-                    <div class="step-icon"><i class="fas fa-user"></i></div>
-                    <div class="step-title">Paso 1</div>
-                    <div class="step-description">Datos Básicos</div>
-                </div>
-                <div class="step-horizontal complete">
-                    <div class="step-icon"><i class="fas fa-id-card"></i></div>
-                    <div class="step-title">Paso 2</div>
-                    <div class="step-description">Información Personal</div>
-                </div>
-                <div class="step-horizontal complete">
-                    <div class="step-icon"><i class="fas fa-building"></i></div>
-                    <div class="step-title">Paso 3</div>
-                    <div class="step-description">Cámara de Comercio</div>
-                </div>
-                <div class="step-horizontal active">
-                    <div class="step-icon"><i class="fas fa-heartbeat"></i></div>
-                    <div class="step-title">Paso 4</div>
-                    <div class="step-description">Salud</div>
-                </div>
-                <div class="step-horizontal">
-                    <div class="step-icon"><i class="fas fa-camera"></i></div>
-                    <div class="step-title">Paso 5</div>
-                    <div class="step-description">Registro Fotográfico</div>
-                </div>
-                <div class="step-horizontal">
-                    <div class="step-icon"><i class="fas fa-flag-checkered"></i></div>
-                    <div class="step-title">Paso 6</div>
-                    <div class="step-description">Finalización</div>
-                </div>
-            </div>
 
-            <!-- Controles de navegación -->
-            <div class="controls text-center mb-4">
-                <a href="../camara_comercio/camara_comercio.php" class="btn btn-secondary me-2">
-                    <i class="fas fa-arrow-left me-1"></i>Anterior
-                </a>
-                <button class="btn btn-primary" id="nextBtn" type="button" onclick="document.getElementById('formSalud').submit();">
-                    Siguiente<i class="fas fa-arrow-right ms-1"></i>
-                </button>
+        <!-- Barra de Progreso -->
+        <div class="wizard-progress">
+            <div class="wizard-steps">
+                <div class="wizard-step completed">
+                    <div class="wizard-step-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="wizard-step-title">Paso 1</div>
+                    <div class="wizard-step-description">Datos Básicos</div>
+                </div>
+                <div class="wizard-step completed">
+                    <div class="wizard-step-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <div class="wizard-step-title">Paso 2</div>
+                    <div class="wizard-step-description">Información Personal</div>
+                </div>
+                <div class="wizard-step completed">
+                    <div class="wizard-step-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="wizard-step-title">Paso 3</div>
+                    <div class="wizard-step-description">Cámara de Comercio</div>
+                </div>
+                <div class="wizard-step active">
+                    <div class="wizard-step-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div class="wizard-step-title">Paso 4</div>
+                    <div class="wizard-step-description">Salud</div>
+                </div>
+                <div class="wizard-step">
+                    <div class="wizard-step-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="wizard-step-title">Paso 5</div>
+                    <div class="wizard-step-description">Composición Familiar</div>
+                </div>
+                <div class="wizard-step">
+                    <div class="wizard-step-icon">
+                        <i class="fas fa-flag-checkered"></i>
+                    </div>
+                    <div class="wizard-step-title">Paso 6</div>
+                    <div class="wizard-step-description">Finalización</div>
+                </div>
             </div>
+        </div>
 
-            <!-- Mensajes de sesión -->
-            <?php if (isset($_SESSION['error'])): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <?php echo $_SESSION['error']; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <?php unset($_SESSION['error']); ?>
-            <?php endif; ?>
-            
-            <?php if (isset($_SESSION['success'])): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>
-                    <?php echo $_SESSION['success']; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <?php unset($_SESSION['success']); ?>
-            <?php endif; ?>
-            
-            <?php if (isset($error_message)): ?>
-                <div class="alert alert-danger">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
-                    <?php echo htmlspecialchars($error_message); ?>
-                </div>
-            <?php endif; ?>
-            
-            <?php if ($datos_existentes): ?>
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle me-2"></i>
-                    Ya existe información de salud registrada para esta cédula. Puede actualizar los datos.
-                </div>
-            <?php endif; ?>
-            
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 300px;">
-                </div>
-                <div class="col-md-6 text-end">
-                    <div class="text-muted">
-                        <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
-                        <small>Cédula: <?php echo htmlspecialchars($id_cedula); ?></small>
+        <!-- Contenido del Wizard -->
+        <div class="wizard-content">
+            <div class="wizard-step-content active">
+                <!-- Información del Evaluado -->
+                <div class="wizard-evaluado-info">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="wizard-logo">
+                        </div>
+                        <div class="col-md-6 wizard-evaluado-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Fecha:</span> <?php echo date('d/m/Y'); ?>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Cédula:</span> <?php echo htmlspecialchars($id_cedula); ?>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Usuario:</span> <?php echo htmlspecialchars($_SESSION['username'] ?? 'N/A'); ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <form action="" method="POST" id="formSalud" novalidate autocomplete="off">
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label for="id_estado_salud" class="form-label">
-                            <i class="bi bi-heart me-1"></i>Estado de Salud:
-                        </label>
-                        <select class="form-select" id="id_estado_salud" name="id_estado_salud" required>
-                            <option value="">Seleccione una opción</option>
-                            <?php foreach ($estados_salud as $estado): ?>
-                                <option value="<?php echo $estado['id']; ?>" 
-                                    <?php echo ($datos_existentes && $datos_existentes['id_estado_salud'] == $estado['id']) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($estado['nombre']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <div class="invalid-feedback">Por favor seleccione el estado de salud.</div>
+
+                <!-- Mensajes de sesión -->
+                <?php if (isset($_SESSION['error'])): ?>
+                    <div class="wizard-alert wizard-alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <strong>Error:</strong><br>
+                            <?php echo $_SESSION['error']; ?>
+                        </div>
                     </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <label for="tipo_enfermedad" class="form-label">
-                            <i class="bi bi-exclamation-triangle me-1"></i>¿Padece algún tipo de enfermedad?:
-                        </label>
-                        <select class="form-select" id="tipo_enfermedad" name="tipo_enfermedad" required>
-                            <option value="">Seleccione una opción</option>
-                            <?php foreach ($opciones_parametro as $opcion): ?>
-                                <option value="<?php echo $opcion['id']; ?>" 
-                                    <?php echo ($datos_existentes && $datos_existentes['tipo_enfermedad'] == $opcion['id']) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($opcion['nombre']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <div class="invalid-feedback">Por favor seleccione si padece algún tipo de enfermedad.</div>
+                    <?php unset($_SESSION['error']); ?>
+                <?php endif; ?>
+                
+                <?php if (isset($_SESSION['success'])): ?>
+                    <div class="wizard-alert wizard-alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>Éxito:</strong><br>
+                            <?php echo $_SESSION['success']; ?>
+                        </div>
                     </div>
-                    
-                    <div class="col-md-4 mb-3 campos-adicionales" id="tipo_enfermedad_cual" style="display: none;">
-                        <label for="tipo_enfermedad_cual" class="form-label">
-                            <i class="bi bi-chat-text me-1"></i>¿Cuál(es)?
-                        </label>
-                        <input type="text" class="form-control" id="tipo_enfermedad_cual" name="tipo_enfermedad_cual" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['tipo_enfermedad_cual']) : ''; ?>" 
-                               maxlength="200">
-                        <div class="invalid-feedback">Por favor especifique qué tipo de enfermedad padece.</div>
+                    <?php unset($_SESSION['success']); ?>
+                <?php endif; ?>
+                
+                <?php if (isset($error_message)): ?>
+                    <div class="wizard-alert wizard-alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <strong>Error:</strong><br>
+                            <?php echo htmlspecialchars($error_message); ?>
+                        </div>
                     </div>
-                </div>
+                <?php endif; ?>
+                
+                <?php if ($datos_existentes): ?>
+                    <div class="wizard-alert wizard-alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>Información:</strong><br>
+                            Ya existe información de salud registrada para esta cédula. Puede actualizar los datos.
+                        </div>
+                    </div>
+                <?php endif; ?>
+                
+                <!-- Formulario -->
+                <form action="" method="POST" id="formSalud" class="wizard-form" novalidate autocomplete="off">
+                    <div class="row">
+                        <div class="col-md-4 form-group">
+                            <label for="id_estado_salud" class="form-label">
+                                <i class="fas fa-heart"></i>
+                                Estado de Salud:
+                            </label>
+                            <select class="form-select" id="id_estado_salud" name="id_estado_salud" required>
+                                <option value="">Seleccione una opción</option>
+                                <?php foreach ($estados_salud as $estado): ?>
+                                    <option value="<?php echo $estado['id']; ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['id_estado_salud'] == $estado['id']) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($estado['nombre']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="invalid-feedback">Por favor seleccione el estado de salud.</div>
+                        </div>
+                        
+                        <div class="col-md-4 form-group">
+                            <label for="tipo_enfermedad" class="form-label">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                ¿Padece algún tipo de enfermedad?:
+                            </label>
+                            <select class="form-select" id="tipo_enfermedad" name="tipo_enfermedad" required>
+                                <option value="">Seleccione una opción</option>
+                                <?php foreach ($opciones_parametro as $opcion): ?>
+                                    <option value="<?php echo $opcion['id']; ?>" 
+                                        <?php echo ($datos_existentes && $datos_existentes['tipo_enfermedad'] == $opcion['id']) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($opcion['nombre']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="invalid-feedback">Por favor seleccione si padece algún tipo de enfermedad.</div>
+                        </div>
+                        
+                        <div class="col-md-4 form-group wizard-conditional-fields" id="tipo_enfermedad_cual" style="display: none;">
+                            <label for="tipo_enfermedad_cual" class="form-label">
+                                <i class="fas fa-comment"></i>
+                                ¿Cuál(es)?
+                            </label>
+                            <input type="text" class="form-control" id="tipo_enfermedad_cual" name="tipo_enfermedad_cual" 
+                                   value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['tipo_enfermedad_cual']) : ''; ?>" 
+                                   maxlength="200" data-depends-on="tipo_enfermedad" data-depends-value="2" data-required-when-visible="true">
+                            <div class="invalid-feedback">Por favor especifique qué tipo de enfermedad padece.</div>
+                        </div>
+                    </div>
                 
                 <div class="row">
                     <div class="col-md-4 mb-3">
@@ -322,78 +338,157 @@ try {
                     </div>
                 </div>
                 
-                <div class="row">
-                    <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-primary btn-lg me-2">
-                            <i class="bi bi-check-circle me-2"></i>
-                            <?php echo $datos_existentes ? 'Actualizar' : 'Guardar'; ?>
-                        </button>
-                        <a href="../camara_comercio/camara_comercio.php" class="btn btn-secondary btn-lg">
-                            <i class="bi bi-arrow-left me-2"></i>Volver
-                        </a>
-                    </div>
-                </div>
-            </form>
-            
-            <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const tipoEnfermedad = document.getElementById('tipo_enfermedad');
-                const limitacionFisica = document.getElementById('limitacion_fisica');
-                const tipoMedicamento = document.getElementById('tipo_medicamento');
-                const ingiereAlcohol = document.getElementById('ingiere_alcohol');
-                const fuma = document.getElementById('fuma');
-
-                const tipoEnfermedadCual = document.getElementById('tipo_enfermedad_cual');
-                const limitacionFisicaCual = document.getElementById('limitacion_fisica_cual');
-                const tipoMedicamentoCual = document.getElementById('tipo_medicamento_cual');
-                const ingiereAlcoholCual = document.getElementById('ingiere_alcohol_cual');
-                
-                // Verificar si hay datos existentes
-                const tieneDatosExistentes = <?php echo ($datos_existentes) ? 'true' : 'false'; ?>;
-                
-                function toggleCampos() {
-                    // Mostrar u ocultar campos según el valor seleccionado
-                    tipoEnfermedadCual.style.display = tipoEnfermedad.value === '2' ? 'block' : 'none';
-                    limitacionFisicaCual.style.display = limitacionFisica.value === '2' ? 'block' : 'none';
-                    tipoMedicamentoCual.style.display = tipoMedicamento.value === '2' ? 'block' : 'none';
-                    ingiereAlcoholCual.style.display = ingiereAlcohol.value === '2' ? 'block' : 'none';
-                    
-                    // Limpiar campos cuando se ocultan
-                    if (tipoEnfermedad.value !== '2') tipoEnfermedadCual.value = '';
-                    if (limitacionFisica.value !== '2') limitacionFisicaCual.value = '';
-                    if (tipoMedicamento.value !== '2') tipoMedicamentoCual.value = '';
-                    if (ingiereAlcohol.value !== '2') ingiereAlcoholCual.value = '';
-                }
-
-                // Ejecutar al cargar la página
-                toggleCampos();
-                
-                // Si hay datos existentes, mostrar campos correspondientes
-                if (tieneDatosExistentes) {
-                    setTimeout(toggleCampos, 100);
-                }
-
-                // Escuchar el evento de cambio en los campos
-                tipoEnfermedad.addEventListener('change', toggleCampos);
-                limitacionFisica.addEventListener('change', toggleCampos);
-                tipoMedicamento.addEventListener('change', toggleCampos);
-                ingiereAlcohol.addEventListener('change', toggleCampos);
-                fuma.addEventListener('change', toggleCampos);
-            });
-            </script>
-        </div>
-        <div class="card-footer text-body-secondary">
-            <div class="row">
-                <div class="col-md-6">
-                    <small>© 2024 V0.01 - Sistema de Visitas Domiciliarias</small>
-                </div>
-                <div class="col-md-6 text-end">
-                    <small>Usuario: <?php echo htmlspecialchars($_SESSION['username'] ?? 'N/A'); ?></small>
-                </div>
+                </form>
             </div>
+        </div>
+
+        <!-- Navegación del Wizard -->
+        <div class="wizard-navigation">
+            <a href="../camara_comercio/camara_comercio.php" class="wizard-btn wizard-btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Anterior
+            </a>
+            <div class="text-center">
+                <small class="text-muted">Paso 4 de 22</small>
+            </div>
+            <button type="button" class="wizard-btn wizard-btn-primary wizard-btn-next" id="nextBtn" disabled>
+                Siguiente
+                <i class="fas fa-arrow-right"></i>
+            </button>
         </div>
     </div>
 </div>
+
+<script src="../../../../../public/js/wizard.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('formSalud');
+    const inputs = form.querySelectorAll('input, select, textarea');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    // Función de validación de campo
+    function validateField(field) {
+        const value = field.value.trim();
+        const isRequired = field.hasAttribute('required');
+        
+        // Remover clases de validación anteriores
+        field.classList.remove('is-valid', 'is-invalid');
+        
+        // Validación básica
+        if (isRequired && !value) {
+            field.classList.add('is-invalid');
+            return false;
+        }
+        
+        // Si pasa todas las validaciones
+        if (value || !isRequired) {
+            field.classList.add('is-valid');
+            return true;
+        }
+        
+        return false;
+    }
+    
+    // Función para verificar validez del formulario
+    function checkFormValidity() {
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!validateField(field)) {
+                isValid = false;
+            }
+        });
+        
+        nextBtn.disabled = !isValid;
+        return isValid;
+    }
+    
+    // Event listeners para validación en tiempo real
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            validateField(this);
+            checkFormValidity();
+        });
+        
+        input.addEventListener('input', function() {
+            if (this.classList.contains('is-invalid')) {
+                validateField(this);
+                checkFormValidity();
+            }
+        });
+    });
+    
+    // Manejo de campos condicionales
+    const tipoEnfermedad = document.getElementById('tipo_enfermedad');
+    const limitacionFisica = document.getElementById('limitacion_fisica');
+    const tipoMedicamento = document.getElementById('tipo_medicamento');
+    const ingiereAlcohol = document.getElementById('ingiere_alcohol');
+    
+    const tipoEnfermedadCual = document.getElementById('tipo_enfermedad_cual');
+    const limitacionFisicaCual = document.getElementById('limitacion_fisica_cual');
+    const tipoMedicamentoCual = document.getElementById('tipo_medicamento_cual');
+    const ingiereAlcoholCual = document.getElementById('ingiere_alcohol_cual');
+    
+    function toggleCampos() {
+        // Mostrar u ocultar campos según el valor seleccionado
+        if (tipoEnfermedadCual) {
+            tipoEnfermedadCual.style.display = tipoEnfermedad.value === '2' ? 'block' : 'none';
+            if (tipoEnfermedad.value !== '2') tipoEnfermedadCual.value = '';
+        }
+        
+        if (limitacionFisicaCual) {
+            limitacionFisicaCual.style.display = limitacionFisica.value === '2' ? 'block' : 'none';
+            if (limitacionFisica.value !== '2') limitacionFisicaCual.value = '';
+        }
+        
+        if (tipoMedicamentoCual) {
+            tipoMedicamentoCual.style.display = tipoMedicamento.value === '2' ? 'block' : 'none';
+            if (tipoMedicamento.value !== '2') tipoMedicamentoCual.value = '';
+        }
+        
+        if (ingiereAlcoholCual) {
+            ingiereAlcoholCual.style.display = ingiereAlcohol.value === '2' ? 'block' : 'none';
+            if (ingiereAlcohol.value !== '2') ingiereAlcoholCual.value = '';
+        }
+        
+        checkFormValidity();
+    }
+    
+    // Ejecutar al cargar la página
+    toggleCampos();
+    
+    // Escuchar el evento de cambio en los campos
+    if (tipoEnfermedad) tipoEnfermedad.addEventListener('change', toggleCampos);
+    if (limitacionFisica) limitacionFisica.addEventListener('change', toggleCampos);
+    if (tipoMedicamento) tipoMedicamento.addEventListener('change', toggleCampos);
+    if (ingiereAlcohol) ingiereAlcohol.addEventListener('change', toggleCampos);
+    
+    // Navegación con el botón siguiente
+    nextBtn.addEventListener('click', function() {
+        if (checkFormValidity()) {
+            // Mostrar animación de carga
+            nextBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
+            nextBtn.disabled = true;
+            
+            // Enviar formulario
+            setTimeout(() => {
+                form.submit();
+            }, 500);
+        } else {
+            // Mostrar alerta
+            if (window.wizard) {
+                window.wizard.showAlert('Por favor complete todos los campos obligatorios antes de continuar.', 'warning');
+            } else {
+                alert('Por favor complete todos los campos obligatorios antes de continuar.');
+            }
+        }
+    });
+    
+    // Verificar validez inicial
+    checkFormValidity();
+});
+</script>
 
 <?php
 $contenido = ob_get_clean();
