@@ -17,9 +17,22 @@
  * @date       2024
  */
 ?>
-<div class="d-flex flex-column flex-shrink-0 p-3 bg-white border-end min-vh-100" style="width: 260px;">
+<?php
+    // Determinar tema visual si fue pasado por la vista (por ejemplo, $theme = 'evaluador')
+    $isEvaluadorTheme = isset($theme) && $theme === 'evaluador';
+
+    // Clases y estilos dinámicos del contenedor del menú
+    $menuBaseClasses = 'd-flex flex-column flex-shrink-0 p-3 min-vh-100';
+    $menuThemeClasses = $isEvaluadorTheme ? ' text-white' : ' bg-white border-end';
+    $menuInlineStyle = 'width: 260px;' . ($isEvaluadorTheme ? ' background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);' : '');
+
+    // Clases para los enlaces/títulos del menú
+    $linkClass = $isEvaluadorTheme ? 'nav-link text-white' : 'nav-link link-dark';
+    $titleClass = $isEvaluadorTheme ? 'nav-link text-white fw-bold' : 'nav-link link-dark fw-bold';
+?>
+<div class="<?php echo $menuBaseClasses . $menuThemeClasses; ?>" style="<?php echo $menuInlineStyle; ?>">
     <!-- Encabezado del menú -->
-    <a href="#" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+    <a href="#" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none <?php echo $isEvaluadorTheme ? 'text-white' : 'link-dark'; ?>">
         <span class="fs-4 fw-bold">Menú</span>
     </a>
     <hr>
@@ -51,14 +64,14 @@
             <hr>
             <!-- Título de la sección para el cliente -->
             <li class="nav-item">
-                <span class="nav-link link-dark fw-bold text-success">
+                <span class="<?php echo $titleClass; ?> <?php echo $isEvaluadorTheme ? '' : 'text-success'; ?>">
                     <i class="bi bi-person-check me-2"></i>
                     Opciones del Cliente
                 </span>
             </li>
             <!-- Enlace al dashboard del cliente -->
             <li class="nav-item">
-                <a href="/ModuStackVisit_2/resources/views/cliente/dashboardCliente.php" class="nav-link link-dark">
+                <a href="/ModuStackVisit_2/resources/views/cliente/dashboardCliente.php" class="<?php echo $linkClass; ?>">
                     <i class="bi bi-house-door me-2"></i>
                     Dashboard Cliente
                 </a>
@@ -73,21 +86,21 @@
             <hr>
             <!-- Título de la sección para el evaluador -->
             <li class="nav-item">
-                <span class="nav-link link-dark fw-bold text-primary">
+                <span class="<?php echo $titleClass; ?>">
                     <i class="bi bi-clipboard-check me-2"></i>
                     Opciones del Evaluador
                 </span>
             </li>
             <!-- Enlace a la sección "Carta de autorización" -->
             <li class="nav-item">
-                <a href="/ModuStackVisit_2/resources/views/evaluador/carta_visita/index_carta.php" class="nav-link link-dark">
+                <a href="/ModuStackVisit_2/resources/views/evaluador/carta_visita/index_carta.php" class="<?php echo $linkClass; ?>">
                     <i class="bi bi-file-earmark-text me-2"></i>
                     Carta de autorización
                 </a>
             </li>
             <!-- Enlace a la sección "Evaluación visita domiciliaria" -->
             <li>
-                <a href="/ModuStackVisit_2/resources/views/evaluador/evaluacion_visita/index_evaluacion.php" class="nav-link link-dark">
+                <a href="/ModuStackVisit_2/resources/views/evaluador/evaluacion_visita/index_evaluacion.php" class="<?php echo $linkClass; ?>">
                     <i class="bi bi-house-door me-2"></i>
                     Evaluación visita domiciliaria
                 </a>
@@ -102,21 +115,21 @@
             <hr>
             <!-- Título de la sección para el administrador -->
             <li class="nav-item">
-                <span class="nav-link link-dark fw-bold text-primary">
+                <span class="<?php echo $titleClass; ?>">
                     <i class="bi bi-shield-lock me-2"></i>
                     Opciones del administrador
                 </span>
             </li>
             <!-- Enlace al panel de administración de usuarios de "Carta de Autorización" -->
             <li>
-                <a href="/ModuStackVisit_2/resources/views/admin/usuario_carta/index.php" class="nav-link link-dark">
+                <a href="/ModuStackVisit_2/resources/views/admin/usuario_carta/index.php" class="<?php echo $linkClass; ?>">
                     <i class="bi bi-envelope me-2"></i>
                     Usuarios Carta
                 </a>
             </li>
             <!-- Enlace al panel de administración de usuarios de "Evaluación" -->
             <li>
-                <a href="/ModuStackVisit_2/resources/views/admin/usuario_evaluacion/index.php" class="nav-link link-dark">
+                <a href="/ModuStackVisit_2/resources/views/admin/usuario_evaluacion/index.php" class="<?php echo $linkClass; ?>">
                     <i class="bi bi-clipboard-check me-2"></i>
                     Usuarios Evaluación
                 </a>
@@ -131,42 +144,42 @@
             <hr>
             <!-- Título de la sección para el superadministrador -->
             <li class="nav-item">
-                <span class="nav-link link-dark fw-bold text-warning">
+                <span class="<?php echo $titleClass; ?> <?php echo $isEvaluadorTheme ? '' : 'text-warning'; ?>">
                     <i class="bi bi-shield-lock me-2"></i>
                     Opciones del Superadministrador
                 </span>
             </li>
             <!-- Enlace al panel de superadministrador -->
             <li>
-                <a href="/ModuStackVisit_2/resources/views/superadmin/dashboardSuperAdmin.php" class="nav-link link-dark">
+                <a href="/ModuStackVisit_2/resources/views/superadmin/dashboardSuperAdmin.php" class="<?php echo $linkClass; ?>">
                     <i class="bi bi-shield-lock-fill me-2"></i>
                     Panel de Superadministrador
                 </a>
             </li>
             <!-- Enlace a la gestión de usuarios -->
             <li>
-                <a href="/ModuStackVisit_2/resources/views/superadmin/gestion_usuarios.php" class="nav-link link-dark">
+                <a href="/ModuStackVisit_2/resources/views/superadmin/gestion_usuarios.php" class="<?php echo $linkClass; ?>">
                     <i class="bi bi-people me-2"></i>
                     Gestión de Usuarios
                 </a>
             </li>
             <!-- Enlace a la gestión de opciones del sistema -->
             <li>
-                <a href="/ModuStackVisit_2/resources/views/superadmin/gestion_opciones.php" class="nav-link link-dark">
+                <a href="/ModuStackVisit_2/resources/views/superadmin/gestion_opciones.php" class="<?php echo $linkClass; ?>">
                     <i class="bi bi-gear me-2"></i>
                     Gestión de Opciones
                 </a>
             </li>
             <!-- Enlace a la gestión de tablas principales -->
             <li>
-                <a href="/ModuStackVisit_2/resources/views/superadmin/gestion_tablas_principales.php" class="nav-link link-dark">
+                <a href="/ModuStackVisit_2/resources/views/superadmin/gestion_tablas_principales.php" class="<?php echo $linkClass; ?>">
                     <i class="bi bi-database me-2"></i>
                     Tablas Principales
                 </a>
             </li>
             <!-- Enlace al explorador de imágenes -->
             <li>
-                <a href="/ModuStackVisit_2/explorador_imagenes.php" class="nav-link link-dark">
+                <a href="/ModuStackVisit_2/explorador_imagenes.php" class="<?php echo $linkClass; ?>">
                     <i class="bi bi-images me-2"></i>
                     Explorador de Imágenes
                 </a>
