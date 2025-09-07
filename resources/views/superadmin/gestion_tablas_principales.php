@@ -158,36 +158,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                     </a>
                 </li>
                 <li>
-                    <a href="configuracion_sistema.php" class="nav-link text-white">
-                        <i class="bi bi-gear me-2"></i>
-                        Configuración
-                    </a>
-                </li>
-                <li>
-                    <a href="logs_sistema.php" class="nav-link text-white">
-                        <i class="bi bi-journal-text me-2"></i>
-                        Logs del Sistema
-                    </a>
-                </li>
-                <li>
-                    <a href="auditoria.php" class="nav-link text-white">
-                        <i class="bi bi-shield-check me-2"></i>
-                        Auditoría
-                    </a>
-                </li>
-                <li>
-                    <a href="respaldo.php" class="nav-link text-white">
-                        <i class="bi bi-download me-2"></i>
-                        Respaldos
-                    </a>
-                </li>
-                <li>
-                    <a href="reportes.php" class="nav-link text-white">
-                        <i class="bi bi-graph-up me-2"></i>
-                        Reportes
-                    </a>
-                </li>
-                <li>
                     <a href="test_menu.php" class="nav-link text-white">
                         <i class="bi bi-tools me-2"></i>
                         Test

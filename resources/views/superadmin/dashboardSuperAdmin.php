@@ -63,33 +63,9 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
                     </a>
                 </li>
                 <li>
-                    <a href="configuracion_sistema.php" class="nav-link text-white">
+                    <a href="gestion_opciones.php" class="nav-link text-white">
                         <i class="bi bi-gear me-2"></i>
-                        Configuración
-                    </a>
-                </li>
-                <li>
-                    <a href="logs_sistema.php" class="nav-link text-white">
-                        <i class="bi bi-journal-text me-2"></i>
-                        Logs del Sistema
-                    </a>
-                </li>
-                <li>
-                    <a href="auditoria.php" class="nav-link text-white">
-                        <i class="bi bi-shield-check me-2"></i>
-                        Auditoría
-                    </a>
-                </li>
-                <li>
-                    <a href="respaldo.php" class="nav-link text-white">
-                        <i class="bi bi-download me-2"></i>
-                        Respaldos
-                    </a>
-                </li>
-                <li>
-                    <a href="reportes.php" class="nav-link text-white">
-                        <i class="bi bi-graph-up me-2"></i>
-                        Reportes
+                        Gestión de Opciones
                     </a>
                 </li>
                 <li>
