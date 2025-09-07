@@ -162,7 +162,7 @@ class TablasPrincipalesController {
                 
                 $stmt = $this->db->prepare("SELECT `$rutaCol`, `$nombreCol` FROM `$tabla` WHERE id_cedula = :id_cedula");
                 $stmt->bindParam(':id_cedula', $idCedula, \PDO::PARAM_INT);
-                $stmt->execute();
+            $stmt->execute();
                 $archivos = $stmt->fetchAll(\PDO::FETCH_ASSOC);
                 
                 foreach ($archivos as $archivo) {
@@ -237,16 +237,16 @@ class TablasPrincipalesController {
             $this->logger->info('Usuario eliminado completamente', [
                 'id_cedula' => $idCedula,
                 'registros_eliminados' => $registrosEliminados,
-                'tablas_procesadas' => $tablasProcesadas,
+            'tablas_procesadas' => $tablasProcesadas,
                 'archivos_eliminados' => count($resultadoArchivos['archivos_eliminados'] ?? [])
-            ]);
-            
-            return [
-                'success' => true,
+        ]);
+        
+        return [
+            'success' => true,
                 'mensaje' => "Usuario eliminado exitosamente. Se eliminaron $registrosEliminados registros y " . count($resultadoArchivos['archivos_eliminados'] ?? []) . " archivos.",
                 'id_cedula' => $idCedula,
                 'registros_eliminados' => $registrosEliminados,
-                'tablas_procesadas' => $tablasProcesadas,
+            'tablas_procesadas' => $tablasProcesadas,
                 'archivos_eliminados' => $resultadoArchivos['archivos_eliminados'] ?? [],
                 'errores_archivos' => $resultadoArchivos['errores'] ?? []
             ];
@@ -306,7 +306,7 @@ class TablasPrincipalesController {
             // Truncar tablas relacionadas
             foreach (self::TABLAS_RELACIONADAS as $tabla) {
                 $stmt = $this->db->prepare("TRUNCATE TABLE `$tabla`");
-                $stmt->execute();
+            $stmt->execute();
                 $tablasTruncadas[] = $tabla;
             }
             

@@ -197,17 +197,17 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
                     <li><a class="dropdown-item" href="../../logout.php">Cerrar sesión</a></li>
                 </ul>
+                </div>
             </div>
-        </div>
-
+            
         <!-- Contenido principal -->
         <div class="flex-grow-1">
-            <!-- Header -->
+                    <!-- Header -->
             <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
                 <div class="container-fluid">
                     <span class="navbar-brand">
                         <i class="bi bi-database me-2"></i>
-                        Gestión de Tablas Principales
+                                        Gestión de Tablas Principales
                     </span>
                     <div class="d-flex align-items-center">
                         <span class="text-white me-3">
@@ -217,20 +217,20 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                         <button class="btn btn-outline-light btn-sm me-2" onclick="cargarEstadisticasGenerales()">
                             <i class="bi bi-graph-up me-1"></i>
                             Estadísticas Generales
-                        </button>
+                                    </button>
                         <a href="../../logout.php" class="btn btn-outline-light btn-sm">
                             <i class="bi bi-box-arrow-right me-1"></i>
                             Salir
                         </a>
-                    </div>
-                </div>
+                                </div>
+                            </div>
             </nav>
 
             <!-- Contenido del dashboard -->
             <div class="container-fluid py-4">
                 <!-- Botones de Acción -->
-                <div class="row mb-4">
-                    <div class="col-12">
+                    <div class="row mb-4">
+                        <div class="col-12">
                         <div class="d-flex justify-content-between">
                             <div>
                                 <a href="gestion_tablas_simple.php" class="btn btn-success me-2">
@@ -254,24 +254,24 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                                 <a href="test_simple.php" class="btn btn-secondary">
                                     <i class="bi bi-gear"></i> Test Simple
                                 </a>
-                            </div>
+                                    </div>
                             <button class="btn btn-danger btn-lg" onclick="confirmarVaciarTablas()">
                                 <i class="bi bi-trash3"></i> Vaciar Tablas
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
+                                                        </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
                 <!-- Tabla de Usuarios Evaluados -->
-                <div class="row">
-                    <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-12">
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="card-title mb-0">
                                     <i class="bi bi-people"></i> Usuarios Evaluados
                                 </h5>
                             </div>
-                            <div class="card-body">
+                                                <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-striped table-hover" id="tablaUsuarios">
                                         <thead class="table-dark">
@@ -286,27 +286,27 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                                             <!-- Los usuarios se cargarán aquí -->
                                         </tbody>
                                     </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Resultados -->
+                    
+                    <!-- Resultados -->
                 <div class="row mt-4" id="resultados" style="display: none;">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h6 class="card-title">
-                                    <i class="bi bi-clipboard-check"></i> Resultados de la Operación
-                                </h6>
-                                <div id="contenidoResultados">
-                                    <!-- Los resultados se mostrarán aquí -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="bi bi-clipboard-check"></i> Resultados de la Operación
+                                    </h6>
+                                    <div id="contenidoResultados">
+                                        <!-- Los resultados se mostrarán aquí -->
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 </div>
             </div>
         </div>
@@ -381,8 +381,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                     </button>
                 </div>
             </div>
-        </div>
-    </div>
+                </div>
+            </div>
         </div>
     </div>
     
