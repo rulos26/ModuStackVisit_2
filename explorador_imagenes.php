@@ -260,17 +260,24 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
         <!-- Contenido principal -->
         <div class="flex-grow-1">
             <!-- Header -->
-            <div class="bg-white border-bottom p-4">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h1 class="h4 mb-0">
-                            <i class="bi bi-images me-2"></i>
-                            Explorador de Imágenes
-                        </h1>
-                        <p class="text-muted mb-0">Gestiona las imágenes del servidor</p>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+                <div class="container-fluid">
+                    <span class="navbar-brand">
+                        <i class="bi bi-images me-2"></i>
+                        Explorador de Imágenes
+                    </span>
+                    <div class="d-flex align-items-center">
+                        <span class="text-white me-3">
+                            <i class="bi bi-clock"></i>
+                            <?php echo date('d/m/Y H:i'); ?>
+                        </span>
+                        <a href="logout.php" class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-box-arrow-right me-1"></i>
+                            Salir
+                        </a>
                     </div>
                 </div>
-            </div>
+            </nav>
             
             <!-- Toolbar -->
             <div class="toolbar">
@@ -386,6 +393,13 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Verificar que el logout funciona
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Explorador de imágenes cargado correctamente');
+        });
+    </script>
     
     <script>
         let currentPath = '<?php echo $currentPath; ?>';

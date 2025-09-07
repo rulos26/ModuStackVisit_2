@@ -1,6 +1,8 @@
 <?php
 // Logout - Cerrar sesión de forma segura
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Log de logout si hay información de usuario
 if (isset($_SESSION['username'])) {
