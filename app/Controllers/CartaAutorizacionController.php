@@ -44,8 +44,8 @@ class CartaAutorizacionController {
                 error_log('DEBUG CartaAutorizacionController: Insert exitoso.');
                 echo '<pre style="background:#222;color:#0f0;padding:1em;">DEBUG CartaAutorizacionController: Insert exitoso.</pre>';
                 
-                // Guardar cédula en tabla evaluados
-                self::guardarEnEvaluados($cedula);
+                // Guardar cédula y datos en tabla evaluados
+                self::guardarEnEvaluados($cedula, $nombres, $direccion, $localidad, $barrio, $telefono, $celular, $correo);
                 
                 return true;
             } else {
@@ -61,10 +61,17 @@ class CartaAutorizacionController {
     }
     
     /**
-     * Guardar cédula en tabla evaluados
+     * Guardar cédula y datos en tabla evaluados
      * @param string $cedula
+     * @param string $nombres
+     * @param string $direccion
+     * @param string $localidad
+     * @param string $barrio
+     * @param string $telefono
+     * @param string $celular
+     * @param string $correo
      */
-    private static function guardarEnEvaluados($cedula) {
+    private static function guardarEnEvaluados($cedula, $nombres, $direccion, $localidad, $barrio, $telefono, $celular, $correo) {
         try {
             $db = Database::getInstance()->getConnection();
             
@@ -79,17 +86,24 @@ class CartaAutorizacionController {
                 return; // Ya existe, no hacer nada
             }
             
-            // Insertar nueva cédula en evaluados
-            $stmt = $db->prepare('INSERT INTO evaluados (id_cedula) VALUES (:cedula)');
+            // Insertar nueva cédula y datos en evaluados
+            $stmt = $db->prepare('INSERT INTO evaluados (id_cedula, nombres, direccion, localidad, barrio, telefono, celular_1, correo) VALUES (:cedula, :nombres, :direccion, :localidad, :barrio, :telefono, :celular, :correo)');
             $stmt->bindParam(':cedula', $cedula);
+            $stmt->bindParam(':nombres', $nombres);
+            $stmt->bindParam(':direccion', $direccion);
+            $stmt->bindParam(':localidad', $localidad);
+            $stmt->bindParam(':barrio', $barrio);
+            $stmt->bindParam(':telefono', $telefono);
+            $stmt->bindParam(':celular', $celular);
+            $stmt->bindParam(':correo', $correo);
             $result = $stmt->execute();
             
             if ($result) {
-                error_log('DEBUG CartaAutorizacionController: Cédula guardada en evaluados: ' . $cedula);
-                echo '<pre style="background:#222;color:#0f0;padding:1em;">DEBUG CartaAutorizacionController: Cédula guardada en evaluados: ' . $cedula . '</pre>';
+                error_log('DEBUG CartaAutorizacionController: Cédula y datos guardados en evaluados: ' . $cedula);
+                echo '<pre style="background:#222;color:#0f0;padding:1em;">DEBUG CartaAutorizacionController: Cédula y datos guardados en evaluados: ' . $cedula . '</pre>';
             } else {
-                error_log('DEBUG CartaAutorizacionController: Error al guardar cédula en evaluados: ' . $cedula);
-                echo '<pre style="background:#222;color:#f00;padding:1em;">DEBUG CartaAutorizacionController: Error al guardar cédula en evaluados: ' . $cedula . '</pre>';
+                error_log('DEBUG CartaAutorizacionController: Error al guardar cédula y datos en evaluados: ' . $cedula);
+                echo '<pre style="background:#222;color:#f00;padding:1em;">DEBUG CartaAutorizacionController: Error al guardar cédula y datos en evaluados: ' . $cedula . '</pre>';
             }
             
         } catch (PDOException $e) {
