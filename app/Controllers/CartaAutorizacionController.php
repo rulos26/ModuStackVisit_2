@@ -43,6 +43,10 @@ class CartaAutorizacionController {
             if ($result) {
                 error_log('DEBUG CartaAutorizacionController: Insert exitoso.');
                 echo '<pre style="background:#222;color:#0f0;padding:1em;">DEBUG CartaAutorizacionController: Insert exitoso.</pre>';
+                
+                // Guardar cédula en tabla evaluados
+                self::guardarEnEvaluados($cedula);
+                
                 return true;
             } else {
                 error_log('DEBUG CartaAutorizacionController: Insert fallido.');
@@ -53,6 +57,44 @@ class CartaAutorizacionController {
             error_log('DEBUG CartaAutorizacionController: Excepción PDO: ' . $e->getMessage());
             echo '<pre style="background:#222;color:#f00;padding:1em;">DEBUG CartaAutorizacionController: Excepción PDO: ' . htmlspecialchars($e->getMessage()) . '</pre>';
             return 'Error al guardar la autorización: ' . htmlspecialchars($e->getMessage());
+        }
+    }
+    
+    /**
+     * Guardar cédula en tabla evaluados
+     * @param string $cedula
+     */
+    private static function guardarEnEvaluados($cedula) {
+        try {
+            $db = Database::getInstance()->getConnection();
+            
+            // Verificar si ya existe la cédula en evaluados
+            $stmt_check = $db->prepare('SELECT id FROM evaluados WHERE id_cedula = :cedula LIMIT 1');
+            $stmt_check->bindParam(':cedula', $cedula);
+            $stmt_check->execute();
+            
+            if ($stmt_check->fetch()) {
+                error_log('DEBUG CartaAutorizacionController: Cédula ya existe en evaluados: ' . $cedula);
+                echo '<pre style="background:#222;color:#ff0;padding:1em;">DEBUG CartaAutorizacionController: Cédula ya existe en evaluados: ' . $cedula . '</pre>';
+                return; // Ya existe, no hacer nada
+            }
+            
+            // Insertar nueva cédula en evaluados
+            $stmt = $db->prepare('INSERT INTO evaluados (id_cedula) VALUES (:cedula)');
+            $stmt->bindParam(':cedula', $cedula);
+            $result = $stmt->execute();
+            
+            if ($result) {
+                error_log('DEBUG CartaAutorizacionController: Cédula guardada en evaluados: ' . $cedula);
+                echo '<pre style="background:#222;color:#0f0;padding:1em;">DEBUG CartaAutorizacionController: Cédula guardada en evaluados: ' . $cedula . '</pre>';
+            } else {
+                error_log('DEBUG CartaAutorizacionController: Error al guardar cédula en evaluados: ' . $cedula);
+                echo '<pre style="background:#222;color:#f00;padding:1em;">DEBUG CartaAutorizacionController: Error al guardar cédula en evaluados: ' . $cedula . '</pre>';
+            }
+            
+        } catch (PDOException $e) {
+            error_log('DEBUG CartaAutorizacionController: Error PDO al guardar en evaluados: ' . $e->getMessage());
+            echo '<pre style="background:#222;color:#f00;padding:1em;">DEBUG CartaAutorizacionController: Error PDO al guardar en evaluados: ' . htmlspecialchars($e->getMessage()) . '</pre>';
         }
     }
 } 
