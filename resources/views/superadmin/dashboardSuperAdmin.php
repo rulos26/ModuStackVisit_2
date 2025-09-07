@@ -99,6 +99,12 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
                     </a>
                 </li>
                 <li>
+                    <a href="test_menu.php" class="nav-link text-white">
+                        <i class="bi bi-tools me-2"></i>
+                        Test
+                    </a>
+                </li>
+                <li>
                     <a href="../../../explorador_imagenes.php" class="nav-link text-white">
                         <i class="bi bi-images me-2"></i>
                         Explorador de Imágenes

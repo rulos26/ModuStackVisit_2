@@ -188,115 +188,15 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                     </a>
                 </li>
                 <li>
+                    <a href="test_menu.php" class="nav-link text-white">
+                        <i class="bi bi-tools me-2"></i>
+                        Test
+                    </a>
+                </li>
+                <li>
                     <a href="../../../explorador_imagenes.php" class="nav-link text-white">
                         <i class="bi bi-images me-2"></i>
                         Explorador de Imágenes
-                    </a>
-                </li>
-            </ul>
-            <hr>
-            <h6 class="text-white-50 mb-3">Herramientas de Diagnóstico</h6>
-            <ul class="nav nav-pills flex-column mb-auto">
-                <li>
-                    <a href="gestion_tablas_simple.php" class="nav-link text-white">
-                        <i class="bi bi-lightning me-2"></i>
-                        Versión Simple
-                    </a>
-                </li>
-                <li>
-                    <a href="test_final.php" class="nav-link text-white">
-                        <i class="bi bi-check-circle-fill me-2"></i>
-                        Test Final
-                    </a>
-                </li>
-                <li>
-                    <a href="test_funcionamiento.php" class="nav-link text-white">
-                        <i class="bi bi-check2-circle me-2"></i>
-                        Test Funcionamiento
-                    </a>
-                </li>
-                <li>
-                    <a href="test_estructura_real.php" class="nav-link text-white">
-                        <i class="bi bi-folder-open me-2"></i>
-                        Test Estructura Real
-                    </a>
-                </li>
-                <li>
-                    <a href="test_estructura_servidor.php" class="nav-link text-white">
-                        <i class="bi bi-folder me-2"></i>
-                        Test Estructura
-                    </a>
-                </li>
-                <li>
-                    <a href="test_configuracion.php" class="nav-link text-white">
-                        <i class="bi bi-gear-fill me-2"></i>
-                        Test Configuración
-                    </a>
-                </li>
-                <li>
-                    <a href="test_basico_error.php" class="nav-link text-white">
-                        <i class="bi bi-exclamation-circle me-2"></i>
-                        Test Básico Error
-                    </a>
-                </li>
-                <li>
-                    <a href="test_error_500.php" class="nav-link text-white">
-                        <i class="bi bi-exclamation-triangle me-2"></i>
-                        Test Error 500
-                    </a>
-                </li>
-                <li>
-                    <a href="test_procesador_simple.php" class="nav-link text-white">
-                        <i class="bi bi-bug me-2"></i>
-                        Test Procesador
-                    </a>
-                </li>
-                <li>
-                    <a href="test_tablas_relacionadas.php" class="nav-link text-white">
-                        <i class="bi bi-table me-2"></i>
-                        Test Tablas
-                    </a>
-                </li>
-                <li>
-                    <a href="test_funcionalidad.php" class="nav-link text-white">
-                        <i class="bi bi-play-circle me-2"></i>
-                        Test Funcionalidad
-                    </a>
-                </li>
-                <li>
-                    <a href="test_basico.php" class="nav-link text-white">
-                        <i class="bi bi-check-circle me-2"></i>
-                        Test Básico
-                    </a>
-                </li>
-                <li>
-                    <a href="diagnostico_tablas.php" class="nav-link text-white">
-                        <i class="bi bi-search me-2"></i>
-                        Diagnóstico de Base de Datos
-                    </a>
-                </li>
-                <li>
-                    <a href="test_conexion.php" class="nav-link text-white">
-                        <i class="bi bi-tools me-2"></i>
-                        Test de Conexión
-                    </a>
-                </li>
-                <li>
-                    <a href="test_simple.php" class="nav-link text-white">
-                        <i class="bi bi-gear me-2"></i>
-                        Test Simple
-                    </a>
-                </li>
-                <li>
-                    <a href="test_error_500_detallado.php" class="nav-link text-white">
-                        <i class="bi bi-exclamation-octagon me-2"></i>
-                        Test Error 500 Detallado
-                    </a>
-                </li>
-                <li>
-                    <a href="test_procesador_directo.php" class="nav-link text-white">
-                        <i class="bi bi-play-btn me-2"></i>
-                        Test Procesador Directo
                     </a>
                 </li>
             </ul>
