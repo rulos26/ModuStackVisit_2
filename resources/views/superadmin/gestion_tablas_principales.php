@@ -233,6 +233,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                     <div class="col-12">
                         <div class="d-flex justify-content-between">
                             <div>
+                                <a href="gestion_tablas_simple.php" class="btn btn-success me-2">
+                                    <i class="bi bi-lightning"></i> Versión Simple
+                                </a>
+                                <a href="test_basico.php" class="btn btn-success me-2">
+                                    <i class="bi bi-check-circle"></i> Test Básico
+                                </a>
                                 <a href="diagnostico_tablas.php" class="btn btn-info me-2">
                                     <i class="bi bi-search"></i> Diagnóstico de Base de Datos
                                 </a>

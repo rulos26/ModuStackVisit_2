@@ -12,10 +12,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
 
 echo "<h2>Test Simple de Conexión</h2>";
 
-// Test 1: Conexión directa usando el archivo de conexión existente
-echo "<h3>1. Conexión Directa</h3>";
+// Test 1: Conexión directa usando mysqli
+echo "<h3>1. Conexión Directa con mysqli</h3>";
 try {
-    require_once __DIR__ . '/../../conn/conexion.php';
+    $mysqli = new mysqli("localhost", "u130454517_root", "0382646740Ju*", "u130454517_modulo_vista");
     
     if ($mysqli->connect_error) {
         echo "❌ Error de conexión: " . $mysqli->connect_error . "<br>";
