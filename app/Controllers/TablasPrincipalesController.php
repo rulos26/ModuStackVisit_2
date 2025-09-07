@@ -16,34 +16,34 @@ class TablasPrincipalesController {
     // Tabla principal de usuarios evaluados
     private const TABLA_EVALUADOS = 'evaluados';
     
-    // Tablas relacionadas que se verifican al eliminar un usuario
+    // Tablas relacionadas con sus campos de identificación
     private const TABLAS_RELACIONADAS = [
-        'autorizaciones',
-        'camara_comercio', 
-        'composicion_familiar',
-        'concepto_final_evaluador',
-        'cuentas_bancarias',
-        'data_credito',
-        'estados_salud',
-        'estado_vivienda',
-        'estudios',
-        'evidencia_fotografica',
-        'experiencia_laboral',
-        'firmas',
-        'foto_perfil_autorizacion',
-        'gasto',
-        'informacion_judicial',
-        'informacion_pareja',
-        'ingresos_mensuales',
-        'inventario_enseres',
-        'pasivos',
-        'patrimonio',
-        'servicios_publicos',
-        'tipo_vivienda',
-        'ubicacion',
-        'ubicacion_autorizacion',
-        'ubicacion_foto',
-        'foto_perfil_visita'
+        'autorizaciones' => 'cedula',
+        'camara_comercio' => 'id_cedula',
+        'composicion_familiar' => 'id_cedula',
+        'concepto_final_evaluador' => 'id_cedula',
+        'cuentas_bancarias' => 'id_cedula',
+        'data_credito' => 'id_cedula',
+        'estados_salud' => 'id_cedula',
+        'estado_vivienda' => 'id_cedula',
+        'estudios' => 'id_cedula',
+        'evidencia_fotografica' => 'id_cedula',
+        'experiencia_laboral' => 'id_cedula',
+        'firmas' => 'id_cedula',
+        'foto_perfil_autorizacion' => 'id_cedula',
+        'gasto' => 'id_cedula',
+        'informacion_judicial' => 'id_cedula',
+        'informacion_pareja' => 'id_cedula',
+        'ingresos_mensuales' => 'id_cedula',
+        'inventario_enseres' => 'id_cedula',
+        'pasivos' => 'id_cedula',
+        'patrimonio' => 'id_cedula',
+        'servicios_publicos' => 'id_cedula',
+        'tipo_vivienda' => 'id_cedula',
+        'ubicacion' => 'id_cedula',
+        'ubicacion_autorizacion' => 'id_cedula',
+        'ubicacion_foto' => 'id_cedula',
+        'foto_perfil_visita' => 'id_cedula'
     ];
     
     // Tablas que contienen archivos físicos
@@ -125,8 +125,8 @@ class TablasPrincipalesController {
             }
             
             // Verificar tablas relacionadas
-            foreach (self::TABLAS_RELACIONADAS as $tabla) {
-                $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM `$tabla` WHERE id_cedula = :id_cedula");
+            foreach (self::TABLAS_RELACIONADAS as $tabla => $campo) {
+                $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM `$tabla` WHERE `$campo` = :id_cedula");
                 $stmt->bindParam(':id_cedula', $idCedula, \PDO::PARAM_INT);
                 $stmt->execute();
                 $total = $stmt->fetch(\PDO::FETCH_ASSOC)['total'];
@@ -220,8 +220,8 @@ class TablasPrincipalesController {
             }
             
             // Eliminar de tablas relacionadas
-            foreach (self::TABLAS_RELACIONADAS as $tabla) {
-                $stmt = $this->db->prepare("DELETE FROM `$tabla` WHERE id_cedula = :id_cedula");
+            foreach (self::TABLAS_RELACIONADAS as $tabla => $campo) {
+                $stmt = $this->db->prepare("DELETE FROM `$tabla` WHERE `$campo` = :id_cedula");
                 $stmt->bindParam(':id_cedula', $idCedula, \PDO::PARAM_INT);
                 $stmt->execute();
                 $eliminados = $stmt->rowCount();

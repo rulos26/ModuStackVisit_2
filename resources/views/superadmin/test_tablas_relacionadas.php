@@ -25,24 +25,44 @@ try {
     
     echo "✅ Conexión PDO exitosa<br><br>";
     
-    // Lista de tablas que deberían existir según el código
+    // Lista de tablas con sus campos de identificación
     $tablasEsperadas = [
-        'autorizaciones', 'camara_comercio', 'composicion_familiar', 'concepto_final_evaluador',
-        'cuentas_bancarias', 'data_credito', 'estados_salud', 'estado_vivienda', 'estudios',
-        'evidencia_fotografica', 'experiencia_laboral', 'firmas', 'foto_perfil_autorizacion',
-        'gasto', 'informacion_judicial', 'informacion_pareja', 'ingresos_mensuales',
-        'inventario_enseres', 'pasivos', 'patrimonio', 'servicios_publicos', 'tipo_vivienda',
-        'ubicacion', 'ubicacion_autorizacion', 'ubicacion_foto', 'foto_perfil_visita'
+        'autorizaciones' => 'cedula',
+        'camara_comercio' => 'id_cedula',
+        'composicion_familiar' => 'id_cedula',
+        'concepto_final_evaluador' => 'id_cedula',
+        'cuentas_bancarias' => 'id_cedula',
+        'data_credito' => 'id_cedula',
+        'estados_salud' => 'id_cedula',
+        'estado_vivienda' => 'id_cedula',
+        'estudios' => 'id_cedula',
+        'evidencia_fotografica' => 'id_cedula',
+        'experiencia_laboral' => 'id_cedula',
+        'firmas' => 'id_cedula',
+        'foto_perfil_autorizacion' => 'id_cedula',
+        'gasto' => 'id_cedula',
+        'informacion_judicial' => 'id_cedula',
+        'informacion_pareja' => 'id_cedula',
+        'ingresos_mensuales' => 'id_cedula',
+        'inventario_enseres' => 'id_cedula',
+        'pasivos' => 'id_cedula',
+        'patrimonio' => 'id_cedula',
+        'servicios_publicos' => 'id_cedula',
+        'tipo_vivienda' => 'id_cedula',
+        'ubicacion' => 'id_cedula',
+        'ubicacion_autorizacion' => 'id_cedula',
+        'ubicacion_foto' => 'id_cedula',
+        'foto_perfil_visita' => 'id_cedula'
     ];
     
     echo "<h3>Verificación de Tablas Esperadas:</h3>";
     echo "<table border='1' style='border-collapse: collapse; width: 100%;'>";
-    echo "<tr><th>Tabla</th><th>Existe</th><th>Registros</th><th>Columna id_cedula</th></tr>";
+    echo "<tr><th>Tabla</th><th>Existe</th><th>Registros</th><th>Campo Esperado</th><th>Campo Existe</th></tr>";
     
     $tablasExistentes = [];
-    $tablasConIdCedula = [];
+    $tablasConCampoCorrecto = [];
     
-    foreach ($tablasEsperadas as $tabla) {
+    foreach ($tablasEsperadas as $tabla => $campoEsperado) {
         echo "<tr>";
         echo "<td>$tabla</td>";
         
@@ -57,17 +77,20 @@ try {
             $result = $stmt->fetch();
             echo "<td>" . $result['count'] . "</td>";
             
-            // Verificar si tiene columna id_cedula
-            $stmt = $pdo->query("SHOW COLUMNS FROM `$tabla` LIKE 'id_cedula'");
+            echo "<td>$campoEsperado</td>";
+            
+            // Verificar si tiene el campo esperado
+            $stmt = $pdo->query("SHOW COLUMNS FROM `$tabla` LIKE '$campoEsperado'");
             if ($stmt->rowCount() > 0) {
                 echo "<td style='color: green;'>✅ Sí</td>";
-                $tablasConIdCedula[] = $tabla;
+                $tablasConCampoCorrecto[] = $tabla;
             } else {
                 echo "<td style='color: red;'>❌ No</td>";
             }
         } else {
             echo "<td style='color: red;'>❌ No</td>";
             echo "<td>-</td>";
+            echo "<td>$campoEsperado</td>";
             echo "<td>-</td>";
         }
         echo "</tr>";
@@ -77,15 +100,15 @@ try {
     echo "<br><h3>Resumen:</h3>";
     echo "Tablas esperadas: " . count($tablasEsperadas) . "<br>";
     echo "Tablas existentes: " . count($tablasExistentes) . "<br>";
-    echo "Tablas con columna id_cedula: " . count($tablasConIdCedula) . "<br>";
+    echo "Tablas con campo correcto: " . count($tablasConCampoCorrecto) . "<br>";
     
-    echo "<br><h3>Tablas que SÍ existen y tienen id_cedula:</h3>";
-    if (count($tablasConIdCedula) > 0) {
-        foreach ($tablasConIdCedula as $tabla) {
-            echo "• " . $tabla . "<br>";
+    echo "<br><h3>Tablas que SÍ existen y tienen el campo correcto:</h3>";
+    if (count($tablasConCampoCorrecto) > 0) {
+        foreach ($tablasConCampoCorrecto as $tabla) {
+            echo "• " . $tabla . " (campo: " . $tablasEsperadas[$tabla] . ")<br>";
         }
     } else {
-        echo "Ninguna tabla tiene la columna id_cedula.<br>";
+        echo "Ninguna tabla tiene el campo correcto.<br>";
     }
     
     echo "<br><h3>Tablas que NO existen:</h3>";
@@ -108,14 +131,16 @@ try {
         echo "Probando con usuario: " . $usuario['nombres'] . " " . $usuario['apellidos'] . " (ID: $idCedula)<br><br>";
         
         echo "<table border='1' style='border-collapse: collapse; width: 100%;'>";
-        echo "<tr><th>Tabla</th><th>Registros para este usuario</th></tr>";
+        echo "<tr><th>Tabla</th><th>Campo</th><th>Registros para este usuario</th></tr>";
         
-        foreach ($tablasConIdCedula as $tabla) {
+        foreach ($tablasConCampoCorrecto as $tabla) {
             echo "<tr>";
             echo "<td>$tabla</td>";
+            echo "<td>" . $tablasEsperadas[$tabla] . "</td>";
             
             try {
-                $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM `$tabla` WHERE id_cedula = ?");
+                $campo = $tablasEsperadas[$tabla];
+                $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM `$tabla` WHERE `$campo` = ?");
                 $stmt->execute([$idCedula]);
                 $result = $stmt->fetch();
                 echo "<td>" . $result['count'] . "</td>";

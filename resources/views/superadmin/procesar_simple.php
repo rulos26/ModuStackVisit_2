@@ -74,14 +74,34 @@ try {
                 break;
             }
             
-            // Lista de tablas relacionadas
+            // Lista de tablas relacionadas con sus campos de identificación
             $tablasRelacionadas = [
-                'autorizaciones', 'camara_comercio', 'composicion_familiar', 'concepto_final_evaluador',
-                'cuentas_bancarias', 'data_credito', 'estados_salud', 'estado_vivienda', 'estudios',
-                'evidencia_fotografica', 'experiencia_laboral', 'firmas', 'foto_perfil_autorizacion',
-                'gasto', 'informacion_judicial', 'informacion_pareja', 'ingresos_mensuales',
-                'inventario_enseres', 'pasivos', 'patrimonio', 'servicios_publicos', 'tipo_vivienda',
-                'ubicacion', 'ubicacion_autorizacion', 'ubicacion_foto', 'foto_perfil_visita'
+                'autorizaciones' => 'cedula',
+                'camara_comercio' => 'id_cedula',
+                'composicion_familiar' => 'id_cedula',
+                'concepto_final_evaluador' => 'id_cedula',
+                'cuentas_bancarias' => 'id_cedula',
+                'data_credito' => 'id_cedula',
+                'estados_salud' => 'id_cedula',
+                'estado_vivienda' => 'id_cedula',
+                'estudios' => 'id_cedula',
+                'evidencia_fotografica' => 'id_cedula',
+                'experiencia_laboral' => 'id_cedula',
+                'firmas' => 'id_cedula',
+                'foto_perfil_autorizacion' => 'id_cedula',
+                'gasto' => 'id_cedula',
+                'informacion_judicial' => 'id_cedula',
+                'informacion_pareja' => 'id_cedula',
+                'ingresos_mensuales' => 'id_cedula',
+                'inventario_enseres' => 'id_cedula',
+                'pasivos' => 'id_cedula',
+                'patrimonio' => 'id_cedula',
+                'servicios_publicos' => 'id_cedula',
+                'tipo_vivienda' => 'id_cedula',
+                'ubicacion' => 'id_cedula',
+                'ubicacion_autorizacion' => 'id_cedula',
+                'ubicacion_foto' => 'id_cedula',
+                'foto_perfil_visita' => 'id_cedula'
             ];
             
             $tablasConDatos = [];
@@ -95,13 +115,13 @@ try {
             }
             
             // Verificar en tablas relacionadas
-            foreach ($tablasRelacionadas as $tabla) {
+            foreach ($tablasRelacionadas as $tabla => $campo) {
                 try {
                     // Verificar si la tabla existe
                     $stmt = $pdo->query("SHOW TABLES LIKE '$tabla'");
                     if ($stmt->rowCount() > 0) {
-                        // Verificar si tiene datos para este id_cedula
-                        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM `$tabla` WHERE id_cedula = ?");
+                        // Verificar si tiene datos para este id_cedula usando el campo correcto
+                        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM `$tabla` WHERE `$campo` = ?");
                         $stmt->execute([$idCedula]);
                         $result = $stmt->fetch();
                         if ($result['count'] > 0) {
