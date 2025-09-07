@@ -66,12 +66,41 @@ class TablasPrincipalesController {
      */
     public function obtenerUsuariosEvaluados() {
         try {
+            // Primero verificar si la tabla existe
+            if (!$this->tablaExiste(self::TABLA_EVALUADOS)) {
+                return ['error' => 'La tabla "evaluados" no existe en la base de datos'];
+            }
+            
+            // Verificar la estructura de la tabla
+            $stmt = $this->db->prepare("DESCRIBE " . self::TABLA_EVALUADOS);
+            $stmt->execute();
+            $columnas = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            // Verificar si las columnas necesarias existen
+            $columnasExistentes = array_column($columnas, 'Field');
+            $columnasRequeridas = ['id_cedula', 'nombres', 'apellidos'];
+            
+            foreach ($columnasRequeridas as $columna) {
+                if (!in_array($columna, $columnasExistentes)) {
+                    return ['error' => "La columna '$columna' no existe en la tabla evaluados. Columnas disponibles: " . implode(', ', $columnasExistentes)];
+                }
+            }
+            
+            // Obtener los usuarios
             $stmt = $this->db->prepare("SELECT id_cedula, nombres, apellidos FROM " . self::TABLA_EVALUADOS . " ORDER BY nombres, apellidos");
             $stmt->execute();
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $usuarios = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            $this->logger->info('Usuarios evaluados obtenidos', [
+                'total_usuarios' => count($usuarios)
+            ]);
+            
+            return $usuarios;
+            
         } catch (PDOException $e) {
             $this->logger->error('Error al obtener usuarios evaluados', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'tabla' => self::TABLA_EVALUADOS
             ]);
             return ['error' => 'Error al obtener usuarios evaluados: ' . $e->getMessage()];
         }
@@ -305,6 +334,22 @@ class TablasPrincipalesController {
                 'usuario' => $_SESSION['username'] ?? 'unknown'
             ]);
             return ['error' => 'Error al vaciar tablas: ' . $e->getMessage()];
+        }
+    }
+    
+    /**
+     * Verificar si una tabla existe
+     * @param string $nombreTabla
+     * @return bool
+     */
+    private function tablaExiste($nombreTabla) {
+        try {
+            $stmt = $this->db->prepare("SHOW TABLES LIKE :tabla");
+            $stmt->bindParam(':tabla', $nombreTabla);
+            $stmt->execute();
+            return $stmt->rowCount() > 0;
+        } catch (PDOException $e) {
+            return false;
         }
     }
 }

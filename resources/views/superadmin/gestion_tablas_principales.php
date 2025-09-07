@@ -228,10 +228,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
 
             <!-- Contenido del dashboard -->
             <div class="container-fluid py-4">
-                <!-- Botón Vaciar Tablas -->
+                <!-- Botones de Acción -->
                 <div class="row mb-4">
                     <div class="col-12">
-                        <div class="d-flex justify-content-end">
+                        <div class="d-flex justify-content-between">
+                            <a href="diagnostico_tablas.php" class="btn btn-info">
+                                <i class="bi bi-search"></i> Diagnóstico de Base de Datos
+                            </a>
                             <button class="btn btn-danger btn-lg" onclick="confirmarVaciarTablas()">
                                 <i class="bi bi-trash3"></i> Vaciar Tablas
                             </button>
@@ -390,10 +393,15 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                 },
                 body: 'accion=obtener_usuarios_evaluados'
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.error) {
-                    mostrarError(data.error);
+                    mostrarError(`Error: ${data.error}<br><br>Haz clic en "Diagnóstico de Base de Datos" para más información.`);
                     return;
                 }
                 
@@ -422,7 +430,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
             })
             .catch(error => {
                 console.error('Error:', error);
-                mostrarError('Error al cargar los usuarios evaluados');
+                mostrarError(`Error de conexión: ${error.message}<br><br>Verifica la conexión a la base de datos.`);
             });
         }
         
