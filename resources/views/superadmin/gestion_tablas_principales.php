@@ -123,114 +123,111 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
         }
     </style>
 </head>
-<body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 px-0">
-                <div class="d-flex flex-column flex-shrink-0 p-3 bg-dark text-white" style="width: 280px; min-height: 100vh;">
-                    <a href="dashboardSuperAdmin.php" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                        <i class="bi bi-shield-lock-fill me-2"></i>
-                        <span class="fs-4 fw-bold">Superadmin</span>
+<body class="bg-light">
+    <div class="d-flex">
+        <!-- Menú lateral -->
+        <div class="d-flex flex-column flex-shrink-0 p-3 bg-dark text-white" style="width: 280px; min-height: 100vh;">
+            <a href="dashboardSuperAdmin.php" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <i class="bi bi-shield-lock-fill me-2"></i>
+                <span class="fs-4 fw-bold">Superadmin</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="dashboardSuperAdmin.php" class="nav-link text-white">
+                        <i class="bi bi-speedometer2 me-2"></i>
+                        Dashboard
                     </a>
-                    <hr>
-                    <ul class="nav nav-pills flex-column mb-auto">
-                        <li class="nav-item">
-                            <a href="dashboardSuperAdmin.php" class="nav-link text-white">
-                                <i class="bi bi-speedometer2 me-2"></i>
-                                Dashboard
-                            </a>
-                        </li>
-                        <li>
-                            <a href="gestion_usuarios.php" class="nav-link text-white">
-                                <i class="bi bi-people me-2"></i>
-                                Gestión de Usuarios
-                            </a>
-                        </li>
-                        <li>
-                            <a href="gestion_opciones.php" class="nav-link text-white">
-                                <i class="bi bi-gear me-2"></i>
-                                Gestión de Opciones
-                            </a>
-                        </li>
-                        <li>
-                            <a href="gestion_tablas_principales.php" class="nav-link active text-white">
-                                <i class="bi bi-database me-2"></i>
-                                Tablas Principales
-                            </a>
-                        </li>
-                        <li>
-                            <a href="configuracion_sistema.php" class="nav-link text-white">
-                                <i class="bi bi-gear me-2"></i>
-                                Configuración
-                            </a>
-                        </li>
-                        <li>
-                            <a href="logs_sistema.php" class="nav-link text-white">
-                                <i class="bi bi-journal-text me-2"></i>
-                                Logs del Sistema
-                            </a>
-                        </li>
-                        <li>
-                            <a href="auditoria.php" class="nav-link text-white">
-                                <i class="bi bi-shield-check me-2"></i>
-                                Auditoría
-                            </a>
-                        </li>
-                        <li>
-                            <a href="respaldo.php" class="nav-link text-white">
-                                <i class="bi bi-download me-2"></i>
-                                Respaldos
-                            </a>
-                        </li>
-                        <li>
-                            <a href="reportes.php" class="nav-link text-white">
-                                <i class="bi bi-graph-up me-2"></i>
-                                Reportes
-                            </a>
-                        </li>
-                    </ul>
-                    <hr>
-                    <div class="dropdown">
-                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle me-2"></i>
-                            <strong><?php echo htmlspecialchars($_SESSION['username'] ?? 'Superadministrador'); ?></strong>
+                </li>
+                <li>
+                    <a href="gestion_usuarios.php" class="nav-link text-white">
+                        <i class="bi bi-people me-2"></i>
+                        Gestión de Usuarios
+                    </a>
+                </li>
+                <li>
+                    <a href="gestion_opciones.php" class="nav-link text-white">
+                        <i class="bi bi-gear me-2"></i>
+                        Gestión de Opciones
+                    </a>
+                </li>
+                <li>
+                    <a href="gestion_tablas_principales.php" class="nav-link active text-white">
+                        <i class="bi bi-database me-2"></i>
+                        Tablas Principales
+                    </a>
+                </li>
+                <li>
+                    <a href="configuracion_sistema.php" class="nav-link text-white">
+                        <i class="bi bi-gear me-2"></i>
+                        Configuración
+                    </a>
+                </li>
+                <li>
+                    <a href="logs_sistema.php" class="nav-link text-white">
+                        <i class="bi bi-journal-text me-2"></i>
+                        Logs del Sistema
+                    </a>
+                </li>
+                <li>
+                    <a href="auditoria.php" class="nav-link text-white">
+                        <i class="bi bi-shield-check me-2"></i>
+                        Auditoría
+                    </a>
+                </li>
+                <li>
+                    <a href="respaldo.php" class="nav-link text-white">
+                        <i class="bi bi-download me-2"></i>
+                        Respaldos
+                    </a>
+                </li>
+                <li>
+                    <a href="reportes.php" class="nav-link text-white">
+                        <i class="bi bi-graph-up me-2"></i>
+                        Reportes
+                    </a>
+                </li>
+            </ul>
+            <hr>
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle me-2"></i>
+                    <strong><?php echo htmlspecialchars($_SESSION['username'] ?? 'Superadministrador'); ?></strong>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                    <li><a class="dropdown-item" href="../../logout.php">Cerrar sesión</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="flex-grow-1">
+            <!-- Header -->
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+                <div class="container-fluid">
+                    <span class="navbar-brand">
+                        <i class="bi bi-database me-2"></i>
+                        Gestión de Tablas Principales
+                    </span>
+                    <div class="d-flex align-items-center">
+                        <span class="text-white me-3">
+                            <i class="bi bi-clock"></i>
+                            <?php echo date('d/m/Y H:i'); ?>
+                        </span>
+                        <button class="btn btn-outline-light btn-sm me-2" onclick="cargarEstadisticasGenerales()">
+                            <i class="bi bi-graph-up me-1"></i>
+                            Estadísticas Generales
+                        </button>
+                        <a href="../../logout.php" class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-box-arrow-right me-1"></i>
+                            Salir
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                            <li><a class="dropdown-item" href="../../logout.php">Cerrar sesión</a></li>
-                        </ul>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Main Content -->
-            <div class="flex-grow-1">
-                <!-- Header -->
-                <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-                    <div class="container-fluid">
-                        <span class="navbar-brand">
-                            <i class="bi bi-database me-2"></i>
-                            Gestión de Tablas Principales
-                        </span>
-                        <div class="d-flex align-items-center">
-                            <span class="text-white me-3">
-                                <i class="bi bi-clock"></i>
-                                <?php echo date('d/m/Y H:i'); ?>
-                            </span>
-                            <button class="btn btn-outline-light btn-sm me-2" onclick="cargarEstadisticasGenerales()">
-                                <i class="bi bi-graph-up me-1"></i>
-                                Estadísticas Generales
-                            </button>
-                            <a href="../../logout.php" class="btn btn-outline-light btn-sm">
-                                <i class="bi bi-box-arrow-right me-1"></i>
-                                Salir
-                            </a>
-                        </div>
-                    </div>
-                </nav>
+            </nav>
 
-                <!-- Contenido del dashboard -->
-                <div class="container-fluid py-4">
+            <!-- Contenido del dashboard -->
+            <div class="container-fluid py-4">
                     
                     <!-- Estadísticas Generales -->
                     <div class="row mb-4" id="estadisticasGenerales" style="display: none;">
@@ -453,8 +450,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                 </div>
             </div>
         </div>
-    </div>
-                </div>
             </div>
         </div>
     </div>
