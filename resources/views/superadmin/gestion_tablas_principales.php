@@ -409,12 +409,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
         
         // Cargar usuarios evaluados
         function cargarUsuariosEvaluados() {
+            const formData = new FormData();
+            formData.append('accion', 'obtener_usuarios_evaluados');
+            
             fetch('procesar_tablas_principales.php', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'accion=obtener_usuarios_evaluados'
+                body: formData
             })
             .then(response => {
                 if (!response.ok) {
@@ -446,26 +446,33 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
         
         // Cargar usuarios con procesador simple
         function cargarUsuariosConProcesadorSimple() {
+            const formData = new FormData();
+            formData.append('accion', 'obtener_usuarios_evaluados');
+            
             fetch('procesar_simple.php', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'accion=obtener_usuarios_evaluados'
+                body: formData
             })
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.json();
+                return response.text();
             })
-            .then(data => {
-                if (data.error) {
-                    mostrarError(`Error: ${data.error}<br><br>Haz clic en "Test Básico" para más información.`);
-                    return;
+            .then(text => {
+                try {
+                    const data = JSON.parse(text);
+                    if (data.error) {
+                        mostrarError(`Error: ${data.error}<br><br>Haz clic en "Test Básico" para más información.`);
+                        return;
+                    }
+                    
+                    mostrarUsuarios(data);
+                } catch (parseError) {
+                    console.error('Error parseando JSON:', parseError);
+                    console.error('Respuesta cruda:', text);
+                    mostrarError(`Error parseando respuesta: ${parseError.message}<br><br>Haz clic en "Test Procesador" para más información.`);
                 }
-                
-                mostrarUsuarios(data);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -509,12 +516,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
             document.getElementById('confirmacionEliminarUsuario').value = '';
             
             // Verificar tablas con datos
+            const formData = new FormData();
+            formData.append('accion', 'verificar_tablas_con_datos');
+            formData.append('id_cedula', idCedula);
+            
             fetch('procesar_tablas_principales.php', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `accion=verificar_tablas_con_datos&id_cedula=${idCedula}`
+                body: formData
             })
             .then(response => {
                 if (!response.ok) {
@@ -532,12 +540,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
             .then(data => {
                 if (data.error && data.fallback) {
                     // Si hay error del framework, usar procesador simple
+                    const formData = new FormData();
+                    formData.append('accion', 'verificar_tablas_con_datos');
+                    formData.append('id_cedula', idCedula);
+                    
                     return fetch('procesar_simple.php', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: `accion=verificar_tablas_con_datos&id_cedula=${idCedula}`
+                        body: formData
                     })
                     .then(response => {
                         if (!response.ok) {

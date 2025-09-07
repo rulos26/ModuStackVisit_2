@@ -46,7 +46,8 @@ try {
     switch ($accion) {
         case 'obtener_usuarios_evaluados':
             $resultado = $controller->obtenerUsuariosEvaluados();
-            echo json_encode($resultado);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode($resultado, JSON_UNESCAPED_UNICODE);
             break;
             
         case 'verificar_tablas_con_datos':
@@ -61,7 +62,8 @@ try {
             }
             
             $resultado = $controller->verificarTablasConDatos((int)$idCedula);
-            echo json_encode($resultado);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode($resultado, JSON_UNESCAPED_UNICODE);
             break;
             
         case 'eliminar_usuario_completo':
@@ -82,7 +84,8 @@ try {
             }
             
             $resultado = $controller->eliminarUsuarioCompleto((int)$idCedula);
-            echo json_encode($resultado);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode($resultado, JSON_UNESCAPED_UNICODE);
             break;
             
         case 'vaciar_todas_las_tablas':
@@ -93,7 +96,8 @@ try {
             }
             
             $resultado = $controller->vaciarTodasLasTablas();
-            echo json_encode($resultado);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode($resultado, JSON_UNESCAPED_UNICODE);
             break;
             
         default:
