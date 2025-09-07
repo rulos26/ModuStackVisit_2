@@ -187,6 +187,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                         Reportes
                     </a>
                 </li>
+                <li>
+                    <a href="../../../explorador_imagenes.php" class="nav-link text-white">
+                        <i class="bi bi-images me-2"></i>
+                        Explorador de Imágenes
+                    </a>
+                </li>
             </ul>
             <hr>
             <h6 class="text-white-50 mb-3">Herramientas de Diagnóstico</h6>

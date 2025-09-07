@@ -98,6 +98,12 @@ $usuario = $_SESSION['username'] ?? 'Superadministrador';
                         Tablas Principales
                     </a>
                 </li>
+                <li>
+                    <a href="../../../explorador_imagenes.php" class="nav-link text-white">
+                        <i class="bi bi-images me-2"></i>
+                        Explorador de Imágenes
+                    </a>
+                </li>
             </ul>
             <hr>
             <div class="dropdown">
