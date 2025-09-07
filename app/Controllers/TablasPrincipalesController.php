@@ -87,7 +87,7 @@ class TablasPrincipalesController {
             }
             
             // Obtener los usuarios
-            $stmt = $this->db->prepare("SELECT id_cedula, nombres, apellidos FROM " . self::TABLA_EVALUADOS . " ORDER BY nombres, apellidos");
+            $stmt = $this->db->prepare("SELECT id_cedula, nombres, apellidos FROM " . self::TABLA_EVALUADOS . " WHERE id_cedula IS NOT NULL ORDER BY nombres, apellidos");
             $stmt->execute();
             $usuarios = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             

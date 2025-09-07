@@ -236,6 +236,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                                 <a href="gestion_tablas_simple.php" class="btn btn-success me-2">
                                     <i class="bi bi-lightning"></i> Versión Simple
                                 </a>
+                                <a href="test_funcionalidad.php" class="btn btn-primary me-2">
+                                    <i class="bi bi-play-circle"></i> Test Funcionalidad
+                                </a>
                                 <a href="test_basico.php" class="btn btn-success me-2">
                                     <i class="bi bi-check-circle"></i> Test Básico
                                 </a>

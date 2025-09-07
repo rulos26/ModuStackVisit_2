@@ -60,7 +60,7 @@ try {
             }
             
             // Obtener los usuarios
-            $stmt = $pdo->query("SELECT id_cedula, nombres, apellidos FROM evaluados ORDER BY nombres, apellidos");
+            $stmt = $pdo->query("SELECT id_cedula, nombres, apellidos FROM evaluados WHERE id_cedula IS NOT NULL ORDER BY nombres, apellidos");
             $usuarios = $stmt->fetchAll();
             
             echo json_encode($usuarios);
