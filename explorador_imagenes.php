@@ -23,6 +23,9 @@ require_once 'app/Controllers/ExploradorImagenesController.php';
 $explorador = new ExploradorImagenesController();
 $currentPath = $_GET['path'] ?? '';
 $content = $explorador->getFolderContent($currentPath);
+
+// Obtener información del usuario
+$usuario = $_SESSION['username'] ?? 'Superadministrador';
 ?>
 
 <!DOCTYPE html>
@@ -38,39 +41,6 @@ $content = $explorador->getFolderContent($currentPath);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     
     <style>
-        .explorer-container {
-            background: #f8f9fa;
-            min-height: 100vh;
-        }
-        
-        .explorer-header {
-            background: white;
-            border-bottom: 1px solid #dee2e6;
-            padding: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .breadcrumb-container {
-            background: white;
-            border-bottom: 1px solid #dee2e6;
-            padding: 0.75rem 1rem;
-        }
-        
-        .breadcrumb {
-            margin: 0;
-            background: none;
-            padding: 0;
-        }
-        
-        .breadcrumb-item + .breadcrumb-item::before {
-            content: ">";
-            color: #6c757d;
-        }
-        
-        .explorer-content {
-            padding: 1rem;
-        }
-        
         .file-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -215,132 +185,197 @@ $content = $explorador->getFolderContent($currentPath);
             font-size: 0.875rem;
             color: #6c757d;
         }
+        
+        .breadcrumb-container {
+            background: white;
+            border-bottom: 1px solid #dee2e6;
+            padding: 0.75rem 1rem;
+        }
+        
+        .breadcrumb {
+            margin: 0;
+            background: none;
+            padding: 0;
+        }
+        
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: ">";
+            color: #6c757d;
+        }
     </style>
 </head>
-<body>
-    <div class="explorer-container">
-        <!-- Header -->
-        <div class="explorer-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="h4 mb-0">
+<body class="bg-light">
+    <div class="d-flex">
+        <!-- Menú lateral -->
+        <div class="d-flex flex-column flex-shrink-0 p-3 bg-dark text-white" style="width: 280px; min-height: 100vh;">
+            <a href="resources/views/superadmin/dashboardSuperAdmin.php" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <i class="bi bi-shield-lock-fill me-2"></i>
+                <span class="fs-4 fw-bold">Superadmin</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="resources/views/superadmin/dashboardSuperAdmin.php" class="nav-link text-white">
+                        <i class="bi bi-speedometer2 me-2"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="resources/views/superadmin/gestion_usuarios.php" class="nav-link text-white">
+                        <i class="bi bi-people me-2"></i>
+                        Gestión de Usuarios
+                    </a>
+                </li>
+                <li>
+                    <a href="resources/views/superadmin/gestion_opciones.php" class="nav-link text-white">
+                        <i class="bi bi-gear me-2"></i>
+                        Gestión de Opciones
+                    </a>
+                </li>
+                <li>
+                    <a href="resources/views/superadmin/gestion_tablas_principales.php" class="nav-link text-white">
+                        <i class="bi bi-database me-2"></i>
+                        Tablas Principales
+                    </a>
+                </li>
+                <li>
+                    <a href="explorador_imagenes.php" class="nav-link active text-white">
                         <i class="bi bi-images me-2"></i>
                         Explorador de Imágenes
-                    </h1>
-                    <p class="text-muted mb-0">Gestiona las imágenes del servidor</p>
-                </div>
-                <div>
-                    <a href="dashboard.php" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-1"></i>
-                        Volver al Dashboard
                     </a>
+                </li>
+            </ul>
+            <hr>
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle me-2"></i>
+                    <strong><?php echo htmlspecialchars($usuario); ?></strong>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                    <li><a class="dropdown-item" href="logout.php">Cerrar sesión</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Contenido principal -->
+        <div class="flex-grow-1">
+            <!-- Header -->
+            <div class="bg-white border-bottom p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h4 mb-0">
+                            <i class="bi bi-images me-2"></i>
+                            Explorador de Imágenes
+                        </h1>
+                        <p class="text-muted mb-0">Gestiona las imágenes del servidor</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Toolbar -->
-        <div class="toolbar">
-            <button class="btn btn-outline-primary btn-sm" onclick="goBack()" id="btnBack" disabled>
-                <i class="bi bi-arrow-left me-1"></i>
-                Atrás
-            </button>
-            <button class="btn btn-outline-primary btn-sm" onclick="reloadContent()">
-                <i class="bi bi-arrow-clockwise me-1"></i>
-                Recargar
-            </button>
-            <div class="path-display" id="currentPathDisplay">
-                public/images<?php echo $currentPath ? '/' . $currentPath : ''; ?>
+            
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <button class="btn btn-outline-primary btn-sm" onclick="goBack()" id="btnBack" disabled>
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Atrás
+                </button>
+                <button class="btn btn-outline-primary btn-sm" onclick="reloadContent()">
+                    <i class="bi bi-arrow-clockwise me-1"></i>
+                    Recargar
+                </button>
+                <div class="path-display" id="currentPathDisplay">
+                    public/images<?php echo $currentPath ? '/' . $currentPath : ''; ?>
+                </div>
             </div>
-        </div>
-        
-        <!-- Breadcrumb -->
-        <div class="breadcrumb-container">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb" id="breadcrumb">
-                    <?php if ($content['success']): ?>
-                        <?php foreach ($content['breadcrumb'] as $index => $crumb): ?>
-                            <li class="breadcrumb-item <?php echo $index === count($content['breadcrumb']) - 1 ? 'active' : ''; ?>">
-                                <?php if ($index === count($content['breadcrumb']) - 1): ?>
-                                    <?php echo htmlspecialchars($crumb['name']); ?>
-                                <?php else: ?>
-                                    <a href="?path=<?php echo urlencode($crumb['path']); ?>" class="text-decoration-none">
+            
+            <!-- Breadcrumb -->
+            <div class="breadcrumb-container">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb" id="breadcrumb">
+                        <?php if ($content['success']): ?>
+                            <?php foreach ($content['breadcrumb'] as $index => $crumb): ?>
+                                <li class="breadcrumb-item <?php echo $index === count($content['breadcrumb']) - 1 ? 'active' : ''; ?>">
+                                    <?php if ($index === count($content['breadcrumb']) - 1): ?>
                                         <?php echo htmlspecialchars($crumb['name']); ?>
-                                    </a>
-                                <?php endif; ?>
-                            </li>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </ol>
-            </nav>
-        </div>
-        
-        <!-- Content -->
-        <div class="explorer-content">
-            <?php if (!$content['success']): ?>
-                <div class="error-message">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
-                    <?php echo htmlspecialchars($content['error']); ?>
-                </div>
-            <?php else: ?>
-                <!-- Stats -->
-                <div class="stats">
-                    <i class="bi bi-info-circle me-1"></i>
-                    <?php echo $content['totalItems']; ?> elementos encontrados
-                </div>
-                
-                <!-- File Grid -->
-                <div class="file-grid" id="fileGrid">
-                    <?php if (empty($content['items'])): ?>
-                        <div class="col-12 text-center text-muted py-5">
-                            <i class="bi bi-folder-x fs-1 mb-3"></i>
-                            <p>Esta carpeta está vacía</p>
-                        </div>
-                    <?php else: ?>
-                        <?php foreach ($content['items'] as $item): ?>
-                            <div class="file-item <?php echo $item['type']; ?>" 
-                                 data-path="<?php echo htmlspecialchars($item['path']); ?>"
-                                 data-type="<?php echo $item['type']; ?>"
-                                 data-name="<?php echo htmlspecialchars($item['name']); ?>">
-                                
-                                <?php if ($item['type'] === 'directory'): ?>
-                                    <div class="file-icon">
-                                        <i class="bi bi-folder-fill"></i>
-                                    </div>
-                                    <div class="file-name"><?php echo htmlspecialchars($item['name']); ?></div>
-                                    <div class="file-info">
-                                        <?php echo $explorador->formatFileSize($item['size']); ?>
-                                    </div>
-                                <?php elseif ($item['type'] === 'image'): ?>
-                                    <img src="public/images/<?php echo htmlspecialchars($item['path']); ?>" 
-                                         alt="<?php echo htmlspecialchars($item['name']); ?>"
-                                         class="file-thumbnail"
-                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                    <div class="file-icon" style="display: none;">
-                                        <i class="bi bi-image"></i>
-                                    </div>
-                                    <div class="file-name"><?php echo htmlspecialchars($item['name']); ?></div>
-                                    <div class="file-info">
-                                        <?php echo $explorador->formatFileSize($item['size']); ?>
-                                    </div>
-                                    <div class="file-actions">
-                                        <button class="btn btn-delete" onclick="deleteFile('<?php echo htmlspecialchars($item['path']); ?>', '<?php echo htmlspecialchars($item['name']); ?>')">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                <?php else: ?>
-                                    <div class="file-icon">
-                                        <i class="bi bi-file-earmark"></i>
-                                    </div>
-                                    <div class="file-name"><?php echo htmlspecialchars($item['name']); ?></div>
-                                    <div class="file-info">
-                                        <?php echo $explorador->formatFileSize($item['size']); ?>
-                                    </div>
-                                <?php endif; ?>
+                                    <?php else: ?>
+                                        <a href="?path=<?php echo urlencode($crumb['path']); ?>" class="text-decoration-none">
+                                            <?php echo htmlspecialchars($crumb['name']); ?>
+                                        </a>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </ol>
+                </nav>
+            </div>
+            
+            <!-- Content -->
+            <div class="p-4">
+                <?php if (!$content['success']): ?>
+                    <div class="error-message">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <?php echo htmlspecialchars($content['error']); ?>
+                    </div>
+                <?php else: ?>
+                    <!-- Stats -->
+                    <div class="stats">
+                        <i class="bi bi-info-circle me-1"></i>
+                        <?php echo $content['totalItems']; ?> elementos encontrados
+                    </div>
+                    
+                    <!-- File Grid -->
+                    <div class="file-grid" id="fileGrid">
+                        <?php if (empty($content['items'])): ?>
+                            <div class="col-12 text-center text-muted py-5">
+                                <i class="bi bi-folder-x fs-1 mb-3"></i>
+                                <p>Esta carpeta está vacía</p>
                             </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
+                        <?php else: ?>
+                            <?php foreach ($content['items'] as $item): ?>
+                                <div class="file-item <?php echo $item['type']; ?>" 
+                                     data-path="<?php echo htmlspecialchars($item['path']); ?>"
+                                     data-type="<?php echo $item['type']; ?>"
+                                     data-name="<?php echo htmlspecialchars($item['name']); ?>">
+                                    
+                                    <?php if ($item['type'] === 'directory'): ?>
+                                        <div class="file-icon">
+                                            <i class="bi bi-folder-fill"></i>
+                                        </div>
+                                        <div class="file-name"><?php echo htmlspecialchars($item['name']); ?></div>
+                                        <div class="file-info">
+                                            <?php echo $explorador->formatFileSize($item['size']); ?>
+                                        </div>
+                                    <?php elseif ($item['type'] === 'image'): ?>
+                                        <img src="public/images/<?php echo htmlspecialchars($item['path']); ?>" 
+                                             alt="<?php echo htmlspecialchars($item['name']); ?>"
+                                             class="file-thumbnail"
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                        <div class="file-icon" style="display: none;">
+                                            <i class="bi bi-image"></i>
+                                        </div>
+                                        <div class="file-name"><?php echo htmlspecialchars($item['name']); ?></div>
+                                        <div class="file-info">
+                                            <?php echo $explorador->formatFileSize($item['size']); ?>
+                                        </div>
+                                        <div class="file-actions">
+                                            <button class="btn btn-delete" onclick="deleteFile('<?php echo htmlspecialchars($item['path']); ?>', '<?php echo htmlspecialchars($item['name']); ?>')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="file-icon">
+                                            <i class="bi bi-file-earmark"></i>
+                                        </div>
+                                        <div class="file-name"><?php echo htmlspecialchars($item['name']); ?></div>
+                                        <div class="file-info">
+                                            <?php echo $explorador->formatFileSize($item['size']); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
     
@@ -459,7 +494,7 @@ $content = $explorador->getFolderContent($currentPath);
             alertDiv.className = alertClass;
             alertDiv.innerHTML = `<i class="${icon} me-2"></i>${message}`;
             
-            const content = document.querySelector('.explorer-content');
+            const content = document.querySelector('.p-4');
             content.insertBefore(alertDiv, content.firstChild);
             
             // Remover el mensaje después de 5 segundos
