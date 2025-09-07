@@ -67,30 +67,15 @@
                         <p>Identificado (a) con cédula de ciudadanía No. <strong><?= htmlspecialchars($row1['cedula'] ?? '') ?></strong></p>
                         <p>Expedida en: <strong>Bogotá D.C</strong></p>
                         <p><?= nl2br(htmlspecialchars($row1['autorizacion'] ?? '')) ?></p>
-                        <p>Hago constar de manera libre y voluntaria que la información procesada en el
-                            presente estudio, obedece a la verdad y AUTORIZO plenamente a la empresa
-                            GRUPO DE TAREAS EMPRESARIALES con NIT 830.142.258-3 para realizar
-                            VERIFICACIÓN ACADÉMICA, VERIFICACIÓN JUDICIAL, CENTRAL DE RIESGOS
-                            LEY 1266 y LEY 1581 del 2012 habeas data. Para tomar las pruebas necesarias y
-                            suficientes, a fin de establecer la veracidad de la información suministrada, para que
-                            en el momento que se haga necesaria se utilice como prueba. Contemplando en el
-                            DECRETO 1266 DE 2008. </p>
-                        <p> Legislación adicional solicitada (SPOA - SIJUF y centrales de riesgo):
-                            La observación hace referencia a la necesidad de incorporar la autorización de consulta ante la Fiscalía
-                            General de la Nación (SPOA - SIJUF) y la autorización para consulta en centrales de riesgo, tal como lo
-                            exigen las leyes 1266 de 2008, 1581 de 2012 y 172 de 2014.
-                            Adjuntamos en este correo el texto sugerido que puede incorporarse tal cual en el formato PDF, de
-                            manera que se cumpla con los requerimientos legales.
-                            "autorizo la visita domiciliaria y manifiesto de manera libre, expresa e informada que autorizo
-                            plenamente a la empresa GRUPO DE TAREAS EMPRESARIALES, con NIT 830.142.258-3, para realizar
-                            la verificación de antecedentes judiciales, penales, disciplinarios y fiscales ante las autoridades
-                            competentes, incluyendo la Fiscalía General de la Nación mediante consulta en el sistema SPOA – SIJUF,
-                            así como la verificación académica, laboral, domiciliaria y la consulta en centrales de información
-                            financiera y crediticia (Data crédito, CIFIN u otras), de conformidad con lo establecido en el artículo 13
-                            ley 1581 del 2012, la Ley 172 de 2014, Ley 1266 de 2008, Ley 1581 de 2012 y el Decreto 1266 de 2008,
-                            Para tomar las pruebas necesarias y suficientes, a fin de establecer la veracidad de la información
-                            suministrada, para que en el momento que se haga necesaria se utilice como prueba. Contemplado en el
-                            DECRETO 1266 de 2008.</p>
+                        <p>Manifiesto de manera libre, expresa e informada que autorizo plenamente a la empresa GRUPO DE
+TAREAS EMPRESARIALÉS, identificada con NIT 830142.258-3, para llevar a cabo la visita|
+domiciliaria, entrevista y verificación de datos. Autorizo la consulta y entrega de la información que
+repose ante la Fiscalía General de la Nación (SPOA - SIJUF) asi como las anotaciones y
+|antecedentes judiciales y penales, conforme a lo establecido en el artículo 13 de la Ley 1581 de 2012.
+Autorizo la consulta en centrales de riesgo, de acuerdo con lo dispuesto en las Leyes Estatutarias
+1712 de 2014, 1266 de 2008 y 1581 de 2012. Finalmente, autorizo la verificación de mi historial laboral,
+historial académico y referencias personales.</p>
+                        <p></p>
                     </div>
                 </td>
             </tr>
