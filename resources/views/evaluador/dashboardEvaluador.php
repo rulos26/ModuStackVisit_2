@@ -120,6 +120,18 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="carta_visita/index_carta.php">
+                                <i class="bi bi-file-earmark-text-fill me-2"></i>
+                                Carta de Autorización
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="evaluacion_visita/index_evaluacion.php">
+                                <i class="bi bi-house-door-fill me-2"></i>
+                                Evaluación Visita Domiciliaria
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="#">
                                 <i class="bi bi-gear me-2"></i>
                                 Configuración
