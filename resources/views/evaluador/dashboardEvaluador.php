@@ -54,32 +54,12 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
         .card:hover {
             transform: translateY(-5px);
         }
-        .stats-card {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
-        }
-        .stats-card .card-body {
-            padding: 1.5rem;
-        }
-        .stats-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-        }
         .welcome-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border-radius: 15px;
             padding: 2rem;
             margin-bottom: 2rem;
-        }
-        .task-card {
-            border-left: 4px solid #28a745;
-        }
-        .task-card.urgent {
-            border-left-color: #dc3545;
-        }
-        .task-card.pending {
-            border-left-color: #ffc107;
         }
     </style>
 </head>
@@ -102,24 +82,6 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-list-task me-2"></i>
-                                Mis Evaluaciones
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-calendar-week me-2"></i>
-                                Agenda
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-file-earmark-text me-2"></i>
-                                Reportes
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="carta_visita/index_carta.php">
                                 <i class="bi bi-file-earmark-text-fill me-2"></i>
                                 Carta de Autorización
@@ -129,24 +91,6 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
                             <a class="nav-link" href="evaluacion_visita/index_evaluacion.php">
                                 <i class="bi bi-house-door-fill me-2"></i>
                                 Evaluación Visita Domiciliaria
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-gear me-2"></i>
-                                Configuración
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../layout/dashboard.php">
-                                <i class="bi bi-layout-text-sidebar me-2"></i>
-                                Layout Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../../../dashboard.php">
-                                <i class="bi bi-speedometer2 me-2"></i>
-                                Demo Dashboard raíz
                             </a>
                         </li>
                         <li class="nav-item mt-4">
@@ -190,189 +134,7 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
                         </div>
                     </div>
 
-                    <!-- Stats Cards -->
-                    <div class="row mb-4">
-                        <div class="col-md-3">
-                            <div class="card stats-card">
-                                <div class="card-body text-center">
-                                    <i class="bi bi-list-task mb-3" style="font-size: 2rem;"></i>
-                                    <div class="stats-number">15</div>
-                                    <div>Evaluaciones Pendientes</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card stats-card">
-                                <div class="card-body text-center">
-                                    <i class="bi bi-check-circle mb-3" style="font-size: 2rem;"></i>
-                                    <div class="stats-number">23</div>
-                                    <div>Evaluaciones Completadas</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card stats-card">
-                                <div class="card-body text-center">
-                                    <i class="bi bi-clock mb-3" style="font-size: 2rem;"></i>
-                                    <div class="stats-number">8</div>
-                                    <div>Visitas Hoy</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card stats-card">
-                                <div class="card-body text-center">
-                                    <i class="bi bi-star mb-3" style="font-size: 2rem;"></i>
-                                    <div class="stats-number">4.9</div>
-                                    <div>Calificación Promedio</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Quick Actions -->
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header bg-success text-white">
-                                    <h5 class="mb-0">
-                                        <i class="bi bi-lightning me-2"></i>
-                                        Acciones Rápidas
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-3 text-center mb-3">
-                                            <a href="#" class="btn btn-outline-success btn-lg p-4 w-100">
-                                                <i class="bi bi-plus-circle mb-2" style="font-size: 2rem; display: block;"></i>
-                                                Nueva Evaluación
-                                            </a>
-                                        </div>
-                                        <div class="col-md-3 text-center mb-3">
-                                            <a href="#" class="btn btn-outline-primary btn-lg p-4 w-100">
-                                                <i class="bi bi-calendar-check mb-2" style="font-size: 2rem; display: block;"></i>
-                                                Ver Agenda
-                                            </a>
-                                        </div>
-                                        <div class="col-md-3 text-center mb-3">
-                                            <a href="#" class="btn btn-outline-info btn-lg p-4 w-100">
-                                                <i class="bi bi-file-earmark-text mb-2" style="font-size: 2rem; display: block;"></i>
-                                                Generar Reporte
-                                            </a>
-                                        </div>
-                                        <div class="col-md-3 text-center mb-3">
-                                            <a href="#" class="btn btn-outline-warning btn-lg p-4 w-100">
-                                                <i class="bi bi-gear mb-2" style="font-size: 2rem; display: block;"></i>
-                                                Configuración
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tasks and Notifications -->
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="card">
-                                <div class="card-header bg-primary text-white">
-                                    <h5 class="mb-0">
-                                        <i class="bi bi-list-check me-2"></i>
-                                        Tareas Pendientes
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="list-group list-group-flush">
-                                        <div class="list-group-item task-card urgent">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <h6 class="mb-1">Evaluación de vivienda - Calle 123 #45-67</h6>
-                                                    <small class="text-muted">Cliente: Juan Pérez - Cédula: 12345678</small>
-                                                    <br>
-                                                    <span class="badge bg-danger">Urgente</span>
-                                                </div>
-                                                <div class="text-end">
-                                                    <small class="text-muted">Hoy, 14:00</small><br>
-                                                    <button class="btn btn-sm btn-success mt-1">Iniciar</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="list-group-item task-card">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <h6 class="mb-1">Evaluación de vivienda - Carrera 78 #90-12</h6>
-                                                    <small class="text-muted">Cliente: María García - Cédula: 87654321</small>
-                                                    <br>
-                                                    <span class="badge bg-primary">Programada</span>
-                                                </div>
-                                                <div class="text-end">
-                                                    <small class="text-muted">Mañana, 10:00</small><br>
-                                                    <button class="btn btn-sm btn-outline-primary mt-1">Ver Detalles</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="list-group-item task-card pending">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <h6 class="mb-1">Evaluación de vivienda - Avenida 5 #23-45</h6>
-                                                    <small class="text-muted">Cliente: Carlos López - Cédula: 11223344</small>
-                                                    <br>
-                                                    <span class="badge bg-warning">Pendiente</span>
-                                                </div>
-                                                <div class="text-end">
-                                                    <small class="text-muted">15/01/2025, 16:00</small><br>
-                                                    <button class="btn btn-sm btn-outline-warning mt-1">Reagendar</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-header bg-info text-white">
-                                    <h5 class="mb-0">
-                                        <i class="bi bi-bell me-2"></i>
-                                        Notificaciones
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="list-group list-group-flush">
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <i class="bi bi-exclamation-triangle text-warning me-2"></i>
-                                                Nueva evaluación asignada
-                                            </div>
-                                            <small class="text-muted">Hace 30 min</small>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <i class="bi bi-check-circle text-success me-2"></i>
-                                                Evaluación completada
-                                            </div>
-                                            <small class="text-muted">Hace 2 horas</small>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <i class="bi bi-info-circle text-info me-2"></i>
-                                                Cliente canceló cita
-                                            </div>
-                                            <small class="text-muted">Hace 1 día</small>
-                                        </div>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <i class="bi bi-star text-warning me-2"></i>
-                                                Nueva calificación recibida
-                                            </div>
-                                            <small class="text-muted">Hace 2 días</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
