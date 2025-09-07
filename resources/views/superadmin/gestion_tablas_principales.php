@@ -236,6 +236,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                                 <a href="gestion_tablas_simple.php" class="btn btn-success me-2">
                                     <i class="bi bi-lightning"></i> Versión Simple
                                 </a>
+                                <a href="test_configuracion.php" class="btn btn-warning me-2">
+                                    <i class="bi bi-gear-fill"></i> Test Configuración
+                                </a>
+                                <a href="test_basico_error.php" class="btn btn-danger me-2">
+                                    <i class="bi bi-exclamation-circle"></i> Test Básico Error
+                                </a>
                                 <a href="test_error_500.php" class="btn btn-danger me-2">
                                     <i class="bi bi-exclamation-triangle"></i> Test Error 500
                                 </a>
