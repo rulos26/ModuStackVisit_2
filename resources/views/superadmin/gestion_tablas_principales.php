@@ -236,6 +236,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                                 <a href="gestion_tablas_simple.php" class="btn btn-success me-2">
                                     <i class="bi bi-lightning"></i> Versión Simple
                                 </a>
+                                <a href="test_procesador_simple.php" class="btn btn-danger me-2">
+                                    <i class="bi bi-bug"></i> Test Procesador
+                                </a>
                                 <a href="test_tablas_relacionadas.php" class="btn btn-warning me-2">
                                     <i class="bi bi-table"></i> Test Tablas
                                 </a>
@@ -254,7 +257,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                                 <a href="test_simple.php" class="btn btn-secondary">
                                     <i class="bi bi-gear"></i> Test Simple
                                 </a>
-                                    </div>
+                            </div>
                             <button class="btn btn-danger btn-lg" onclick="confirmarVaciarTablas()">
                                 <i class="bi bi-trash3"></i> Vaciar Tablas
                                                         </button>
@@ -513,7 +516,19 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                 },
                 body: `accion=verificar_tablas_con_datos&id_cedula=${idCedula}`
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(text => {
+                try {
+                    return JSON.parse(text);
+                } catch (parseError) {
+                    throw new Error(`Error parseando JSON: ${parseError.message}. Respuesta: ${text}`);
+                }
+            })
             .then(data => {
                 if (data.error && data.fallback) {
                     // Si hay error del framework, usar procesador simple
@@ -523,7 +538,20 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                             'Content-Type': 'application/x-www-form-urlencoded',
                         },
                         body: `accion=verificar_tablas_con_datos&id_cedula=${idCedula}`
-                    }).then(response => response.json());
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.text();
+                    })
+                    .then(text => {
+                        try {
+                            return JSON.parse(text);
+                        } catch (parseError) {
+                            throw new Error(`Error parseando JSON: ${parseError.message}. Respuesta: ${text}`);
+                        }
+                    });
                 }
                 return data;
             })

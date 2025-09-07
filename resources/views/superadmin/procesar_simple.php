@@ -2,6 +2,8 @@
 // Procesador simple sin dependencias complejas
 error_reporting(E_ALL);
 ini_set('display_errors', 0); // No mostrar errores en la respuesta JSON
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/../../logs/php_errors.log');
 
 session_start();
 
@@ -14,6 +16,24 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
 
 // Obtener la acción solicitada
 $accion = $_POST['accion'] ?? '';
+
+// Función para enviar respuesta JSON con manejo de errores
+function enviarRespuesta($data) {
+    // Limpiar cualquier salida previa
+    if (ob_get_level()) {
+        ob_clean();
+    }
+    
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($data, JSON_UNESCAPED_UNICODE);
+    exit();
+}
+
+// Función para manejar errores
+function manejarError($mensaje, $codigo = 500) {
+    http_response_code($codigo);
+    enviarRespuesta(['error' => $mensaje]);
+}
 
 try {
     // Conexión directa a la base de datos
@@ -63,15 +83,14 @@ try {
             $stmt = $pdo->query("SELECT id_cedula, nombres, apellidos FROM evaluados WHERE id_cedula IS NOT NULL ORDER BY nombres, apellidos");
             $usuarios = $stmt->fetchAll();
             
-            echo json_encode($usuarios);
+            enviarRespuesta($usuarios);
             break;
             
         case 'verificar_tablas_con_datos':
             $idCedula = $_POST['id_cedula'] ?? '';
             
             if (empty($idCedula) || !is_numeric($idCedula)) {
-                echo json_encode(['error' => 'ID de cédula inválido']);
-                break;
+                manejarError('ID de cédula inválido', 400);
             }
             
             // Lista de tablas relacionadas con sus campos de identificación
@@ -135,19 +154,17 @@ try {
                 }
             }
             
-            echo json_encode($tablasConDatos);
+            enviarRespuesta($tablasConDatos);
             break;
             
         default:
-            echo json_encode(['error' => 'Acción no válida']);
+            manejarError('Acción no válida', 400);
     }
     
 } catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode([
-        'error' => 'Error: ' . $e->getMessage(),
-        'file' => $e->getFile(),
-        'line' => $e->getLine()
-    ]);
+    // Log del error
+    error_log("Error en procesar_simple.php: " . $e->getMessage() . " en línea " . $e->getLine());
+    
+    manejarError('Error interno del servidor: ' . $e->getMessage());
 }
 ?>
