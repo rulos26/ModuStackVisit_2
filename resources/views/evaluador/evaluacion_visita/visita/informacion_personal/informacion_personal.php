@@ -299,7 +299,7 @@ try {
                             <i class="bi bi-person me-1"></i>Nombres:
                         </label>
                         <input type="text" class="form-control" id="nombres" name="nombres" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['nombres']) : ''; ?>" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['nombres'] ?? '') : ''; ?>" 
                                required pattern="[A-Za-zÁáÉéÍíÓóÚúÑñ\s]+" maxlength="100">
                         <div class="invalid-feedback">Por favor ingrese nombres válidos (solo letras).</div>
                     </div>
@@ -309,7 +309,7 @@ try {
                             <i class="bi bi-person me-1"></i>Apellidos:
                         </label>
                         <input type="text" class="form-control" id="apellidos" name="apellidos" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['apellidos']) : ''; ?>" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['apellidos'] ?? '') : ''; ?>" 
                                required pattern="[A-Za-zÁáÉéÍíÓóÚúÑñ\s]+" maxlength="100">
                         <div class="invalid-feedback">Por favor ingrese apellidos válidos (solo letras).</div>
                     </div>
@@ -319,7 +319,7 @@ try {
                             <i class="bi bi-calendar me-1"></i>Edad:
                         </label>
                         <input type="number" class="form-control" id="edad" name="edad" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['edad']) : ''; ?>" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['edad'] ?? '') : ''; ?>" 
                                required min="18" max="120">
                         <div class="invalid-feedback">La edad debe estar entre 18 y 120 años.</div>
                     </div>
@@ -331,7 +331,7 @@ try {
                             <i class="bi bi-calendar-date me-1"></i>Fecha de Expedición:
                         </label>
                         <input type="date" class="form-control" id="fecha_expedicion" name="fecha_expedicion" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['fecha_expedicion']) : ''; ?>" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['fecha_expedicion'] ?? '') : ''; ?>" 
                                required max="<?php echo date('Y-m-d'); ?>">
                         <div class="invalid-feedback">Por favor ingrese una fecha válida.</div>
                     </div>
@@ -357,7 +357,7 @@ try {
                             <i class="bi bi-phone me-1"></i>Celular 1:
                         </label>
                         <input type="tel" class="form-control" id="celular_1" name="celular_1" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['celular_1']) : ''; ?>" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['celular_1'] ?? '') : ''; ?>" 
                                required pattern="[0-9]{10}" placeholder="3001234567">
                         <div class="invalid-feedback">Ingrese un número de celular válido (10 dígitos).</div>
                     </div>
@@ -369,7 +369,7 @@ try {
                             <i class="bi bi-phone me-1"></i>Celular 2:
                         </label>
                         <input type="tel" class="form-control" id="celular_2" name="celular_2" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['celular_2']) : ''; ?>" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['celular_2'] ?? '') : ''; ?>" 
                                pattern="[0-9]{10}" placeholder="3001234567">
                         <div class="invalid-feedback">Ingrese un número de celular válido (10 dígitos).</div>
                     </div>
@@ -379,7 +379,7 @@ try {
                             <i class="bi bi-telephone me-1"></i>Teléfono:
                         </label>
                         <input type="tel" class="form-control" id="telefono" name="telefono" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['telefono']) : ''; ?>" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['telefono'] ?? '') : ''; ?>" 
                                pattern="[0-9]{7}" placeholder="1234567">
                         <div class="invalid-feedback">Ingrese un número de teléfono válido (7 dígitos).</div>
                     </div>
@@ -457,7 +457,7 @@ try {
                             <i class="bi bi-clock me-1"></i>Hace cuánto tiempo:
                         </label>
                         <input type="number" class="form-control" id="hacer_cuanto" name="hacer_cuanto" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['hacer_cuanto']) : ''; ?>" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['hacer_cuanto'] ?? '') : ''; ?>" 
                                min="0" max="50" placeholder="Años">
                         <div class="form-text">Años en el estado civil actual</div>
                     </div>
@@ -467,7 +467,7 @@ try {
                             <i class="bi bi-people me-1"></i>Número de Hijos:
                         </label>
                         <input type="number" class="form-control" id="numero_hijos" name="numero_hijos" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['numero_hijos']) : ''; ?>" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['numero_hijos'] ?? '') : ''; ?>" 
                                min="0" max="20">
                         <div class="invalid-feedback">El número de hijos debe estar entre 0 y 20.</div>
                     </div>
@@ -477,7 +477,7 @@ try {
                             <i class="bi bi-geo-alt me-1"></i>Dirección:
                         </label>
                         <input type="text" class="form-control" id="direccion" name="direccion" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['direccion']) : ''; ?>" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['direccion'] ?? '') : ''; ?>" 
                                required maxlength="200">
                         <div class="invalid-feedback">Por favor ingrese la dirección.</div>
                     </div>
@@ -505,7 +505,7 @@ try {
                             <i class="bi bi-geo-alt me-1"></i>Localidad:
                         </label>
                         <input type="text" class="form-control" id="localidad" name="localidad" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['localidad']) : ''; ?>" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['localidad'] ?? '') : ''; ?>" 
                                required maxlength="100">
                         <div class="invalid-feedback">Por favor ingrese la localidad.</div>
                     </div>
@@ -515,7 +515,7 @@ try {
                             <i class="bi bi-house me-1"></i>Barrio:
                         </label>
                         <input type="text" class="form-control" id="barrio" name="barrio" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['barrio']) : ''; ?>" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['barrio'] ?? '') : ''; ?>" 
                                required maxlength="100">
                         <div class="invalid-feedback">Por favor ingrese el barrio.</div>
                     </div>
@@ -543,7 +543,7 @@ try {
                             <i class="bi bi-envelope me-1"></i>Correo Electrónico:
                         </label>
                         <input type="email" class="form-control" id="correo" name="correo" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['correo']) : ''; ?>" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['correo'] ?? '') : ''; ?>" 
                                required maxlength="100">
                         <div class="invalid-feedback">Por favor ingrese un correo electrónico válido.</div>
                     </div>
@@ -553,7 +553,7 @@ try {
                             <i class="bi bi-briefcase me-1"></i>Cargo:
                         </label>
                         <input type="text" class="form-control" id="cargo" name="cargo" 
-                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['cargo']) : ''; ?>" 
+                               value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['cargo'] ?? '') : ''; ?>" 
                                maxlength="100">
                         <div class="form-text">Cargo o profesión actual</div>
                     </div>
@@ -565,7 +565,7 @@ try {
                             <i class="bi bi-chat-text me-1"></i>Observaciones:
                         </label>
                         <textarea class="form-control" id="observacion" name="observacion" rows="4" 
-                                  maxlength="1000" placeholder="Ingrese observaciones adicionales..."><?php echo $datos_existentes ? htmlspecialchars($datos_existentes['observacion']) : ''; ?></textarea>
+                                  maxlength="1000" placeholder="Ingrese observaciones adicionales..."><?php echo $datos_existentes ? htmlspecialchars($datos_existentes['observacion'] ?? '') : ''; ?></textarea>
                         <div class="form-text">Máximo 1000 caracteres</div>
                     </div>
                 </div>
