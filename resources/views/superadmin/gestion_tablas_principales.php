@@ -281,6 +281,18 @@ if (!isset($_SESSION['user_id']) || $_SESSION['rol'] != 3) {
                         Test Simple
                     </a>
                 </li>
+                <li>
+                    <a href="test_error_500_detallado.php" class="nav-link text-white">
+                        <i class="bi bi-exclamation-octagon me-2"></i>
+                        Test Error 500 Detallado
+                    </a>
+                </li>
+                <li>
+                    <a href="test_procesador_directo.php" class="nav-link text-white">
+                        <i class="bi bi-play-btn me-2"></i>
+                        Test Procesador Directo
+                    </a>
+                </li>
             </ul>
             <hr>
             <div class="dropdown">
