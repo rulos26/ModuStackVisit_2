@@ -79,12 +79,107 @@ if (isset($_GET['mensaje'])) {
         .badge-protegido {
             font-size: 0.75em;
         }
+        
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: -280px;
+                width: 280px;
+                height: 100vh;
+                z-index: 1050;
+                transition: left 0.3s ease;
+            }
+            .sidebar.show {
+                left: 0;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+            .btn-action {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+            .stats-card .card-body {
+                padding: 1rem 0.75rem;
+            }
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+            .modal-content {
+                border-radius: 0.5rem;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+        
+        /* Mobile menu overlay */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1040;
+            display: none;
+        }
+        
+        .sidebar-overlay.show {
+            display: block;
+        }
+        
+        /* Table responsive improvements */
+        @media (max-width: 992px) {
+            .table th:nth-child(4),
+            .table td:nth-child(4),
+            .table th:nth-child(5),
+            .table td:nth-child(5),
+            .table th:nth-child(8),
+            .table td:nth-child(8) {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .table th:nth-child(1),
+            .table td:nth-child(1),
+            .table th:nth-child(3),
+            .table td:nth-child(3) {
+                display: none;
+            }
+        }
+        
+        /* Action buttons responsive */
+        @media (max-width: 576px) {
+            .btn-group {
+                flex-direction: column;
+            }
+            .btn-action {
+                margin: 1px 0;
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body class="bg-light">
+    <!-- Overlay para móvil -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
     <div class="d-flex">
         <!-- Menú lateral -->
-        <div class="d-flex flex-column flex-shrink-0 p-3 bg-dark text-white" style="width: 280px; min-height: 100vh;">
+        <div class="d-flex flex-column flex-shrink-0 p-3 bg-dark text-white sidebar" style="width: 280px; min-height: 100vh;">
             <a href="dashboardSuperAdmin.php" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                 <i class="bi bi-shield-lock-fill me-2"></i>
                 <span class="fs-4 fw-bold">Superadmin</span>
@@ -141,22 +236,25 @@ if (isset($_GET['mensaje'])) {
         </div>
 
         <!-- Contenido principal -->
-        <div class="flex-grow-1">
+        <div class="flex-grow-1 main-content">
             <!-- Header -->
             <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
                 <div class="container-fluid">
+                    <button class="btn btn-outline-light mobile-menu-btn me-3" id="mobileMenuBtn">
+                        <i class="bi bi-list"></i>
+                    </button>
                     <span class="navbar-brand">
                         <i class="bi bi-people-fill me-2"></i>
                         Gestión de Usuarios
                     </span>
                     <div class="d-flex align-items-center">
-                        <span class="text-white me-3">
+                        <span class="text-white me-3 d-none d-md-inline">
                             <i class="bi bi-clock"></i>
                             <?php echo date('d/m/Y H:i'); ?>
                         </span>
                         <a href="../../../logout.php" class="btn btn-outline-light btn-sm">
                             <i class="bi bi-box-arrow-right me-1"></i>
-                            Salir
+                            <span class="d-none d-sm-inline">Salir</span>
                         </a>
                     </div>
                 </div>
@@ -668,6 +766,44 @@ if (isset($_GET['mensaje'])) {
                 password.focus();
                 return false;
             }
+        });
+
+        // Funcionalidad del menú móvil
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            // Toggle del menú móvil
+            mobileMenuBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+                sidebarOverlay.classList.toggle('show');
+            });
+
+            // Cerrar menú al hacer clic en el overlay
+            sidebarOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('show');
+                sidebarOverlay.classList.remove('show');
+            });
+
+            // Cerrar menú al hacer clic en un enlace del menú (móvil)
+            const menuLinks = document.querySelectorAll('.sidebar .nav-link');
+            menuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('show');
+                        sidebarOverlay.classList.remove('show');
+                    }
+                });
+            });
+
+            // Cerrar menú al redimensionar la ventana
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    sidebar.classList.remove('show');
+                    sidebarOverlay.classList.remove('show');
+                }
+            });
         });
     </script>
 </body>
