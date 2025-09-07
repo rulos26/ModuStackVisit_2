@@ -1,7 +1,22 @@
 <?php
-// Redirigir al nuevo wizard
-header('Location: ../inventario_enseres_wizard.php');
-exit();
+// Mostrar errores solo en desarrollo
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
+ob_start();
+
+if (session_status() === PHP_SESSION_NONE) {
+session_start();
+}
+
+if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
+    header('Location: ../../../../../public/login.php');
+    exit();
+}
+
+require_once __DIR__ . '/InventarioEnseresController.php';
+use App\Controllers\InventarioEnseresController;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
