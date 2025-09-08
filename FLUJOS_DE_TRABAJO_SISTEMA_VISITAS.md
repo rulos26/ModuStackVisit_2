@@ -7,7 +7,7 @@
 4. [Cámara de Comercio](#cámara-de-comercio)
 5. [Salud](#salud)
 6. [Composición Familiar](#composición-familiar)
-7. [Tipo de Vivienda](#tipo-de-vivienda)
+7. [Tipo de Vivienda](#tipo-de-vivienda)  
 8. [Estado de Vivienda](#estado-de-vivienda)
 9. [Inventario de Enseres](#inventario-de-enseres)
 10. [Servicios Públicos](#servicios-públicos)
