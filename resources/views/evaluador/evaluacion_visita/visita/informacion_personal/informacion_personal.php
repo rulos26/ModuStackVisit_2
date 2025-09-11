@@ -411,8 +411,11 @@ try {
                             </label>
                             <input type="tel" class="form-control" id="telefono" name="telefono"
                                 value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['telefono'] ?? '') : ''; ?>"
-                                pattern="[0-9]{7}" placeholder="1234567">
-                            <div class="invalid-feedback">Ingrese un número de teléfono válido (7 dígitos).</div>
+                                pattern="^\+?\d{1,3}\s?\(?\d{2,4}\)?[\s-]?\d{3,4}[\s-]?\d{4}$"
+                                placeholder="+1 (436) 685-5062">
+                            <div class="invalid-feedback">
+                                Ingrese un número válido. Ejemplo: +1 (436) 685-5062 o 1234567
+                            </div>
                         </div>
 
                         <div class="col-12 col-md-4 mb-3">
