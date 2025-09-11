@@ -76,17 +76,42 @@ try {
     $error_message = "Error al cargar los datos: " . $e->getMessage();
 }
 ?>
+<!-- Puedes usar este código como base para tu formulario y menú responsive -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Visita Domiciliaria - Información Personal</title>
+    <title>Formulario Responsive y Menú</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="../../../../../public/css/styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* Menú horizontal en desktop */
+        @media (min-width: 992px) {
+            .navbar-desktop {
+                display: flex !important;
+            }
+            .navbar-mobile {
+                display: none !important;
+            }
+        }
+        /* Menú hamburguesa en móvil/tablet */
+        @media (max-width: 991.98px) {
+            .navbar-desktop {
+                display: none !important;
+            }
+            .navbar-mobile {
+                display: block !important;
+            }
+        }
+        /* Ajuste para observaciones */
+        .obs-row {
+            flex-wrap: wrap;
+        }
+        .obs-col {
+            flex: 1 0 100%;
+            max-width: 100%;
+        }
         .steps-horizontal {
             display: flex;
             justify-content: space-between;
@@ -177,7 +202,48 @@ try {
         } */
     </style>
 </head>
-<body>
+<body class="bg-light">
+    <!-- Barra superior con tamaño de pantalla -->
+    <nav class="navbar navbar-light bg-primary text-white mb-3">
+        <div class="container-fluid justify-content-between">
+            <span class="navbar-brand mb-0 h1 text-white">Mi Dashboard</span>
+            <span id="screen-size" class="fw-bold"></span>
+        </div>
+    </nav>
+
+    <!-- Menú responsive -->
+    <!-- Menú Desktop Horizontal -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-desktop mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Menú</a>
+            <div class="collapse navbar-collapse show">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" href="#">Opciones del Evaluador</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Carta de autorización</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Evaluación visita domiciliaria</a></li>
+                </ul>
+                <span class="navbar-text text-white">Usuario: evaluador</span>
+            </div>
+        </div>
+    </nav>
+    <!-- Menú Mobile Hamburguesa -->
+    <nav class="navbar navbar-dark bg-dark navbar-mobile mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Menú</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuMobile" aria-controls="menuMobile" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="menuMobile">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" href="#">Opciones del Evaluador</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Carta de autorización</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Evaluación visita domiciliaria</a></li>
+                </ul>
+                <span class="navbar-text text-white">Usuario: evaluador</span>
+            </div>
+        </div>
+    </nav>
+
     <div class="container-fluid px-2">
         <div class="card mt-4 w-100" style="max-width:100%; border-radius: 0;">
             <div class="card-header bg-primary text-white">
@@ -630,7 +696,7 @@ try {
         </div>
     </div>
     <script src="../../../../../public/js/validacionInformacionPersonal.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Validación del formulario
         (function() {
@@ -752,6 +818,12 @@ try {
                 alert('Por favor complete todos los campos obligatorios antes de continuar.');
             }
         });
+
+        function updateScreenSize() {
+            document.getElementById('screen-size').textContent = 'width: ' + window.innerWidth + 'px';
+        }
+        window.addEventListener('resize', updateScreenSize);
+        window.addEventListener('DOMContentLoaded', updateScreenSize);
     </script>
 </body>
 </html>
