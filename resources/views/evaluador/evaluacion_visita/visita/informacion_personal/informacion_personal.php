@@ -112,6 +112,14 @@ try {
             flex: 1 0 100%;
             max-width: 100%;
         }
+
+        /* --- NUEVO: Forzar 4 columnas desde 1920px --- */
+        @media (min-width: 1920px) {
+            .form-responsive-row > [class^="col-"] {
+                flex: 0 0 25%;
+                max-width: 25%;
+            }
+        }
         .steps-horizontal {
             display: flex;
             justify-content: space-between;
