@@ -383,8 +383,11 @@ try {
                             </label>
                             <input type="tel" class="form-control" id="celular_1" name="celular_1"
                                 value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['celular_1'] ?? '') : ''; ?>"
-                                required pattern="[0-9]{10}" placeholder="3001234567">
-                            <div class="invalid-feedback">Ingrese un número de celular válido (10 dígitos).</div>
+                                required pattern="^\+?\d{1,3}\s?\(?\d{2,4}\)?[\s-]?\d{3,4}[\s-]?\d{4}$"
+                                placeholder="+1 (997) 998-9661">
+                            <div class="invalid-feedback">
+                                Ingrese un número válido. Ejemplo: +1 (997) 998-9661 o 3001234567
+                            </div>
                         </div>
                     </div>
 
@@ -395,8 +398,11 @@ try {
                             </label>
                             <input type="tel" class="form-control" id="celular_2" name="celular_2"
                                 value="<?php echo $datos_existentes ? htmlspecialchars($datos_existentes['celular_2'] ?? '') : ''; ?>"
-                                pattern="[0-9]{10}" placeholder="3001234567">
-                            <div class="invalid-feedback">Ingrese un número de celular válido (10 dígitos).</div>
+                                pattern="^\+?\d{1,3}\s?\(?\d{2,4}\)?[\s-]?\d{3,4}[\s-]?\d{4}$"
+                                placeholder="+1 (997) 998-9661">
+                            <div class="invalid-feedback">
+                                Ingrese un número válido. Ejemplo: +1 (997) 998-9661 o 3001234567
+                            </div>
                         </div>
 
                         <div class="col-12 col-md-4 mb-3">
