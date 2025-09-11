@@ -167,6 +167,15 @@ try {
   background-clip: content-box, border-box;
   padding: 1rem;
 }
+.card-body{
+      border: 3px solid transparent;
+  border-radius: 12px;
+  background-image: linear-gradient(white, white), 
+                    linear-gradient(90deg, #ff0000, #ff9900, #00ccff, #33cc33);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  padding: 1rem;
+}
 </style>
 
 <div class="card mt-5">
