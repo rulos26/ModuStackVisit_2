@@ -26,8 +26,8 @@ if ($env === 'development') {
     error_reporting(E_ALL);
 } else {
     // Production: do not display errors to users
-    ini_set('display_errors', '0');
-    ini_set('display_startup_errors', '0');
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
     error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 }
 
