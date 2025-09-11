@@ -85,10 +85,130 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap 5 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* ...tu CSS... */
+        /* Menú horizontal en desktop */
+        @media (min-width: 992px) {
+            .navbar-desktop {
+                display: flex !important;
+            }
+            .navbar-mobile {
+                display: none !important;
+            }
+        }
+        /* Menú hamburguesa en móvil/tablet */
+        @media (max-width: 991.98px) {
+            .navbar-desktop {
+                display: none !important;
+            }
+            .navbar-mobile {
+                display: block !important;
+            }
+        }
+        /* Ajuste para observaciones */
+        .obs-row {
+            flex-wrap: wrap;
+        }
+        .obs-col {
+            flex: 1 0 100%;
+            max-width: 100%;
+        }
+        /* Forzar 4 columnas desde 1440px (ajustado para pantallas grandes) */
+        @media (min-width: 1440px) {
+            .form-responsive-row > [class*="col-"] {
+                flex: 0 0 25%;
+                max-width: 25%;
+            }
+        }
+        /* Bootstrap row display flex fix para forzar columnas */
+        .form-responsive-row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        /* Ajuste para imagen de logo que no carga */
+        .logo-empresa {
+            max-width: 300px;
+            min-width: 120px;
+            height: auto;
+            object-fit: contain;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        /* Mejorar visual de la card */
+        .card {
+            box-shadow: 0 2px 16px 0 rgba(0,0,0,0.07);
+        }
+        /* Pasos */
+        .steps-horizontal {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            width: 100%;
+            gap: 0.5rem;
+        }
+        .step-horizontal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+        .step-horizontal:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            z-index: 0;
+            transform: translateX(50%);
+        }
+        .step-horizontal .step-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            border: 2px solid #e0e0e0;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+        .step-horizontal.active .step-icon {
+            background: #4361ee;
+            border-color: #4361ee;
+            color: #fff;
+            box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.2);
+        }
+        .step-horizontal.complete .step-icon {
+            background: #2ecc71;
+            border-color: #2ecc71;
+            color: #fff;
+        }
+        .step-horizontal .step-title {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+        .step-horizontal .step-description {
+            font-size: 0.85rem;
+            color: #888;
+            text-align: center;
+        }
+        .step-horizontal.active .step-title,
+        .step-horizontal.active .step-description {
+            color: #4361ee;
+        }
+        .step-horizontal.complete .step-title,
+        .step-horizontal.complete .step-description {
+            color: #2ecc71;
+        }
     </style>
 </head>
 <body class="bg-light">
