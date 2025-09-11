@@ -157,7 +157,7 @@ try {
         .step-horizontal.complete .step-description {
             color: #2ecc71;
         }
-        .card.mt-5 {
+       /*  .card.mt-5 {
             border: 3px solid transparent;
             border-radius: 12px;
             background-image: linear-gradient(white, white), 
@@ -174,7 +174,7 @@ try {
             background-origin: border-box;
             background-clip: content-box, border-box;
             padding: 1rem;
-        }
+        } */
     </style>
 </head>
 <body>
