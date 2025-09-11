@@ -264,11 +264,9 @@ try {
             <?php endif; ?>
 
             <div class="row mb-4">
-                <div class="col-md-6">
+                <div class="col-12 d-flex justify-content-between align-items-center">
                     <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 300px;">
-                </div>
-                <div class="col-md-6 text-end">
-                    <div class="text-muted">
+                    <div class="text-muted text-end">
                         <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
                         <small>Cédula: <?php echo htmlspecialchars($id_cedula); ?></small>
                     </div>
@@ -277,7 +275,7 @@ try {
 
             <form action="" method="POST" id="formInformacionPersonal" novalidate autocomplete="off">
                 <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="id_cedula" class="form-label">
                             <i class="bi bi-card-text me-1"></i>Número de Documento:
                         </label>
@@ -286,7 +284,7 @@ try {
                         <div class="form-text">Documento de identidad</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="id_tipo_documentos" class="form-label">
                             <i class="bi bi-card-list me-1"></i>Tipo de Documento:
                         </label>
@@ -302,7 +300,7 @@ try {
                         <div class="invalid-feedback">Por favor seleccione el tipo de documento.</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="cedula_expedida" class="form-label">
                             <i class="bi bi-geo-alt me-1"></i>Cédula expedida en:
                         </label>
@@ -320,7 +318,7 @@ try {
                 </div>
 
                 <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="nombres" class="form-label">
                             <i class="bi bi-person me-1"></i>Nombres:
                         </label>
@@ -330,7 +328,7 @@ try {
                         <div class="invalid-feedback">Por favor ingrese nombres válidos (solo letras).</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="apellidos" class="form-label">
                             <i class="bi bi-person me-1"></i>Apellidos:
                         </label>
@@ -340,7 +338,7 @@ try {
                         <div class="invalid-feedback">Por favor ingrese apellidos válidos (solo letras).</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="edad" class="form-label">
                             <i class="bi bi-calendar me-1"></i>Edad:
                         </label>
@@ -352,7 +350,7 @@ try {
                 </div>
 
                 <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="fecha_expedicion" class="form-label">
                             <i class="bi bi-calendar-date me-1"></i>Fecha de Expedición:
                         </label>
@@ -362,7 +360,7 @@ try {
                         <div class="invalid-feedback">Por favor ingrese una fecha válida.</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="lugar_nacimiento" class="form-label">
                             <i class="bi bi-geo-alt me-1"></i>Lugar de Nacimiento:
                         </label>
@@ -378,7 +376,7 @@ try {
                         <div class="invalid-feedback">Por favor seleccione el lugar de nacimiento.</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="celular_1" class="form-label">
                             <i class="bi bi-phone me-1"></i>Celular 1:
                         </label>
@@ -390,7 +388,7 @@ try {
                 </div>
 
                 <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="celular_2" class="form-label">
                             <i class="bi bi-phone me-1"></i>Celular 2:
                         </label>
@@ -400,7 +398,7 @@ try {
                         <div class="invalid-feedback">Ingrese un número de celular válido (10 dígitos).</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="telefono" class="form-label">
                             <i class="bi bi-telephone me-1"></i>Teléfono:
                         </label>
@@ -410,7 +408,7 @@ try {
                         <div class="invalid-feedback">Ingrese un número de teléfono válido (7 dígitos).</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="id_rh" class="form-label">
                             <i class="bi bi-droplet me-1"></i>Tipo de RH:
                         </label>
@@ -428,7 +426,7 @@ try {
                 </div>
 
                 <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="id_estatura" class="form-label">
                             <i class="bi bi-arrows-vertical me-1"></i>Estatura:
                         </label>
@@ -444,7 +442,7 @@ try {
                         <div class="invalid-feedback">Por favor seleccione la estatura.</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="peso_kg" class="form-label">
                             <i class="bi bi-weight me-1"></i>Peso (kg):
                         </label>
@@ -460,7 +458,7 @@ try {
                         <div class="invalid-feedback">Por favor seleccione el peso.</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="id_estado_civil" class="form-label">
                             <i class="bi bi-heart me-1"></i>Estado Civil:
                         </label>
@@ -478,7 +476,7 @@ try {
                 </div>
 
                 <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="hacer_cuanto" class="form-label">
                             <i class="bi bi-clock me-1"></i>Hace cuánto tiempo:
                         </label>
@@ -488,7 +486,7 @@ try {
                         <div class="form-text">Años en el estado civil actual</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="numero_hijos" class="form-label">
                             <i class="bi bi-people me-1"></i>Número de Hijos:
                         </label>
@@ -498,7 +496,7 @@ try {
                         <div class="invalid-feedback">El número de hijos debe estar entre 0 y 20.</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="direccion" class="form-label">
                             <i class="bi bi-geo-alt me-1"></i>Dirección:
                         </label>
@@ -510,7 +508,7 @@ try {
                 </div>
 
                 <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="id_ciudad" class="form-label">
                             <i class="bi bi-building me-1"></i>Ciudad:
                         </label>
@@ -526,7 +524,7 @@ try {
                         <div class="invalid-feedback">Por favor seleccione la ciudad.</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="localidad" class="form-label">
                             <i class="bi bi-geo-alt me-1"></i>Localidad:
                         </label>
@@ -536,7 +534,7 @@ try {
                         <div class="invalid-feedback">Por favor ingrese la localidad.</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="barrio" class="form-label">
                             <i class="bi bi-house me-1"></i>Barrio:
                         </label>
@@ -548,7 +546,7 @@ try {
                 </div>
 
                 <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="id_estrato" class="form-label">
                             <i class="bi bi-layers me-1"></i>Estrato:
                         </label>
@@ -564,7 +562,7 @@ try {
                         <div class="invalid-feedback">Por favor seleccione el estrato.</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="correo" class="form-label">
                             <i class="bi bi-envelope me-1"></i>Correo Electrónico:
                         </label>
@@ -574,7 +572,7 @@ try {
                         <div class="invalid-feedback">Por favor ingrese un correo electrónico válido.</div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label for="cargo" class="form-label">
                             <i class="bi bi-briefcase me-1"></i>Cargo:
                         </label>
