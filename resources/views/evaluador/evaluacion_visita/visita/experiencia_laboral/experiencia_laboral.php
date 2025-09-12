@@ -249,7 +249,7 @@ try {
                             <div class="experiencia-item border rounded p-3 mb-3" data-index="<?php echo $index; ?>">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="mb-0 text-primary">
-                                        <i class="bi bi-briefcase me-2"></i>Experiencia Laboral #<?php echo $index + 1; ?>
+                                        <i class="bi bi-briefcase me-2"></i>Experiencia Laboral #<?php echo intval($index) + 1; ?>
                                     </h6>
                                     <?php if ($index > 0): ?>
                                         <button type="button" class="btn btn-sm btn-outline-danger" onclick="eliminarExperiencia(this)">
