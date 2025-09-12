@@ -9,7 +9,7 @@ if (!isset($_SESSION['id_cedula'])) {
     exit();
 }
 
-require_once __DIR__ . '/../../../controllers/evaluador/experiencia_laboral_controller.php';
+require_once __DIR__ . "/../../../../controllers/evaluador/experiencia_laboral_controller.php"; // corregir ruta
 $controller = new ExperienciaLaboralController();
 
 // Procesar formulario si se envió
