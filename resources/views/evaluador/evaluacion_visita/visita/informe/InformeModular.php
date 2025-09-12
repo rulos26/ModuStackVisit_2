@@ -137,6 +137,12 @@ class DataFormatter {
         if (empty($amount)) return '$ 0,00';
         return '$ ' . number_format($amount, 2, ',', '.');
     }
+    
+    public function formatBoolean($value) {
+        if ($value === '1') return 'Sí';
+        if ($value === '0') return 'No';
+        return 'No disponible';
+    }
 }
 
 /**

@@ -470,6 +470,8 @@ class DataManager {
             ['Teléfono', $this->formatter->formatPhone($this->getDato('telefono'))],
             ['Celular', $this->formatter->formatPhone($this->getDato('celular_1'))],
             ['Email', $this->formatter->validateEmail($this->getDato('correo'))],
+            ['Tiene Multa en SIMIT', $this->formatter->formatBoolean($this->getDato('tiene_multa_simit'))],
+            ['Tiene Tarjeta Militar', $this->formatter->formatBoolean($this->getDato('tiene_tarjeta_militar'))],
             ['Cargo', $this->getDato('cargo')],
             ['Observaciones', $this->getDato('observacion')]
         ];
@@ -562,7 +564,54 @@ class DataManager {
     public function getIngresos() { return $this->getSeccionVacia('INGRESOS'); }
     public function getGastos() { return $this->getSeccionVacia('GASTOS'); }
     public function getEstudios() { return $this->getSeccionVacia('ESTUDIOS'); }
-    public function getExperienciaLaboral() { return $this->getSeccionVacia('EXPERIENCIA LABORAL'); }
+    public function getExperienciaLaboral() {
+        global $mysqli;
+        
+        $sql = "SELECT id, id_cedula, empresa, tiempo, cargo, salario, retiro, concepto, nombre, numero 
+                FROM experiencia_laboral 
+                WHERE id_cedula = ? 
+                ORDER BY id ASC";
+        
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param('s', $this->cedula);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $experiencias = [];
+        while ($row = $result->fetch_assoc()) {
+            $experiencias[] = $row;
+        }
+        
+        if (empty($experiencias)) {
+            return $this->getSeccionVacia('EXPERIENCIA LABORAL');
+        }
+        
+        $config = new ConfiguracionInforme();
+        $headers = ['Empresa', 'Tiempo Laborado', 'Cargo', 'Salario', 'Motivo Retiro', 'Concepto', 'Contacto', 'Teléfono'];
+        
+        $data = [];
+        foreach ($experiencias as $exp) {
+            $data[] = [
+                $exp['empresa'] ?: 'N/A',
+                $exp['tiempo'] ?: 'N/A',
+                $exp['cargo'] ?: 'N/A',
+                $exp['salario'] ? $this->formatter->formatMoney($exp['salario']) : 'N/A',
+                $exp['retiro'] ?: 'N/A',
+                $exp['concepto'] ?: 'N/A',
+                $exp['nombre'] ?: 'N/A',
+                $exp['numero'] ?: 'N/A'
+            ];
+        }
+        
+        $tabla = $config->generarTabla('EXPERIENCIA LABORAL', $headers, $data, ['15%', '12%', '15%', '12%', '15%', '15%', '12%', '12%']);
+        
+        return "
+        <table cellpadding='5' style='width: 100%;'>
+            <tr style='border: 1px solid rgb(255, 255, 255);'>
+                <td width='100%' style='border: 1px solid rgb(255, 255, 255);'>{$tabla}</td>
+            </tr>
+        </table>";
+    }
     public function getInformacionJudicial() { return $this->getSeccionVacia('INFORMACIÓN JUDICIAL'); }
     public function getConceptoFinal() { return $this->getSeccionVacia('CONCEPTO FINAL'); }
     public function getUbicacion() { return $this->getSeccionVacia('UBICACIÓN'); }
@@ -591,6 +640,12 @@ class DataFormatter {
     public function formatMoney($amount) {
         if (empty($amount)) return '$ 0,00';
         return '$ ' . number_format($amount, 2, ',', '.');
+    }
+    
+    public function formatBoolean($value) {
+        if ($value === '1') return 'Sí';
+        if ($value === '0') return 'No';
+        return 'No disponible';
     }
 }
 

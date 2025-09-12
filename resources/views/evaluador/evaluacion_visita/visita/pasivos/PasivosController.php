@@ -44,6 +44,51 @@ class PasivosController {
         return $sanitizados;
     }
 
+    /**
+     * Convierte un valor en formato colombiano a número decimal
+     * Formato esperado: $1.500.000,50 o 1500000,50 o 1500000.50
+     */
+    private function convertirValorColombiano($valor) {
+        if (empty($valor) || $valor === 'N/A') {
+            return 0;
+        }
+        
+        // Remover símbolo de peso
+        $valor = str_replace('$', '', $valor);
+        
+        // Remover espacios
+        $valor = trim($valor);
+        
+        // Si tiene coma como separador decimal (formato colombiano)
+        if (strpos($valor, ',') !== false) {
+            // Separar parte entera y decimal
+            $partes = explode(',', $valor);
+            if (count($partes) === 2) {
+                // Remover puntos de la parte entera (separadores de miles)
+                $parte_entera = str_replace('.', '', $partes[0]);
+                $parte_decimal = $partes[1];
+                return floatval($parte_entera . '.' . $parte_decimal);
+            }
+        }
+        
+        // Si tiene punto como separador decimal (formato internacional)
+        if (strpos($valor, '.') !== false) {
+            // Verificar si es separador decimal o de miles
+            $partes = explode('.', $valor);
+            if (count($partes) === 2 && strlen($partes[1]) <= 2) {
+                // Es separador decimal (máximo 2 decimales)
+                $parte_entera = str_replace('.', '', $partes[0]);
+                return floatval($parte_entera . '.' . $partes[1]);
+            } else {
+                // Es separador de miles, remover todos los puntos
+                return floatval(str_replace('.', '', $valor));
+            }
+        }
+        
+        // Si no tiene separadores, convertir directamente
+        return floatval($valor);
+    }
+
     public function validarDatos($datos) {
         $errores = [];
         
@@ -114,15 +159,15 @@ class PasivosController {
             }
             
             // Validar deuda (debe ser un número positivo)
-            $deuda = str_replace(['$', ',', '.'], '', $datos['deuda'][$i]);
-            if (empty($datos['deuda'][$i]) || !is_numeric($deuda) || $deuda < 0) {
-                $errores[] = "Registro $numero_registro: La deuda debe ser un número válido mayor o igual a 0.";
+            $deuda_convertida = $this->convertirValorColombiano($datos['deuda'][$i]);
+            if (empty($datos['deuda'][$i]) || $deuda_convertida < 0) {
+                $errores[] = "Registro $numero_registro: La deuda debe ser un valor válido mayor o igual a 0. Formato aceptado: $1.500.000,50 o 1500000,50";
             }
             
             // Validar cuota mensual (debe ser un número positivo)
-            $cuota = str_replace(['$', ',', '.'], '', $datos['cuota_mes'][$i]);
-            if (empty($datos['cuota_mes'][$i]) || !is_numeric($cuota) || $cuota < 0) {
-                $errores[] = "Registro $numero_registro: La cuota mensual debe ser un número válido mayor o igual a 0.";
+            $cuota_convertida = $this->convertirValorColombiano($datos['cuota_mes'][$i]);
+            if (empty($datos['cuota_mes'][$i]) || $cuota_convertida < 0) {
+                $errores[] = "Registro $numero_registro: La cuota mensual debe ser un valor válido mayor o igual a 0. Formato aceptado: $1.500.000,50 o 1500000,50";
             }
         }
         
@@ -152,8 +197,10 @@ class PasivosController {
                 $id_entidad = $datos['id_entidad'][$i];
                 $id_tipo_inversion = $datos['id_tipo_inversion'][$i];
                 $id_ciudad = $datos['id_ciudad'][$i];
-                $deuda = str_replace(['$', ',', '.'], '', $datos['deuda'][$i]);
-                $cuota_mes = str_replace(['$', ',', '.'], '', $datos['cuota_mes'][$i]);
+                
+                // Convertir valores usando el método para formato colombiano
+                $deuda = $this->convertirValorColombiano($datos['deuda'][$i]);
+                $cuota_mes = $this->convertirValorColombiano($datos['cuota_mes'][$i]);
                 
                 $stmt->bindParam(':id_cedula', $id_cedula);
                 $stmt->bindParam(':item', $item);

@@ -21,6 +21,51 @@ class AportanteController {
         return self::$instance;
     }
 
+    /**
+     * Convierte un valor en formato colombiano a número decimal
+     * Formato esperado: $1.500.000,50 o 1500000,50 o 1500000.50
+     */
+    private function convertirValorColombiano($valor) {
+        if (empty($valor) || $valor === 'N/A') {
+            return 0;
+        }
+        
+        // Remover símbolo de peso
+        $valor = str_replace('$', '', $valor);
+        
+        // Remover espacios
+        $valor = trim($valor);
+        
+        // Si tiene coma como separador decimal (formato colombiano)
+        if (strpos($valor, ',') !== false) {
+            // Separar parte entera y decimal
+            $partes = explode(',', $valor);
+            if (count($partes) === 2) {
+                // Remover puntos de la parte entera (separadores de miles)
+                $parte_entera = str_replace('.', '', $partes[0]);
+                $parte_decimal = $partes[1];
+                return floatval($parte_entera . '.' . $parte_decimal);
+            }
+        }
+        
+        // Si tiene punto como separador decimal (formato internacional)
+        if (strpos($valor, '.') !== false) {
+            // Verificar si es separador decimal o de miles
+            $partes = explode('.', $valor);
+            if (count($partes) === 2 && strlen($partes[1]) <= 2) {
+                // Es separador decimal (máximo 2 decimales)
+                $parte_entera = str_replace('.', '', $partes[0]);
+                return floatval($parte_entera . '.' . $partes[1]);
+            } else {
+                // Es separador de miles, remover todos los puntos
+                return floatval(str_replace('.', '', $valor));
+            }
+        }
+        
+        // Si no tiene separadores, convertir directamente
+        return floatval($valor);
+    }
+
     public function sanitizarDatos($datos) {
         $sanitizados = [];
         foreach ($datos as $clave => $valor) {
@@ -77,9 +122,9 @@ class AportanteController {
             }
             
             // Validar valor (debe ser un número positivo)
-            $valor = str_replace(['$', ',', '.'], '', $datos['valor'][$i]);
-            if (empty($datos['valor'][$i]) || !is_numeric($valor) || $valor < 0) {
-                $errores[] = "Registro $numero_registro: El valor debe ser un número válido mayor o igual a 0.";
+            $valor_convertido = $this->convertirValorColombiano($datos['valor'][$i]);
+            if (empty($datos['valor'][$i]) || $valor_convertido < 0) {
+                $errores[] = "Registro $numero_registro: El valor debe ser un valor válido mayor o igual a 0. Formato aceptado: $1.500.000,50 o 1500000,50";
             }
         }
         
@@ -105,7 +150,9 @@ class AportanteController {
             
             for ($i = 0; $i < $longitud; $i++) {
                 $nombre = $datos['nombre'][$i];
-                $valor = str_replace(['$', ',', '.'], '', $datos['valor'][$i]);
+                
+                // Convertir valor usando el método para formato colombiano
+                $valor = $this->convertirValorColombiano($datos['valor'][$i]);
                 
                 $stmt->bindParam(':id_cedula', $id_cedula);
                 $stmt->bindParam(':nombre', $nombre);

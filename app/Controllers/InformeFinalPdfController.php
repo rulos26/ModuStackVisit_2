@@ -27,6 +27,7 @@ class InformeFinalPdfController {
             e.edad, e.fecha_expedicion, e.lugar_nacimiento, e.celular_1, e.celular_2, e.telefono, 
             e.id_rh, e.id_estatura, e.peso_kg, e.id_estado_civil, e.hacer_cuanto, e.numero_hijos, e.direccion, 
             e.id_ciudad, e.localidad, e.barrio, e.id_estrato, e.correo, e.cargo, e.observacion,
+            e.tiene_multa_simit, e.tiene_tarjeta_militar,
             td.nombre AS tipo_documento_nombre,
             m1.municipio AS lugar_nacimiento_municipio,
             m2.municipio AS ciudad_nombre,

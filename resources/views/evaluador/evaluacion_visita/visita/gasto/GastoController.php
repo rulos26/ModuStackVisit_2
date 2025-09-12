@@ -21,6 +21,51 @@ class GastoController {
         return self::$instance;
     }
 
+    /**
+     * Convierte un valor en formato colombiano a número decimal
+     * Formato esperado: $1.500.000,50 o 1500000,50 o 1500000.50
+     */
+    private function convertirValorColombiano($valor) {
+        if (empty($valor) || $valor === 'N/A') {
+            return 0;
+        }
+        
+        // Remover símbolo de peso
+        $valor = str_replace('$', '', $valor);
+        
+        // Remover espacios
+        $valor = trim($valor);
+        
+        // Si tiene coma como separador decimal (formato colombiano)
+        if (strpos($valor, ',') !== false) {
+            // Separar parte entera y decimal
+            $partes = explode(',', $valor);
+            if (count($partes) === 2) {
+                // Remover puntos de la parte entera (separadores de miles)
+                $parte_entera = str_replace('.', '', $partes[0]);
+                $parte_decimal = $partes[1];
+                return floatval($parte_entera . '.' . $parte_decimal);
+            }
+        }
+        
+        // Si tiene punto como separador decimal (formato internacional)
+        if (strpos($valor, '.') !== false) {
+            // Verificar si es separador decimal o de miles
+            $partes = explode('.', $valor);
+            if (count($partes) === 2 && strlen($partes[1]) <= 2) {
+                // Es separador decimal (máximo 2 decimales)
+                $parte_entera = str_replace('.', '', $partes[0]);
+                return floatval($parte_entera . '.' . $partes[1]);
+            } else {
+                // Es separador de miles, remover todos los puntos
+                return floatval(str_replace('.', '', $valor));
+            }
+        }
+        
+        // Si no tiene separadores, convertir directamente
+        return floatval($valor);
+    }
+
     public function sanitizarDatos($datos) {
         $sanitizados = [];
         foreach ($datos as $clave => $valor) {
@@ -52,10 +97,10 @@ class GastoController {
             if (!isset($datos[$campo]) || empty($datos[$campo])) {
                 $errores[] = "El campo '$nombre' es obligatorio.";
             } else {
-                // Validar que sea un número válido
-                $valor = str_replace(['$', ',', '.'], '', $datos[$campo]);
-                if (!is_numeric($valor) || $valor < 0) {
-                    $errores[] = "El campo '$nombre' debe ser un número válido mayor o igual a 0.";
+                // Validar que sea un número válido usando formato colombiano
+                $valor_convertido = $this->convertirValorColombiano($datos[$campo]);
+                if ($valor_convertido < 0) {
+                    $errores[] = "El campo '$nombre' debe ser un valor válido mayor o igual a 0. Formato aceptado: $1.500.000,50 o 1500000,50";
                 }
             }
         }
@@ -73,15 +118,15 @@ class GastoController {
             $stmt_delete->bindParam(':id_cedula', $id_cedula);
             $stmt_delete->execute();
             
-            // Preparar los valores limpios
-            $alimentacion_val = str_replace(['$', ',', '.'], '', $datos['alimentacion_val']);
-            $educacion_val = str_replace(['$', ',', '.'], '', $datos['educacion_val']);
-            $salud_val = str_replace(['$', ',', '.'], '', $datos['salud_val']);
-            $recreacion_val = str_replace(['$', ',', '.'], '', $datos['recreacion_val']);
-            $cuota_creditos_val = str_replace(['$', ',', '.'], '', $datos['cuota_creditos_val']);
-            $arriendo_val = str_replace(['$', ',', '.'], '', $datos['arriendo_val']);
-            $servicios_publicos_val = str_replace(['$', ',', '.'], '', $datos['servicios_publicos_val']);
-            $otros_val = str_replace(['$', ',', '.'], '', $datos['otros_val']);
+            // Preparar los valores usando formato colombiano
+            $alimentacion_val = $this->convertirValorColombiano($datos['alimentacion_val']);
+            $educacion_val = $this->convertirValorColombiano($datos['educacion_val']);
+            $salud_val = $this->convertirValorColombiano($datos['salud_val']);
+            $recreacion_val = $this->convertirValorColombiano($datos['recreacion_val']);
+            $cuota_creditos_val = $this->convertirValorColombiano($datos['cuota_creditos_val']);
+            $arriendo_val = $this->convertirValorColombiano($datos['arriendo_val']);
+            $servicios_publicos_val = $this->convertirValorColombiano($datos['servicios_publicos_val']);
+            $otros_val = $this->convertirValorColombiano($datos['otros_val']);
             
             // Insertar el nuevo registro
             $sql = "INSERT INTO gasto (id_cedula, alimentacion_val, educacion_val, salud_val, recreacion_val, cuota_creditos_val, arriendo_val, servicios_publicos_val, otros_val) 

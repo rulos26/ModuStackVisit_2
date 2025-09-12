@@ -94,11 +94,21 @@ class InformacionPersonalController {
             $errores[] = 'La dirección es obligatoria.';
         }
         
-        // Validar campos de selección
+        // Validar campos de selección obligatorios (excluyendo campos booleanos)
         $camposSelect = ['id_tipo_documentos', 'cedula_expedida', 'id_rh', 'id_estatura', 'peso_kg', 'id_estado_civil', 'id_ciudad', 'lugar_nacimiento', 'id_estrato'];
         foreach ($camposSelect as $campo) {
             if (empty($datos[$campo]) || $datos[$campo] == '0') {
                 $errores[] = 'El campo ' . str_replace('_', ' ', $campo) . ' es obligatorio.';
+            }
+        }
+        
+        // Validar campos booleanos obligatorios (pueden ser 0 o 1, pero no vacíos)
+        $camposBooleanos = ['tiene_multa_simit', 'tiene_tarjeta_militar'];
+        foreach ($camposBooleanos as $campo) {
+            if (!isset($datos[$campo]) || $datos[$campo] === '' || $datos[$campo] === null) {
+                $errores[] = 'El campo ' . str_replace('_', ' ', $campo) . ' es obligatorio.';
+            } elseif (!in_array($datos[$campo], ['0', '1'])) {
+                $errores[] = 'El campo ' . str_replace('_', ' ', $campo) . ' debe ser Sí o No.';
             }
         }
         
@@ -176,13 +186,13 @@ class InformacionPersonalController {
                 edad, fecha_expedicion, lugar_nacimiento, celular_1, celular_2, 
                 telefono, id_rh, id_estatura, peso_kg, id_estado_civil, hacer_cuanto, 
                 numero_hijos, direccion, id_ciudad, localidad, barrio, id_estrato, 
-                correo, cargo, observacion
+                correo, cargo, observacion, tiene_multa_simit, tiene_tarjeta_militar
             ) VALUES (
                 :id_cedula, :id_tipo_documentos, :cedula_expedida, :nombres, :apellidos,
                 :edad, :fecha_expedicion, :lugar_nacimiento, :celular_1, :celular_2,
                 :telefono, :id_rh, :id_estatura, :peso_kg, :id_estado_civil, :hacer_cuanto,
                 :numero_hijos, :direccion, :id_ciudad, :localidad, :barrio, :id_estrato,
-                :correo, :cargo, :observacion
+                :correo, :cargo, :observacion, :tiene_multa_simit, :tiene_tarjeta_militar
             )";
             
             $stmt = $this->db->prepare($sql);
@@ -213,6 +223,8 @@ class InformacionPersonalController {
             $stmt->bindParam(':correo', $datos['correo']);
             $stmt->bindParam(':cargo', $datos['cargo']);
             $stmt->bindParam(':observacion', $datos['observacion']);
+            $stmt->bindParam(':tiene_multa_simit', $datos['tiene_multa_simit']);
+            $stmt->bindParam(':tiene_tarjeta_militar', $datos['tiene_tarjeta_militar']);
             
             $resultado = $stmt->execute();
             
@@ -255,7 +267,9 @@ class InformacionPersonalController {
                 id_estrato = :id_estrato,
                 correo = :correo,
                 cargo = :cargo,
-                observacion = :observacion
+                observacion = :observacion,
+                tiene_multa_simit = :tiene_multa_simit,
+                tiene_tarjeta_militar = :tiene_tarjeta_militar
                 WHERE id_cedula = :id_cedula";
             
             $stmt = $this->db->prepare($sql);
@@ -286,6 +300,8 @@ class InformacionPersonalController {
             $stmt->bindParam(':correo', $datos['correo']);
             $stmt->bindParam(':cargo', $datos['cargo']);
             $stmt->bindParam(':observacion', $datos['observacion']);
+            $stmt->bindParam(':tiene_multa_simit', $datos['tiene_multa_simit']);
+            $stmt->bindParam(':tiene_tarjeta_militar', $datos['tiene_tarjeta_militar']);
             
             $resultado = $stmt->execute();
             

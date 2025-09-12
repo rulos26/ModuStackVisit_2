@@ -147,6 +147,8 @@ class PerfilModule extends BaseModule {
             ['Teléfono', $this->formatter->formatPhone($this->datos_perfil['telefono'])],
             ['Celular', $this->formatter->formatPhone($this->datos_perfil['celular_1'])],
             ['Email', $this->formatter->validateEmail($this->datos_perfil['correo'])],
+            ['Tiene Multa en SIMIT', $this->formatter->formatBoolean($this->datos_perfil['tiene_multa_simit'])],
+            ['Tiene Tarjeta Militar', $this->formatter->formatBoolean($this->datos_perfil['tiene_tarjeta_militar'])],
             ['Cargo', $this->datos_perfil['cargo']],
             ['Observaciones', $this->datos_perfil['observacion']]
         ];

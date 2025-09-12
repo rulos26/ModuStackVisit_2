@@ -234,90 +234,213 @@ try {
                 </div>
             </div>
             
+            <!-- Nota informativa -->
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Información importante:</strong> Puede agregar múltiples experiencias laborales. Use el botón "Agregar Experiencia" para añadir más registros.
+            </div>
+
             <form action="" method="POST" id="formExperiencia" novalidate autocomplete="off">
-                <div class="row mb-3">
-                    <div class="col-md-4 mb-3">
-                        <label for="empresa" class="form-label">
-                            <i class="bi bi-building me-1"></i>Empresa:
-                        </label>
-                        <input type="text" class="form-control" id="empresa" name="empresa" 
-                               value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['empresa']) : ''; ?>"
-                               placeholder="Ej: Empresa ABC S.A." minlength="3" required>
-                        <div class="form-text">Mínimo 3 caracteres</div>
-                    </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <label for="tiempo" class="form-label">
-                            <i class="bi bi-clock me-1"></i>Tiempo Laborado:
-                        </label>
-                        <input type="text" class="form-control" id="tiempo" name="tiempo" 
-                               value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['tiempo']) : ''; ?>"
-                               placeholder="Ej: 2 años, 6 meses" minlength="3" required>
-                        <div class="form-text">Mínimo 3 caracteres</div>
-                    </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <label for="cargo" class="form-label">
-                            <i class="bi bi-person-badge me-1"></i>Cargo Desempeñado:
-                        </label>
-                        <input type="text" class="form-control" id="cargo" name="cargo" 
-                               value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['cargo']) : ''; ?>"
-                               placeholder="Ej: Gerente de Ventas" minlength="3" required>
-                        <div class="form-text">Mínimo 3 caracteres</div>
-                    </div>
+                <!-- Contenedor de experiencias laborales -->
+                <div id="experiencias-container">
+                    <?php if (!empty($datos_existentes) && is_array($datos_existentes)): ?>
+                        <!-- Si hay datos existentes múltiples -->
+                        <?php foreach ($datos_existentes as $index => $experiencia): ?>
+                            <div class="experiencia-item border rounded p-3 mb-3" data-index="<?php echo $index; ?>">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="bi bi-briefcase me-2"></i>Experiencia Laboral #<?php echo $index + 1; ?>
+                                    </h6>
+                                    <?php if ($index > 0): ?>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="eliminarExperiencia(this)">
+                                            <i class="bi bi-trash me-1"></i>Eliminar
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">
+                                            <i class="bi bi-building me-1"></i>Empresa:
+                                        </label>
+                                        <input type="text" class="form-control" name="experiencias[<?php echo $index; ?>][empresa]" 
+                                               value="<?php echo htmlspecialchars($experiencia['empresa']); ?>"
+                                               placeholder="Ej: Empresa ABC S.A." minlength="3" required>
+                                        <div class="form-text">Mínimo 3 caracteres</div>
+                                    </div>
+                                    
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">
+                                            <i class="bi bi-clock me-1"></i>Tiempo Laborado:
+                                        </label>
+                                        <input type="text" class="form-control" name="experiencias[<?php echo $index; ?>][tiempo]" 
+                                               value="<?php echo htmlspecialchars($experiencia['tiempo']); ?>"
+                                               placeholder="Ej: 2 años, 6 meses" minlength="3" required>
+                                        <div class="form-text">Mínimo 3 caracteres</div>
+                                    </div>
+                                    
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">
+                                            <i class="bi bi-person-badge me-1"></i>Cargo Desempeñado:
+                                        </label>
+                                        <input type="text" class="form-control" name="experiencias[<?php echo $index; ?>][cargo]" 
+                                               value="<?php echo htmlspecialchars($experiencia['cargo']); ?>"
+                                               placeholder="Ej: Gerente de Ventas" minlength="3" required>
+                                        <div class="form-text">Mínimo 3 caracteres</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">
+                                            <i class="bi bi-cash me-1"></i>Salario:
+                                        </label>
+                                        <input type="number" class="form-control" name="experiencias[<?php echo $index; ?>][salario]" 
+                                               value="<?php echo htmlspecialchars($experiencia['salario']); ?>"
+                                               placeholder="Ej: 2500000" min="0" step="1000" required>
+                                        <div class="form-text">Salario mensual en pesos</div>
+                                    </div>
+                                    
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">
+                                            <i class="bi bi-box-arrow-right me-1"></i>Motivo de Retiro:
+                                        </label>
+                                        <input type="text" class="form-control" name="experiencias[<?php echo $index; ?>][retiro]" 
+                                               value="<?php echo htmlspecialchars($experiencia['retiro']); ?>"
+                                               placeholder="Ej: Renuncia voluntaria" minlength="5" required>
+                                        <div class="form-text">Mínimo 5 caracteres</div>
+                                    </div>
+                                    
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">
+                                            <i class="bi bi-chat-quote me-1"></i>Concepto Emitido:
+                                        </label>
+                                        <input type="text" class="form-control" name="experiencias[<?php echo $index; ?>][concepto]" 
+                                               value="<?php echo htmlspecialchars($experiencia['concepto']); ?>"
+                                               placeholder="Ej: Excelente trabajador" minlength="5" required>
+                                        <div class="form-text">Mínimo 5 caracteres</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">
+                                            <i class="bi bi-person me-1"></i>Nombre del Contacto:
+                                        </label>
+                                        <input type="text" class="form-control" name="experiencias[<?php echo $index; ?>][nombre]" 
+                                               value="<?php echo htmlspecialchars($experiencia['nombre']); ?>"
+                                               placeholder="Ej: Juan Pérez" minlength="3" required>
+                                        <div class="form-text">Mínimo 3 caracteres</div>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">
+                                            <i class="bi bi-telephone me-1"></i>Número de Contacto:
+                                        </label>
+                                        <input type="number" class="form-control" name="experiencias[<?php echo $index; ?>][numero]" 
+                                               value="<?php echo htmlspecialchars($experiencia['numero']); ?>"
+                                               placeholder="Ej: 3001234567" min="1000000" required>
+                                        <div class="form-text">Mínimo 7 dígitos</div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <!-- Experiencia inicial (si no hay datos existentes) -->
+                        <div class="experiencia-item border rounded p-3 mb-3" data-index="0">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0 text-primary">
+                                    <i class="bi bi-briefcase me-2"></i>Experiencia Laboral #1
+                                </h6>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-building me-1"></i>Empresa:
+                                    </label>
+                                    <input type="text" class="form-control" name="experiencias[0][empresa]" 
+                                           placeholder="Ej: Empresa ABC S.A." minlength="3" required>
+                                    <div class="form-text">Mínimo 3 caracteres</div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-clock me-1"></i>Tiempo Laborado:
+                                    </label>
+                                    <input type="text" class="form-control" name="experiencias[0][tiempo]" 
+                                           placeholder="Ej: 2 años, 6 meses" minlength="3" required>
+                                    <div class="form-text">Mínimo 3 caracteres</div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-person-badge me-1"></i>Cargo Desempeñado:
+                                    </label>
+                                    <input type="text" class="form-control" name="experiencias[0][cargo]" 
+                                           placeholder="Ej: Gerente de Ventas" minlength="3" required>
+                                    <div class="form-text">Mínimo 3 caracteres</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-cash me-1"></i>Salario:
+                                    </label>
+                                    <input type="number" class="form-control" name="experiencias[0][salario]" 
+                                           placeholder="Ej: 2500000" min="0" step="1000" required>
+                                    <div class="form-text">Salario mensual en pesos</div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-box-arrow-right me-1"></i>Motivo de Retiro:
+                                    </label>
+                                    <input type="text" class="form-control" name="experiencias[0][retiro]" 
+                                           placeholder="Ej: Renuncia voluntaria" minlength="5" required>
+                                    <div class="form-text">Mínimo 5 caracteres</div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-chat-quote me-1"></i>Concepto Emitido:
+                                    </label>
+                                    <input type="text" class="form-control" name="experiencias[0][concepto]" 
+                                           placeholder="Ej: Excelente trabajador" minlength="5" required>
+                                    <div class="form-text">Mínimo 5 caracteres</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-person me-1"></i>Nombre del Contacto:
+                                    </label>
+                                    <input type="text" class="form-control" name="experiencias[0][nombre]" 
+                                           placeholder="Ej: Juan Pérez" minlength="3" required>
+                                    <div class="form-text">Mínimo 3 caracteres</div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-telephone me-1"></i>Número de Contacto:
+                                    </label>
+                                    <input type="number" class="form-control" name="experiencias[0][numero]" 
+                                           placeholder="Ej: 3001234567" min="1000000" required>
+                                    <div class="form-text">Mínimo 7 dígitos</div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
                 
-                <div class="row mb-3">
-                    <div class="col-md-4 mb-3">
-                        <label for="salario" class="form-label">
-                            <i class="bi bi-cash me-1"></i>Salario:
-                        </label>
-                        <input type="number" class="form-control" id="salario" name="salario" 
-                               value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['salario']) : ''; ?>"
-                               placeholder="Ej: 2500000" min="0" step="1000" required>
-                        <div class="form-text">Salario mensual en pesos</div>
-                    </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <label for="retiro" class="form-label">
-                            <i class="bi bi-box-arrow-right me-1"></i>Motivo de Retiro:
-                        </label>
-                        <input type="text" class="form-control" id="retiro" name="retiro" 
-                               value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['retiro']) : ''; ?>"
-                               placeholder="Ej: Renuncia voluntaria" minlength="5" required>
-                        <div class="form-text">Mínimo 5 caracteres</div>
-                    </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <label for="concepto" class="form-label">
-                            <i class="bi bi-chat-quote me-1"></i>Concepto Emitido:
-                        </label>
-                        <input type="text" class="form-control" id="concepto" name="concepto" 
-                               value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['concepto']) : ''; ?>"
-                               placeholder="Ej: Excelente trabajador" minlength="5" required>
-                        <div class="form-text">Mínimo 5 caracteres</div>
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <div class="col-md-6 mb-3">
-                        <label for="nombre" class="form-label">
-                            <i class="bi bi-person me-1"></i>Nombre del Contacto:
-                        </label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" 
-                               value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['nombre']) : ''; ?>"
-                               placeholder="Ej: Juan Pérez" minlength="3" required>
-                        <div class="form-text">Mínimo 3 caracteres</div>
-                    </div>
-                    
-                    <div class="col-md-6 mb-3">
-                        <label for="numero" class="form-label">
-                            <i class="bi bi-telephone me-1"></i>Número de Contacto:
-                        </label>
-                        <input type="number" class="form-control" id="numero" name="numero" 
-                               value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['numero']) : ''; ?>"
-                               placeholder="Ej: 3001234567" min="1000000" required>
-                        <div class="form-text">Mínimo 7 dígitos</div>
+                <!-- Botón para agregar nueva experiencia -->
+                <div class="row mb-4">
+                    <div class="col-12 text-center">
+                        <button type="button" class="btn btn-success" onclick="agregarExperiencia()">
+                            <i class="bi bi-plus-circle me-2"></i>Agregar Experiencia Laboral
+                        </button>
                     </div>
                 </div>
                 
@@ -333,6 +456,148 @@ try {
                     </div>
                 </div>
             </form>
+            
+            <!-- JavaScript para manejar múltiples experiencias -->
+            <script>
+            let contadorExperiencias = <?php echo !empty($datos_existentes) && is_array($datos_existentes) ? count($datos_existentes) : 1; ?>;
+            
+            function agregarExperiencia() {
+                const container = document.getElementById('experiencias-container');
+                const nuevaExperiencia = document.createElement('div');
+                nuevaExperiencia.className = 'experiencia-item border rounded p-3 mb-3';
+                nuevaExperiencia.setAttribute('data-index', contadorExperiencias);
+                
+                nuevaExperiencia.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0 text-primary">
+                            <i class="bi bi-briefcase me-2"></i>Experiencia Laboral #${contadorExperiencias + 1}
+                        </h6>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="eliminarExperiencia(this)">
+                            <i class="bi bi-trash me-1"></i>Eliminar
+                        </button>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-building me-1"></i>Empresa:
+                            </label>
+                            <input type="text" class="form-control" name="experiencias[${contadorExperiencias}][empresa]" 
+                                   placeholder="Ej: Empresa ABC S.A." minlength="3" required>
+                            <div class="form-text">Mínimo 3 caracteres</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-clock me-1"></i>Tiempo Laborado:
+                            </label>
+                            <input type="text" class="form-control" name="experiencias[${contadorExperiencias}][tiempo]" 
+                                   placeholder="Ej: 2 años, 6 meses" minlength="3" required>
+                            <div class="form-text">Mínimo 3 caracteres</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-person-badge me-1"></i>Cargo Desempeñado:
+                            </label>
+                            <input type="text" class="form-control" name="experiencias[${contadorExperiencias}][cargo]" 
+                                   placeholder="Ej: Gerente de Ventas" minlength="3" required>
+                            <div class="form-text">Mínimo 3 caracteres</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-cash me-1"></i>Salario:
+                            </label>
+                            <input type="number" class="form-control" name="experiencias[${contadorExperiencias}][salario]" 
+                                   placeholder="Ej: 2500000" min="0" step="1000" required>
+                            <div class="form-text">Salario mensual en pesos</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-box-arrow-right me-1"></i>Motivo de Retiro:
+                            </label>
+                            <input type="text" class="form-control" name="experiencias[${contadorExperiencias}][retiro]" 
+                                   placeholder="Ej: Renuncia voluntaria" minlength="5" required>
+                            <div class="form-text">Mínimo 5 caracteres</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-chat-quote me-1"></i>Concepto Emitido:
+                            </label>
+                            <input type="text" class="form-control" name="experiencias[${contadorExperiencias}][concepto]" 
+                                   placeholder="Ej: Excelente trabajador" minlength="5" required>
+                            <div class="form-text">Mínimo 5 caracteres</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-person me-1"></i>Nombre del Contacto:
+                            </label>
+                            <input type="text" class="form-control" name="experiencias[${contadorExperiencias}][nombre]" 
+                                   placeholder="Ej: Juan Pérez" minlength="3" required>
+                            <div class="form-text">Mínimo 3 caracteres</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-telephone me-1"></i>Número de Contacto:
+                            </label>
+                            <input type="number" class="form-control" name="experiencias[${contadorExperiencias}][numero]" 
+                                   placeholder="Ej: 3001234567" min="1000000" required>
+                            <div class="form-text">Mínimo 7 dígitos</div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(nuevaExperiencia);
+                contadorExperiencias++;
+                
+                // Scroll suave hacia la nueva experiencia
+                nuevaExperiencia.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
+            function eliminarExperiencia(boton) {
+                const experiencia = boton.closest('.experiencia-item');
+                const container = document.getElementById('experiencias-container');
+                const experiencias = container.querySelectorAll('.experiencia-item');
+                
+                // No permitir eliminar si solo queda una experiencia
+                if (experiencias.length <= 1) {
+                    alert('Debe mantener al menos una experiencia laboral.');
+                    return;
+                }
+                
+                if (confirm('¿Está seguro de que desea eliminar esta experiencia laboral?')) {
+                    experiencia.remove();
+                    actualizarNumeracion();
+                }
+            }
+            
+            function actualizarNumeracion() {
+                const experiencias = document.querySelectorAll('.experiencia-item');
+                experiencias.forEach((experiencia, index) => {
+                    const titulo = experiencia.querySelector('h6');
+                    titulo.innerHTML = `<i class="bi bi-briefcase me-2"></i>Experiencia Laboral #${index + 1}`;
+                    
+                    // Actualizar los nombres de los campos
+                    const inputs = experiencia.querySelectorAll('input');
+                    inputs.forEach(input => {
+                        const name = input.getAttribute('name');
+                        if (name) {
+                            const newName = name.replace(/experiencias\[\d+\]/, `experiencias[${index}]`);
+                            input.setAttribute('name', newName);
+                        }
+                    });
+                });
+            }
+            </script>
         </div>
         <div class="card-footer text-body-secondary">
             <div class="row">

@@ -349,6 +349,12 @@ try {
                     </div>
                 </div>
 
+                <!-- Nota informativa sobre campos obligatorios -->
+                <div class="alert alert-info mb-4">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Información importante:</strong> Los campos marcados con <span class="text-danger">*</span> son obligatorios y deben ser completados antes de continuar.
+                </div>
+
                 <form action="" method="POST" id="formInformacionPersonal" novalidate autocomplete="off">
                     <!-- Agrupa cada fila de campos en .form-responsive-row para forzar 4 columnas en pantallas grandes -->
                     <div class="row form-responsive-row">
@@ -655,6 +661,35 @@ try {
                         </div>
                     </div>
 
+                    <!-- Nueva fila para los campos booleanos -->
+                    <div class="row form-responsive-row">
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                            <label for="tiene_multa_simit" class="form-label">
+                                <i class="bi bi-exclamation-triangle me-1"></i>Tiene Multa en SIMIT: <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="tiene_multa_simit" name="tiene_multa_simit" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="1" <?php echo ($datos_existentes && $datos_existentes['tiene_multa_simit'] == '1') ? 'selected' : ''; ?>>Sí</option>
+                                <option value="0" <?php echo ($datos_existentes && $datos_existentes['tiene_multa_simit'] == '0') ? 'selected' : ''; ?>>No</option>
+                            </select>
+                            <div class="invalid-feedback">Por favor seleccione si tiene multa en SIMIT.</div>
+                            <div class="valid-feedback">Campo completado correctamente.</div>
+                        </div>
+
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                            <label for="tiene_tarjeta_militar" class="form-label">
+                                <i class="bi bi-shield-check me-1"></i>Tiene Tarjeta Militar: <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="tiene_tarjeta_militar" name="tiene_tarjeta_militar" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="1" <?php echo ($datos_existentes && $datos_existentes['tiene_tarjeta_militar'] == '1') ? 'selected' : ''; ?>>Sí</option>
+                                <option value="0" <?php echo ($datos_existentes && $datos_existentes['tiene_tarjeta_militar'] == '0') ? 'selected' : ''; ?>>No</option>
+                            </select>
+                            <div class="invalid-feedback">Por favor seleccione si tiene tarjeta militar.</div>
+                            <div class="valid-feedback">Campo completado correctamente.</div>
+                        </div>
+                    </div>
+
                     <!-- Observaciones ocupa todo el ancho -->
                     <div class="row mt-3 obs-row">
                         <div class="col-12 obs-col">
@@ -700,6 +735,94 @@ try {
         }
         window.addEventListener('resize', updateScreenSize);
         window.addEventListener('DOMContentLoaded', updateScreenSize);
+        
+        // Validación adicional para campos obligatorios
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formInformacionPersonal');
+            const camposObligatorios = [
+                'id_tipo_documentos', 'cedula_expedida', 'nombres', 'apellidos', 'edad',
+                'fecha_expedicion', 'lugar_nacimiento', 'celular_1', 'id_rh', 'id_estatura',
+                'peso_kg', 'id_estado_civil', 'direccion', 'id_ciudad', 'localidad', 'barrio',
+                'id_estrato', 'correo', 'tiene_multa_simit', 'tiene_tarjeta_militar'
+            ];
+            
+            // Función para validar un campo
+            function validarCampo(campo) {
+                const elemento = document.getElementById(campo);
+                if (!elemento) return true;
+                
+                const valor = elemento.value.trim();
+                let esValido = true;
+                
+                // Validación especial para campos booleanos
+                if (campo === 'tiene_multa_simit' || campo === 'tiene_tarjeta_militar') {
+                    esValido = valor !== '';
+                } else {
+                    esValido = valor !== '' && valor !== '0';
+                }
+                
+                // Aplicar clases de validación
+                if (esValido) {
+                    elemento.classList.remove('is-invalid');
+                    elemento.classList.add('is-valid');
+                } else {
+                    elemento.classList.remove('is-valid');
+                    elemento.classList.add('is-invalid');
+                }
+                
+                return esValido;
+            }
+            
+            // Validar todos los campos obligatorios
+            function validarFormulario() {
+                let esValido = true;
+                camposObligatorios.forEach(campo => {
+                    if (!validarCampo(campo)) {
+                        esValido = false;
+                    }
+                });
+                return esValido;
+            }
+            
+            // Agregar event listeners a los campos
+            camposObligatorios.forEach(campo => {
+                const elemento = document.getElementById(campo);
+                if (elemento) {
+                    elemento.addEventListener('blur', () => validarCampo(campo));
+                    elemento.addEventListener('change', () => validarCampo(campo));
+                }
+            });
+            
+            // Validar formulario al enviar
+            form.addEventListener('submit', function(e) {
+                if (!validarFormulario()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Mostrar mensaje de error
+                    const mensajeError = document.createElement('div');
+                    mensajeError.className = 'alert alert-danger mt-3';
+                    mensajeError.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>Por favor complete todos los campos obligatorios antes de continuar.';
+                    
+                    // Remover mensaje anterior si existe
+                    const mensajeAnterior = form.querySelector('.alert-danger');
+                    if (mensajeAnterior) {
+                        mensajeAnterior.remove();
+                    }
+                    
+                    form.appendChild(mensajeError);
+                    
+                    // Scroll al primer campo inválido
+                    const primerCampoInvalido = form.querySelector('.is-invalid');
+                    if (primerCampoInvalido) {
+                        primerCampoInvalido.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        primerCampoInvalido.focus();
+                    }
+                }
+                
+                form.classList.add('was-validated');
+            });
+        });
     </script>
 </body>
 </html>

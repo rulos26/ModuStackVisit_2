@@ -163,6 +163,12 @@ error_reporting(E_ALL);
                         <td><?= htmlspecialchars($evaluado['correo'] ?? '') ?></td>
                     </tr>
                     <tr>
+                        <th style="background-color: #ABABAB;">Tiene Multa en SIMIT</th>
+                        <td><?= ($evaluado['tiene_multa_simit'] == '1') ? 'Sí' : (($evaluado['tiene_multa_simit'] == '0') ? 'No' : 'N/A') ?></td>
+                        <th style="background-color: #ABABAB;">Tiene Tarjeta Militar</th>
+                        <td><?= ($evaluado['tiene_tarjeta_militar'] == '1') ? 'Sí' : (($evaluado['tiene_tarjeta_militar'] == '0') ? 'No' : 'N/A') ?></td>
+                    </tr>
+                    <tr>
                         <th style="background-color: #ABABAB;">Cargo Actual</th>
                         <td><?= htmlspecialchars($evaluado['cargo'] ?? '') ?></td>
                         <th style="background-color: #ABABAB;">Observaciones</th>
@@ -688,7 +694,13 @@ error_reporting(E_ALL);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($pasivos as $pasivo): ?>
+                    <?php 
+                    $total_deuda = 0;
+                    $total_cuota = 0;
+                    foreach ($pasivos as $pasivo): 
+                        if (is_numeric($pasivo['deuda'])) $total_deuda += $pasivo['deuda'];
+                        if (is_numeric($pasivo['cuota_mes'])) $total_cuota += $pasivo['cuota_mes'];
+                    ?>
                         <tr>
                             <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($pasivo['item']) ?></td>
                             <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($pasivo['id_entidad']) ?></td>
@@ -706,6 +718,16 @@ error_reporting(E_ALL);
                             </td>
                         </tr>
                     <?php endforeach; ?>
+                    <!-- Fila de total para pasivos -->
+                    <tr style="background-color: #f0f0f0; font-weight: bold;">
+                        <td colspan="4" style="border: 1px solid black; text-align: center; font-weight: bold;">TOTAL PASIVOS</td>
+                        <td style="border: 1px solid black; text-align: center; font-weight: bold;">
+                            $<?= number_format($total_deuda, 0, ',', '.') ?>
+                        </td>
+                        <td style="border: 1px solid black; text-align: center; font-weight: bold;">
+                            $<?= number_format($total_cuota, 0, ',', '.') ?>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         <?php else: ?>
@@ -741,7 +763,11 @@ error_reporting(E_ALL);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($aportantes as $aportante): ?>
+                    <?php 
+                    $total_aportantes = 0;
+                    foreach ($aportantes as $aportante): 
+                        if (is_numeric($aportante['valor'])) $total_aportantes += $aportante['valor'];
+                    ?>
                         <tr>
                             <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($aportante['nombre']) ?></td>
                             <td style="border: 1px solid black; text-align: center;">
@@ -751,6 +777,13 @@ error_reporting(E_ALL);
                             </td>
                         </tr>
                     <?php endforeach; ?>
+                    <!-- Fila de total para aportantes -->
+                    <tr style="background-color: #f0f0f0; font-weight: bold;">
+                        <td style="border: 1px solid black; text-align: center; font-weight: bold;">TOTAL APORTANTES</td>
+                        <td style="border: 1px solid black; text-align: center; font-weight: bold;">
+                            $<?= number_format($total_aportantes, 0, ',', '.') ?>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         <?php else: ?>
@@ -827,6 +860,15 @@ error_reporting(E_ALL);
                     </tr>
                 </thead>
                 <tbody>
+                    <?php 
+                    $total_ingresos = 0;
+                    $salario_val = is_numeric($ingresos_mensuales['salario_val']) ? $ingresos_mensuales['salario_val'] : 0;
+                    $pension_val = is_numeric($ingresos_mensuales['pension_val']) ? $ingresos_mensuales['pension_val'] : 0;
+                    $arriendo_val = is_numeric($ingresos_mensuales['arriendo_val']) ? $ingresos_mensuales['arriendo_val'] : 0;
+                    $trabajo_independiente_val = is_numeric($ingresos_mensuales['trabajo_independiente_val']) ? $ingresos_mensuales['trabajo_independiente_val'] : 0;
+                    $otros_val = is_numeric($ingresos_mensuales['otros_val']) ? $ingresos_mensuales['otros_val'] : 0;
+                    $total_ingresos = $salario_val + $pension_val + $arriendo_val + $trabajo_independiente_val + $otros_val;
+                    ?>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">SALARIO</td>
                         <td colspan="8" style="border: 1px solid black; text-align: center;">
@@ -867,6 +909,13 @@ error_reporting(E_ALL);
                             ?>
                         </td>
                     </tr>
+                    <!-- Fila de total para ingresos mensuales -->
+                    <tr style="background-color: #f0f0f0; font-weight: bold;">
+                        <td colspan="4" style="border: 1px solid black; text-align: center; font-weight: bold;">TOTAL INGRESOS MENSUALES</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center; font-weight: bold;">
+                            $<?= number_format($total_ingresos, 0, ',', '.') ?>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         <?php else: ?>
@@ -898,6 +947,18 @@ error_reporting(E_ALL);
                     </tr>
                 </thead>
                 <tbody>
+                    <?php 
+                    $total_gastos = 0;
+                    $alimentacion_val = is_numeric($gastos['alimentacion_val']) ? $gastos['alimentacion_val'] : 0;
+                    $educacion_val = is_numeric($gastos['educacion_val']) ? $gastos['educacion_val'] : 0;
+                    $salud_val = is_numeric($gastos['salud_val']) ? $gastos['salud_val'] : 0;
+                    $recreacion_val = is_numeric($gastos['recreacion_val']) ? $gastos['recreacion_val'] : 0;
+                    $cuota_creditos_val = is_numeric($gastos['cuota_creditos_val']) ? $gastos['cuota_creditos_val'] : 0;
+                    $arriendo_val = is_numeric($gastos['arriendo_val']) ? $gastos['arriendo_val'] : 0;
+                    $servicios_publicos_val = is_numeric($gastos['servicios_publicos_val']) ? $gastos['servicios_publicos_val'] : 0;
+                    $otros_val = is_numeric($gastos['otros_val']) ? $gastos['otros_val'] : 0;
+                    $total_gastos = $alimentacion_val + $educacion_val + $salud_val + $recreacion_val + $cuota_creditos_val + $arriendo_val + $servicios_publicos_val + $otros_val;
+                    ?>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">ALIMENTACIÓN</td>
                         <td colspan="8" style="border: 1px solid black; text-align: center;">
@@ -960,6 +1021,13 @@ error_reporting(E_ALL);
                             <?php
                                 echo is_numeric($gastos['otros_val']) ? ('$' . number_format($gastos['otros_val'], 0, ',', '.')) : htmlspecialchars($gastos['otros_val']);
                             ?>
+                        </td>
+                    </tr>
+                    <!-- Fila de total para gastos -->
+                    <tr style="background-color: #f0f0f0; font-weight: bold;">
+                        <td colspan="4" style="border: 1px solid black; text-align: center; font-weight: bold;">TOTAL GASTOS MENSUALES</td>
+                        <td colspan="8" style="border: 1px solid black; text-align: center; font-weight: bold;">
+                            $<?= number_format($total_gastos, 0, ',', '.') ?>
                         </td>
                     </tr>
                 </tbody>
