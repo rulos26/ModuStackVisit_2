@@ -828,8 +828,20 @@ try {
 </html>
 <?php
 $contenido = ob_get_clean();
+// Intentar incluir dashboard
+$dashboard_path = __DIR__ . '/../../../../layout/dashboard.php';
+if (file_exists($dashboard_path)) {
+    include $dashboard_path;
+} else {
+    // fallback si no existe
+    echo $contenido;
+    echo '<div style="background: #f8d7da; color: #721c24; padding: 1rem; margin: 1rem; border: 1px solid #f5c6cb; border-radius: 0.25rem;">';
+    echo '<strong>Advertencia:</strong> No se pudo cargar el layout del dashboard. Ruta intentada:<br>';
+    echo htmlspecialchars($dashboard_path);
+    echo '</div>';
+}
 
-// Intentar múltiples rutas posibles para el dashboard
+/* // Intentar múltiples rutas posibles para el dashboard
 $dashboard_paths = [
     dirname(__DIR__, 4) . '/layout/dashboard.php',
     dirname(__DIR__, 5) . '/layout/dashboard.php',
@@ -856,5 +868,5 @@ if (!$dashboard_incluido) {
         echo '- ' . htmlspecialchars($path) . '<br>';
     }
     echo '</div>';
-}
+} */
 ?>
