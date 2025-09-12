@@ -614,6 +614,7 @@ try {
 
 <?php
 $contenido = ob_get_clean();
+
 // Intentar múltiples rutas posibles para el dashboard
 $dashboard_paths = [
     dirname(__DIR__, 4) . '/layout/dashboard.php',
@@ -622,6 +623,7 @@ $dashboard_paths = [
     __DIR__ . '/../../../../../layout/dashboard.php',
     __DIR__ . '/../../../../../../layout/dashboard.php'
 ];
+
 $dashboard_incluido = false;
 foreach ($dashboard_paths as $path) {
     if (file_exists($path)) {
@@ -630,7 +632,9 @@ foreach ($dashboard_paths as $path) {
         break;
     }
 }
+
 if (!$dashboard_incluido) {
+    // Si no se encuentra el dashboard, mostrar el contenido directamente
     echo $contenido;
     echo '<div style="background: #f8d7da; color: #721c24; padding: 1rem; margin: 1rem; border: 1px solid #f5c6cb; border-radius: 0.25rem;">';
     echo '<strong>Advertencia:</strong> No se pudo cargar el layout del dashboard. Rutas probadas:<br>';
