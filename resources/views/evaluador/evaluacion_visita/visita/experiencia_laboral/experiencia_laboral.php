@@ -10,7 +10,7 @@ if (!isset($_SESSION['id_cedula'])) {
 }
 
 require_once __DIR__ . "/ExperienciaLaboralController.php"; // corregir ruta
-$controller = ExperienciaLaboralController::getInstance();
+$controller = new ExperienciaLaboralController();
 
 // Procesar formulario si se envió
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
