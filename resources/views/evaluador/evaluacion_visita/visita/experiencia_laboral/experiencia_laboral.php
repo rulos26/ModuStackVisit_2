@@ -9,8 +9,8 @@ if (!isset($_SESSION['id_cedula'])) {
     exit();
 }
 
-require_once __DIR__ . "/../../../../controllers/evaluador/experiencia_laboral_controller.php"; // corregir ruta
-$controller = new ExperienciaLaboralController();
+require_once __DIR__ . "/ExperienciaLaboralController.php"; // corregir ruta
+$controller = ExperienciaLaboralController::getInstance();
 
 // Procesar formulario si se envió
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
