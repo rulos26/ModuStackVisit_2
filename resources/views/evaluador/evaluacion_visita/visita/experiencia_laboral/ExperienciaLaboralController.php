@@ -26,6 +26,27 @@ class ExperienciaLaboralController {
         foreach ($datos as $clave => $valor) {
             if (is_string($valor)) {
                 $sanitizados[$clave] = trim(strip_tags($valor));
+            } elseif (is_array($valor)) {
+                // Manejar arrays anidados (como 'experiencias')
+                $sanitizados[$clave] = [];
+                foreach ($valor as $sub_clave => $sub_valor) {
+                    if (is_array($sub_valor)) {
+                        $sanitizados[$clave][$sub_clave] = [];
+                        foreach ($sub_valor as $campo => $campo_valor) {
+                            if (is_string($campo_valor)) {
+                                $sanitizados[$clave][$sub_clave][$campo] = trim(strip_tags($campo_valor));
+                            } else {
+                                $sanitizados[$clave][$sub_clave][$campo] = $campo_valor;
+                            }
+                        }
+                    } else {
+                        if (is_string($sub_valor)) {
+                            $sanitizados[$clave][$sub_clave] = trim(strip_tags($sub_valor));
+                        } else {
+                            $sanitizados[$clave][$sub_clave] = $sub_valor;
+                        }
+                    }
+                }
             } else {
                 $sanitizados[$clave] = $valor;
             }
@@ -40,7 +61,7 @@ class ExperienciaLaboralController {
         if (isset($datos['experiencias']) && is_array($datos['experiencias'])) {
             // Validar múltiples experiencias
             foreach ($datos['experiencias'] as $index => $experiencia) {
-                $errores = array_merge($errores, $this->validarExperiencia($experiencia, $index + 1));
+                $errores = array_merge($errores, $this->validarExperiencia($experiencia, intval($index) + 1));
             }
         } else {
             // Validar experiencia única (compatibilidad con versión anterior)
@@ -142,15 +163,19 @@ class ExperienciaLaboralController {
                 $stmt = $this->db->prepare($sql);
                 
                 foreach ($datos['experiencias'] as $experiencia) {
+                    // Asegurar que el salario sea un número
+                    $salario = is_numeric($experiencia['salario']) ? floatval($experiencia['salario']) : 0;
+                    $numero = is_numeric($experiencia['numero']) ? intval($experiencia['numero']) : 0;
+                    
                     $stmt->bindParam(':id_cedula', $id_cedula);
                     $stmt->bindParam(':empresa', $experiencia['empresa']);
                     $stmt->bindParam(':tiempo', $experiencia['tiempo']);
                     $stmt->bindParam(':cargo', $experiencia['cargo']);
-                    $stmt->bindParam(':salario', $experiencia['salario']);
+                    $stmt->bindParam(':salario', $salario);
                     $stmt->bindParam(':retiro', $experiencia['retiro']);
                     $stmt->bindParam(':concepto', $experiencia['concepto']);
                     $stmt->bindParam(':nombre', $experiencia['nombre']);
-                    $stmt->bindParam(':numero', $experiencia['numero']);
+                    $stmt->bindParam(':numero', $numero);
                     
                     if ($stmt->execute()) {
                         $experiencias_guardadas++;
@@ -173,16 +198,20 @@ class ExperienciaLaboralController {
                     :id_cedula, :empresa, :tiempo, :cargo, :salario, :retiro, :concepto, :nombre, :numero
                 )";
                 
+                // Asegurar que el salario sea un número
+                $salario = is_numeric($datos['salario']) ? floatval($datos['salario']) : 0;
+                $numero = is_numeric($datos['numero']) ? intval($datos['numero']) : 0;
+                
                 $stmt = $this->db->prepare($sql);
                 $stmt->bindParam(':id_cedula', $id_cedula);
                 $stmt->bindParam(':empresa', $datos['empresa']);
                 $stmt->bindParam(':tiempo', $datos['tiempo']);
                 $stmt->bindParam(':cargo', $datos['cargo']);
-                $stmt->bindParam(':salario', $datos['salario']);
+                $stmt->bindParam(':salario', $salario);
                 $stmt->bindParam(':retiro', $datos['retiro']);
                 $stmt->bindParam(':concepto', $datos['concepto']);
                 $stmt->bindParam(':nombre', $datos['nombre']);
-                $stmt->bindParam(':numero', $datos['numero']);
+                $stmt->bindParam(':numero', $numero);
                 
                 if ($stmt->execute()) {
                     return [
