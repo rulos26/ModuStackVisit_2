@@ -89,9 +89,17 @@ try {
     $id_cedula = $_SESSION['id_cedula'];
     $datos_existentes = $controller->obtenerPorCedula($id_cedula);
     
+    // Debug: Mostrar datos existentes
+    if ($datos_existentes !== false) {
+        error_log('DEBUG tiene_pareja.php: Datos existentes encontrados: ' . print_r($datos_existentes, true));
+    } else {
+        error_log('DEBUG tiene_pareja.php: No se encontraron datos existentes para cédula: ' . $id_cedula);
+    }
+    
     // Si no hay datos del formulario (POST), usar datos existentes
-    if (empty($datos_formulario) && !empty($datos_existentes)) {
+    if (empty($datos_formulario) && $datos_existentes !== false) {
         $datos_formulario = $datos_existentes;
+        error_log('DEBUG tiene_pareja.php: Cargando datos existentes en formulario: ' . print_r($datos_formulario, true));
     }
     
     // Obtener opciones para los select
@@ -107,6 +115,7 @@ try {
 ?>
 <link rel="stylesheet" href="../../../../../public/css/styles.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
 <style>
 .steps-horizontal { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; width: 100%; gap: 0.5rem; }
 .step-horizontal { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; }
@@ -605,29 +614,6 @@ document.getElementById('formTienePareja').addEventListener('submit', function(e
 
 <?php
 $contenido = ob_get_clean();
-// Intentar múltiples rutas posibles para el dashboard
-$dashboard_paths = [
-    dirname(__DIR__, 4) . '/layout/dashboard.php',
-    dirname(__DIR__, 5) . '/layout/dashboard.php',
-    dirname(__DIR__, 6) . '/layout/dashboard.php',
-    __DIR__ . '/../../../../../layout/dashboard.php',
-    __DIR__ . '/../../../../../../layout/dashboard.php'
-];
-$dashboard_incluido = false;
-foreach ($dashboard_paths as $path) {
-    if (file_exists($path)) {
-        include $path;
-        $dashboard_incluido = true;
-        break;
-    }
-}
-if (!$dashboard_incluido) {
-    echo $contenido;
-    echo '<div style="background: #f8d7da; color: #721c24; padding: 1rem; margin: 1rem; border: 1px solid #f5c6cb; border-radius: 0.25rem;">';
-    echo '<strong>Advertencia:</strong> No se pudo cargar el layout del dashboard. Rutas probadas:<br>';
-    foreach ($dashboard_paths as $path) {
-        echo '- ' . htmlspecialchars($path) . '<br>';
-    }
-    echo '</div>';
-}
+$theme = 'evaluador'; // Set theme for evaluator
+include dirname(__DIR__, 2) . '/layout/dashboard.php';
 ?> 
