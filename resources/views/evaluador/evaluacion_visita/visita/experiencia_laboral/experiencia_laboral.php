@@ -1,7 +1,7 @@
 <?php
 // Mostrar errores solo en desarrollo
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
+ini_set('display_errors', '0');
+ini_set('display_startup_errors', '0');
 error_reporting(E_ALL);
 
 ob_start();
@@ -51,7 +51,8 @@ try {
     $error_message = "Error al cargar los datos: " . $e->getMessage();
 }
 ?>
-<link rel="stylesheet" href="../../../../../public/css/styles.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/ModuStackVisit_2/public/css/styles.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
 <style>
@@ -225,7 +226,7 @@ try {
             
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 300px;">
+                    <img src="/ModuStackVisit_2/public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 300px;">
                 </div>
                 <div class="col-md-6 text-end">
                     <div class="text-muted">
@@ -599,6 +600,9 @@ try {
                 });
             }
             </script>
+            
+            <!-- Bootstrap JS -->
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         </div>
         <div class="card-footer text-body-secondary">
             <div class="row">
