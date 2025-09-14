@@ -615,5 +615,31 @@ document.getElementById('formTienePareja').addEventListener('submit', function(e
 <?php
 $contenido = ob_get_clean();
 $theme = 'evaluador'; // Set theme for evaluator
-include dirname(__DIR__, 2) . '/layout/dashboard.php';
+
+// Intentar múltiples rutas posibles para el dashboard
+$dashboard_paths = [
+    __DIR__ . '/../../../../../../layout/dashboard.php',
+    dirname(__DIR__, 6) . '/layout/dashboard.php',
+    dirname(__DIR__, 5) . '/layout/dashboard.php',
+    dirname(__DIR__, 4) . '/layout/dashboard.php'
+];
+
+$dashboard_incluido = false;
+foreach ($dashboard_paths as $path) {
+    if (file_exists($path)) {
+        include $path;
+        $dashboard_incluido = true;
+        break;
+    }
+}
+
+if (!$dashboard_incluido) {
+    echo $contenido;
+    echo '<div style="background: #f8d7da; color: #721c24; padding: 1rem; margin: 1rem; border: 1px solid #f5c6cb; border-radius: 0.25rem;">';
+    echo '<strong>Error:</strong> No se pudo cargar el layout del dashboard. Rutas probadas:<br>';
+    foreach ($dashboard_paths as $path) {
+        echo '- ' . htmlspecialchars($path) . '<br>';
+    }
+    echo '</div>';
+}
 ?> 
