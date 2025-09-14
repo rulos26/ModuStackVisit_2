@@ -61,12 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $errores_campos['id_nivel_academico'] = $error;
                 } elseif (strpos($error, 'actividad') !== false) {
                     $errores_campos['actividad'] = $error;
-                } elseif (strpos($error, 'empresa') !== false) {
+                } elseif (strpos($error, 'dirección') !== false) {
+                    $errores_campos['direccion_empresa'] = $error;
+                } elseif (strpos($error, 'La empresa es obligatoria') !== false || strpos($error, 'La empresa no puede exceder') !== false) {
                     $errores_campos['empresa'] = $error;
                 } elseif (strpos($error, 'antigüedad') !== false) {
                     $errores_campos['antiguedad'] = $error;
-                } elseif (strpos($error, 'dirección') !== false) {
-                    $errores_campos['direccion_empresa'] = $error;
                 } elseif (strpos($error, 'teléfono 1') !== false) {
                     $errores_campos['telefono_1'] = $error;
                 } elseif (strpos($error, 'teléfono 2') !== false) {
