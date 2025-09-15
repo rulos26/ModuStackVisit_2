@@ -298,11 +298,15 @@ try {
                                    maxlength="200">
                             <div class="invalid-feedback">Por favor ingrese la actividad.</div>
                         </div>
-                        <div class="col-md-6 mb-3 campos-adicionales" id="campo-observacion" style="display: none;">
+                    </div>
+                    
+                    <!-- Observaciones ocupa todo el ancho -->
+                    <div class="row">
+                        <div class="col-12 mb-3 campos-adicionales" id="campo-observacion" style="display: none;">
                             <label for="observacion" class="form-label">
                                 <i class="bi bi-chat-text me-1"></i>Observaciones:
                             </label>
-                            <textarea class="form-control" id="observacion" name="observacion" rows="2" maxlength="1000"><?php echo $datos_existentes ? htmlspecialchars($datos_existentes['observacion']) : ''; ?></textarea>
+                            <textarea class="form-control" id="observacion" name="observacion" rows="4" maxlength="1000"><?php echo $datos_existentes ? htmlspecialchars($datos_existentes['observacion']) : ''; ?></textarea>
                             <div class="form-text">Máximo 1000 caracteres</div>
                         </div>
                     </div>
