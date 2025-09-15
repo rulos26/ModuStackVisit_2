@@ -1,39 +1,65 @@
 <?php
-// Mostrar errores solo en desarrollo
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-
 ob_start();
 
+// Verificar sesión
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Verificar si el usuario está autenticado
 if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
     header('Location: ../../../../../public/login.php');
     exit();
 }
 
+// Incluir el controlador desde la misma carpeta
 require_once __DIR__ . '/PasivosController.php';
+
 use App\Controllers\PasivosController;
 
+// Variables para manejar errores y datos
+$errores_campos = [];
+$datos_formulario = [];
+
+// Procesar el formulario cuando se envía
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $controller = PasivosController::getInstance();
+
+        // Sanitizar y validar datos de entrada
         $datos = $controller->sanitizarDatos($_POST);
+
+        // Validar datos
         $errores = $controller->validarDatos($datos);
+        
+        // Guardar los datos del formulario para mantenerlos en caso de error
+        $datos_formulario = $datos;
+        
         if (empty($errores)) {
+            // Intentar guardar los datos
             $resultado = $controller->guardar($datos);
+
             if ($resultado['success']) {
                 $_SESSION['success'] = $resultado['message'];
+
+                // Siempre redirigir a la siguiente pantalla después de guardar/actualizar exitosamente
                 header('Location: ../aportante/aportante.php');
                 exit();
             } else {
                 $_SESSION['error'] = $resultado['message'];
             }
         } else {
-            $_SESSION['error'] = implode('<br>', $errores);
+            // Procesar errores para mostrarlos en campos específicos
+            foreach ($errores as $error) {
+                if (strpos($error, 'pasivos') !== false) {
+                    $errores_campos['tiene_pasivos'] = $error;
+                } else {
+                    $_SESSION['error'] = $error;
+                }
+            }
         }
     } catch (Exception $e) {
         error_log("Error en pasivos.php: " . $e->getMessage());
@@ -42,39 +68,248 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 try {
+    // Obtener instancia del controlador
     $controller = PasivosController::getInstance();
+
+    // Obtener datos existentes si los hay
     $id_cedula = $_SESSION['id_cedula'];
     $datos_existentes = $controller->obtenerPorCedula($id_cedula);
+    
+    // Si no hay datos del formulario (POST), usar datos existentes
+    if (empty($datos_formulario) && $datos_existentes !== false) {
+        $datos_formulario = $datos_existentes;
+    }
+    
+    // Determinar si tiene pasivos basado en los datos existentes
+    $tiene_pasivos_valor = '';
+    if (!empty($datos_formulario)) {
+        // Si hay datos de pasivos (item != 'N/A'), asumir que tiene pasivos
+        if (!empty($datos_formulario[0]['item']) && $datos_formulario[0]['item'] != 'N/A') {
+            $tiene_pasivos_valor = '1'; // Sí tiene pasivos
+        } else {
+            $tiene_pasivos_valor = '0'; // No tiene pasivos
+        }
+    }
+    
+    // Obtener opciones para los select
     $municipios = $controller->obtenerMunicipios();
 } catch (Exception $e) {
     error_log("Error en pasivos.php: " . $e->getMessage());
     $error_message = "Error al cargar los datos: " . $e->getMessage();
 }
 ?>
-<link rel="stylesheet" href="../../../../../public/css/styles.css">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<!-- Puedes usar este código como base para tu formulario y menú responsive -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario Responsive y Menú</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-.steps-horizontal { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; width: 100%; gap: 0.5rem; }
-.step-horizontal { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; }
-.step-horizontal:not(:last-child)::after { content: ''; position: absolute; top: 24px; left: 50%; width: 100%; height: 4px; background: #e0e0e0; z-index: 0; transform: translateX(50%); }
-.step-horizontal .step-icon { width: 48px; height: 48px; border-radius: 50%; background: #e0e0e0; color: #888; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 0.5rem; border: 2px solid #e0e0e0; z-index: 1; transition: all 0.3s; }
-.step-horizontal.active .step-icon { background: #4361ee; border-color: #4361ee; color: #fff; box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.2); }
-.step-horizontal.complete .step-icon { background: #2ecc71; border-color: #2ecc71; color: #fff; }
-.step-horizontal .step-title { font-weight: bold; font-size: 1rem; margin-bottom: 0.2rem; }
-.step-horizontal .step-description { font-size: 0.85rem; color: #888; text-align: center; }
-.step-horizontal.active .step-title, .step-horizontal.active .step-description { color: #4361ee; }
-.step-horizontal.complete .step-title, .step-horizontal.complete .step-description { color: #2ecc71; }
-.pasivo-item { border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 20px; background: #f8f9fa; }
-.pasivo-item h6 { color: #495057; margin-bottom: 15px; border-bottom: 2px solid #dee2e6; padding-bottom: 10px; }
-.btn-remove-pasivo { position: absolute; top: 10px; right: 10px; }
+        /* Menú horizontal en desktop */
+        @media (min-width: 992px) {
+            .navbar-desktop {
+                display: flex !important;
+            }
+            .navbar-mobile {
+                display: none !important;
+            }
+        }
+        /* Menú hamburguesa en móvil/tablet */
+        @media (max-width: 991.98px) {
+            .navbar-desktop {
+                display: none !important;
+            }
+            .navbar-mobile {
+                display: block !important;
+            }
+        }
+        /* Ajuste para observaciones */
+        .obs-row {
+            flex-wrap: wrap;
+        }
+        .obs-col {
+            flex: 1 0 100%;
+            max-width: 100%;
+        }
+        /* Forzar 4 columnas desde 1440px (ajustado para pantallas grandes) */
+        @media (min-width: 1440px) {
+            .form-responsive-row > [class*="col-"] {
+                flex: 0 0 25%;
+                max-width: 25%;
+            }
+        }
+        /* Bootstrap row display flex fix para forzar columnas */
+        .form-responsive-row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        /* Ajuste para imagen de logo que no carga */
+        .logo-empresa {
+            max-width: 300px;
+            min-width: 120px;
+            height: auto;
+            object-fit: contain;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        /* Mejorar visual de la card */
+        .card {
+            box-shadow: 0 2px 16px 0 rgba(0,0,0,0.07);
+        }
+        /* Pasos */
+        .steps-horizontal {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            width: 100%;
+            gap: 0.5rem;
+        }
+        .step-horizontal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+        .step-horizontal:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            z-index: 0;
+            transform: translateX(50%);
+        }
+        .step-horizontal .step-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            border: 2px solid #e0e0e0;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+        .step-horizontal.active .step-icon {
+            background: #4361ee;
+            border-color: #4361ee;
+            color: #fff;
+            box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.2);
+        }
+        .step-horizontal.complete .step-icon {
+            background: #2ecc71;
+            border-color: #2ecc71;
+            color: #fff;
+        }
+        .step-horizontal .step-title {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+        .step-horizontal .step-description {
+            font-size: 0.85rem;
+            color: #888;
+            text-align: center;
+        }
+        .step-horizontal.active .step-title,
+        .step-horizontal.active .step-description {
+            color: #4361ee;
+        }
+        .step-horizontal.complete .step-title,
+        .step-horizontal.complete .step-description {
+            color: #2ecc71;
+        }
+        .campos-pasivos { 
+            display: none; 
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .campos-pasivos.show { 
+            display: block; 
+            opacity: 1;
+            max-height: 2000px;
+        }
+        .pasivo-item { 
+            border: 1px solid #dee2e6; 
+            border-radius: 8px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            background: #f8f9fa; 
+            position: relative;
+        }
+        .pasivo-item h6 { 
+            color: #495057; 
+            margin-bottom: 15px; 
+            border-bottom: 2px solid #dee2e6; 
+            padding-bottom: 10px; 
+        }
+        .btn-remove-pasivo { 
+            position: absolute; 
+            top: 10px; 
+            right: 10px; 
+        }
+        /* Estilos para errores en campos */
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+        .form-control.is-valid,
+        .form-select.is-valid {
+            border-color: #198754;
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+        }
+        .invalid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: #dc3545;
+        }
+        .valid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: #198754;
+        }
+        .form-text.error-message {
+            color: #dc3545;
+            font-weight: 500;
+        }
+        .form-text.success-message {
+            color: #198754;
+            font-weight: 500;
+        }
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+            font-weight: bold;
+        }
 </style>
+</head>
+<body class="bg-light">
 
-<div class="container mt-4">
-    <div class="card mt-5">
+    <div class="container-fluid px-2">
+        <div class="card mt-4 w-100" style="max-width:100%; border-radius: 0;">
         <div class="card-header bg-primary text-white">
             <h5 class="card-title mb-0">
                 <i class="bi bi-exclamation-triangle me-2"></i>
-                VISITA DOMICILIARÍA - DETALLES DE PASIVOS
+                VISITA DOMICILIARÍA - PASIVOS
             </h5>
         </div>
         <div class="card-body">
@@ -101,7 +336,7 @@ try {
                     <div class="step-description">Salud</div>
                 </div>
                 <div class="step-horizontal complete">
-                    <div class="step-icon"><i class="fas fa-people"></i></div>
+                        <div class="step-icon"><i class="fas fa-users"></i></div>
                     <div class="step-title">Paso 5</div>
                     <div class="step-description">Composición Familiar</div>
                 </div>
@@ -147,16 +382,6 @@ try {
                 </div>
             </div>
 
-            <!-- Controles de navegación -->
-            <div class="controls text-center mb-4">
-                <a href="tiene_pasivo.php" class="btn btn-secondary me-2">
-                    <i class="fas fa-arrow-left me-1"></i>Anterior
-                </a>
-                <button class="btn btn-primary" id="nextBtn" type="button" onclick="document.getElementById('formPasivosDetallado').submit();">
-                    Siguiente<i class="fas fa-arrow-right ms-1"></i>
-                </button>
-            </div>
-
             <!-- Mensajes de sesión -->
             <?php if (isset($_SESSION['error'])): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -183,18 +408,20 @@ try {
                 </div>
             <?php endif; ?>
             
-            <?php if (!empty($datos_existentes)): ?>
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle me-2"></i>
-                    Ya existen <?php echo count($datos_existentes); ?> pasivo(s) registrado(s) para esta cédula. Puede actualizar los datos.
+            <?php if ($datos_existentes): ?>
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <strong>Datos cargados:</strong> Se encontró información de pasivos registrada para esta cédula. Los datos se han cargado automáticamente.
+                </div>
+            <?php else: ?>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>Sin datos:</strong> No se encontró información de pasivos registrada para esta cédula. Complete el formulario para registrar la información.
                 </div>
             <?php endif; ?>
             
             <div class="row mb-4">
-                <div class="col-md-6">
-                    <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 300px;">
-                </div>
-                <div class="col-md-6 text-end">
+                    <div class="col-12 text-end">
                     <div class="text-muted">
                         <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
                         <small>Cédula: <?php echo htmlspecialchars($id_cedula); ?></small>
@@ -202,51 +429,85 @@ try {
                 </div>
             </div>
             
-            <form action="" method="POST" id="formPasivosDetallado" novalidate autocomplete="off">
+                <!-- Nota informativa sobre campos obligatorios -->
+                <div class="alert alert-info mb-4">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Información importante:</strong> Los campos marcados con <span class="text-danger">*</span> son obligatorios y deben ser completados antes de continuar.
+                </div>
+            
+            <form action="" method="POST" id="formPasivos" novalidate autocomplete="off">
+                <!-- Campo obligatorio -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="tiene_pasivos" class="form-label required-field">
+                            <i class="bi bi-exclamation-triangle me-1"></i>¿Posee usted pasivos?
+                        </label>
+                        <select class="form-select <?php echo !empty($errores_campos['tiene_pasivos']) ? 'is-invalid' : (!empty($tiene_pasivos_valor) ? 'is-valid' : ''); ?>" 
+                                id="tiene_pasivos" name="tiene_pasivos" required onchange="toggleCamposPasivos()">
+                            <option value="">Seleccione una opción</option>
+                            <option value="0" <?php echo ($tiene_pasivos_valor == '0') ? 'selected' : ''; ?>>No</option>
+                            <option value="1" <?php echo ($tiene_pasivos_valor == '1') ? 'selected' : ''; ?>>Sí</option>
+                        </select>
+                        <?php if (!empty($errores_campos['tiene_pasivos'])): ?>
+                        <div class="invalid-feedback">
+                                <?php echo htmlspecialchars($errores_campos['tiene_pasivos']); ?>
+                        </div>
+                        <?php endif; ?>
+                        <div class="form-text">Seleccione "No" si no posee pasivos, o "Sí" para continuar con el formulario detallado.</div>
+                    </div>
+                </div>
+                
+                <!-- Campos de información de pasivos (se muestran/ocultan dinámicamente) -->
+                <div id="camposPasivos" class="campos-pasivos <?php echo ($tiene_pasivos_valor == '1') ? 'show' : ''; ?>">
+                    <hr class="my-4">
+                    <h6 class="text-primary mb-3">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Información de los Pasivos
+                    </h6>
+                    
                 <div id="pasivos-container">
                     <!-- Pasivo inicial -->
                     <div class="pasivo-item" data-pasivo="0">
                         <h6><i class="fas fa-exclamation-triangle me-2"></i>Pasivo #1</h6>
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <label for="item_0" class="form-label">
+                                    <label for="item_0" class="form-label required-field">
                                     <i class="bi bi-box me-1"></i>Producto:
                                 </label>
                                 <input type="text" class="form-control" id="item_0" name="item[]" 
-                                       value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes[0]['item'] ?? '') : ''; ?>"
+                                           value="<?php echo !empty($datos_formulario) && !empty($datos_formulario[0]['item']) ? htmlspecialchars($datos_formulario[0]['item']) : ''; ?>"
                                        placeholder="Ej: Tarjeta de crédito, Préstamo" minlength="3" required>
                                 <div class="form-text">Mínimo 3 caracteres</div>
                             </div>
                             
                             <div class="col-md-4 mb-3">
-                                <label for="id_entidad_0" class="form-label">
+                                    <label for="id_entidad_0" class="form-label required-field">
                                     <i class="bi bi-bank me-1"></i>Entidad:
                                 </label>
                                 <input type="text" class="form-control" id="id_entidad_0" name="id_entidad[]" 
-                                       value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes[0]['id_entidad'] ?? '') : ''; ?>"
+                                           value="<?php echo !empty($datos_formulario) && !empty($datos_formulario[0]['id_entidad']) ? htmlspecialchars($datos_formulario[0]['id_entidad']) : ''; ?>"
                                        placeholder="Ej: Banco de Bogotá" minlength="3" required>
                                 <div class="form-text">Mínimo 3 caracteres</div>
                             </div>
                             
                             <div class="col-md-4 mb-3">
-                                <label for="id_tipo_inversion_0" class="form-label">
+                                    <label for="id_tipo_inversion_0" class="form-label required-field">
                                     <i class="bi bi-graph-up me-1"></i>Tipo de Inversión:
                                 </label>
                                 <input type="text" class="form-control" id="id_tipo_inversion_0" name="id_tipo_inversion[]" 
-                                       value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes[0]['id_tipo_inversion'] ?? '') : ''; ?>"
+                                           value="<?php echo !empty($datos_formulario) && !empty($datos_formulario[0]['id_tipo_inversion']) ? htmlspecialchars($datos_formulario[0]['id_tipo_inversion']) : ''; ?>"
                                        placeholder="Ej: Consumo, Hipotecario" minlength="3" required>
                                 <div class="form-text">Mínimo 3 caracteres</div>
                             </div>
                             
                             <div class="col-md-4 mb-3">
-                                <label for="id_ciudad_0" class="form-label">
+                                    <label for="id_ciudad_0" class="form-label required-field">
                                     <i class="bi bi-geo-alt me-1"></i>Ciudad:
                                 </label>
                                 <select class="form-select" id="id_ciudad_0" name="id_ciudad[]" required>
                                     <option value="">Seleccione una ciudad</option>
                                     <?php foreach ($municipios as $municipio): ?>
                                         <option value="<?php echo $municipio['id_municipio']; ?>" 
-                                            <?php echo (!empty($datos_existentes) && $datos_existentes[0]['id_ciudad'] == $municipio['id_municipio']) ? 'selected' : ''; ?>>
+                                                <?php echo (!empty($datos_formulario) && !empty($datos_formulario[0]['id_ciudad']) && $datos_formulario[0]['id_ciudad'] == $municipio['id_municipio']) ? 'selected' : ''; ?>>
                                             <?php echo htmlspecialchars($municipio['municipio']); ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -254,26 +515,26 @@ try {
                             </div>
                             
                             <div class="col-md-4 mb-3">
-                                <label for="deuda_0" class="form-label">
+                                    <label for="deuda_0" class="form-label required-field">
                                     <i class="bi bi-cash-stack me-1"></i>Deuda:
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
                                     <input type="text" class="form-control" id="deuda_0" name="deuda[]" 
-                                           value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes[0]['deuda'] ?? '') : ''; ?>"
+                                               value="<?php echo !empty($datos_formulario) && !empty($datos_formulario[0]['deuda']) ? htmlspecialchars($datos_formulario[0]['deuda']) : ''; ?>"
                                            placeholder="0.00" required>
                                 </div>
                                 <div class="form-text">Ingrese el valor total de la deuda</div>
                             </div>
                             
                             <div class="col-md-4 mb-3">
-                                <label for="cuota_mes_0" class="form-label">
+                                    <label for="cuota_mes_0" class="form-label required-field">
                                     <i class="bi bi-calendar-check me-1"></i>Cuota Mensual:
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
                                     <input type="text" class="form-control" id="cuota_mes_0" name="cuota_mes[]" 
-                                           value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes[0]['cuota_mes'] ?? '') : ''; ?>"
+                                               value="<?php echo !empty($datos_formulario) && !empty($datos_formulario[0]['cuota_mes']) ? htmlspecialchars($datos_formulario[0]['cuota_mes']) : ''; ?>"
                                            placeholder="0.00" required>
                                 </div>
                                 <div class="form-text">Ingrese el valor de la cuota mensual</div>
@@ -282,8 +543,8 @@ try {
                     </div>
                     
                     <!-- Pasivos adicionales si existen datos -->
-                    <?php if (!empty($datos_existentes) && count($datos_existentes) > 1): ?>
-                        <?php for ($i = 1; $i < count($datos_existentes); $i++): ?>
+                        <?php if (!empty($datos_formulario) && count($datos_formulario) > 1): ?>
+                            <?php for ($i = 1; $i < count($datos_formulario); $i++): ?>
                             <div class="pasivo-item" data-pasivo="<?php echo $i; ?>">
                                 <button type="button" class="btn btn-danger btn-sm btn-remove-pasivo" onclick="removePasivo(this)">
                                     <i class="fas fa-times"></i>
@@ -291,41 +552,41 @@ try {
                                 <h6><i class="fas fa-exclamation-triangle me-2"></i>Pasivo #<?php echo $i + 1; ?></h6>
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
-                                        <label for="item_<?php echo $i; ?>" class="form-label">
+                                            <label for="item_<?php echo $i; ?>" class="form-label required-field">
                                             <i class="bi bi-box me-1"></i>Producto:
                                         </label>
                                         <input type="text" class="form-control" id="item_<?php echo $i; ?>" name="item[]" 
-                                               value="<?php echo htmlspecialchars($datos_existentes[$i]['item']); ?>"
+                                                   value="<?php echo htmlspecialchars($datos_formulario[$i]['item']); ?>"
                                                placeholder="Ej: Tarjeta de crédito, Préstamo" minlength="3" required>
                                     </div>
                                     
                                     <div class="col-md-4 mb-3">
-                                        <label for="id_entidad_<?php echo $i; ?>" class="form-label">
+                                            <label for="id_entidad_<?php echo $i; ?>" class="form-label required-field">
                                             <i class="bi bi-bank me-1"></i>Entidad:
                                         </label>
                                         <input type="text" class="form-control" id="id_entidad_<?php echo $i; ?>" name="id_entidad[]" 
-                                               value="<?php echo htmlspecialchars($datos_existentes[$i]['id_entidad']); ?>"
+                                                   value="<?php echo htmlspecialchars($datos_formulario[$i]['id_entidad']); ?>"
                                                placeholder="Ej: Banco de Bogotá" minlength="3" required>
                                     </div>
                                     
                                     <div class="col-md-4 mb-3">
-                                        <label for="id_tipo_inversion_<?php echo $i; ?>" class="form-label">
+                                            <label for="id_tipo_inversion_<?php echo $i; ?>" class="form-label required-field">
                                             <i class="bi bi-graph-up me-1"></i>Tipo de Inversión:
                                         </label>
                                         <input type="text" class="form-control" id="id_tipo_inversion_<?php echo $i; ?>" name="id_tipo_inversion[]" 
-                                               value="<?php echo htmlspecialchars($datos_existentes[$i]['id_tipo_inversion']); ?>"
+                                                   value="<?php echo htmlspecialchars($datos_formulario[$i]['id_tipo_inversion']); ?>"
                                                placeholder="Ej: Consumo, Hipotecario" minlength="3" required>
                                     </div>
                                     
                                     <div class="col-md-4 mb-3">
-                                        <label for="id_ciudad_<?php echo $i; ?>" class="form-label">
+                                            <label for="id_ciudad_<?php echo $i; ?>" class="form-label required-field">
                                             <i class="bi bi-geo-alt me-1"></i>Ciudad:
                                         </label>
                                         <select class="form-select" id="id_ciudad_<?php echo $i; ?>" name="id_ciudad[]" required>
                                             <option value="">Seleccione una ciudad</option>
                                             <?php foreach ($municipios as $municipio): ?>
                                                 <option value="<?php echo $municipio['id_municipio']; ?>" 
-                                                    <?php echo ($datos_existentes[$i]['id_ciudad'] == $municipio['id_municipio']) ? 'selected' : ''; ?>>
+                                                        <?php echo ($datos_formulario[$i]['id_ciudad'] == $municipio['id_municipio']) ? 'selected' : ''; ?>>
                                                     <?php echo htmlspecialchars($municipio['municipio']); ?>
                                                 </option>
                                             <?php endforeach; ?>
@@ -333,25 +594,25 @@ try {
                                     </div>
                                     
                                     <div class="col-md-4 mb-3">
-                                        <label for="deuda_<?php echo $i; ?>" class="form-label">
+                                            <label for="deuda_<?php echo $i; ?>" class="form-label required-field">
                                             <i class="bi bi-cash-stack me-1"></i>Deuda:
                                         </label>
                                         <div class="input-group">
                                             <span class="input-group-text">$</span>
                                             <input type="text" class="form-control" id="deuda_<?php echo $i; ?>" name="deuda[]" 
-                                                   value="<?php echo htmlspecialchars($datos_existentes[$i]['deuda']); ?>"
+                                                       value="<?php echo htmlspecialchars($datos_formulario[$i]['deuda']); ?>"
                                                    placeholder="0.00" required>
                                         </div>
                                     </div>
                                     
                                     <div class="col-md-4 mb-3">
-                                        <label for="cuota_mes_<?php echo $i; ?>" class="form-label">
+                                            <label for="cuota_mes_<?php echo $i; ?>" class="form-label required-field">
                                             <i class="bi bi-calendar-check me-1"></i>Cuota Mensual:
                                         </label>
                                         <div class="input-group">
                                             <span class="input-group-text">$</span>
                                             <input type="text" class="form-control" id="cuota_mes_<?php echo $i; ?>" name="cuota_mes[]" 
-                                                   value="<?php echo htmlspecialchars($datos_existentes[$i]['cuota_mes']); ?>"
+                                                       value="<?php echo htmlspecialchars($datos_formulario[$i]['cuota_mes']); ?>"
                                                    placeholder="0.00" required>
                                         </div>
                                     </div>
@@ -366,11 +627,17 @@ try {
                         <button type="button" class="btn btn-success btn-lg me-2" id="btnAgregarPasivo">
                             <i class="bi bi-plus-circle me-2"></i>Agregar Otro Pasivo
                         </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-12 text-center">
                         <button type="submit" class="btn btn-primary btn-lg me-2">
                             <i class="bi bi-check-circle me-2"></i>
-                            <?php echo !empty($datos_existentes) ? 'Actualizar' : 'Guardar'; ?>
+                            <?php echo $datos_existentes ? 'Actualizar' : 'Guardar'; ?>
                         </button>
-                        <a href="tiene_pasivo.php" class="btn btn-secondary btn-lg">
+                        <a href="../cuentas_bancarias/cuentas_bancarias.php" class="btn btn-secondary btn-lg">
                             <i class="bi bi-arrow-left me-2"></i>Volver
                         </a>
                     </div>
@@ -389,21 +656,52 @@ try {
         </div>
     </div>
 </div>
+    <!-- Solo Bootstrap JS, no rutas locales para evitar errores de MIME -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
 
-<script src="https://cdn.jsdelivr.net/npm/autonumeric@4.1.0/dist/autoNumeric.min.js"></script>
 <script>
-let pasivoCounter = <?php echo !empty($datos_existentes) ? count($datos_existentes) : 1; ?>;
+function toggleCamposPasivos() {
+    const tienePasivosSelect = document.getElementById('tiene_pasivos');
+    const camposPasivosDiv = document.getElementById('camposPasivos');
+    const campos = camposPasivosDiv.querySelectorAll('input, select, textarea');
 
-// Inicializar autoNumeric para campos de dinero existentes
-document.querySelectorAll('input[id^="deuda_"], input[id^="cuota_mes_"]').forEach(function(input) {
-    new AutoNumeric(input, {
-        currencySymbol: '$',
-        decimalCharacter: '.',
-        digitGroupSeparator: ',',
-        minimumValue: '0'
-    });
+    if (tienePasivosSelect.value === '1') { // '1' corresponde a "Sí"
+        camposPasivosDiv.classList.add('show');
+    } else {
+        camposPasivosDiv.classList.remove('show');
+        // Limpiar todos los campos cuando se ocultan para no enviar datos antiguos
+        campos.forEach(campo => {
+            if (campo.type === 'select-one') {
+                campo.selectedIndex = 0; // Resetea el select
+            } else {
+                campo.value = ''; // Limpia inputs y textareas
+            }
+        });
+    }
+}
+
+// Ejecutar al cargar la página para establecer el estado inicial correcto
+document.addEventListener('DOMContentLoaded', function() {
+    // Verificar si hay datos cargados y mostrar campos si es necesario
+    const tienePasivosSelect = document.getElementById('tiene_pasivos');
+    if (tienePasivosSelect && tienePasivosSelect.value === '1') {
+        // Si ya está seleccionado "Sí", mostrar los campos
+        const camposPasivosDiv = document.getElementById('camposPasivos');
+        if (camposPasivosDiv) {
+            camposPasivosDiv.classList.add('show');
+        }
+    }
+    
+    // Ejecutar la función normal
+    toggleCamposPasivos();
 });
 
+// Variables para manejar pasivos dinámicos
+let pasivoCounter = <?php echo !empty($datos_formulario) ? count($datos_formulario) : 1; ?>;
+
+// Función para agregar nuevo pasivo
 document.getElementById('btnAgregarPasivo').addEventListener('click', function() {
     const container = document.getElementById('pasivos-container');
     const nuevoPasivo = document.createElement('div');
@@ -417,7 +715,7 @@ document.getElementById('btnAgregarPasivo').addEventListener('click', function()
         <h6><i class="fas fa-exclamation-triangle me-2"></i>Pasivo #${pasivoCounter + 1}</h6>
         <div class="row">
             <div class="col-md-4 mb-3">
-                <label for="item_${pasivoCounter}" class="form-label">
+                <label for="item_${pasivoCounter}" class="form-label required-field">
                     <i class="bi bi-box me-1"></i>Producto:
                 </label>
                 <input type="text" class="form-control" id="item_${pasivoCounter}" name="item[]" 
@@ -426,7 +724,7 @@ document.getElementById('btnAgregarPasivo').addEventListener('click', function()
             </div>
             
             <div class="col-md-4 mb-3">
-                <label for="id_entidad_${pasivoCounter}" class="form-label">
+                <label for="id_entidad_${pasivoCounter}" class="form-label required-field">
                     <i class="bi bi-bank me-1"></i>Entidad:
                 </label>
                 <input type="text" class="form-control" id="id_entidad_${pasivoCounter}" name="id_entidad[]" 
@@ -435,7 +733,7 @@ document.getElementById('btnAgregarPasivo').addEventListener('click', function()
             </div>
             
             <div class="col-md-4 mb-3">
-                <label for="id_tipo_inversion_${pasivoCounter}" class="form-label">
+                <label for="id_tipo_inversion_${pasivoCounter}" class="form-label required-field">
                     <i class="bi bi-graph-up me-1"></i>Tipo de Inversión:
                 </label>
                 <input type="text" class="form-control" id="id_tipo_inversion_${pasivoCounter}" name="id_tipo_inversion[]" 
@@ -444,7 +742,7 @@ document.getElementById('btnAgregarPasivo').addEventListener('click', function()
             </div>
             
             <div class="col-md-4 mb-3">
-                <label for="id_ciudad_${pasivoCounter}" class="form-label">
+                <label for="id_ciudad_${pasivoCounter}" class="form-label required-field">
                     <i class="bi bi-geo-alt me-1"></i>Ciudad:
                 </label>
                 <select class="form-select" id="id_ciudad_${pasivoCounter}" name="id_ciudad[]" required>
@@ -458,7 +756,7 @@ document.getElementById('btnAgregarPasivo').addEventListener('click', function()
             </div>
             
             <div class="col-md-4 mb-3">
-                <label for="deuda_${pasivoCounter}" class="form-label">
+                <label for="deuda_${pasivoCounter}" class="form-label required-field">
                     <i class="bi bi-cash-stack me-1"></i>Deuda:
                 </label>
                 <div class="input-group">
@@ -470,7 +768,7 @@ document.getElementById('btnAgregarPasivo').addEventListener('click', function()
             </div>
             
             <div class="col-md-4 mb-3">
-                <label for="cuota_mes_${pasivoCounter}" class="form-label">
+                <label for="cuota_mes_${pasivoCounter}" class="form-label required-field">
                     <i class="bi bi-calendar-check me-1"></i>Cuota Mensual:
                 </label>
                 <div class="input-group">
@@ -484,22 +782,6 @@ document.getElementById('btnAgregarPasivo').addEventListener('click', function()
     `;
     
     container.appendChild(nuevoPasivo);
-    
-    // Inicializar autoNumeric para los nuevos campos de dinero
-    new AutoNumeric(`#deuda_${pasivoCounter}`, {
-        currencySymbol: '$',
-        decimalCharacter: '.',
-        digitGroupSeparator: ',',
-        minimumValue: '0'
-    });
-    
-    new AutoNumeric(`#cuota_mes_${pasivoCounter}`, {
-        currencySymbol: '$',
-        decimalCharacter: '.',
-        digitGroupSeparator: ',',
-        minimumValue: '0'
-    });
-    
     pasivoCounter++;
 });
 
@@ -514,33 +796,328 @@ function removePasivo(button) {
         titulo.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>Pasivo #${index + 1}`;
     });
 }
+
+// Validación del formulario (mejorada)
+document.getElementById('formPasivos').addEventListener('submit', function(event) {
+    const tienePasivosSelect = document.getElementById('tiene_pasivos');
+    
+    // Validar que se haya seleccionado una opción principal
+    if (!tienePasivosSelect.value || tienePasivosSelect.value === '') {
+        event.preventDefault();
+        alert('Por favor, seleccione si posee pasivos.');
+        tienePasivosSelect.focus();
+        return;
+    }
+    
+    // Validar campos de los pasivos solo si se seleccionó "Sí"
+    if (tienePasivosSelect.value === '1') {
+        const camposObligatorios = ['item', 'id_entidad', 'id_tipo_inversion', 'id_ciudad', 'deuda', 'cuota_mes'];
+        
+        const pasivos = document.querySelectorAll('.pasivo-item');
+        for (let i = 0; i < pasivos.length; i++) {
+            for (const campo of camposObligatorios) {
+                const elemento = document.getElementById(`${campo}_${i}`);
+                if (!elemento.value || elemento.value.trim() === '') {
+                    event.preventDefault();
+                    // Obtener el texto de la etiqueta para un mensaje más claro
+                    const label = elemento.closest('.mb-3').querySelector('label');
+                    const labelText = label ? label.innerText.replace('*', '').trim() : campo;
+                    alert(`El campo "${labelText}" del Pasivo #${i + 1} es obligatorio.`);
+                    elemento.focus();
+                    return;
+                }
+            }
+        }
+    }
+});
 </script>
 
 <?php
 $contenido = ob_get_clean();
-// Intentar múltiples rutas posibles para el dashboard
-$dashboard_paths = [
-    dirname(__DIR__, 4) . '/layout/dashboard.php',
-    dirname(__DIR__, 5) . '/layout/dashboard.php',
-    dirname(__DIR__, 6) . '/layout/dashboard.php',
-    __DIR__ . '/../../../../../layout/dashboard.php',
-    __DIR__ . '/../../../../../../layout/dashboard.php'
-];
-$dashboard_incluido = false;
-foreach ($dashboard_paths as $path) {
-    if (file_exists($path)) {
-        include $path;
-        $dashboard_incluido = true;
-        break;
-    }
+
+// Verificar si la sesión ya está iniciada antes de intentar iniciarla
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
-if (!$dashboard_incluido) {
-    echo $contenido;
-    echo '<div style="background: #f8d7da; color: #721c24; padding: 1rem; margin: 1rem; border: 1px solid #f5c6cb; border-radius: 0.25rem;">';
-    echo '<strong>Advertencia:</strong> No se pudo cargar el layout del dashboard. Rutas probadas:<br>';
-    foreach ($dashboard_paths as $path) {
-        echo '- ' . htmlspecialchars($path) . '<br>';
-    }
-    echo '</div>';
+
+// Verificar si hay sesión activa
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['rol'])) {
+    header('Location: ../../../../../index.php');
+    exit();
 }
+
+// Verificar que el usuario tenga rol de Evaluador (4)
+if ($_SESSION['rol'] != 4) {
+    header('Location: ../../../../../index.php');
+    exit();
+}
+
+$nombreUsuario = $_SESSION['nombre'] ?? 'Evaluador';
+$cedulaUsuario = $_SESSION['cedula'] ?? '';
 ?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasivos - Dashboard Evaluador</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.9);
+            border-radius: 8px;
+            margin: 2px 0;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .steps-horizontal {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            width: 100%;
+            gap: 0.5rem;
+        }
+        .step-horizontal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+        .step-horizontal:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            z-index: 0;
+            transform: translateX(50%);
+        }
+        .step-horizontal .step-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            border: 2px solid #e0e0e0;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+        .step-horizontal.active .step-icon {
+            background: #4361ee;
+            border-color: #4361ee;
+            color: #fff;
+            box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.2);
+        }
+        .step-horizontal.complete .step-icon {
+            background: #2ecc71;
+            border-color: #2ecc71;
+            color: #fff;
+        }
+        .step-horizontal .step-title {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+        .step-horizontal .step-description {
+            font-size: 0.85rem;
+            color: #888;
+            text-align: center;
+        }
+        .step-horizontal.active .step-title,
+        .step-horizontal.active .step-description {
+            color: #4361ee;
+        }
+        .step-horizontal.complete .step-title,
+        .step-horizontal.complete .step-description {
+            color: #2ecc71;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 12px 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #11998e;
+            box-shadow: 0 0 0 0.2rem rgba(17, 153, 142, 0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
+        }
+        .btn-secondary {
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+        }
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        .form-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        .invalid-feedback {
+            font-size: 0.875rem;
+        }
+        .valid-feedback {
+            font-size: 0.875rem;
+        }
+        .text-danger {
+            color: #dc3545 !important;
+            font-weight: bold;
+        }
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .campos-pasivos { 
+            display: none; 
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .campos-pasivos.show { 
+            display: block; 
+            opacity: 1;
+            max-height: 2000px;
+        }
+        .pasivo-item { 
+            border: 1px solid #dee2e6; 
+            border-radius: 8px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            background: #f8f9fa; 
+            position: relative;
+        }
+        .pasivo-item h6 { 
+            color: #495057; 
+            margin-bottom: 15px; 
+            border-bottom: 2px solid #dee2e6; 
+            padding-bottom: 10px; 
+        }
+        .btn-remove-pasivo { 
+            position: absolute; 
+            top: 10px; 
+            right: 10px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Verde -->
+            <div class="col-md-3 col-lg-2 px-0 sidebar">
+                <div class="p-3">
+                    <h4 class="text-white text-center mb-4">
+                        <i class="bi bi-clipboard-check"></i>
+                        Evaluador
+                    </h4>
+                    <hr class="text-white">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../../dashboardEvaluador.php">
+                                <i class="bi bi-house-door me-2"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../carta_visita/index_carta.php">
+                                <i class="bi bi-file-earmark-text-fill me-2"></i>
+                                Carta de Autorización
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="../index.php">
+                                <i class="bi bi-house-door-fill me-2"></i>
+                                Evaluación Visita Domiciliaria
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-warning" href="../../../../../logout.php">
+                                <i class="bi bi-box-arrow-right me-2"></i>
+                                Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="p-4">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h1 class="h3 mb-0">Pasivos</h1>
+                            <p class="text-muted mb-0">Formulario de información de pasivos</p>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">Usuario: <?php echo htmlspecialchars($nombreUsuario); ?></small><br>
+                            <small class="text-muted">Cédula: <?php echo htmlspecialchars($cedulaUsuario); ?></small>
+                        </div>
+                    </div>
+
+                    <!-- Contenido del formulario -->
+                    <?php echo $contenido; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

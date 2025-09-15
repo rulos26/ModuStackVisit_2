@@ -92,11 +92,24 @@ class PasivosController {
     public function validarDatos($datos) {
         $errores = [];
         
-        // Verificar que se recibieron los arrays necesarios
-        if (!isset($datos['item']) || !is_array($datos['item'])) {
-            $errores[] = "Debe proporcionar al menos un producto.";
-            return $errores;
+        // Validar si tiene pasivos (único campo obligatorio)
+        if (empty($datos['tiene_pasivos']) || $datos['tiene_pasivos'] == '') {
+            $errores[] = 'Debe seleccionar si posee pasivos.';
+            return $errores; // Si no selecciona, no validar más campos
         }
+        
+        // Si no tiene pasivos (valor 0), no validar más campos
+        if ($datos['tiene_pasivos'] == '0') {
+            return $errores; // No hay más validaciones necesarias
+        }
+        
+        // Si tiene pasivos (valor 1), validar los campos adicionales
+        if ($datos['tiene_pasivos'] == '1') {
+            // Verificar que se recibieron los arrays necesarios
+            if (!isset($datos['item']) || !is_array($datos['item'])) {
+                $errores[] = "Debe proporcionar al menos un producto.";
+                return $errores;
+            }
         
         if (!isset($datos['id_entidad']) || !is_array($datos['id_entidad'])) {
             $errores[] = "Debe proporcionar al menos una entidad.";
@@ -177,7 +190,37 @@ class PasivosController {
     public function guardar($datos) {
         try {
             $id_cedula = $_SESSION['id_cedula'];
+            $tiene_pasivos = $datos['tiene_pasivos'];
             
+            // Si el usuario indica que NO tiene pasivos
+            if ($tiene_pasivos == '0') {
+                $existe = $this->obtenerPorCedula($id_cedula);
+                
+                if ($existe) {
+                    // Si ya existe un registro, se actualiza para limpiar los campos
+                    $sql = "UPDATE pasivos SET 
+                            item = 'N/A', id_entidad = 'N/A', id_tipo_inversion = 'N/A', 
+                            id_ciudad = 0, deuda = 'N/A', cuota_mes = 'N/A'
+                            WHERE id_cedula = :id_cedula";
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->bindParam(':id_cedula', $id_cedula);
+                } else {
+                    // Si no existe, se inserta un nuevo registro con valores N/A
+                    $sql = "INSERT INTO pasivos (id_cedula, item, id_entidad, id_tipo_inversion, id_ciudad, deuda, cuota_mes) 
+                            VALUES (:id_cedula, 'N/A', 'N/A', 'N/A', 0, 'N/A', 'N/A')";
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->bindParam(':id_cedula', $id_cedula);
+                }
+                $ok = $stmt->execute();
+                
+                if ($ok) {
+                    return ['success' => true, 'message' => 'Se ha registrado que no tiene pasivos.'];
+                } else {
+                    return ['success' => false, 'message' => 'Error al registrar la información.'];
+                }
+            }
+            
+            // Si tiene pasivos, guardar toda la información
             // Primero eliminar registros existentes para esta cédula
             $sql_delete = "DELETE FROM pasivos WHERE id_cedula = :id_cedula";
             $stmt_delete = $this->db->prepare($sql_delete);
