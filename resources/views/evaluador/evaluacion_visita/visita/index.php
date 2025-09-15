@@ -51,16 +51,43 @@ ob_start();
             serán incluidos en una base de datos cuyo responsable es Grupo de Tareas Empresariales. 
             La finalidad de la recolección es para proceso que llevaen curso con la <b>ENTIDAD</b>. Usted podrá revocar su autorización en cualquier momento, consultar su información personal y ejercer sus derechos de conocer, actualizar, rectificar, corregir, suprimir o revocar su autorización enviando un email a: grpte@hotmail.com
         </div>
+        <!-- Mensajes de sesión -->
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <?php echo $_SESSION['error']; ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['error']); ?>
+        <?php endif; ?>
+
+        <?php if (isset($_SESSION['success'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <?php echo $_SESSION['success']; ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['success']); ?>
+        <?php endif; ?>
+
         <form action="session.php" method="POST" id="formDocumento" autocomplete="off">
             <div class="mb-3">
-                <label for="id_cedula" class="form-label">Número de Documento:</label>
-                <input type="number" class="form-control" id="id_cedula" name="id_cedula" required min="1" autocomplete="off">
+                <label for="id_cedula" class="form-label">
+                    <i class="bi bi-card-text me-1"></i>Número de Documento:
+                </label>
+                <input type="number" class="form-control" id="id_cedula" name="id_cedula" 
+                       required min="1" max="9999999999" autocomplete="off" 
+                       placeholder="Ingrese su número de cédula">
                 <div class="invalid-feedback">
-                    Por favor ingrese un número de documento válido.
+                    Por favor ingrese un número de documento válido (7-10 dígitos).
+                </div>
+                <div class="form-text">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Ingrese su número de cédula de ciudadanía (7-10 dígitos)
                 </div>
             </div>
             <div class="text-center">
-                <input type="submit" class="btn btn-primary" value="Empezar" id="btnEnviar" disabled>
+                <input type="submit" class="btn btn-primary" value="Validar Documento" id="btnEnviar" disabled>
             </div>
         </form>
         <div class="card-footer text-body-secondary">
@@ -69,16 +96,51 @@ ob_start();
     </div>
 </div>
 <script>
-// Automatización: Habilitar el botón solo si el campo tiene valor válido
+// Validación mejorada del documento
 const inputCedula = document.getElementById('id_cedula');
 const btnEnviar = document.getElementById('btnEnviar');
-inputCedula.addEventListener('input', function() {
-    if (inputCedula.value.length > 0 && parseInt(inputCedula.value) > 0) {
-        btnEnviar.disabled = false;
-        inputCedula.classList.remove('is-invalid');
-    } else {
-        btnEnviar.disabled = true;
+
+function validarDocumento() {
+    const valor = inputCedula.value.trim();
+    const longitud = valor.length;
+    
+    // Validar que sea numérico y mayor que 0
+    if (!valor || !/^\d+$/.test(valor) || parseInt(valor) <= 0) {
         inputCedula.classList.add('is-invalid');
+        inputCedula.classList.remove('is-valid');
+        btnEnviar.disabled = true;
+        return false;
+    }
+    
+    // Validar longitud (7-10 dígitos)
+    if (longitud < 7 || longitud > 10) {
+        inputCedula.classList.add('is-invalid');
+        inputCedula.classList.remove('is-valid');
+        btnEnviar.disabled = true;
+        return false;
+    }
+    
+    // Documento válido
+    inputCedula.classList.remove('is-invalid');
+    inputCedula.classList.add('is-valid');
+    btnEnviar.disabled = false;
+    return true;
+}
+
+// Event listeners
+inputCedula.addEventListener('input', validarDocumento);
+inputCedula.addEventListener('blur', validarDocumento);
+
+// Validar al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    validarDocumento();
+});
+
+// Prevenir envío si no es válido
+document.getElementById('formDocumento').addEventListener('submit', function(e) {
+    if (!validarDocumento()) {
+        e.preventDefault();
+        inputCedula.focus();
     }
 });
 </script>
