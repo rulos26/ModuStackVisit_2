@@ -292,16 +292,9 @@ try {
                     </div>
                 <?php endif; ?>
 
-                <?php if ($datos_existentes): ?>
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle me-2"></i>
-                        Ya existe información registrada para esta cédula. Puede actualizar los datos.
-                    </div>
-                <?php endif; ?>
-
                 <div class="row mb-4">
                     <div class="col-12 d-flex justify-content-between align-items-center">
-                        <img src="public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid logo-empresa">
+                        <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid logo-empresa">
                         <div class="text-muted text-end">
                             <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
                             <small>Cédula: <?php echo htmlspecialchars($id_cedula); ?></small>
@@ -327,7 +320,7 @@ try {
                             <div class="form-text">Documento de identidad</div>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="id_tipo_documentos" class="form-label">
+                            <label for="id_tipo_documentos" class="form-label required-field">
                                 <i class="bi bi-card-list me-1"></i>Tipo de Documento:
                             </label>
                             <select class="form-select" id="id_tipo_documentos" name="id_tipo_documentos" required>
@@ -342,7 +335,7 @@ try {
                             <div class="invalid-feedback">Por favor seleccione el tipo de documento.</div>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="cedula_expedida" class="form-label">
+                            <label for="cedula_expedida" class="form-label required-field">
                                 <i class="bi bi-geo-alt me-1"></i>Cédula expedida en:
                             </label>
                             <select class="form-select" id="cedula_expedida" name="cedula_expedida" required>
@@ -357,7 +350,7 @@ try {
                             <div class="invalid-feedback">Por favor seleccione el municipio de expedición.</div>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="nombres" class="form-label">
+                            <label for="nombres" class="form-label required-field">
                                 <i class="bi bi-person me-1"></i>Nombres:
                             </label>
                             <input type="text" class="form-control" id="nombres" name="nombres"
@@ -369,7 +362,7 @@ try {
                     <!-- Fila 2: Apellidos, Edad, Fecha y Lugar -->
                     <div class="row">
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="apellidos" class="form-label">
+                            <label for="apellidos" class="form-label required-field">
                                 <i class="bi bi-person me-1"></i>Apellidos:
                             </label>
                             <input type="text" class="form-control" id="apellidos" name="apellidos"
@@ -378,7 +371,7 @@ try {
                             <div class="invalid-feedback">Por favor ingrese apellidos válidos (solo letras).</div>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="edad" class="form-label">
+                            <label for="edad" class="form-label required-field">
                                 <i class="bi bi-calendar me-1"></i>Edad:
                             </label>
                             <input type="number" class="form-control" id="edad" name="edad"
@@ -387,7 +380,7 @@ try {
                             <div class="invalid-feedback">La edad debe estar entre 18 y 120 años.</div>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="fecha_expedicion" class="form-label">
+                            <label for="fecha_expedicion" class="form-label required-field">
                                 <i class="bi bi-calendar-date me-1"></i>Fecha de Expedición:
                             </label>
                             <input type="date" class="form-control" id="fecha_expedicion" name="fecha_expedicion"
@@ -396,7 +389,7 @@ try {
                             <div class="invalid-feedback">Por favor ingrese una fecha válida.</div>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="lugar_nacimiento" class="form-label">
+                            <label for="lugar_nacimiento" class="form-label required-field">
                                 <i class="bi bi-geo-alt me-1"></i>Lugar de Nacimiento:
                             </label>
                             <select class="form-select" id="lugar_nacimiento" name="lugar_nacimiento" required>
@@ -414,7 +407,7 @@ try {
                     <!-- Fila 3: Teléfonos y RH -->
                     <div class="row">
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="celular_1" class="form-label">
+                            <label for="celular_1" class="form-label required-field">
                                 <i class="bi bi-phone me-1"></i>Celular 1:
                             </label>
                             <input type="tel" class="form-control" id="celular_1" name="celular_1"
@@ -450,7 +443,7 @@ try {
                             </div>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="id_rh" class="form-label">
+                            <label for="id_rh" class="form-label required-field">
                                 <i class="bi bi-droplet me-1"></i>Tipo de RH:
                             </label>
                             <select class="form-select" id="id_rh" name="id_rh" required>
@@ -468,7 +461,7 @@ try {
                     <!-- Fila 4: Estatura, Peso, Estado Civil y Hace Cuánto -->
                     <div class="row">
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="id_estatura" class="form-label">
+                            <label for="id_estatura" class="form-label required-field">
                                 <i class="bi bi-arrows-vertical me-1"></i>Estatura:
                             </label>
                             <select class="form-select" id="id_estatura" name="id_estatura" required>
@@ -483,7 +476,7 @@ try {
                             <div class="invalid-feedback">Por favor seleccione la estatura.</div>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="peso_kg" class="form-label">
+                            <label for="peso_kg" class="form-label required-field">
                                 <i class="bi bi-weight me-1"></i>Peso (kg):
                             </label>
                             <select class="form-select" id="peso_kg" name="peso_kg" required>
@@ -498,7 +491,7 @@ try {
                             <div class="invalid-feedback">Por favor seleccione el peso.</div>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="id_estado_civil" class="form-label">
+                            <label for="id_estado_civil" class="form-label required-field">
                                 <i class="bi bi-heart me-1"></i>Estado Civil:
                             </label>
                             <select class="form-select" id="id_estado_civil" name="id_estado_civil" required>
@@ -535,7 +528,7 @@ try {
                             <div class="invalid-feedback">El número de hijos debe estar entre 0 y 20.</div>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="direccion" class="form-label">
+                            <label for="direccion" class="form-label required-field">
                                 <i class="bi bi-geo-alt me-1"></i>Dirección:
                             </label>
                             <input type="text" class="form-control" id="direccion" name="direccion"
@@ -544,7 +537,7 @@ try {
                             <div class="invalid-feedback">Por favor ingrese la dirección.</div>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="id_ciudad" class="form-label">
+                            <label for="id_ciudad" class="form-label required-field">
                                 <i class="bi bi-building me-1"></i>Ciudad:
                             </label>
                             <select class="form-select" id="id_ciudad" name="id_ciudad" required>
@@ -559,7 +552,7 @@ try {
                             <div class="invalid-feedback">Por favor seleccione la ciudad.</div>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="localidad" class="form-label">
+                            <label for="localidad" class="form-label required-field">
                                 <i class="bi bi-geo-alt me-1"></i>Localidad:
                             </label>
                             <input type="text" class="form-control" id="localidad" name="localidad"
@@ -572,7 +565,7 @@ try {
                     <!-- Fila 6: Barrio, Estrato, Correo y Cargo -->
                     <div class="row">
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="barrio" class="form-label">
+                            <label for="barrio" class="form-label required-field">
                                 <i class="bi bi-house me-1"></i>Barrio:
                             </label>
                             <input type="text" class="form-control" id="barrio" name="barrio"
@@ -581,7 +574,7 @@ try {
                             <div class="invalid-feedback">Por favor ingrese el barrio.</div>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="id_estrato" class="form-label">
+                            <label for="id_estrato" class="form-label required-field">
                                 <i class="bi bi-layers me-1"></i>Estrato:
                             </label>
                             <select class="form-select" id="id_estrato" name="id_estrato" required>
@@ -596,7 +589,7 @@ try {
                             <div class="invalid-feedback">Por favor seleccione el estrato.</div>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="correo" class="form-label">
+                            <label for="correo" class="form-label required-field">
                                 <i class="bi bi-envelope me-1"></i>Correo Electrónico:
                             </label>
                             <input type="email" class="form-control" id="correo" name="correo"
@@ -618,8 +611,8 @@ try {
                     <!-- Fila 7: Campos booleanos -->
                     <div class="row">
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="tiene_multa_simit" class="form-label">
-                                <i class="bi bi-exclamation-triangle me-1"></i>Tiene Multa en SIMIT: <span class="text-danger">*</span>
+                            <label for="tiene_multa_simit" class="form-label required-field">
+                                <i class="bi bi-exclamation-triangle me-1"></i>Tiene Multa en SIMIT:
                             </label>
                             <select class="form-select" id="tiene_multa_simit" name="tiene_multa_simit" required>
                                 <option value="">Seleccione una opción</option>
@@ -630,8 +623,8 @@ try {
                             <div class="valid-feedback">Campo completado correctamente.</div>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <label for="tiene_tarjeta_militar" class="form-label">
-                                <i class="bi bi-shield-check me-1"></i>Tiene Tarjeta Militar: <span class="text-danger">*</span>
+                            <label for="tiene_tarjeta_militar" class="form-label required-field">
+                                <i class="bi bi-shield-check me-1"></i>Tiene Tarjeta Militar:
                             </label>
                             <select class="form-select" id="tiene_tarjeta_militar" name="tiene_tarjeta_militar" required>
                                 <option value="">Seleccione una opción</option>
@@ -962,6 +955,15 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
         }
         .valid-feedback {
             font-size: 0.875rem;
+        }
+        .text-danger {
+            color: #dc3545 !important;
+            font-weight: bold;
+        }
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+            font-weight: bold;
         }
     </style>
 </head>
