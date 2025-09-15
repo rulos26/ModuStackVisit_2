@@ -458,7 +458,7 @@ try {
                                             <i class="bi bi-briefcase me-2"></i>Experiencia Laboral #<?php echo intval($index) + 1; ?>
                                         </h6>
                                         <?php if ($index > 0): ?>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="eliminarExperiencia(this)">
+                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeExperiencia(this)">
                                                 <i class="bi bi-trash me-1"></i>Eliminar
                                             </button>
                                         <?php endif; ?>
@@ -687,11 +687,6 @@ try {
     </div>
     
     <!-- Solo Bootstrap JS, no rutas locales para evitar errores de MIME -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Cleave.js para formato de moneda -->
-    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
-
-    <script>
 // Variables para Cleave.js
 let cleaveInstances = {};
 
