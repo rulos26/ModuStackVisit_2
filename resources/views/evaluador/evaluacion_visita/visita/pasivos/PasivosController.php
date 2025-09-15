@@ -195,23 +195,17 @@ class PasivosController {
             
             // Si el usuario indica que NO tiene pasivos
             if ($tiene_pasivos == '0') {
-                $existe = $this->obtenerPorCedula($id_cedula);
+                // Eliminar TODOS los registros existentes para esta cédula
+                $sql_delete = "DELETE FROM pasivos WHERE id_cedula = :id_cedula";
+                $stmt_delete = $this->db->prepare($sql_delete);
+                $stmt_delete->bindParam(':id_cedula', $id_cedula);
+                $stmt_delete->execute();
                 
-                if ($existe) {
-                    // Si ya existe un registro, se actualiza para limpiar los campos
-                    $sql = "UPDATE pasivos SET 
-                            item = 'N/A', id_entidad = 'N/A', id_tipo_inversion = 'N/A', 
-                            id_ciudad = 0, deuda = 'N/A', cuota_mes = 'N/A'
-                            WHERE id_cedula = :id_cedula";
-                    $stmt = $this->db->prepare($sql);
-                    $stmt->bindParam(':id_cedula', $id_cedula);
-                } else {
-                    // Si no existe, se inserta un nuevo registro con valores N/A
-                    $sql = "INSERT INTO pasivos (id_cedula, item, id_entidad, id_tipo_inversion, id_ciudad, deuda, cuota_mes) 
-                            VALUES (:id_cedula, 'N/A', 'N/A', 'N/A', 0, 'N/A', 'N/A')";
-                    $stmt = $this->db->prepare($sql);
-                    $stmt->bindParam(':id_cedula', $id_cedula);
-                }
+                // Insertar un solo registro indicando que no tiene pasivos
+                $sql = "INSERT INTO pasivos (id_cedula, item, id_entidad, id_tipo_inversion, id_ciudad, deuda, cuota_mes) 
+                        VALUES (:id_cedula, 'N/A', 'N/A', 'N/A', 0, 'N/A', 'N/A')";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindParam(':id_cedula', $id_cedula);
                 $ok = $stmt->execute();
                 
                 if ($ok) {

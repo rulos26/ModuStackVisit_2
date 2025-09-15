@@ -411,7 +411,7 @@ class InformeFinalPdfController {
             }
         }
 
-        // Consulta de pasivos
+        // Consulta de pasivos - Solo registros válidos (excluir registros con item = 'N/A')
         $sql_pasivos = "SELECT 
             p.item, 
             p.id_entidad, 
@@ -423,7 +423,7 @@ class InformeFinalPdfController {
             m.municipio
         FROM pasivos p
         LEFT JOIN municipios m ON p.id_ciudad = m.id_municipio
-        WHERE p.id_cedula = :cedula";
+        WHERE p.id_cedula = :cedula AND p.item != 'N/A' AND p.item IS NOT NULL AND p.item != ''";
         
         $stmt_pasivos = $db->prepare($sql_pasivos);
         $stmt_pasivos->bindParam(':cedula', $cedula);
