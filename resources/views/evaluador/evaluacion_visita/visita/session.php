@@ -2,6 +2,7 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
 // Iniciar la sesión si no está iniciada
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -10,46 +11,87 @@ if (session_status() == PHP_SESSION_NONE) {
 // Verificar si se ha enviado el formulario
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Obtener la cédula del formulario
-    $id_cedula = $_POST['id_cedula'];
-    
-    // Incluir el controlador de validación de documentos
-    require_once __DIR__ . '/../../../../../../app/Controllers/DocumentoValidatorController.php';
-    
-    use App\Controllers\DocumentoValidatorController;
+    $id_cedula = trim($_POST['id_cedula']);
     
     try {
-        // Crear instancia del validador
-        $validador = new DocumentoValidatorController();
+        // Incluir la conexión a la base de datos
+        require_once __DIR__ . '/../../../../../app/Database/Database.php';
         
-        // Validar el documento según el flujo optimizado
-        $resultado = $validador->validarDocumento($id_cedula);
+        $db = \App\Database\Database::getInstance()->getConnection();
         
-        if ($resultado['success']) {
-            // Almacenar la cédula en la sesión
+        // Paso 1: Validar formato del documento
+        if (!is_numeric($id_cedula) || $id_cedula <= 0) {
+            $_SESSION['error'] = 'Número de documento inválido. Ingrese una cédula válida (7-10 dígitos).';
+            header("Location: index.php");
+            exit;
+        }
+        
+        $longitud = strlen($id_cedula);
+        if ($longitud < 7 || $longitud > 10) {
+            $_SESSION['error'] = 'Número de documento inválido. Ingrese una cédula válida (7-10 dígitos).';
+            header("Location: index.php");
+            exit;
+        }
+        
+        // Paso 2: Buscar en tabla evaluados
+        $sql = "SELECT * FROM evaluados WHERE id_cedula = :cedula LIMIT 1";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':cedula', $id_cedula);
+        $stmt->execute();
+        $evaluado = $stmt->fetch(\PDO::FETCH_ASSOC);
+        
+        if ($evaluado) {
+            // Evaluado encontrado
             $_SESSION['id_cedula'] = $id_cedula;
+            $_SESSION['success'] = 'Evaluado encontrado. Redirigiendo a Información Personal…';
+            header("Location: informacion_personal/informacion_personal.php");
+            exit;
+        }
+        
+        // Paso 3: Buscar en tabla autorizaciones
+        $sql = "SELECT * FROM autorizaciones WHERE cedula = :cedula LIMIT 1";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':cedula', $id_cedula);
+        $stmt->execute();
+        $autorizacion = $stmt->fetch(\PDO::FETCH_ASSOC);
+        
+        if ($autorizacion) {
+            // Crear evaluado desde autorización
+            $sql = "INSERT INTO evaluados (
+                id_cedula, nombres, direccion, localidad, barrio, 
+                telefono, celular_1, correo, fecha_creacion
+            ) VALUES (
+                :id_cedula, :nombres, :direccion, :localidad, :barrio,
+                :telefono, :celular_1, :correo, NOW()
+            )";
             
-            // Almacenar mensaje de éxito
-            $_SESSION['success'] = $resultado['message'];
+            $stmt = $db->prepare($sql);
+            $stmt->bindParam(':id_cedula', $autorizacion['cedula']);
+            $stmt->bindParam(':nombres', $autorizacion['nombres']);
+            $stmt->bindParam(':direccion', $autorizacion['direccion']);
+            $stmt->bindParam(':localidad', $autorizacion['localidad']);
+            $stmt->bindParam(':barrio', $autorizacion['barrio']);
+            $stmt->bindParam(':telefono', $autorizacion['telefono']);
+            $stmt->bindParam(':celular_1', $autorizacion['celular']);
+            $stmt->bindParam(':correo', $autorizacion['correo']);
             
-            // Redirigir según la acción
-            if ($resultado['action'] === 'evaluado_existente' || $resultado['action'] === 'evaluado_creado') {
-                header("Location: " . $resultado['redirect']);
-            } else {
+            $resultado = $stmt->execute();
+            
+            if ($resultado) {
+                $_SESSION['id_cedula'] = $id_cedula;
+                $_SESSION['success'] = 'Se creó el evaluado a partir de la carta de autorización. Continúe con Información Personal.';
                 header("Location: informacion_personal/informacion_personal.php");
-            }
-        } else {
-            // Almacenar mensaje de error
-            $_SESSION['error'] = $resultado['message'];
-            
-            // Redirigir según la acción
-            if ($resultado['action'] === 'no_encontrado' && $resultado['redirect']) {
-                header("Location: " . $resultado['redirect']);
+                exit;
             } else {
-                // Volver al formulario de ingreso con error
+                $_SESSION['error'] = 'Error al crear evaluado desde autorización.';
                 header("Location: index.php");
+                exit;
             }
         }
         
+        // Paso 4: No encontrado en ninguna tabla
+        $_SESSION['error'] = 'No se encontró ninguna cédula asociada con carta de autorización.';
+        header("Location: ../../carta_visita/index_carta.php");
         exit;
         
     } catch (Exception $e) {

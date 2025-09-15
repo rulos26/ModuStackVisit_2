@@ -521,7 +521,7 @@ try {
                                 min="0" max="50" placeholder="Años">
                             <div class="form-text">Años en el estado civil actual</div>
                         </div>
-                    </div>
+                        </div>
 
                     <!-- Fila 5: Número de Hijos, Dirección, Ciudad y Localidad -->
                     <div class="row">
@@ -567,7 +567,7 @@ try {
                                 required maxlength="100">
                             <div class="invalid-feedback">Por favor ingrese la localidad.</div>
                         </div>
-                    </div>
+                        </div>
 
                     <!-- Fila 6: Barrio, Estrato, Correo y Cargo -->
                     <div class="row">
