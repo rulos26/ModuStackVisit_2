@@ -111,76 +111,77 @@ class PasivosController {
                 return $errores;
             }
         
-        if (!isset($datos['id_entidad']) || !is_array($datos['id_entidad'])) {
-            $errores[] = "Debe proporcionar al menos una entidad.";
-            return $errores;
-        }
-        
-        if (!isset($datos['id_tipo_inversion']) || !is_array($datos['id_tipo_inversion'])) {
-            $errores[] = "Debe proporcionar al menos un tipo de inversión.";
-            return $errores;
-        }
-        
-        if (!isset($datos['id_ciudad']) || !is_array($datos['id_ciudad'])) {
-            $errores[] = "Debe seleccionar al menos una ciudad.";
-            return $errores;
-        }
-        
-        if (!isset($datos['deuda']) || !is_array($datos['deuda'])) {
-            $errores[] = "Debe proporcionar al menos un valor de deuda.";
-            return $errores;
-        }
-        
-        if (!isset($datos['cuota_mes']) || !is_array($datos['cuota_mes'])) {
-            $errores[] = "Debe proporcionar al menos un valor de cuota mensual.";
-            return $errores;
-        }
-        
-        // Verificar que todos los arrays tengan la misma longitud
-        $longitud = count($datos['item']);
-        if (count($datos['id_entidad']) !== $longitud || 
-            count($datos['id_tipo_inversion']) !== $longitud || 
-            count($datos['id_ciudad']) !== $longitud || 
-            count($datos['deuda']) !== $longitud || 
-            count($datos['cuota_mes']) !== $longitud) {
-            $errores[] = "Todos los campos deben tener la misma cantidad de registros.";
-            return $errores;
-        }
-        
-        // Validar cada conjunto de datos
-        for ($i = 0; $i < $longitud; $i++) {
-            $numero_registro = $i + 1;
-            
-            // Validar producto (mínimo 3 caracteres)
-            if (empty($datos['item'][$i]) || strlen(trim($datos['item'][$i])) < 3) {
-                $errores[] = "Registro $numero_registro: El producto debe tener al menos 3 caracteres.";
+            if (!isset($datos['id_entidad']) || !is_array($datos['id_entidad'])) {
+                $errores[] = "Debe proporcionar al menos una entidad.";
+                return $errores;
             }
             
-            // Validar entidad (mínimo 3 caracteres)
-            if (empty($datos['id_entidad'][$i]) || strlen(trim($datos['id_entidad'][$i])) < 3) {
-                $errores[] = "Registro $numero_registro: La entidad debe tener al menos 3 caracteres.";
+            if (!isset($datos['id_tipo_inversion']) || !is_array($datos['id_tipo_inversion'])) {
+                $errores[] = "Debe proporcionar al menos un tipo de inversión.";
+                return $errores;
             }
             
-            // Validar tipo de inversión (mínimo 3 caracteres)
-            if (empty($datos['id_tipo_inversion'][$i]) || strlen(trim($datos['id_tipo_inversion'][$i])) < 3) {
-                $errores[] = "Registro $numero_registro: El tipo de inversión debe tener al menos 3 caracteres.";
+            if (!isset($datos['id_ciudad']) || !is_array($datos['id_ciudad'])) {
+                $errores[] = "Debe seleccionar al menos una ciudad.";
+                return $errores;
             }
             
-            // Validar ciudad (debe ser un número válido)
-            if (empty($datos['id_ciudad'][$i]) || !is_numeric($datos['id_ciudad'][$i]) || $datos['id_ciudad'][$i] < 1) {
-                $errores[] = "Registro $numero_registro: Debe seleccionar una ciudad válida.";
+            if (!isset($datos['deuda']) || !is_array($datos['deuda'])) {
+                $errores[] = "Debe proporcionar al menos un valor de deuda.";
+                return $errores;
             }
             
-            // Validar deuda (debe ser un número positivo)
-            $deuda_convertida = $this->convertirValorColombiano($datos['deuda'][$i]);
-            if (empty($datos['deuda'][$i]) || $deuda_convertida < 0) {
-                $errores[] = "Registro $numero_registro: La deuda debe ser un valor válido mayor o igual a 0. Formato aceptado: $1.500.000,50 o 1500000,50";
+            if (!isset($datos['cuota_mes']) || !is_array($datos['cuota_mes'])) {
+                $errores[] = "Debe proporcionar al menos un valor de cuota mensual.";
+                return $errores;
             }
             
-            // Validar cuota mensual (debe ser un número positivo)
-            $cuota_convertida = $this->convertirValorColombiano($datos['cuota_mes'][$i]);
-            if (empty($datos['cuota_mes'][$i]) || $cuota_convertida < 0) {
-                $errores[] = "Registro $numero_registro: La cuota mensual debe ser un valor válido mayor o igual a 0. Formato aceptado: $1.500.000,50 o 1500000,50";
+            // Verificar que todos los arrays tengan la misma longitud
+            $longitud = count($datos['item']);
+            if (count($datos['id_entidad']) !== $longitud || 
+                count($datos['id_tipo_inversion']) !== $longitud || 
+                count($datos['id_ciudad']) !== $longitud || 
+                count($datos['deuda']) !== $longitud || 
+                count($datos['cuota_mes']) !== $longitud) {
+                $errores[] = "Todos los campos deben tener la misma cantidad de registros.";
+                return $errores;
+            }
+            
+            // Validar cada conjunto de datos
+            for ($i = 0; $i < $longitud; $i++) {
+                $numero_registro = $i + 1;
+                
+                // Validar producto (mínimo 3 caracteres)
+                if (empty($datos['item'][$i]) || strlen(trim($datos['item'][$i])) < 3) {
+                    $errores[] = "Registro $numero_registro: El producto debe tener al menos 3 caracteres.";
+                }
+                
+                // Validar entidad (mínimo 3 caracteres)
+                if (empty($datos['id_entidad'][$i]) || strlen(trim($datos['id_entidad'][$i])) < 3) {
+                    $errores[] = "Registro $numero_registro: La entidad debe tener al menos 3 caracteres.";
+                }
+                
+                // Validar tipo de inversión (mínimo 3 caracteres)
+                if (empty($datos['id_tipo_inversion'][$i]) || strlen(trim($datos['id_tipo_inversion'][$i])) < 3) {
+                    $errores[] = "Registro $numero_registro: El tipo de inversión debe tener al menos 3 caracteres.";
+                }
+                
+                // Validar ciudad (debe ser un número válido)
+                if (empty($datos['id_ciudad'][$i]) || !is_numeric($datos['id_ciudad'][$i]) || $datos['id_ciudad'][$i] < 1) {
+                    $errores[] = "Registro $numero_registro: Debe seleccionar una ciudad válida.";
+                }
+                
+                // Validar deuda (debe ser un número positivo)
+                $deuda_convertida = $this->convertirValorColombiano($datos['deuda'][$i]);
+                if (empty($datos['deuda'][$i]) || $deuda_convertida < 0) {
+                    $errores[] = "Registro $numero_registro: La deuda debe ser un valor válido mayor o igual a 0. Formato aceptado: $1.500.000,50 o 1500000,50";
+                }
+                
+                // Validar cuota mensual (debe ser un número positivo)
+                $cuota_convertida = $this->convertirValorColombiano($datos['cuota_mes'][$i]);
+                if (empty($datos['cuota_mes'][$i]) || $cuota_convertida < 0) {
+                    $errores[] = "Registro $numero_registro: La cuota mensual debe ser un valor válido mayor o igual a 0. Formato aceptado: $1.500.000,50 o 1500000,50";
+                }
             }
         }
         
