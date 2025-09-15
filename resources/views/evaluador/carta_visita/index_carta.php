@@ -79,8 +79,8 @@ ob_start();
                 
                 <?php if (isset($_GET['reason']) && $_GET['reason'] === 'documento_no_encontrado'): ?>
                     <div class="mt-3">
-                        <a href="../../evaluacion_visita/visita/index.php" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left me-2"></i>Volver a Búsqueda de Documento
+                        <a href="../evaluacion_visita/visita/index.php" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>Volver a Evaluación de Visita
                         </a>
                     </div>
                 <?php endif; ?>
