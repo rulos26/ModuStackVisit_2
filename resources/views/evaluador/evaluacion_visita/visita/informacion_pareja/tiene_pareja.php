@@ -102,6 +102,17 @@ try {
         error_log('DEBUG tiene_pareja.php: Cargando datos existentes en formulario: ' . print_r($datos_formulario, true));
     }
     
+    // Determinar si tiene pareja basado en los datos existentes
+    $tiene_pareja_valor = '';
+    if (!empty($datos_formulario)) {
+        // Si hay datos de pareja (nombres, cédula, etc.), asumir que tiene pareja
+        if (!empty($datos_formulario['nombres']) && !empty($datos_formulario['cedula']) && $datos_formulario['cedula'] != '00') {
+            $tiene_pareja_valor = '2'; // Sí tiene pareja
+        } elseif (isset($datos_formulario['observacion']) && strpos($datos_formulario['observacion'], 'no tener pareja') !== false) {
+            $tiene_pareja_valor = '1'; // No tiene pareja
+        }
+    }
+    
     // Obtener opciones para los select
     $opciones_parametro = $controller->obtenerOpciones('parametro');
     $tipo_documentos = $controller->obtenerOpciones('tipo_documentos');
@@ -361,9 +372,15 @@ try {
             <?php endif; ?>
             
             <?php if ($datos_existentes): ?>
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle me-2"></i>
-                    Ya existe información de pareja registrada para esta cédula. Puede actualizar los datos.
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <strong>Datos cargados:</strong> Se encontró información de pareja registrada para esta cédula. Los datos se han cargado automáticamente.
+                    <br><small>Valor tiene_pareja: <?php echo $tiene_pareja_valor; ?> | Cédula: <?php echo !empty($datos_formulario['cedula']) ? $datos_formulario['cedula'] : 'vacía'; ?> | Nombres: <?php echo !empty($datos_formulario['nombres']) ? $datos_formulario['nombres'] : 'vacíos'; ?></small>
+                </div>
+            <?php else: ?>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>Sin datos:</strong> No se encontró información de pareja registrada para esta cédula. Complete el formulario para registrar la información.
                 </div>
             <?php endif; ?>
             
@@ -389,12 +406,12 @@ try {
                         <label for="tiene_pareja" class="form-label required-field">
                             <i class="bi bi-heart me-1"></i>¿Está usted en relación sentimental actual?
                         </label>
-                        <select class="form-select <?php echo !empty($errores_campos['tiene_pareja']) ? 'is-invalid' : (!empty($datos_formulario['tiene_pareja']) ? 'is-valid' : ''); ?>" 
+                        <select class="form-select <?php echo !empty($errores_campos['tiene_pareja']) ? 'is-invalid' : (!empty($tiene_pareja_valor) ? 'is-valid' : ''); ?>" 
                                 id="tiene_pareja" name="tiene_pareja" required onchange="toggleCamposPareja()">
                             <option value="">Seleccione una opción</option>
                             <?php foreach ($opciones_parametro as $opcion): ?>
                                 <option value="<?php echo $opcion['id']; ?>" 
-                                    <?php echo (!empty($datos_formulario['tiene_pareja']) && $datos_formulario['tiene_pareja'] == $opcion['id']) ? 'selected' : ''; ?>>
+                                    <?php echo ($tiene_pareja_valor == $opcion['id']) ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($opcion['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
@@ -408,7 +425,7 @@ try {
                 </div>
                 
                 <!-- Campos de información de pareja (se muestran/ocultan dinámicamente) -->
-                <div id="camposPareja" class="campos-pareja">
+                <div id="camposPareja" class="campos-pareja <?php echo ($tiene_pareja_valor == '2') ? 'show' : ''; ?>">
                     <hr class="my-4">
                     <h6 class="text-primary mb-3">
                         <i class="bi bi-person-heart me-2"></i>Información de la Pareja
@@ -696,6 +713,17 @@ function toggleCamposPareja() {
 
 // Ejecutar al cargar la página para establecer el estado inicial correcto
 document.addEventListener('DOMContentLoaded', function() {
+    // Verificar si hay datos cargados y mostrar campos si es necesario
+    const tieneParejaSelect = document.getElementById('tiene_pareja');
+    if (tieneParejaSelect && tieneParejaSelect.value === '2') {
+        // Si ya está seleccionado "Sí", mostrar los campos
+        const camposParejaDiv = document.getElementById('camposPareja');
+        if (camposParejaDiv) {
+            camposParejaDiv.classList.add('show');
+        }
+    }
+    
+    // Ejecutar la función normal
     toggleCamposPareja();
 });
 
