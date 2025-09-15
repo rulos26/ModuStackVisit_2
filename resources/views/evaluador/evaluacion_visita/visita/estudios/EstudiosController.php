@@ -215,15 +215,13 @@ class EstudiosController {
             $stmt_obs->execute();
             $observacion = $stmt_obs->fetch(\PDO::FETCH_ASSOC);
             
-            // Agregar la observación al array de estudios si existe
-            if ($observacion && !empty($estudios)) {
-                $estudios['observacion_academica'] = $observacion['observacion'];
-            } elseif ($observacion && empty($estudios)) {
-                // Si no hay estudios pero sí hay observación, crear un array con la observación
-                $estudios = ['observacion_academica' => $observacion['observacion']];
-            }
+            // Crear un array con estudios y observación separados
+            $resultado = [
+                'estudios' => $estudios,
+                'observacion_academica' => $observacion ? $observacion['observacion'] : ''
+            ];
             
-            return $estudios;
+            return $resultado;
         } catch (PDOException $e) {
             return [];
         }

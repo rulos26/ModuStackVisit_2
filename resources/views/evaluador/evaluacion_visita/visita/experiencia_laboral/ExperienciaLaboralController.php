@@ -361,10 +361,11 @@ class ExperienciaLaboralController {
                 return null;
             }
             
-            // Agregar la observación al array de resultados si existe
-            if ($observacion) {
-                $resultados['observacion_laboral'] = $observacion['observacion'];
-            }
+            // Crear un array con experiencias y observación separados
+            $resultado_final = [
+                'experiencias' => $resultados,
+                'observacion_laboral' => $observacion ? $observacion['observacion'] : ''
+            ];
             
             // Si solo hay un resultado, devolverlo como array asociativo para compatibilidad
             if (count($resultados) === 1) {

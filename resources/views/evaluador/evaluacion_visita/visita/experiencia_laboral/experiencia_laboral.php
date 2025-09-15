@@ -76,6 +76,19 @@ try {
     // Obtener datos existentes si los hay
     $id_cedula = $_SESSION['id_cedula'];
     $datos_existentes = $controller->obtenerPorCedula($id_cedula);
+    
+    // Extraer experiencias y observación por separado
+    $experiencias_existentes = [];
+    $observacion_existente = '';
+    if (!empty($datos_existentes) && is_array($datos_existentes)) {
+        if (isset($datos_existentes['experiencias'])) {
+            $experiencias_existentes = $datos_existentes['experiencias'];
+            $observacion_existente = $datos_existentes['observacion_laboral'] ?? '';
+        } else {
+            // Compatibilidad con estructura anterior
+            $experiencias_existentes = $datos_existentes;
+        }
+    }
 } catch (Exception $e) {
     error_log("Error en experiencia_laboral.php: " . $e->getMessage());
     $error_message = "Error al cargar los datos: " . $e->getMessage();
@@ -449,9 +462,9 @@ try {
                 <form action="" method="POST" id="formExperiencia" novalidate autocomplete="off">
                     <!-- Contenedor de experiencias laborales -->
                     <div id="experiencias-container">
-                        <?php if (!empty($datos_existentes) && is_array($datos_existentes)): ?>
+                        <?php if (!empty($experiencias_existentes) && is_array($experiencias_existentes)): ?>
                             <!-- Si hay datos existentes múltiples -->
-                            <?php foreach ($datos_existentes as $index => $experiencia): ?>
+                            <?php foreach ($experiencias_existentes as $index => $experiencia): ?>
                                 <div class="experiencia-item border rounded p-3 mb-3" data-index="<?php echo $index; ?>">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <h6 class="mb-0 text-primary">
@@ -668,7 +681,7 @@ try {
                             </label>
                             <textarea class="form-control" id="observacion_laboral" name="observacion_laboral" 
                                       rows="4" maxlength="1000" 
-                                      placeholder="Ingrese observaciones adicionales sobre la experiencia laboral..."><?php echo !empty($datos_formulario['observacion_laboral']) ? htmlspecialchars($datos_formulario['observacion_laboral']) : ''; ?></textarea>
+                                      placeholder="Ingrese observaciones adicionales sobre la experiencia laboral..."><?php echo !empty($observacion_existente) ? htmlspecialchars($observacion_existente) : ''; ?></textarea>
                             <div class="form-text">Máximo 1000 caracteres</div>
                         </div>
                     </div>
@@ -677,7 +690,7 @@ try {
                         <div class="col-12 text-center">
                             <button type="submit" class="btn btn-primary btn-lg me-2">
                                 <i class="bi bi-check-circle me-2"></i>
-                                <?php echo !empty($datos_existentes) ? 'Actualizar' : 'Guardar'; ?>
+                                <?php echo !empty($experiencias_existentes) ? 'Actualizar' : 'Guardar'; ?>
                             </button>
                             <a href="../informacion_judicial/informacion_judicial.php" class="btn btn-secondary btn-lg">
                                 <i class="bi bi-arrow-left me-2"></i>Volver
@@ -911,7 +924,7 @@ $contenido = ob_get_clean();
         }
     });
 
-    let experienciaCounter = <?php echo !empty($datos_existentes) && is_array($datos_existentes) ? count($datos_existentes) : 1; ?>;
+    let experienciaCounter = <?php echo !empty($experiencias_existentes) && is_array($experiencias_existentes) ? count($experiencias_existentes) : 1; ?>;
 
     document.addEventListener('DOMContentLoaded', function() {
         const btnAgregar = document.getElementById('btnAgregarExperiencia');
