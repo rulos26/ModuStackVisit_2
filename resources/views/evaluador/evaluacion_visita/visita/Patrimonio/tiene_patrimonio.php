@@ -256,11 +256,10 @@ try {
                                     <span class="input-group-text">
                                         <i class="bi bi-currency-dollar"></i>
                                     </span>
-                                    <input type="text" class="form-control" id="valor_vivienda" name="valor_vivienda" 
+                                <input type="text" class="form-control" id="valor_vivienda" name="valor_vivienda" 
                                            value="<?php echo $datos_existentes && isset($datos_existentes['valor_vivienda_formateado']) ? htmlspecialchars($datos_existentes['valor_vivienda_formateado']) : ''; ?>"
                                            placeholder="0.00" 
-                                           pattern="^\$?[\d,]+\.?\d{0,2}$"
-                                           title="Ingrese un valor válido (ej: $ 1,500,000.00)">
+                                           title="Ingrese un valor válido en pesos colombianos (ej: $ 1,500,000.00)">
                                 </div>
                             </div>
                             <div class="form-text">
@@ -320,11 +319,10 @@ try {
                                     <span class="input-group-text">
                                         <i class="bi bi-currency-dollar"></i>
                                     </span>
-                                    <input type="text" class="form-control" id="id_ahorro" name="id_ahorro" 
+                                <input type="text" class="form-control" id="id_ahorro" name="id_ahorro" 
                                            value="<?php echo $datos_existentes && isset($datos_existentes['id_ahorro_formateado']) ? htmlspecialchars($datos_existentes['id_ahorro_formateado']) : ''; ?>"
                                            placeholder="0.00"
-                                           pattern="^\$?[\d,]+\.?\d{0,2}$"
-                                           title="Ingrese un valor válido (ej: $ 500,000.00)">
+                                           title="Ingrese un valor válido en pesos colombianos (ej: $ 500,000.00)">
                                 </div>
                             </div>
                             <div class="form-text">
@@ -437,7 +435,12 @@ function toggleFormularioPatrimonio() {
                 numeralDecimalScale: 2,
                 numeralIntegerScale: 10,
                 prefix: '$ ',
-                rawValueTrimPrefix: true
+                rawValueTrimPrefix: true,
+                onValueChanged: function(e) {
+                    // Remover clases de validación CSS que causan el rojo
+                    valorViviendaInput.classList.remove('is-invalid');
+                    valorViviendaInput.classList.add('is-valid');
+                }
             });
         }
         
@@ -452,23 +455,59 @@ function toggleFormularioPatrimonio() {
                 numeralDecimalScale: 2,
                 numeralIntegerScale: 10,
                 prefix: '$ ',
-                rawValueTrimPrefix: true
+                rawValueTrimPrefix: true,
+                onValueChanged: function(e) {
+                    // Remover clases de validación CSS que causan el rojo
+                    ahorroInput.classList.remove('is-invalid');
+                    ahorroInput.classList.add('is-valid');
+            }
         });
     }
 }
 
-// Ejecutar al cargar la página para establecer el estado inicial correcto
-document.addEventListener('DOMContentLoaded', function() {
-    toggleFormularioPatrimonio();
-});
+    // Función para inicializar el estado de los campos monetarios
+    function inicializarEstadoCampos() {
+        const valorVivienda = document.getElementById('valor_vivienda');
+        const ahorro = document.getElementById('id_ahorro');
+        
+        // Si los campos tienen valores, marcarlos como válidos
+        if (valorVivienda && valorVivienda.value.trim() !== '') {
+            valorVivienda.classList.remove('is-invalid');
+            valorVivienda.classList.add('is-valid');
+        }
+        
+        if (ahorro && ahorro.value.trim() !== '') {
+            ahorro.classList.remove('is-invalid');
+            ahorro.classList.add('is-valid');
+        }
+    }
+
+    // Ejecutar al cargar la página para establecer el estado inicial correcto
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleFormularioPatrimonio();
+        
+        // Inicializar el estado de los campos después de un breve delay
+        setTimeout(() => {
+            inicializarEstadoCampos();
+        }, 500);
+    });
 
     // Función para validar formato monetario
     function validarFormatoMonetario(valor) {
-        // Remover espacios y caracteres no numéricos excepto punto y coma
-        const valorLimpio = valor.replace(/[^\d.,]/g, '');
-        // Verificar que tenga formato válido (números con opcional punto decimal)
+        if (!valor || valor.trim() === '') return false;
+        
+        // Remover prefijo $ y espacios
+        const valorLimpio = valor.replace(/^\$\s*/, '').trim();
+        
+        // Verificar que tenga formato válido para pesos colombianos
+        // Acepta: 1000, 1,000, 1000.00, 1,000.00, etc.
         const regex = /^\d{1,3}(,\d{3})*(\.\d{2})?$/;
-        return regex.test(valorLimpio) && parseFloat(valorLimpio.replace(/,/g, '')) > 0;
+        
+        if (!regex.test(valorLimpio)) return false;
+        
+        // Convertir a número y verificar que sea mayor a 0
+        const numero = parseFloat(valorLimpio.replace(/,/g, ''));
+        return !isNaN(numero) && numero > 0;
     }
     
     // Función para formatear valor monetario para envío
@@ -803,14 +842,22 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
         }
         
         /* Animación para campos monetarios */
-        .currency-input .form-control:valid {
+        .currency-input .form-control:valid,
+        .currency-input .form-control.is-valid {
             background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
             border-color: #28a745;
         }
         
-        .currency-input .form-control:invalid {
+        .currency-input .form-control:invalid,
+        .currency-input .form-control.is-invalid {
             background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
             border-color: #dc3545;
+        }
+        
+        /* Estado normal para campos monetarios (sin validación automática) */
+        .currency-input .form-control:not(:valid):not(:invalid):not(.is-valid):not(.is-invalid) {
+            background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
+            border-color: #d4edda;
         }
         
         /* Tooltip para campos monetarios */
