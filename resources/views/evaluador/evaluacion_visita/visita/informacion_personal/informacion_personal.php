@@ -247,7 +247,7 @@ try {
                     <div class="step-horizontal">
                         <div class="step-icon"><i class="fas fa-flag-checkered"></i></div>
                         <div class="step-title">Paso 22</div>
-                        <div class="step-description">Finalización</div>
+                        <div class="step-description">Registro Fotos</div>
                     </div>
                 </div>
 
