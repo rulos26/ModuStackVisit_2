@@ -682,7 +682,7 @@ try {
     </div>
     <!-- Solo Bootstrap JS, no rutas locales para evitar errores de MIME -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        
+    <script>
         // Validación adicional para campos obligatorios
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('formInformacionPersonal');
