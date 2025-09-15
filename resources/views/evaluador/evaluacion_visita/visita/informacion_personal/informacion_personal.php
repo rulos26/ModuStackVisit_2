@@ -251,15 +251,6 @@ try {
                     </div>
                 </div>
 
-                <!-- Controles de navegación -->
-                <div class="controls text-center mb-4">
-                    <a href="../index.php" class="btn btn-secondary me-2">
-                        <i class="fas fa-arrow-left me-1"></i>Anterior
-                    </a>
-                    <button class="btn btn-primary" id="nextBtn" type="button" disabled>
-                        Siguiente<i class="fas fa-arrow-right ms-1"></i>
-                    </button>
-                </div>
 
                 <!-- Mensajes de sesión -->
                 <?php if (isset($_SESSION['error'])): ?>
