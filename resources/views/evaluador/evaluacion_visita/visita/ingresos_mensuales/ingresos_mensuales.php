@@ -1,40 +1,74 @@
 <?php
-// Mostrar errores solo en desarrollo
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-
 ob_start();
 
+// Verificar sesión
 if (session_status() === PHP_SESSION_NONE) {
 session_start();
 }
 
+// Verificar si el usuario está autenticado
 if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
     header('Location: ../../../../../public/login.php');
     exit();
 }
 
+// Incluir el controlador desde la misma carpeta
 require_once __DIR__ . '/IngresosMensualesController.php';
+
 use App\Controllers\IngresosMensualesController;
 
+// Función para formatear valores monetarios
+function formatearValorMonetario($valor) {
+    if (empty($valor) || $valor === 'N/A' || !is_numeric($valor)) {
+        return '';
+    }
+    
+    // Convertir a número
+    $numero = floatval($valor);
+    
+    // Formatear con separadores de miles y símbolo de peso colombiano
+    return '$' . number_format($numero, 0, ',', '.');
+}
+
+// Variables para manejar errores y datos
+$errores_campos = [];
+$datos_formulario = [];
+
+// Procesar el formulario cuando se envía
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $controller = IngresosMensualesController::getInstance();
+
+        // Sanitizar y validar datos de entrada
         $datos = $controller->sanitizarDatos($_POST);
+
+        // Validar datos
         $errores = $controller->validarDatos($datos);
         
+        // Guardar los datos del formulario para mantenerlos en caso de error
+        $datos_formulario = $datos;
+        
         if (empty($errores)) {
+            // Intentar guardar los datos
             $resultado = $controller->guardar($datos);
+
             if ($resultado['success']) {
                 $_SESSION['success'] = $resultado['message'];
+
+                // Siempre redirigir a la siguiente pantalla después de guardar/actualizar exitosamente
                 header('Location: ../gasto/gasto.php');
                 exit();
             } else {
                 $_SESSION['error'] = $resultado['message'];
             }
         } else {
-            $_SESSION['error'] = implode('<br>', $errores);
+            // Procesar errores para mostrarlos en campos específicos
+            foreach ($errores as $error) {
+                $_SESSION['error'] = $error;
+            }
         }
     } catch (Exception $e) {
         error_log("Error en ingresos_mensuales.php: " . $e->getMessage());
@@ -43,31 +77,253 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 try {
+    // Obtener instancia del controlador
     $controller = IngresosMensualesController::getInstance();
+
+    // Obtener datos existentes si los hay
     $id_cedula = $_SESSION['id_cedula'];
     $datos_existentes = $controller->obtenerPorCedula($id_cedula);
+    
+    // Si no hay datos del formulario (POST), usar datos existentes
+    if (empty($datos_formulario) && $datos_existentes !== false) {
+        $datos_formulario = $datos_existentes;
+    }
 } catch (Exception $e) {
     error_log("Error en ingresos_mensuales.php: " . $e->getMessage());
     $error_message = "Error al cargar los datos: " . $e->getMessage();
 }
 ?>
-<link rel="stylesheet" href="../../../../../public/css/styles.css">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<!-- Puedes usar este código como base para tu formulario y menú responsive -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario Responsive y Menú</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-.steps-horizontal { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; width: 100%; gap: 0.5rem; }
-.step-horizontal { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; }
-.step-horizontal:not(:last-child)::after { content: ''; position: absolute; top: 24px; left: 50%; width: 100%; height: 4px; background: #e0e0e0; z-index: 0; transform: translateX(50%); }
-.step-horizontal .step-icon { width: 48px; height: 48px; border-radius: 50%; background: #e0e0e0; color: #888; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 0.5rem; border: 2px solid #e0e0e0; z-index: 1; transition: all 0.3s; }
-.step-horizontal.active .step-icon { background: #4361ee; border-color: #4361ee; color: #fff; box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.2); }
-.step-horizontal.complete .step-icon { background: #2ecc71; border-color: #2ecc71; color: #fff; }
-.step-horizontal .step-title { font-weight: bold; font-size: 1rem; margin-bottom: 0.2rem; }
-.step-horizontal .step-description { font-size: 0.85rem; color: #888; text-align: center; }
-.step-horizontal.active .step-title, .step-horizontal.active .step-description { color: #4361ee; }
-.step-horizontal.complete .step-title, .step-horizontal.complete .step-description { color: #2ecc71; }
+        /* Menú horizontal en desktop */
+        @media (min-width: 992px) {
+            .navbar-desktop {
+                display: flex !important;
+            }
+            .navbar-mobile {
+                display: none !important;
+            }
+        }
+        /* Menú hamburguesa en móvil/tablet */
+        @media (max-width: 991.98px) {
+            .navbar-desktop {
+                display: none !important;
+            }
+            .navbar-mobile {
+                display: block !important;
+            }
+        }
+        /* Ajuste para observaciones */
+        .obs-row {
+            flex-wrap: wrap;
+        }
+        .obs-col {
+            flex: 1 0 100%;
+            max-width: 100%;
+        }
+        /* Forzar 4 columnas desde 1440px (ajustado para pantallas grandes) */
+        @media (min-width: 1440px) {
+            .form-responsive-row > [class*="col-"] {
+                flex: 0 0 25%;
+                max-width: 25%;
+            }
+        }
+        /* Bootstrap row display flex fix para forzar columnas */
+        .form-responsive-row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        /* Ajuste para imagen de logo que no carga */
+        .logo-empresa {
+            max-width: 300px;
+            min-width: 120px;
+            height: auto;
+            object-fit: contain;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        /* Mejorar visual de la card */
+        .card {
+            box-shadow: 0 2px 16px 0 rgba(0,0,0,0.07);
+        }
+        /* Pasos */
+        .steps-horizontal {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            width: 100%;
+            gap: 0.5rem;
+        }
+        .step-horizontal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+        .step-horizontal:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            z-index: 0;
+            transform: translateX(50%);
+        }
+        .step-horizontal .step-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            border: 2px solid #e0e0e0;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+        .step-horizontal.active .step-icon {
+            background: #4361ee;
+            border-color: #4361ee;
+            color: #fff;
+            box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.2);
+        }
+        .step-horizontal.complete .step-icon {
+            background: #2ecc71;
+            border-color: #2ecc71;
+            color: #fff;
+        }
+        .step-horizontal .step-title {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+        .step-horizontal .step-description {
+            font-size: 0.85rem;
+            color: #888;
+            text-align: center;
+        }
+        .step-horizontal.active .step-title,
+        .step-horizontal.active .step-description {
+            color: #4361ee;
+        }
+        .step-horizontal.complete .step-title,
+        .step-horizontal.complete .step-description {
+            color: #2ecc71;
+        }
+        /* Estilos para errores en campos */
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+        .form-control.is-valid,
+        .form-select.is-valid {
+            border-color: #198754;
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+        }
+        .invalid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: #dc3545;
+        }
+        .valid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: #198754;
+        }
+        .form-text.error-message {
+            color: #dc3545;
+            font-weight: 500;
+        }
+        .form-text.success-message {
+            color: #198754;
+            font-weight: 500;
+        }
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+            font-weight: bold;
+        }
+        /* Estilos para campos de moneda */
+        .currency-input {
+            position: relative;
+        }
+        .currency-input .form-control {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-weight: 600;
+            color: #495057;
+            transition: all 0.3s ease;
+        }
+        .currency-input .form-control:focus {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-color: #11998e;
+            box-shadow: 0 0 0 0.2rem rgba(17, 153, 142, 0.25);
+            transform: translateY(-1px);
+        }
+        .currency-input .form-control:not(:valid):not(:invalid):not(.is-valid):not(.is-invalid) {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        .currency-input .form-control.is-valid {
+            background: linear-gradient(135deg, #d1edff 0%, #b3d9ff 100%);
+            border-color: #198754;
+            color: #0f5132;
+        }
+        .currency-input .form-control.is-invalid {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c2c7 100%);
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .currency-tooltip {
+            position: relative;
+        }
+        .currency-tooltip::after {
+            content: "Formato: $1.500.000,50";
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+        .currency-tooltip:hover::after {
+            opacity: 1;
+        }
 </style>
 
-<div class="container mt-4">
-    <div class="card mt-5">
+</head>
+<body class="bg-light">
+
+    <div class="container-fluid px-2">
+        <div class="card mt-4 w-100" style="max-width:100%; border-radius: 0;">
         <div class="card-header bg-primary text-white">
             <h5 class="card-title mb-0">
                 <i class="bi bi-cash-stack me-2"></i>
@@ -159,16 +415,6 @@ try {
                 </div>
             </div>
 
-            <!-- Controles de navegación -->
-            <div class="controls text-center mb-4">
-                <a href="../data_credito/data_credito.php" class="btn btn-secondary me-2">
-                    <i class="fas fa-arrow-left me-1"></i>Anterior
-                </a>
-                <button class="btn btn-primary" id="nextBtn" type="button" onclick="document.getElementById('formIngresos').submit();">
-                    Siguiente<i class="fas fa-arrow-right ms-1"></i>
-                </button>
-            </div>
-
             <!-- Mensajes de sesión -->
             <?php if (isset($_SESSION['error'])): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -204,7 +450,7 @@ try {
 
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 300px;">
+                    <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid logo-empresa">
                         </div>
                 <div class="col-md-6 text-end">
                     <div class="text-muted">
@@ -214,74 +460,90 @@ try {
                 </div>
             </div>
             
+            <!-- Nota informativa sobre campos obligatorios -->
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Información importante:</strong> Los campos marcados con <span class="text-danger">*</span> son obligatorios y deben ser completados antes de continuar.
+            </div>
+            
             <form action="" method="POST" id="formIngresos" novalidate autocomplete="off">
                         <div class="row">
                             <!-- Campo Salario -->
                             <div class="col-md-4 mb-3">
-                        <label for="salario_val" class="form-label">
+                        <label for="salario_val" class="form-label required-field">
                             <i class="bi bi-briefcase me-1"></i>Salario:
                         </label>
+                        <div class="currency-input currency-tooltip">
                         <div class="input-group">
                                     <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="salario_val" name="salario_val" 
-                                   value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['salario_val'] ?? '') : ''; ?>"
+                                       value="<?php echo !empty($datos_formulario) ? htmlspecialchars(formatearValorMonetario($datos_formulario['salario_val'] ?? '')) : ''; ?>"
                                    placeholder="0.00" required>
+                            </div>
                                 </div>
                         <div class="form-text">Ingrese el salario mensual</div>
                             </div>
                     
                             <!-- Campo Pensión -->
                             <div class="col-md-4 mb-3">
-                        <label for="pension_val" class="form-label">
+                        <label for="pension_val" class="form-label required-field">
                             <i class="bi bi-person-check me-1"></i>Pensión:
                         </label>
+                        <div class="currency-input currency-tooltip">
                         <div class="input-group">
                                     <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="pension_val" name="pension_val" 
-                                   value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['pension_val'] ?? '') : ''; ?>"
+                                       value="<?php echo !empty($datos_formulario) ? htmlspecialchars(formatearValorMonetario($datos_formulario['pension_val'] ?? '')) : ''; ?>"
                                    placeholder="0.00" required>
+                            </div>
                                 </div>
                         <div class="form-text">Ingrese el valor de la pensión</div>
                             </div>
                     
                             <!-- Campo Arriendo -->
                             <div class="col-md-4 mb-3">
-                        <label for="arriendo_val" class="form-label">
+                        <label for="arriendo_val" class="form-label required-field">
                             <i class="bi bi-house me-1"></i>Arriendo:
                         </label>
+                        <div class="currency-input currency-tooltip">
                         <div class="input-group">
                                     <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="arriendo_val" name="arriendo_val" 
-                                   value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['arriendo_val'] ?? '') : ''; ?>"
+                                       value="<?php echo !empty($datos_formulario) ? htmlspecialchars(formatearValorMonetario($datos_formulario['arriendo_val'] ?? '')) : ''; ?>"
                                    placeholder="0.00" required>
+                            </div>
                                 </div>
                         <div class="form-text">Ingrese el valor del arriendo</div>
                             </div>
                     
                             <!-- Campo Trabajo Independiente -->
                             <div class="col-md-4 mb-3">
-                        <label for="trabajo_independiente_val" class="form-label">
+                        <label for="trabajo_independiente_val" class="form-label required-field">
                             <i class="bi bi-person-workspace me-1"></i>Trabajo Independiente:
                         </label>
+                        <div class="currency-input currency-tooltip">
                         <div class="input-group">
                                     <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="trabajo_independiente_val" name="trabajo_independiente_val" 
-                                   value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['trabajo_independiente_val'] ?? '') : ''; ?>"
+                                       value="<?php echo !empty($datos_formulario) ? htmlspecialchars(formatearValorMonetario($datos_formulario['trabajo_independiente_val'] ?? '')) : ''; ?>"
                                    placeholder="0.00" required>
+                            </div>
                                 </div>
                         <div class="form-text">Ingrese ingresos por trabajo independiente</div>
                             </div>
                     
                             <!-- Campo Otros -->
                             <div class="col-md-4 mb-3">
-                        <label for="otros_val" class="form-label">
+                        <label for="otros_val" class="form-label required-field">
                             <i class="bi bi-plus-circle me-1"></i>Otros:
                         </label>
+                        <div class="currency-input currency-tooltip">
                         <div class="input-group">
                                     <span class="input-group-text">$</span>
                             <input type="text" class="form-control" id="otros_val" name="otros_val" 
-                                   value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes['otros_val'] ?? '') : ''; ?>"
+                                       value="<?php echo !empty($datos_formulario) ? htmlspecialchars(formatearValorMonetario($datos_formulario['otros_val'] ?? '')) : ''; ?>"
                                    placeholder="0.00" required>
+                            </div>
                         </div>
                         <div class="form-text">Ingrese otros ingresos</div>
                     </div>
@@ -313,44 +575,390 @@ try {
     </div>
     </div>
 
-<script src="https://cdn.jsdelivr.net/npm/autonumeric@4.1.0/dist/autoNumeric.min.js"></script>
+    <!-- Solo Bootstrap JS, no rutas locales para evitar errores de MIME -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Cleave.js para formato de moneda -->
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+</body>
+</html>
+
 <script>
-// Inicializar autoNumeric para campos de dinero
-document.querySelectorAll('input[id$="_val"]').forEach(function(input) {
-    new AutoNumeric(input, {
-        currencySymbol: '$',
-        decimalCharacter: '.',
-        digitGroupSeparator: ',',
-        minimumValue: '0'
+// Variables para Cleave.js
+let cleaveInstances = {};
+
+// Función para inicializar Cleave.js en un campo
+function inicializarCleave(campoId) {
+    if (cleaveInstances[campoId]) {
+        cleaveInstances[campoId].destroy();
+    }
+    
+    const campo = document.getElementById(campoId);
+    if (campo) {
+        cleaveInstances[campoId] = new Cleave(campo, {
+            numeral: true,
+            numeralThousandsGroupStyle: 'thousand',
+            numeralDecimalMark: ',',
+            delimiter: '.',
+            numeralDecimalScale: 2,
+            prefix: '$ ',
+            onValueChanged: function(e) {
+                const input = e.target;
+                // Remover clases de validación previas
+                input.classList.remove('is-invalid', 'is-valid');
+                
+                // Validar formato monetario
+                if (validarFormatoMonetario(input.value)) {
+                    input.classList.add('is-valid');
+                } else if (input.value.trim() !== '') {
+                    input.classList.add('is-invalid');
+                }
+            }
+        });
+    }
+}
+
+// Función para validar formato monetario colombiano
+function validarFormatoMonetario(valor) {
+    if (!valor || valor.trim() === '') return false;
+    
+    // Remover prefijo $ y espacios
+    let valorLimpio = valor.replace(/^\$\s*/, '').trim();
+    
+    // Patrón para formato colombiano: 1.500.000,50 o 1500000,50
+    const patronColombiano = /^(\d{1,3}(\.\d{3})*|\d+)(,\d{1,2})?$/;
+    
+    return patronColombiano.test(valorLimpio);
+}
+
+// Función para formatear valor para envío
+function formatearValorParaEnvio(valor) {
+    if (!valor || valor.trim() === '') return '';
+    
+    // Remover prefijo $ y espacios
+    let valorLimpio = valor.replace(/^\$\s*/, '').trim();
+    
+    // Reemplazar punto por nada (separador de miles) y coma por punto (decimal)
+    valorLimpio = valorLimpio.replace(/\./g, '').replace(',', '.');
+    
+    return valorLimpio;
+}
+
+// Función para inicializar estado de campos monetarios
+function inicializarEstadoCampos() {
+    const camposMonetarios = document.querySelectorAll('input[id$="_val"]');
+    camposMonetarios.forEach(campo => {
+        if (campo.value && campo.value.trim() !== '') {
+            campo.classList.add('is-valid');
+        }
+    });
+}
+
+// Ejecutar al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar Cleave.js para campos monetarios existentes
+    setTimeout(function() {
+        const camposMonetarios = document.querySelectorAll('input[id$="_val"]');
+        camposMonetarios.forEach(campo => {
+            inicializarCleave(campo.id);
+        });
+        
+        // Inicializar estado de campos monetarios
+        inicializarEstadoCampos();
+    }, 100);
+});
+
+// Validación del formulario
+document.getElementById('formIngresos').addEventListener('submit', function(event) {
+    const camposObligatorios = ['salario_val', 'pension_val', 'arriendo_val', 'trabajo_independiente_val', 'otros_val'];
+    
+    // Validar campos obligatorios
+    for (const campoId of camposObligatorios) {
+        const elemento = document.getElementById(campoId);
+        if (!elemento.value || elemento.value.trim() === '') {
+            event.preventDefault();
+            const label = elemento.closest('.mb-3').querySelector('label');
+            const labelText = label ? label.innerText.replace('*', '').trim() : campoId;
+            alert(`El campo "${labelText}" es obligatorio.`);
+            elemento.focus();
+            return;
+        }
+        
+        // Validación específica para campos monetarios
+        if (!validarFormatoMonetario(elemento.value)) {
+            event.preventDefault();
+            const label = elemento.closest('.mb-3').querySelector('label');
+            const labelText = label ? label.innerText.replace('*', '').trim() : campoId;
+            alert(`El campo "${labelText}" debe tener un formato válido (ej: $1.500.000,50).`);
+            elemento.focus();
+            return;
+        }
+    }
+    
+    // Formatear valores monetarios antes del envío
+    const camposMonetarios = document.querySelectorAll('input[id$="_val"]');
+    camposMonetarios.forEach(campo => {
+        if (campo.value && campo.value.trim() !== '') {
+            campo.value = formatearValorParaEnvio(campo.value);
+        }
     });
 });
 </script>
 
 <?php
 $contenido = ob_get_clean();
-// Intentar múltiples rutas posibles para el dashboard
-$dashboard_paths = [
-    dirname(__DIR__, 4) . '/layout/dashboard.php',
-    dirname(__DIR__, 5) . '/layout/dashboard.php',
-    dirname(__DIR__, 6) . '/layout/dashboard.php',
-    __DIR__ . '/../../../../../layout/dashboard.php',
-    __DIR__ . '/../../../../../../layout/dashboard.php'
-];
-$dashboard_incluido = false;
-foreach ($dashboard_paths as $path) {
-    if (file_exists($path)) {
-        include $path;
-        $dashboard_incluido = true;
-        break;
-    }
+
+// Verificar si la sesión ya está iniciada antes de intentar iniciarla
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
-if (!$dashboard_incluido) {
-    echo $contenido;
-    echo '<div style="background: #f8d7da; color: #721c24; padding: 1rem; margin: 1rem; border: 1px solid #f5c6cb; border-radius: 0.25rem;">';
-    echo '<strong>Advertencia:</strong> No se pudo cargar el layout del dashboard. Rutas probadas:<br>';
-    foreach ($dashboard_paths as $path) {
-        echo '- ' . htmlspecialchars($path) . '<br>';
-    }
-    echo '</div>';
+
+// Verificar si hay sesión activa
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['rol'])) {
+    header('Location: ../../../../../index.php');
+    exit();
 }
+
+// Verificar que el usuario tenga rol de Evaluador (4)
+if ($_SESSION['rol'] != 4) {
+    header('Location: ../../../../../index.php');
+    exit();
+}
+
+$nombreUsuario = $_SESSION['nombre'] ?? 'Evaluador';
+$cedulaUsuario = $_SESSION['cedula'] ?? '';
 ?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingresos Mensuales - Dashboard Evaluador</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.9);
+            border-radius: 8px;
+            margin: 2px 0;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .steps-horizontal {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            width: 100%;
+            gap: 0.5rem;
+        }
+        .step-horizontal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+        .step-horizontal:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            z-index: 0;
+            transform: translateX(50%);
+        }
+        .step-horizontal .step-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            border: 2px solid #e0e0e0;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+        .step-horizontal.active .step-icon {
+            background: #4361ee;
+            border-color: #4361ee;
+            color: #fff;
+            box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.2);
+        }
+        .step-horizontal.complete .step-icon {
+            background: #2ecc71;
+            border-color: #2ecc71;
+            color: #fff;
+        }
+        .step-horizontal .step-title {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+        .step-horizontal .step-description {
+            font-size: 0.85rem;
+            color: #888;
+            text-align: center;
+        }
+        .step-horizontal.active .step-title,
+        .step-horizontal.active .step-description {
+            color: #4361ee;
+        }
+        .step-horizontal.complete .step-title,
+        .step-horizontal.complete .step-description {
+            color: #2ecc71;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 12px 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #11998e;
+            box-shadow: 0 0 0 0.2rem rgba(17, 153, 142, 0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
+        }
+        .btn-secondary {
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+        }
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        .form-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        .invalid-feedback {
+            font-size: 0.875rem;
+        }
+        .valid-feedback {
+            font-size: 0.875rem;
+        }
+        .text-danger {
+            color: #dc3545 !important;
+            font-weight: bold;
+        }
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Verde -->
+            <div class="col-md-3 col-lg-2 px-0 sidebar">
+                <div class="p-3">
+                    <h4 class="text-white text-center mb-4">
+                        <i class="bi bi-clipboard-check"></i>
+                        Evaluador
+                    </h4>
+                    <hr class="text-white">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../../dashboardEvaluador.php">
+                                <i class="bi bi-house-door me-2"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../carta_visita/index_carta.php">
+                                <i class="bi bi-file-earmark-text-fill me-2"></i>
+                                Carta de Autorización
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="../index.php">
+                                <i class="bi bi-house-door-fill me-2"></i>
+                                Evaluación Visita Domiciliaria
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-warning" href="../../../../../logout.php">
+                                <i class="bi bi-box-arrow-right me-2"></i>
+                                Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="p-4">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h1 class="h3 mb-0">Ingresos Mensuales</h1>
+                            <p class="text-muted mb-0">Formulario de ingresos del núcleo familiar</p>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">Usuario: <?php echo htmlspecialchars($nombreUsuario); ?></small><br>
+                            <small class="text-muted">Cédula: <?php echo htmlspecialchars($cedulaUsuario); ?></small>
+                        </div>
+                    </div>
+
+                    <!-- Contenido del formulario -->
+                    <?php echo $contenido; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
