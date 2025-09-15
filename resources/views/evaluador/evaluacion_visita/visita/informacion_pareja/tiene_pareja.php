@@ -451,9 +451,11 @@ try {
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-                            <div class="invalid-feedback">
-                                <?php echo !empty($errores_campos['id_tipo_documentos']) ? htmlspecialchars($errores_campos['id_tipo_documentos']) : 'Debe seleccionar el tipo de documento.'; ?>
-                            </div>
+                            <?php if (!empty($errores_campos['id_tipo_documentos'])): ?>
+                                <div class="invalid-feedback">
+                                    <?php echo htmlspecialchars($errores_campos['id_tipo_documentos']); ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="cedula_expedida" class="form-label">
@@ -469,9 +471,11 @@ try {
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-                            <div class="invalid-feedback">
-                                <?php echo !empty($errores_campos['cedula_expedida']) ? htmlspecialchars($errores_campos['cedula_expedida']) : 'Debe seleccionar dónde fue expedida la cédula.'; ?>
-                            </div>
+                            <?php if (!empty($errores_campos['cedula_expedida'])): ?>
+                                <div class="invalid-feedback">
+                                    <?php echo htmlspecialchars($errores_campos['cedula_expedida']); ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     
@@ -517,9 +521,11 @@ try {
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-                            <div class="invalid-feedback">
-                                <?php echo !empty($errores_campos['id_genero']) ? htmlspecialchars($errores_campos['id_genero']) : 'Debe seleccionar el género.'; ?>
-                            </div>
+                            <?php if (!empty($errores_campos['id_genero'])): ?>
+                                <div class="invalid-feedback">
+                                    <?php echo htmlspecialchars($errores_campos['id_genero']); ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     
@@ -538,9 +544,11 @@ try {
                                     </option>
                                 <?php endforeach; ?>
                                 </select>
-                            <div class="invalid-feedback">
-                                <?php echo !empty($errores_campos['id_nivel_academico']) ? htmlspecialchars($errores_campos['id_nivel_academico']) : 'Debe seleccionar el nivel académico.'; ?>
-                            </div>
+                            <?php if (!empty($errores_campos['id_nivel_academico'])): ?>
+                                <div class="invalid-feedback">
+                                    <?php echo htmlspecialchars($errores_campos['id_nivel_academico']); ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="actividad" class="form-label">
@@ -549,9 +557,11 @@ try {
                             <input type="text" class="form-control <?php echo !empty($errores_campos['actividad']) ? 'is-invalid' : (!empty($datos_formulario['actividad']) ? 'is-valid' : ''); ?>" 
                                    id="actividad" name="actividad" 
                                    value="<?php echo !empty($datos_formulario['actividad']) ? htmlspecialchars($datos_formulario['actividad']) : ''; ?>">
-                            <div class="invalid-feedback">
-                                <?php echo !empty($errores_campos['actividad']) ? htmlspecialchars($errores_campos['actividad']) : 'La actividad es obligatoria.'; ?>
-                            </div>
+                            <?php if (!empty($errores_campos['actividad'])): ?>
+                                <div class="invalid-feedback">
+                                    <?php echo htmlspecialchars($errores_campos['actividad']); ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="empresa" class="form-label">
@@ -560,9 +570,11 @@ try {
                             <input type="text" class="form-control <?php echo !empty($errores_campos['empresa']) ? 'is-invalid' : (!empty($datos_formulario['empresa']) ? 'is-valid' : ''); ?>" 
                                    id="empresa" name="empresa" 
                                    value="<?php echo !empty($datos_formulario['empresa']) ? htmlspecialchars($datos_formulario['empresa']) : ''; ?>">
-                            <div class="invalid-feedback">
-                                <?php echo !empty($errores_campos['empresa']) ? htmlspecialchars($errores_campos['empresa']) : 'La empresa es obligatoria.'; ?>
-                            </div>
+                            <?php if (!empty($errores_campos['empresa'])): ?>
+                                <div class="invalid-feedback">
+                                    <?php echo htmlspecialchars($errores_campos['empresa']); ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     
@@ -574,9 +586,11 @@ try {
                             <input type="text" class="form-control <?php echo !empty($errores_campos['antiguedad']) ? 'is-invalid' : (!empty($datos_formulario['antiguedad']) ? 'is-valid' : ''); ?>" 
                                    id="antiguedad" name="antiguedad" 
                                    value="<?php echo !empty($datos_formulario['antiguedad']) ? htmlspecialchars($datos_formulario['antiguedad']) : ''; ?>">
-                            <div class="invalid-feedback">
-                                <?php echo !empty($errores_campos['antiguedad']) ? htmlspecialchars($errores_campos['antiguedad']) : 'La antigüedad es obligatoria.'; ?>
-                            </div>
+                            <?php if (!empty($errores_campos['antiguedad'])): ?>
+                                <div class="invalid-feedback">
+                                    <?php echo htmlspecialchars($errores_campos['antiguedad']); ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="direccion_empresa" class="form-label">
@@ -585,9 +599,11 @@ try {
                             <input type="text" class="form-control <?php echo !empty($errores_campos['direccion_empresa']) ? 'is-invalid' : (!empty($datos_formulario['direccion_empresa']) ? 'is-valid' : ''); ?>" 
                                    id="direccion_empresa" name="direccion_empresa" 
                                    value="<?php echo !empty($datos_formulario['direccion_empresa']) ? htmlspecialchars($datos_formulario['direccion_empresa']) : ''; ?>">
-                            <div class="invalid-feedback">
-                                <?php echo !empty($errores_campos['direccion_empresa']) ? htmlspecialchars($errores_campos['direccion_empresa']) : 'La dirección de la empresa es obligatoria.'; ?>
-                            </div>
+                            <?php if (!empty($errores_campos['direccion_empresa'])): ?>
+                                <div class="invalid-feedback">
+                                    <?php echo htmlspecialchars($errores_campos['direccion_empresa']); ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="telefono_1" class="form-label required-field">
@@ -614,9 +630,11 @@ try {
                                    id="telefono_2" name="telefono_2" 
                                    value="<?php echo !empty($datos_formulario['telefono_2']) ? htmlspecialchars($datos_formulario['telefono_2']) : ''; ?>" 
                                    pattern="[0-9]{7,10}">
-                            <div class="invalid-feedback">
-                                <?php echo !empty($errores_campos['telefono_2']) ? htmlspecialchars($errores_campos['telefono_2']) : 'El teléfono 2 debe tener entre 7 y 10 dígitos.'; ?>
-                            </div>
+                            <?php if (!empty($errores_campos['telefono_2'])): ?>
+                                <div class="invalid-feedback">
+                                    <?php echo htmlspecialchars($errores_campos['telefono_2']); ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="vive_candidato" class="form-label required-field">
@@ -656,7 +674,7 @@ try {
                     <div class="col-12 text-center">
                         <button type="submit" class="btn btn-primary btn-lg me-2">
                             <i class="bi bi-check-circle me-2"></i>
-                            <?php echo !empty($datos_formulario['tiene_pareja']) ? 'Actualizar' : 'Guardar'; ?>
+                            <?php echo $datos_existentes ? 'Actualizar' : 'Guardar'; ?>
                         </button>
                         <a href="../composición_familiar/composición_familiar.php" class="btn btn-secondary btn-lg">
                             <i class="bi bi-arrow-left me-2"></i>Volver
