@@ -154,7 +154,7 @@ try {
 
             <!-- Controles de navegación -->
             <div class="controls text-center mb-4">
-                <a href="../pasivos/tiene_pasivo.php" class="btn btn-secondary me-2">
+                <a href="../pasivos/pasivos.php" class="btn btn-secondary me-2">
                     <i class="fas fa-arrow-left me-1"></i>Anterior
                 </a>
                 <button class="btn btn-primary" id="nextBtn" type="button" onclick="document.getElementById('formAportantes').submit();">
@@ -282,7 +282,7 @@ try {
                             <i class="bi bi-check-circle me-2"></i>
                             <?php echo !empty($datos_existentes) ? 'Actualizar' : 'Guardar'; ?>
                         </button>
-                        <a href="../pasivos/tiene_pasivo.php" class="btn btn-secondary btn-lg">
+                        <a href="../pasivos/pasivos.php" class="btn btn-secondary btn-lg">
                             <i class="bi bi-arrow-left me-2"></i>Volver
                         </a>
                     </div>

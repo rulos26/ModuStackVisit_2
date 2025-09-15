@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $resultado = $controller->guardar($datos);
             if ($resultado['success']) {
                 $_SESSION['success'] = $resultado['message'];
-                header('Location: ../pasivos/tiene_pasivo.php');
+                header('Location: ../pasivos/pasivos.php');
                 exit();
             } else {
                 $_SESSION['error'] = $resultado['message'];

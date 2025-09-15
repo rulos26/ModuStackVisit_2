@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['success'] = $resultado['message'];
 
                 // Siempre redirigir a la siguiente pantalla después de guardar/actualizar exitosamente
-                header('Location: ../pasivos/tiene_pasivo.php');
+                header('Location: ../pasivos/pasivos.php');
                 exit();
             } else {
                 $_SESSION['error'] = $resultado['message'];
