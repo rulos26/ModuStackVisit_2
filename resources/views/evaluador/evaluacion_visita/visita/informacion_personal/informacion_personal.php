@@ -341,7 +341,7 @@ try {
 
                 <div class="row mb-4">
                     <div class="col-12 d-flex justify-content-between align-items-center">
-                        <img src="/public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid logo-empresa">
+                        <img src="public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid logo-empresa">
                         <div class="text-muted text-end">
                             <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
                             <small>Cédula: <?php echo htmlspecialchars($id_cedula); ?></small>
@@ -828,15 +828,15 @@ try {
 </html>
 <?php
 $contenido = ob_get_clean();
-// Intentar incluir dashboard
-$dashboard_path = __DIR__ . '/../../../../layout/dashboard.php';
+// Intentar incluir dashboard verde del evaluador
+$dashboard_path = __DIR__ . '/../../../dashboardEvaluador.php';
 if (file_exists($dashboard_path)) {
     include $dashboard_path;
 } else {
     // fallback si no existe
     echo $contenido;
     echo '<div style="background: #f8d7da; color: #721c24; padding: 1rem; margin: 1rem; border: 1px solid #f5c6cb; border-radius: 0.25rem;">';
-    echo '<strong>Advertencia:</strong> No se pudo cargar el layout del dashboard. Ruta intentada:<br>';
+    echo '<strong>Advertencia:</strong> No se pudo cargar el dashboard del evaluador. Ruta intentada:<br>';
     echo htmlspecialchars($dashboard_path);
     echo '</div>';
 }
