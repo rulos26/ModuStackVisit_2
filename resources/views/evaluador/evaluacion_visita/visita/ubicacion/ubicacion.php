@@ -259,9 +259,7 @@ try {
             
             <form id="formUbicacion" action="" method="POST">
                 <div class="row mb-4">
-                    <div class="col-6">
-                        <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 60%; height: auto;">
-                    </div>
+                   
                     <div class="col-6 d-flex align-items-center justify-content-center">
                         <div class="location-info text-center">
                             <h4><i class="fas fa-map-marker-alt me-2"></i>Ubicación Actual</h4>

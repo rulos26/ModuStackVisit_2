@@ -296,15 +296,6 @@ try {
                 </div>
             </div>
 
-            <!-- Controles de navegación -->
-            <div class="controls text-center mb-4">
-                <a href="../Patrimonio/tiene_patrimonio.php" class="btn btn-secondary me-2">
-                    <i class="fas fa-arrow-left me-1"></i>Anterior
-                </a>
-                <button class="btn btn-primary" id="nextBtn" type="button" onclick="document.getElementById('formCuentasBancarias').submit();">
-                    Siguiente<i class="fas fa-arrow-right ms-1"></i>
-                </button>
-            </div>
 
             <!-- Mensajes de sesión -->
             <?php if (isset($_SESSION['error'])): ?>
@@ -339,17 +330,6 @@ try {
                 </div>
             <?php endif; ?>
             
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 300px;">
-                </div>
-                <div class="col-md-6 text-end">
-                    <div class="text-muted">
-                        <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
-                        <small>Cédula: <?php echo htmlspecialchars($id_cedula); ?></small>
-                    </div>
-                </div>
-            </div>
             
             <form action="" method="POST" id="formCuentasBancarias" novalidate autocomplete="off">
                 <div id="cuentas-container">
@@ -474,27 +454,6 @@ try {
                 </div>
             </form>
         </div>
-        <div class="card-footer text-body-secondary">
-            <div class="row">
-                <div class="col-md-6">
-                    <small>© 2024 V0.01 - Sistema de Visitas Domiciliarias</small>
-                </div>
-                <div class="col-md-6 text-end">
-                    <small>Usuario: <?php echo htmlspecialchars($_SESSION['username'] ?? 'N/A'); ?></small>
-                </div>
-            </div>
-        </div>
-            </div>
-            <div class="card-footer text-body-secondary">
-                <div class="row">
-                    <div class="col-md-6">
-                        <small>© 2024 V0.01 - Sistema de Visitas Domiciliarias</small>
-                    </div>
-                    <div class="col-md-6 text-end">
-                        <small>Usuario: <?php echo htmlspecialchars($_SESSION['username'] ?? 'N/A'); ?></small>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
     <!-- Solo Bootstrap JS, no rutas locales para evitar errores de MIME -->
@@ -852,12 +811,309 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
                     </div>
 
                     <!-- Contenido del formulario -->
-                    <?php echo $contenido; ?>
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-credit-card me-2"></i>
+                                VISITA DOMICILIARÍA - CUENTAS BANCARIAS
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Indicador de pasos -->
+                            <div class="steps-horizontal mb-4">
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-user"></i></div>
+                                    <div class="step-title">Paso 1</div>
+                                    <div class="step-description">Información Personal</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-id-card"></i></div>
+                                    <div class="step-title">Paso 2</div>
+                                    <div class="step-description">Cámara de Comercio</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-heartbeat"></i></div>
+                                    <div class="step-title">Paso 3</div>
+                                    <div class="step-description">Salud</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-users"></i></div>
+                                    <div class="step-title">Paso 4</div>
+                                    <div class="step-description">Composición Familiar</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-heart"></i></div>
+                                    <div class="step-title">Paso 5</div>
+                                    <div class="step-description">Información Pareja</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-home"></i></div>
+                                    <div class="step-title">Paso 6</div>
+                                    <div class="step-description">Tipo de Vivienda</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-clipboard-check"></i></div>
+                                    <div class="step-title">Paso 7</div>
+                                    <div class="step-description">Estado de Vivienda</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-box-seam"></i></div>
+                                    <div class="step-title">Paso 8</div>
+                                    <div class="step-description">Inventario de Enseres</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-lightning-charge"></i></div>
+                                    <div class="step-title">Paso 9</div>
+                                    <div class="step-description">Servicios Públicos</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-bank"></i></div>
+                                    <div class="step-title">Paso 10</div>
+                                    <div class="step-description">Patrimonio</div>
+                                </div>
+                                <div class="step-horizontal active">
+                                    <div class="step-icon"><i class="fas fa-credit-card"></i></div>
+                                    <div class="step-title">Paso 11</div>
+                                    <div class="step-description">Cuentas Bancarias</div>
+                                </div>
+                            </div>
+
+                            <!-- Mensajes de sesión -->
+                            <?php if (isset($_SESSION['error'])): ?>
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <?php echo $_SESSION['error']; ?>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                <?php unset($_SESSION['error']); ?>
+                            <?php endif; ?>
+                            
+                            <?php if (isset($_SESSION['success'])): ?>
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <?php echo $_SESSION['success']; ?>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                <?php unset($_SESSION['success']); ?>
+                            <?php endif; ?>
+                            
+                            <?php if (isset($error_message)): ?>
+                                <div class="alert alert-danger">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    <?php echo htmlspecialchars($error_message); ?>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($datos_existentes)): ?>
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Ya existen <?php echo count($datos_existentes); ?> cuenta(s) bancaria(s) registrada(s) para esta cédula. Puede actualizar los datos.
+                                </div>
+                            <?php endif; ?>
+                            
+                            <form action="" method="POST" id="formCuentasBancarias" novalidate autocomplete="off">
+                                <div id="cuentas-container">
+                                    <!-- Cuenta inicial -->
+                                    <div class="cuenta-item" data-cuenta="0">
+                                        <h6><i class="fas fa-credit-card me-2"></i>Cuenta Bancaria #1</h6>
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="id_entidad_0" class="form-label required-field">
+                                                    <i class="bi bi-bank me-1"></i>Entidad:
+                                                </label>
+                                                <input type="text" class="form-control" id="id_entidad_0" name="id_entidad[]" 
+                                                       value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes[0]['id_entidad'] ?? '') : ''; ?>"
+                                                       placeholder="Ej: Banco de Bogotá" minlength="3" required>
+                                                <div class="form-text">Mínimo 3 caracteres</div>
+                                            </div>
+                                            
+                                            <div class="col-md-4 mb-3">
+                                                <label for="id_tipo_cuenta_0" class="form-label required-field">
+                                                    <i class="bi bi-card-text me-1"></i>Tipo de Cuenta:
+                                                </label>
+                                                <input type="text" class="form-control" id="id_tipo_cuenta_0" name="id_tipo_cuenta[]" 
+                                                       value="<?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes[0]['id_tipo_cuenta'] ?? '') : ''; ?>"
+                                                       placeholder="Ej: Ahorros, Corriente" minlength="3" required>
+                                                <div class="form-text">Mínimo 3 caracteres</div>
+                                            </div>
+                                            
+                                            <div class="col-md-4 mb-3">
+                                                <label for="id_ciudad_0" class="form-label required-field">
+                                                    <i class="bi bi-geo-alt me-1"></i>Ciudad:
+                                                </label>
+                                                <select class="form-select" id="id_ciudad_0" name="id_ciudad[]" required>
+                                                    <option value="">Seleccione una ciudad</option>
+                                                    <?php foreach ($municipios as $municipio): ?>
+                                                        <option value="<?php echo $municipio['id_municipio']; ?>" 
+                                                            <?php echo (!empty($datos_existentes) && $datos_existentes[0]['id_ciudad'] == $municipio['id_municipio']) ? 'selected' : ''; ?>>
+                                                            <?php echo htmlspecialchars($municipio['municipio']); ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="col-md-12 mb-3">
+                                                <label for="observaciones_0" class="form-label">
+                                                    <i class="bi bi-chat-text me-1"></i>Observaciones:
+                                                </label>
+                                                <textarea class="form-control" id="observaciones_0" name="observaciones[]" 
+                                                          rows="3" maxlength="500"><?php echo !empty($datos_existentes) ? htmlspecialchars($datos_existentes[0]['observaciones'] ?? '') : ''; ?></textarea>
+                                                <div class="form-text">Opcional. Máximo 500 caracteres. Mínimo 10 caracteres si se llena.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Cuentas adicionales si existen datos -->
+                                    <?php if (!empty($datos_existentes) && count($datos_existentes) > 1): ?>
+                                        <?php for ($i = 1; $i < count($datos_existentes); $i++): ?>
+                                            <div class="cuenta-item" data-cuenta="<?php echo $i; ?>">
+                                                <button type="button" class="btn btn-danger btn-sm btn-remove-cuenta" onclick="removeCuenta(this)">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                                <h6><i class="fas fa-credit-card me-2"></i>Cuenta Bancaria #<?php echo $i + 1; ?></h6>
+                                                <div class="row">
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="id_entidad_<?php echo $i; ?>" class="form-label required-field">
+                                                            <i class="bi bi-bank me-1"></i>Entidad:
+                                                        </label>
+                                                        <input type="text" class="form-control" id="id_entidad_<?php echo $i; ?>" name="id_entidad[]" 
+                                                               value="<?php echo htmlspecialchars($datos_existentes[$i]['id_entidad']); ?>"
+                                                               placeholder="Ej: Banco de Bogotá" minlength="3" required>
+                                                    </div>
+                                                    
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="id_tipo_cuenta_<?php echo $i; ?>" class="form-label required-field">
+                                                            <i class="bi bi-card-text me-1"></i>Tipo de Cuenta:
+                                                        </label>
+                                                        <input type="text" class="form-control" id="id_tipo_cuenta_<?php echo $i; ?>" name="id_tipo_cuenta[]" 
+                                                               value="<?php echo htmlspecialchars($datos_existentes[$i]['id_tipo_cuenta']); ?>"
+                                                               placeholder="Ej: Ahorros, Corriente" minlength="3" required>
+                                                    </div>
+                                                    
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="id_ciudad_<?php echo $i; ?>" class="form-label required-field">
+                                                            <i class="bi bi-geo-alt me-1"></i>Ciudad:
+                                                        </label>
+                                                        <select class="form-select" id="id_ciudad_<?php echo $i; ?>" name="id_ciudad[]" required>
+                                                            <option value="">Seleccione una ciudad</option>
+                                                            <?php foreach ($municipios as $municipio): ?>
+                                                                <option value="<?php echo $municipio['id_municipio']; ?>" 
+                                                                    <?php echo ($datos_existentes[$i]['id_ciudad'] == $municipio['id_municipio']) ? 'selected' : ''; ?>>
+                                                                    <?php echo htmlspecialchars($municipio['municipio']); ?>
+                                                                </option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                    </div>
+                                                    
+                                                    <div class="col-md-12 mb-3">
+                                                        <label for="observaciones_<?php echo $i; ?>" class="form-label">
+                                                            <i class="bi bi-chat-text me-1"></i>Observaciones:
+                                                        </label>
+                                                        <textarea class="form-control" id="observaciones_<?php echo $i; ?>" name="observaciones[]" 
+                                                                  rows="3" maxlength="500"><?php echo htmlspecialchars($datos_existentes[$i]['observaciones']); ?></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endfor; ?>
+                                    <?php endif; ?>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-12 text-center">
+                                        <button type="button" class="btn btn-success btn-lg me-2" id="btnAgregarCuenta">
+                                            <i class="bi bi-plus-circle me-2"></i>Agregar Otra Cuenta
+                                        </button>
+                                        <button type="submit" class="btn btn-primary btn-lg me-2">
+                                            <i class="bi bi-check-circle me-2"></i>
+                                            <?php echo !empty($datos_existentes) ? 'Actualizar' : 'Guardar'; ?>
+                                        </button>
+                                        <a href="../Patrimonio/tiene_patrimonio.php" class="btn btn-secondary btn-lg">
+                                            <i class="bi bi-arrow-left me-2"></i>Volver
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    let cuentaCounter = <?php echo !empty($datos_existentes) ? count($datos_existentes) : 1; ?>;
+
+    document.getElementById('btnAgregarCuenta').addEventListener('click', function() {
+        const container = document.getElementById('cuentas-container');
+        const nuevaCuenta = document.createElement('div');
+        nuevaCuenta.className = 'cuenta-item';
+        nuevaCuenta.setAttribute('data-cuenta', cuentaCounter);
+        
+        nuevaCuenta.innerHTML = `
+            <button type="button" class="btn btn-danger btn-sm btn-remove-cuenta" onclick="removeCuenta(this)">
+                <i class="fas fa-times"></i>
+            </button>
+            <h6><i class="fas fa-credit-card me-2"></i>Cuenta Bancaria #${cuentaCounter + 1}</h6>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="id_entidad_${cuentaCounter}" class="form-label required-field">
+                        <i class="bi bi-bank me-1"></i>Entidad:
+                    </label>
+                    <input type="text" class="form-control" id="id_entidad_${cuentaCounter}" name="id_entidad[]" 
+                           placeholder="Ej: Banco de Bogotá" minlength="3" required>
+                    <div class="form-text">Mínimo 3 caracteres</div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <label for="id_tipo_cuenta_${cuentaCounter}" class="form-label required-field">
+                        <i class="bi bi-card-text me-1"></i>Tipo de Cuenta:
+                    </label>
+                    <input type="text" class="form-control" id="id_tipo_cuenta_${cuentaCounter}" name="id_tipo_cuenta[]" 
+                           placeholder="Ej: Ahorros, Corriente" minlength="3" required>
+                    <div class="form-text">Mínimo 3 caracteres</div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <label for="id_ciudad_${cuentaCounter}" class="form-label required-field">
+                        <i class="bi bi-geo-alt me-1"></i>Ciudad:
+                    </label>
+                    <select class="form-select" id="id_ciudad_${cuentaCounter}" name="id_ciudad[]" required>
+                        <option value="">Seleccione una ciudad</option>
+                        <?php foreach ($municipios as $municipio): ?>
+                            <option value="<?php echo $municipio['id_municipio']; ?>">
+                                <?php echo htmlspecialchars($municipio['municipio']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                
+                <div class="col-md-12 mb-3">
+                    <label for="observaciones_${cuentaCounter}" class="form-label">
+                        <i class="bi bi-chat-text me-1"></i>Observaciones:
+                    </label>
+                    <textarea class="form-control" id="observaciones_${cuentaCounter}" name="observaciones[]" 
+                              rows="3" maxlength="500"></textarea>
+                    <div class="form-text">Opcional. Máximo 500 caracteres. Mínimo 10 caracteres si se llena.</div>
+                </div>
+            </div>
+        `;
+        
+        container.appendChild(nuevaCuenta);
+        cuentaCounter++;
+    });
+
+    function removeCuenta(button) {
+        const cuentaItem = button.closest('.cuenta-item');
+        cuentaItem.remove();
+        
+        // Renumerar las cuentas restantes
+        const cuentas = document.querySelectorAll('.cuenta-item');
+        cuentas.forEach((cuenta, index) => {
+            const titulo = cuenta.querySelector('h6');
+            titulo.innerHTML = `<i class="fas fa-credit-card me-2"></i>Cuenta Bancaria #${index + 1}`;
+        });
+    }
+    </script>
 </body>
 </html>

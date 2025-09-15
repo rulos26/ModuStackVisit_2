@@ -310,17 +310,6 @@ $base_url = $protocol . $host . $base_path;
                 </div>
             </div>
 
-            <!-- Controles de navegación -->
-            <div class="controls text-center mb-4">
-                <a href="../concepto_final_evaluador/concepto_final_evaluador.php" class="btn btn-secondary me-2">
-                    <i class="fas fa-arrow-left me-1"></i>Anterior
-                </a>
-                <?php if ($todas_completas): ?>
-                    <a href="../ubicacion/ubicacion.php" class="btn btn-primary">
-                        Siguiente<i class="fas fa-arrow-right ms-1"></i>
-                    </a>
-                <?php endif; ?>
-            </div>
 
             <!-- Mensajes de sesión -->
             <?php if (isset($_SESSION['error'])): ?>
@@ -348,17 +337,6 @@ $base_url = $protocol . $host . $base_path;
                 </div>
             <?php endif; ?>
             
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 300px;">
-                </div>
-                <div class="col-md-6 text-end">
-                    <div class="text-muted">
-                        <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
-                        <small>Cédula: <?php echo htmlspecialchars($id_cedula); ?></small>
-                    </div>
-                </div>
-            </div>
             
             <!-- Grid de fotos -->
             <div class="row">
@@ -452,16 +430,6 @@ $base_url = $protocol . $host . $base_path;
                     </div>
                 </div>
             <?php endif; ?>
-        </div>
-        <div class="card-footer text-body-secondary">
-            <div class="row">
-                <div class="col-md-6">
-                    <small>© 2024 V0.01 - Sistema de Visitas Domiciliarias</small>
-                </div>
-                <div class="col-md-6 text-end">
-                    <small>Usuario: <?php echo htmlspecialchars($_SESSION['username'] ?? 'N/A'); ?></small>
-                </div>
-            </div>
         </div>
     </div>
 </div>

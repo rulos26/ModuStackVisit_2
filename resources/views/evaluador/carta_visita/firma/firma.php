@@ -112,9 +112,7 @@ ob_start();
             <?php endif; ?>
             <form action="guardar_firma.php" method="POST" id="firmaForm">
                 <div class="row mb-4">
-                    <div class="col-6">
-                        <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 60%; height: auto;">
-                    </div>
+                   
                     <div class="col-6 d-flex align-items-center justify-content-center">
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalFirma" id="btnFirmar">
                             Firmar

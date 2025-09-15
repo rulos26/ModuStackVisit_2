@@ -155,15 +155,6 @@ try {
                 </div>
             </div>
 
-            <!-- Controles de navegación -->
-            <div class="controls text-center mb-4">
-                <a href="../servicios_publicos/servicios_publicos.php" class="btn btn-secondary me-2">
-                    <i class="fas fa-arrow-left me-1"></i>Anterior
-                </a>
-                <button class="btn btn-primary" id="nextBtn" type="button" onclick="document.getElementById('formPatrimonio').submit();">
-                    Siguiente<i class="fas fa-arrow-right ms-1"></i>
-                </button>
-            </div>
 
             <!-- Mensajes de sesión -->
             <?php if (isset($_SESSION['error'])): ?>
@@ -198,23 +189,12 @@ try {
                 </div>
             <?php endif; ?>
             
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid" style="max-width: 300px;">
-                </div>
-                <div class="col-md-6 text-end">
-                    <div class="text-muted">
-                        <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
-                        <small>Cédula: <?php echo htmlspecialchars($id_cedula); ?></small>
-                    </div>
-                </div>
-            </div>
             
             <form action="" method="POST" id="formPatrimonio" novalidate autocomplete="off">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="tiene_patrimonio" class="form-label">
-                            <i class="bi bi-question-circle me-1"></i>¿Posee usted patrimonio? <span class="text-danger">*</span>
+                        <label for="tiene_patrimonio" class="form-label required-field">
+                            <i class="bi bi-question-circle me-1"></i>¿Posee usted patrimonio?
                         </label>
                         <select class="form-select" id="tiene_patrimonio" name="tiene_patrimonio" required onchange="toggleFormularioPatrimonio()">
                             <option value="">Seleccione una opción</option>
@@ -369,19 +349,6 @@ try {
                 </div>
             </form>
         </div>
-        <div class="card-footer text-body-secondary">
-            <div class="row">
-                <div class="col-md-6">
-                    <small>© 2024 V0.01 - Sistema de Visitas Domiciliarias</small>
-                </div>
-                <div class="col-md-6 text-end">
-                    <small>Usuario: <?php echo htmlspecialchars($_SESSION['username'] ?? 'N/A'); ?></small>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
     <!-- Cleave.js para formateo de valores monetarios -->
     <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/addons/cleave-phone.co.js"></script>
@@ -887,6 +854,12 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
             opacity: 1;
             visibility: visible;
         }
+        
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -945,12 +918,485 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
                     </div>
 
                     <!-- Contenido del formulario -->
-                    <?php echo $contenido; ?>
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-bank me-2"></i>
+                                VISITA DOMICILIARÍA - PATRIMONIO
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Indicador de pasos -->
+                            <div class="steps-horizontal mb-4">
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-user"></i></div>
+                                    <div class="step-title">Paso 1</div>
+                                    <div class="step-description">Información Personal</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-id-card"></i></div>
+                                    <div class="step-title">Paso 2</div>
+                                    <div class="step-description">Cámara de Comercio</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-heartbeat"></i></div>
+                                    <div class="step-title">Paso 3</div>
+                                    <div class="step-description">Salud</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-users"></i></div>
+                                    <div class="step-title">Paso 4</div>
+                                    <div class="step-description">Composición Familiar</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-heart"></i></div>
+                                    <div class="step-title">Paso 5</div>
+                                    <div class="step-description">Información Pareja</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-home"></i></div>
+                                    <div class="step-title">Paso 6</div>
+                                    <div class="step-description">Tipo de Vivienda</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-clipboard-check"></i></div>
+                                    <div class="step-title">Paso 7</div>
+                                    <div class="step-description">Estado de Vivienda</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-box-seam"></i></div>
+                                    <div class="step-title">Paso 8</div>
+                                    <div class="step-description">Inventario de Enseres</div>
+                                </div>
+                                <div class="step-horizontal complete">
+                                    <div class="step-icon"><i class="fas fa-lightning-charge"></i></div>
+                                    <div class="step-title">Paso 9</div>
+                                    <div class="step-description">Servicios Públicos</div>
+                                </div>
+                                <div class="step-horizontal active">
+                                    <div class="step-icon"><i class="fas fa-bank"></i></div>
+                                    <div class="step-title">Paso 10</div>
+                                    <div class="step-description">Patrimonio</div>
+                                </div>
+                            </div>
+
+                            <!-- Mensajes de sesión -->
+                            <?php if (isset($_SESSION['error'])): ?>
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <?php echo $_SESSION['error']; ?>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                <?php unset($_SESSION['error']); ?>
+                            <?php endif; ?>
+                            
+                            <?php if (isset($_SESSION['success'])): ?>
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <?php echo $_SESSION['success']; ?>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                <?php unset($_SESSION['success']); ?>
+                            <?php endif; ?>
+                            
+                            <?php if (isset($error_message)): ?>
+                                <div class="alert alert-danger">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    <?php echo htmlspecialchars($error_message); ?>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <?php if ($datos_existentes): ?>
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Ya existe información de patrimonio registrada para esta cédula. Puede actualizar los datos.
+                                </div>
+                            <?php endif; ?>
+                            
+                            <form action="" method="POST" id="formPatrimonio" novalidate autocomplete="off">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="tiene_patrimonio" class="form-label required-field">
+                                            <i class="bi bi-question-circle me-1"></i>¿Posee usted patrimonio?
+                                        </label>
+                                        <select class="form-select" id="tiene_patrimonio" name="tiene_patrimonio" required onchange="toggleFormularioPatrimonio()">
+                                            <option value="">Seleccione una opción</option>
+                                            <?php foreach ($parametros as $parametro): ?>
+                                                <option value="<?php echo $parametro['id']; ?>" 
+                                                    <?php 
+                                                    // Determinar la selección basándose en los datos existentes
+                                                    if ($datos_existentes) {
+                                                        // Si existe un registro y el valor_vivienda no es 'N/A', entonces tiene patrimonio
+                                                        if ($datos_existentes['valor_vivienda'] != 'N/A' && $parametro['id'] != '1') {
+                                                            echo 'selected';
+                                                        } elseif ($datos_existentes['valor_vivienda'] == 'N/A' && $parametro['id'] == '1') {
+                                                            echo 'selected';
+                                                        }
+                                                    }
+                                                    ?>>
+                                                    <?php echo htmlspecialchars($parametro['nombre']); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <div class="form-text">Seleccione "No" si no posee patrimonio, o "Sí" para continuar con el formulario detallado.</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Campos de patrimonio detallado (se muestran/ocultan dinámicamente) -->
+                                <div id="camposPatrimonio" class="campos-patrimonio" style="display: <?php echo ($datos_existentes && $datos_existentes['valor_vivienda'] != 'N/A') ? 'block' : 'none'; ?>;">
+                                    <hr class="my-4">
+                                    <h6 class="text-primary mb-3">
+                                        <i class="bi bi-bank me-2"></i>Detalles del Patrimonio
+                                    </h6>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-4 mb-3">
+                                            <label for="valor_vivienda" class="form-label">
+                                                <i class="bi bi-house-dollar me-1"></i>Valor de la Vivienda:
+                                            </label>
+                                            <div class="currency-input currency-tooltip">
+                                            <div class="input-group">
+                                                    <span class="input-group-text">
+                                                        <i class="bi bi-currency-dollar"></i>
+                                                    </span>
+                                                <input type="text" class="form-control" id="valor_vivienda" name="valor_vivienda" 
+                                                           value="<?php echo $datos_existentes && isset($datos_existentes['valor_vivienda_formateado']) ? htmlspecialchars($datos_existentes['valor_vivienda_formateado']) : ''; ?>"
+                                                           placeholder="0.00" 
+                                                           title="Ingrese un valor válido en pesos colombianos (ej: $ 1,500,000.00)">
+                                                </div>
+                                            </div>
+                                            <div class="form-text">
+                                                <i class="bi bi-info-circle me-1"></i>
+                                                Ingrese el valor estimado de su vivienda en pesos colombianos
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-4 mb-3">
+                                            <label for="direccion" class="form-label">
+                                                <i class="bi bi-geo-alt me-1"></i>Dirección:
+                                            </label>
+                                            <input type="text" class="form-control" id="direccion" name="direccion" 
+                                                   value="<?php echo $datos_existentes && $datos_existentes['direccion'] != 'N/A' ? htmlspecialchars($datos_existentes['direccion']) : ''; ?>"
+                                                   placeholder="Dirección de la vivienda" minlength="10">
+                                            <div class="form-text">Mínimo 10 caracteres</div>
+                                        </div>
+                                        
+                                        <div class="col-md-4 mb-3">
+                                            <label for="id_vehiculo" class="form-label">
+                                                <i class="bi bi-car-front me-1"></i>Vehículo:
+                                            </label>
+                                            <input type="text" class="form-control" id="id_vehiculo" name="id_vehiculo" 
+                                                   value="<?php echo $datos_existentes && $datos_existentes['id_vehiculo'] != 'N/A' ? htmlspecialchars($datos_existentes['id_vehiculo']) : ''; ?>"
+                                                   placeholder="Tipo de vehículo" minlength="3">
+                                            <div class="form-text">Mínimo 3 caracteres</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-4 mb-3">
+                                            <label for="id_marca" class="form-label">
+                                                <i class="bi bi-tag me-1"></i>Marca:
+                                            </label>
+                                            <input type="text" class="form-control" id="id_marca" name="id_marca" 
+                                                   value="<?php echo $datos_existentes && $datos_existentes['id_marca'] != 'N/A' ? htmlspecialchars($datos_existentes['id_marca']) : ''; ?>"
+                                                   placeholder="Marca del vehículo" minlength="2">
+                                            <div class="form-text">Mínimo 2 caracteres</div>
+                                        </div>
+                                        
+                                        <div class="col-md-4 mb-3">
+                                            <label for="id_modelo" class="form-label">
+                                                <i class="bi bi-gear me-1"></i>Modelo:
+                                            </label>
+                                            <input type="text" class="form-control" id="id_modelo" name="id_modelo" 
+                                                   value="<?php echo $datos_existentes && $datos_existentes['id_modelo'] != 'N/A' ? htmlspecialchars($datos_existentes['id_modelo']) : ''; ?>"
+                                                   placeholder="Modelo del vehículo" minlength="2">
+                                            <div class="form-text">Mínimo 2 caracteres</div>
+                                        </div>
+                                        
+                                        <div class="col-md-4 mb-3">
+                                            <label for="id_ahorro" class="form-label">
+                                                <i class="bi bi-piggy-bank me-1"></i>Ahorro (CDT, Inversiones):
+                                            </label>
+                                            <div class="currency-input currency-tooltip">
+                                            <div class="input-group">
+                                                    <span class="input-group-text">
+                                                        <i class="bi bi-currency-dollar"></i>
+                                                    </span>
+                                                <input type="text" class="form-control" id="id_ahorro" name="id_ahorro" 
+                                                           value="<?php echo $datos_existentes && isset($datos_existentes['id_ahorro_formateado']) ? htmlspecialchars($datos_existentes['id_ahorro_formateado']) : ''; ?>"
+                                                           placeholder="0.00"
+                                                           title="Ingrese un valor válido en pesos colombianos (ej: $ 500,000.00)">
+                                                </div>
+                                            </div>
+                                            <div class="form-text">
+                                                <i class="bi bi-info-circle me-1"></i>
+                                                Ingrese el valor total de sus ahorros e inversiones
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="otros" class="form-label">
+                                                <i class="bi bi-plus-circle me-1"></i>Otros Bienes:
+                                            </label>
+                                            <input type="text" class="form-control" id="otros" name="otros" 
+                                                   value="<?php echo $datos_existentes && $datos_existentes['otros'] != 'N/A' ? htmlspecialchars($datos_existentes['otros']) : ''; ?>"
+                                                   placeholder="Otros bienes o activos">
+                                            <div class="form-text">Opcional - Otros bienes o activos que posea</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-12 mb-3">
+                                            <label for="observacion" class="form-label">
+                                                <i class="bi bi-chat-text me-1"></i>Observación:
+                                            </label>
+                                            <textarea class="form-control" id="observacion" name="observacion" 
+                                                      rows="4" maxlength="1000"><?php echo $datos_existentes && $datos_existentes['observacion'] != 'N/A' ? htmlspecialchars($datos_existentes['observacion']) : ''; ?></textarea>
+                                            <div class="form-text">Máximo 1000 caracteres. Mínimo 10 caracteres si se llena.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-12 text-center">
+                                        <button type="submit" class="btn btn-primary btn-lg me-2">
+                                            <i class="bi bi-check-circle me-2"></i>
+                                            <?php echo $datos_existentes ? 'Actualizar' : 'Guardar'; ?>
+                                        </button>
+                                        <a href="../servicios_publicos/servicios_publicos.php" class="btn btn-secondary btn-lg">
+                                            <i class="bi bi-arrow-left me-2"></i>Volver
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/addons/cleave-phone.co.js"></script>
+    
+<script>
+    // Variables globales para los formateadores
+    let cleaveValorVivienda, cleaveAhorro;
+    
+function toggleFormularioPatrimonio() {
+    const tienePatrimonioSelect = document.getElementById('tiene_patrimonio');
+    const camposPatrimonioDiv = document.getElementById('camposPatrimonio');
+    const campos = camposPatrimonioDiv.querySelectorAll('input, select, textarea');
+
+    // Determinar si debe mostrar los campos basándose en la selección
+    // Asumiendo que '1' es "No" y cualquier otro valor es "Sí"
+    if (tienePatrimonioSelect.value && tienePatrimonioSelect.value !== '1') {
+        camposPatrimonioDiv.style.display = 'block';
+            // Reinicializar los formateadores cuando se muestran los campos
+            setTimeout(() => {
+                inicializarFormateadores();
+            }, 100);
+    } else {
+        camposPatrimonioDiv.style.display = 'none';
+        // Limpiar todos los campos cuando se ocultan para no enviar datos antiguos
+        campos.forEach(campo => {
+            if (campo.type === 'select-one') {
+                campo.selectedIndex = 0; // Resetea el select
+            } else {
+                campo.value = ''; // Limpia inputs y textareas
+            }
+        });
+            // Destruir formateadores cuando se ocultan los campos
+            if (cleaveValorVivienda) cleaveValorVivienda.destroy();
+            if (cleaveAhorro) cleaveAhorro.destroy();
+        }
+    }
+    
+    function inicializarFormateadores() {
+        // Destruir formateadores existentes si los hay
+        if (cleaveValorVivienda) cleaveValorVivienda.destroy();
+        if (cleaveAhorro) cleaveAhorro.destroy();
+        
+        // Inicializar Cleave.js para valor de vivienda
+        const valorViviendaInput = document.getElementById('valor_vivienda');
+        if (valorViviendaInput) {
+            cleaveValorVivienda = new Cleave(valorViviendaInput, {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralDecimalMark: '.',
+                delimiter: ',',
+                numeralDecimalScale: 2,
+                numeralIntegerScale: 10,
+                prefix: '$ ',
+                rawValueTrimPrefix: true,
+                onValueChanged: function(e) {
+                    // Remover clases de validación CSS que causan el rojo
+                    valorViviendaInput.classList.remove('is-invalid');
+                    valorViviendaInput.classList.add('is-valid');
+                }
+            });
+        }
+        
+        // Inicializar Cleave.js para ahorro
+        const ahorroInput = document.getElementById('id_ahorro');
+        if (ahorroInput) {
+            cleaveAhorro = new Cleave(ahorroInput, {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralDecimalMark: '.',
+                delimiter: ',',
+                numeralDecimalScale: 2,
+                numeralIntegerScale: 10,
+                prefix: '$ ',
+                rawValueTrimPrefix: true,
+                onValueChanged: function(e) {
+                    // Remover clases de validación CSS que causan el rojo
+                    ahorroInput.classList.remove('is-invalid');
+                    ahorroInput.classList.add('is-valid');
+            }
+        });
+    }
+}
+
+    // Función para inicializar el estado de los campos monetarios
+    function inicializarEstadoCampos() {
+        const valorVivienda = document.getElementById('valor_vivienda');
+        const ahorro = document.getElementById('id_ahorro');
+        
+        // Si los campos tienen valores, marcarlos como válidos
+        if (valorVivienda && valorVivienda.value.trim() !== '') {
+            valorVivienda.classList.remove('is-invalid');
+            valorVivienda.classList.add('is-valid');
+        }
+        
+        if (ahorro && ahorro.value.trim() !== '') {
+            ahorro.classList.remove('is-invalid');
+            ahorro.classList.add('is-valid');
+        }
+    }
+
+    // Ejecutar al cargar la página para establecer el estado inicial correcto
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleFormularioPatrimonio();
+        
+        // Inicializar el estado de los campos después de un breve delay
+        setTimeout(() => {
+            inicializarEstadoCampos();
+        }, 500);
+    });
+
+    // Función para validar formato monetario
+    function validarFormatoMonetario(valor) {
+        if (!valor || valor.trim() === '') return false;
+        
+        // Remover prefijo $ y espacios
+        const valorLimpio = valor.replace(/^\$\s*/, '').trim();
+        
+        // Verificar que tenga formato válido para pesos colombianos
+        // Acepta: 1000, 1,000, 1000.00, 1,000.00, etc.
+        const regex = /^\d{1,3}(,\d{3})*(\.\d{2})?$/;
+        
+        if (!regex.test(valorLimpio)) return false;
+        
+        // Convertir a número y verificar que sea mayor a 0
+        const numero = parseFloat(valorLimpio.replace(/,/g, ''));
+        return !isNaN(numero) && numero > 0;
+    }
+    
+    // Función para formatear valor monetario para envío
+    function formatearValorParaEnvio(valor) {
+        if (!valor) return '';
+        // Remover símbolo $ y espacios, mantener solo números, comas y punto
+        return valor.replace(/[$\s]/g, '').replace(/,/g, '');
+    }
+
+// Validación del formulario
+document.getElementById('formPatrimonio').addEventListener('submit', function(event) {
+    const tienePatrimonioSelect = document.getElementById('tiene_patrimonio');
+    
+    // Validar que se haya seleccionado una opción principal
+    if (!tienePatrimonioSelect.value || tienePatrimonioSelect.value === '') {
+        event.preventDefault();
+            mostrarMensajeError('Por favor, seleccione si posee patrimonio.');
+        tienePatrimonioSelect.focus();
+        return;
+    }
+    
+    // Validar campos de patrimonio solo si se seleccionó "Sí" (cualquier valor diferente a '1')
+    if (tienePatrimonioSelect.value && tienePatrimonioSelect.value !== '1') {
+        const camposObligatorios = [
+                { id: 'valor_vivienda', nombre: 'Valor de la Vivienda', esMonetario: true },
+                { id: 'direccion', nombre: 'Dirección', esMonetario: false },
+                { id: 'id_vehiculo', nombre: 'Vehículo', esMonetario: false },
+                { id: 'id_marca', nombre: 'Marca', esMonetario: false },
+                { id: 'id_modelo', nombre: 'Modelo', esMonetario: false },
+                { id: 'id_ahorro', nombre: 'Ahorro', esMonetario: true }
+            ];
+            
+            for (const campo of camposObligatorios) {
+                const elemento = document.getElementById(campo.id);
+                const valor = elemento.value.trim();
+                
+                if (!valor) {
+                    event.preventDefault();
+                    mostrarMensajeError(`El campo "${campo.nombre}" es obligatorio.`);
+                    elemento.focus();
+                    return;
+                }
+                
+                // Validación específica para campos monetarios
+                if (campo.esMonetario && !validarFormatoMonetario(valor)) {
+                event.preventDefault();
+                    mostrarMensajeError(`El campo "${campo.nombre}" debe tener un formato monetario válido (ej: $ 1,500,000.00).`);
+                elemento.focus();
+                return;
+                }
+            }
+            
+            // Formatear valores monetarios antes del envío
+            const valorVivienda = document.getElementById('valor_vivienda');
+            const ahorro = document.getElementById('id_ahorro');
+            
+            if (valorVivienda.value) {
+                valorVivienda.value = formatearValorParaEnvio(valorVivienda.value);
+            }
+            if (ahorro.value) {
+                ahorro.value = formatearValorParaEnvio(ahorro.value);
+            }
+        }
+    });
+    
+    // Función para mostrar mensajes de error mejorados
+    function mostrarMensajeError(mensaje) {
+        // Remover mensaje anterior si existe
+        const mensajeAnterior = document.querySelector('.alert-error-temporal');
+        if (mensajeAnterior) {
+            mensajeAnterior.remove();
+        }
+        
+        // Crear nuevo mensaje de error
+        const mensajeError = document.createElement('div');
+        mensajeError.className = 'alert alert-danger alert-dismissible fade show alert-error-temporal';
+        mensajeError.innerHTML = `
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        
+        // Insertar el mensaje al inicio del formulario
+        const formulario = document.getElementById('formPatrimonio');
+        formulario.insertBefore(mensajeError, formulario.firstChild);
+        
+        // Auto-remover después de 5 segundos
+        setTimeout(() => {
+            if (mensajeError.parentNode) {
+                mensajeError.remove();
+            }
+        }, 5000);
+    }
+</script>
 </body>
 </html>
