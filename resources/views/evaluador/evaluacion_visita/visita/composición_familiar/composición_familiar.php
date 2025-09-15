@@ -318,7 +318,7 @@ try {
                         <div class="step-description">Salud</div>
                     </div>
                     <div class="step-horizontal active">
-                        <div class="step-icon"><i class="fas fa-people"></i></div>
+                        <div class="step-icon"><i class="fas fa-users"></i></div>
                         <div class="step-title">Paso 4</div>
                         <div class="step-description">Composición Familiar</div>
                     </div>
@@ -391,8 +391,9 @@ try {
                                         </button>
                                     <?php endif; ?>
                                 </div>
+                                <!-- Primera fila: Nombre, Parentesco, Edad -->
                                 <div class="row">
-                                    <div class="col-md-2 mb-3">
+                                    <div class="col-md-4 mb-3">
                                         <label for="nombre_<?php echo $index; ?>" class="form-label required-field">
                                             <i class="bi bi-person me-1"></i>Nombre:
                                         </label>
@@ -403,7 +404,7 @@ try {
                                             <?php echo !empty($errores_campos['nombre'][$index]) ? htmlspecialchars($errores_campos['nombre'][$index]) : 'El nombre es obligatorio.'; ?>
                                         </div>
                                     </div>
-                                    <div class="col-md-2 mb-3">
+                                    <div class="col-md-4 mb-3">
                                         <label for="id_parentesco_<?php echo $index; ?>" class="form-label required-field">
                                             <i class="bi bi-diagram-3 me-1"></i>Parentesco:
                                         </label>
@@ -421,7 +422,7 @@ try {
                                             <?php echo !empty($errores_campos['id_parentesco'][$index]) ? htmlspecialchars($errores_campos['id_parentesco'][$index]) : 'Debe seleccionar el parentesco.'; ?>
                                         </div>
                                     </div>
-                                    <div class="col-md-2 mb-3">
+                                    <div class="col-md-4 mb-3">
                                         <label for="edad_<?php echo $index; ?>" class="form-label required-field">
                                             <i class="bi bi-calendar me-1"></i>Edad:
                                         </label>
@@ -432,7 +433,11 @@ try {
                                             <?php echo !empty($errores_campos['edad'][$index]) ? htmlspecialchars($errores_campos['edad'][$index]) : 'La edad es obligatoria (0-120).'; ?>
                                         </div>
                                     </div>
-                                    <div class="col-md-2 mb-3">
+                                </div>
+                                
+                                <!-- Segunda fila: Ocupación, Teléfono, Conviven -->
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
                                         <label for="id_ocupacion_<?php echo $index; ?>" class="form-label">
                                             <i class="bi bi-briefcase me-1"></i>Ocupación:
                                         </label>
@@ -450,7 +455,7 @@ try {
                                             <div class="invalid-feedback"><?php echo htmlspecialchars($errores_campos['id_ocupacion'][$index]); ?></div>
                                         <?php endif; ?>
                                     </div>
-                                    <div class="col-md-2 mb-3">
+                                    <div class="col-md-4 mb-3">
                                         <label for="telefono_<?php echo $index; ?>" class="form-label required-field">
                                             <i class="bi bi-telephone me-1"></i>Teléfono:
                                         </label>
@@ -462,7 +467,7 @@ try {
                                             <?php echo !empty($errores_campos['telefono'][$index]) ? htmlspecialchars($errores_campos['telefono'][$index]) : 'El teléfono es obligatorio (7-10 dígitos).'; ?>
                                         </div>
                                     </div>
-                                    <div class="col-md-2 mb-3">
+                                    <div class="col-md-4 mb-3">
                                         <label for="id_conviven_<?php echo $index; ?>" class="form-label required-field">
                                             <i class="bi bi-house me-1"></i>Conviven:
                                         </label>
@@ -499,15 +504,16 @@ try {
                             <div class="miembro-header">
                                 <h6 class="miembro-title">Miembro Familiar 1</h6>
                             </div>
+                            <!-- Primera fila: Nombre, Parentesco, Edad -->
                             <div class="row">
-                                <div class="col-md-2 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label for="nombre_0" class="form-label required-field">
                                         <i class="bi bi-person me-1"></i>Nombre:
                                     </label>
                                     <input type="text" class="form-control" id="nombre_0" name="nombre[]" required>
                                     <div class="invalid-feedback">El nombre es obligatorio.</div>
                                 </div>
-                                <div class="col-md-2 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label for="id_parentesco_0" class="form-label required-field">
                                         <i class="bi bi-diagram-3 me-1"></i>Parentesco:
                                     </label>
@@ -521,14 +527,18 @@ try {
                                     </select>
                                     <div class="invalid-feedback">Debe seleccionar el parentesco.</div>
                                 </div>
-                                <div class="col-md-2 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label for="edad_0" class="form-label required-field">
                                         <i class="bi bi-calendar me-1"></i>Edad:
                                     </label>
                                     <input type="number" class="form-control" id="edad_0" name="edad[]" min="0" max="120" required>
                                     <div class="invalid-feedback">La edad es obligatoria (0-120).</div>
                                 </div>
-                                <div class="col-md-2 mb-3">
+                            </div>
+                            
+                            <!-- Segunda fila: Ocupación, Teléfono, Conviven -->
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
                                     <label for="id_ocupacion_0" class="form-label">
                                         <i class="bi bi-briefcase me-1"></i>Ocupación:
                                     </label>
@@ -541,7 +551,7 @@ try {
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
-                                <div class="col-md-2 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label for="telefono_0" class="form-label required-field">
                                         <i class="bi bi-telephone me-1"></i>Teléfono:
                                     </label>
@@ -549,7 +559,7 @@ try {
                                            pattern="[0-9]{7,10}" required>
                                     <div class="invalid-feedback">El teléfono es obligatorio (7-10 dígitos).</div>
                                 </div>
-                                <div class="col-md-2 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label for="id_conviven_0" class="form-label required-field">
                                         <i class="bi bi-house me-1"></i>Conviven:
                                     </label>
@@ -615,16 +625,17 @@ try {
                                 <i class="fas fa-trash"></i> Eliminar
                             </button>
                         </div>
+                        <!-- Primera fila: Nombre, Parentesco, Edad -->
                         <div class="row">
-                            <div class="col-md-2 mb-3">
-                                <label for="nombre_${miembroIndex}" class="form-label">
+                            <div class="col-md-4 mb-3">
+                                <label for="nombre_${miembroIndex}" class="form-label required-field">
                                     <i class="bi bi-person me-1"></i>Nombre:
                                 </label>
                                 <input type="text" class="form-control" id="nombre_${miembroIndex}" name="nombre[]" required>
                                 <div class="invalid-feedback">El nombre es obligatorio.</div>
                             </div>
-                            <div class="col-md-2 mb-3">
-                                <label for="id_parentesco_${miembroIndex}" class="form-label">
+                            <div class="col-md-4 mb-3">
+                                <label for="id_parentesco_${miembroIndex}" class="form-label required-field">
                                     <i class="bi bi-diagram-3 me-1"></i>Parentesco:
                                 </label>
                                 <select class="form-select" id="id_parentesco_${miembroIndex}" name="id_parentesco[]" required>
@@ -637,14 +648,18 @@ try {
                                 </select>
                                 <div class="invalid-feedback">Debe seleccionar el parentesco.</div>
                             </div>
-                            <div class="col-md-2 mb-3">
-                                <label for="edad_${miembroIndex}" class="form-label">
+                            <div class="col-md-4 mb-3">
+                                <label for="edad_${miembroIndex}" class="form-label required-field">
                                     <i class="bi bi-calendar me-1"></i>Edad:
                                 </label>
                                 <input type="number" class="form-control" id="edad_${miembroIndex}" name="edad[]" min="0" max="120" required>
                                 <div class="invalid-feedback">La edad es obligatoria (0-120).</div>
                             </div>
-                            <div class="col-md-2 mb-3">
+                        </div>
+                        
+                        <!-- Segunda fila: Ocupación, Teléfono, Conviven -->
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
                                 <label for="id_ocupacion_${miembroIndex}" class="form-label">
                                     <i class="bi bi-briefcase me-1"></i>Ocupación:
                                 </label>
@@ -657,16 +672,16 @@ try {
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            <div class="col-md-2 mb-3">
-                                <label for="telefono_${miembroIndex}" class="form-label">
+                            <div class="col-md-4 mb-3">
+                                <label for="telefono_${miembroIndex}" class="form-label required-field">
                                     <i class="bi bi-telephone me-1"></i>Teléfono:
                                 </label>
                                 <input type="text" class="form-control" id="telefono_${miembroIndex}" name="telefono[]" 
                                        pattern="[0-9]{7,10}" required>
                                 <div class="invalid-feedback">El teléfono es obligatorio (7-10 dígitos).</div>
                             </div>
-                            <div class="col-md-2 mb-3">
-                                <label for="id_conviven_${miembroIndex}" class="form-label">
+                            <div class="col-md-4 mb-3">
+                                <label for="id_conviven_${miembroIndex}" class="form-label required-field">
                                     <i class="bi bi-house me-1"></i>Conviven:
                                 </label>
                                 <select class="form-select" id="id_conviven_${miembroIndex}" name="id_conviven[]" required>
@@ -680,6 +695,8 @@ try {
                                 <div class="invalid-feedback">Debe seleccionar si convive.</div>
                             </div>
                         </div>
+                        
+                        <!-- Tercera fila: Observaciones -->
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="observacion_${miembroIndex}" class="form-label">
