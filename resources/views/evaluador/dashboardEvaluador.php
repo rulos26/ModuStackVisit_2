@@ -1,5 +1,8 @@
 <?php
-session_start();
+// Verificar si la sesión ya está iniciada antes de intentar iniciarla
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Verificar si hay sesión activa
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['rol'])) {
