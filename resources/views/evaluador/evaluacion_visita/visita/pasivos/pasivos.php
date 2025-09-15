@@ -20,6 +20,19 @@ require_once __DIR__ . '/PasivosController.php';
 
 use App\Controllers\PasivosController;
 
+// Función para formatear valores monetarios
+function formatearValorMonetario($valor) {
+    if (empty($valor) || $valor === 'N/A' || !is_numeric($valor)) {
+        return '';
+    }
+    
+    // Convertir a número
+    $numero = floatval($valor);
+    
+    // Formatear con separadores de miles y símbolo de peso colombiano
+    return '$' . number_format($numero, 0, ',', '.');
+}
+
 // Variables para manejar errores y datos
 $errores_campos = [];
 $datos_formulario = [];
@@ -300,6 +313,59 @@ try {
             color: #dc3545;
             font-weight: bold;
         }
+        /* Estilos para campos de moneda */
+        .currency-input {
+            position: relative;
+        }
+        .currency-input .form-control {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-weight: 600;
+            color: #495057;
+            transition: all 0.3s ease;
+        }
+        .currency-input .form-control:focus {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-color: #11998e;
+            box-shadow: 0 0 0 0.2rem rgba(17, 153, 142, 0.25);
+            transform: translateY(-1px);
+        }
+        .currency-input .form-control:not(:valid):not(:invalid):not(.is-valid):not(.is-invalid) {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        .currency-input .form-control.is-valid {
+            background: linear-gradient(135deg, #d1edff 0%, #b3d9ff 100%);
+            border-color: #198754;
+            color: #0f5132;
+        }
+        .currency-input .form-control.is-invalid {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c2c7 100%);
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .currency-tooltip {
+            position: relative;
+        }
+        .currency-tooltip::after {
+            content: "Formato: $1.500.000,50";
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+        .currency-tooltip:hover::after {
+            opacity: 1;
+        }
 </style>
 </head>
 <body class="bg-light">
@@ -518,11 +584,13 @@ try {
                                     <label for="deuda_0" class="form-label required-field">
                                     <i class="bi bi-cash-stack me-1"></i>Deuda:
                                 </label>
+                                <div class="currency-input currency-tooltip">
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
                                     <input type="text" class="form-control" id="deuda_0" name="deuda[]" 
-                                               value="<?php echo !empty($datos_formulario) && !empty($datos_formulario[0]['deuda']) ? htmlspecialchars($datos_formulario[0]['deuda']) : ''; ?>"
+                                                   value="<?php echo !empty($datos_formulario) && !empty($datos_formulario[0]['deuda']) ? htmlspecialchars(formatearValorMonetario($datos_formulario[0]['deuda'])) : ''; ?>"
                                            placeholder="0.00" required>
+                                    </div>
                                 </div>
                                 <div class="form-text">Ingrese el valor total de la deuda</div>
                             </div>
@@ -531,11 +599,13 @@ try {
                                     <label for="cuota_mes_0" class="form-label required-field">
                                     <i class="bi bi-calendar-check me-1"></i>Cuota Mensual:
                                 </label>
+                                <div class="currency-input currency-tooltip">
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
                                     <input type="text" class="form-control" id="cuota_mes_0" name="cuota_mes[]" 
-                                               value="<?php echo !empty($datos_formulario) && !empty($datos_formulario[0]['cuota_mes']) ? htmlspecialchars($datos_formulario[0]['cuota_mes']) : ''; ?>"
+                                               value="<?php echo !empty($datos_formulario) && !empty($datos_formulario[0]['cuota_mes']) ? htmlspecialchars(formatearValorMonetario($datos_formulario[0]['cuota_mes'])) : ''; ?>"
                                            placeholder="0.00" required>
+                                    </div>
                                 </div>
                                 <div class="form-text">Ingrese el valor de la cuota mensual</div>
                             </div>
@@ -597,11 +667,13 @@ try {
                                             <label for="deuda_<?php echo $i; ?>" class="form-label required-field">
                                             <i class="bi bi-cash-stack me-1"></i>Deuda:
                                         </label>
+                                        <div class="currency-input currency-tooltip">
                                         <div class="input-group">
                                             <span class="input-group-text">$</span>
                                             <input type="text" class="form-control" id="deuda_<?php echo $i; ?>" name="deuda[]" 
-                                                       value="<?php echo htmlspecialchars($datos_formulario[$i]['deuda']); ?>"
+                                                           value="<?php echo htmlspecialchars(formatearValorMonetario($datos_formulario[$i]['deuda'])); ?>"
                                                    placeholder="0.00" required>
+                                            </div>
                                         </div>
                                     </div>
                                     
@@ -609,11 +681,13 @@ try {
                                             <label for="cuota_mes_<?php echo $i; ?>" class="form-label required-field">
                                             <i class="bi bi-calendar-check me-1"></i>Cuota Mensual:
                                         </label>
+                                        <div class="currency-input currency-tooltip">
                                         <div class="input-group">
                                             <span class="input-group-text">$</span>
                                             <input type="text" class="form-control" id="cuota_mes_<?php echo $i; ?>" name="cuota_mes[]" 
-                                                       value="<?php echo htmlspecialchars($datos_formulario[$i]['cuota_mes']); ?>"
+                                                           value="<?php echo htmlspecialchars(formatearValorMonetario($datos_formulario[$i]['cuota_mes'])); ?>"
                                                    placeholder="0.00" required>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -658,6 +732,8 @@ try {
 </div>
     <!-- Solo Bootstrap JS, no rutas locales para evitar errores de MIME -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Cleave.js para formato de moneda -->
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
 </body>
 </html>
 
@@ -696,10 +772,99 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Ejecutar la función normal
     toggleCamposPasivos();
+    
+    // Inicializar Cleave.js para campos monetarios existentes
+    setTimeout(function() {
+        const camposMonetarios = document.querySelectorAll('input[id*="deuda_"], input[id*="cuota_mes_"]');
+        camposMonetarios.forEach(campo => {
+            inicializarCleave(campo.id);
+        });
+        
+        // Inicializar estado de campos monetarios
+        inicializarEstadoCampos();
+    }, 100);
 });
 
 // Variables para manejar pasivos dinámicos
 let pasivoCounter = <?php echo !empty($datos_formulario) ? count($datos_formulario) : 1; ?>;
+
+// Variables para Cleave.js
+let cleaveInstances = {};
+
+// Función para inicializar Cleave.js en un campo
+function inicializarCleave(campoId) {
+    if (cleaveInstances[campoId]) {
+        cleaveInstances[campoId].destroy();
+    }
+    
+    const campo = document.getElementById(campoId);
+    if (campo) {
+        cleaveInstances[campoId] = new Cleave(campo, {
+            numeral: true,
+            numeralThousandsGroupStyle: 'thousand',
+            numeralDecimalMark: ',',
+            delimiter: '.',
+            numeralDecimalScale: 2,
+            prefix: '$ ',
+            onValueChanged: function(e) {
+                const input = e.target;
+                // Remover clases de validación previas
+                input.classList.remove('is-invalid', 'is-valid');
+                
+                // Validar formato monetario
+                if (validarFormatoMonetario(input.value)) {
+                    input.classList.add('is-valid');
+                } else if (input.value.trim() !== '') {
+                    input.classList.add('is-invalid');
+                }
+            }
+        });
+    }
+}
+
+// Función para validar formato monetario colombiano
+function validarFormatoMonetario(valor) {
+    if (!valor || valor.trim() === '') return false;
+    
+    // Remover prefijo $ y espacios
+    let valorLimpio = valor.replace(/^\$\s*/, '').trim();
+    
+    // Patrón para formato colombiano: 1.500.000,50 o 1500000,50
+    const patronColombiano = /^(\d{1,3}(\.\d{3})*|\d+)(,\d{1,2})?$/;
+    
+    return patronColombiano.test(valorLimpio);
+}
+
+// Función para formatear valor para envío
+function formatearValorParaEnvio(valor) {
+    if (!valor || valor.trim() === '') return '';
+    
+    // Remover prefijo $ y espacios
+    let valorLimpio = valor.replace(/^\$\s*/, '').trim();
+    
+    // Reemplazar punto por nada (separador de miles) y coma por punto (decimal)
+    valorLimpio = valorLimpio.replace(/\./g, '').replace(',', '.');
+    
+    return valorLimpio;
+}
+
+// Función para mostrar mensaje de error
+function mostrarMensajeError(campo, mensaje) {
+    const feedback = campo.parentNode.querySelector('.invalid-feedback');
+    if (feedback) {
+        feedback.textContent = mensaje;
+    }
+}
+
+// Función para inicializar estado de campos monetarios
+function inicializarEstadoCampos() {
+    const camposMonetarios = document.querySelectorAll('input[id*="deuda_"], input[id*="cuota_mes_"]');
+    camposMonetarios.forEach(campo => {
+        if (campo.value && campo.value.trim() !== '') {
+            campo.classList.add('is-valid');
+        }
+    });
+}
 
 // Función para agregar nuevo pasivo
 document.getElementById('btnAgregarPasivo').addEventListener('click', function() {
@@ -782,6 +947,11 @@ document.getElementById('btnAgregarPasivo').addEventListener('click', function()
     `;
     
     container.appendChild(nuevoPasivo);
+    
+    // Inicializar Cleave.js para los nuevos campos monetarios
+    inicializarCleave(`deuda_${pasivoCounter}`);
+    inicializarCleave(`cuota_mes_${pasivoCounter}`);
+    
     pasivoCounter++;
 });
 
@@ -826,9 +996,29 @@ document.getElementById('formPasivos').addEventListener('submit', function(event
                     elemento.focus();
                     return;
                 }
+                
+                // Validación específica para campos monetarios
+                if (campo === 'deuda' || campo === 'cuota_mes') {
+                    if (!validarFormatoMonetario(elemento.value)) {
+                        event.preventDefault();
+                        const label = elemento.closest('.mb-3').querySelector('label');
+                        const labelText = label ? label.innerText.replace('*', '').trim() : campo;
+                        alert(`El campo "${labelText}" del Pasivo #${i + 1} debe tener un formato válido (ej: $1.500.000,50).`);
+                        elemento.focus();
+                        return;
+                    }
+                }
             }
         }
     }
+    
+    // Formatear valores monetarios antes del envío
+    const camposMonetarios = document.querySelectorAll('input[id*="deuda_"], input[id*="cuota_mes_"]');
+    camposMonetarios.forEach(campo => {
+        if (campo.value && campo.value.trim() !== '') {
+            campo.value = formatearValorParaEnvio(campo.value);
+        }
+    });
 });
 </script>
 
