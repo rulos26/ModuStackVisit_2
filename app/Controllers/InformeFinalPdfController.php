@@ -96,6 +96,19 @@ class InformeFinalPdfController {
             return $valor == '0' ? 'Sí' : 'No';
         }
 
+        // Función para formatear valores monetarios en pesos colombianos
+        function formatearValorMonetario($valor) {
+            if (empty($valor) || $valor === 'N/A' || !is_numeric($valor)) {
+                return 'N/A';
+            }
+            
+            // Convertir a número
+            $numero = floatval($valor);
+            
+            // Formatear con separadores de miles y símbolo de peso colombiano
+            return '$' . number_format($numero, 0, ',', '.');
+        }
+
         // Procesar los campos de estado de salud
         if ($estado_salud) {
             $estado_salud['tipo_enfermedad'] = convertirSiNo($estado_salud['tipo_enfermedad']);
@@ -351,14 +364,18 @@ class InformeFinalPdfController {
         if ($patrimonio) {
             // Lista de campos a procesar
             $campos_patrimonio = [
-                'valor_vivienda', 'direccion', 'id_vehiculo', 'id_marca',
-                'id_modelo', 'id_ahorro', 'otros', 'observacion'
+                'direccion', 'id_vehiculo', 'id_marca',
+                'id_modelo', 'otros', 'observacion'
             ];
 
             // Convertir campos vacíos a N/A
             foreach ($campos_patrimonio as $campo) {
                 $patrimonio[$campo] = empty($patrimonio[$campo]) ? 'N/A' : $patrimonio[$campo];
             }
+            
+            // Formatear campos monetarios específicamente
+            $patrimonio['valor_vivienda'] = formatearValorMonetario($patrimonio['valor_vivienda']);
+            $patrimonio['id_ahorro'] = formatearValorMonetario($patrimonio['id_ahorro']);
         }
 
         // Consulta de cuentas bancarias

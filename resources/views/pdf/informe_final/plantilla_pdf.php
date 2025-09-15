@@ -586,7 +586,7 @@ error_reporting(E_ALL);
                 <tbody>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Valor Vivienda</td>
-                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($patrimonio['valor_vivienda']) ?></td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center; font-weight: bold; color: #2c5530;"><?= htmlspecialchars($patrimonio['valor_vivienda']) ?></td>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Dirección</td>
                         <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($patrimonio['direccion']) ?></td>
                     </tr>
@@ -600,7 +600,7 @@ error_reporting(E_ALL);
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Modelo</td>
                         <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($patrimonio['id_modelo']) ?></td>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Ahorro (CDT, Inversiones)</td>
-                        <td colspan="2" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($patrimonio['id_ahorro']) ?></td>
+                        <td colspan="2" style="border: 1px solid black; text-align: center; font-weight: bold; color: #2c5530;"><?= htmlspecialchars($patrimonio['id_ahorro']) ?></td>
                     </tr>
                     <tr>
                         <td colspan="4" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black;">Otros</td>
