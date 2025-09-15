@@ -90,8 +90,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         
         // Paso 4: No encontrado en ninguna tabla
-        $_SESSION['error'] = 'No se encontró ninguna cédula asociada con carta de autorización.';
-        header("Location: ../../carta_visita/index_carta.php");
+        $_SESSION['error'] = 'El documento ' . $id_cedula . ' no se encontró en el sistema. Debe registrar primero la Carta de Autorización.';
+        $_SESSION['redirect_reason'] = 'documento_no_encontrado';
+        $_SESSION['documento_buscado'] = $id_cedula;
+        header("Location: ../../carta_visita/index_carta.php?reason=documento_no_encontrado&cedula=" . urlencode($id_cedula));
         exit;
         
     } catch (Exception $e) {
