@@ -660,6 +660,19 @@ try {
                         </div>
                     </div>
                     
+                    <!-- Campo de Observaciones Laborales -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <label for="observacion_laboral" class="form-label">
+                                <i class="bi bi-chat-text me-1"></i>Observaciones Laborales:
+                            </label>
+                            <textarea class="form-control" id="observacion_laboral" name="observacion_laboral" 
+                                      rows="4" maxlength="1000" 
+                                      placeholder="Ingrese observaciones adicionales sobre la experiencia laboral..."><?php echo !empty($datos_formulario['observacion_laboral']) ? htmlspecialchars($datos_formulario['observacion_laboral']) : ''; ?></textarea>
+                            <div class="form-text">Máximo 1000 caracteres</div>
+                        </div>
+                    </div>
+                    
                     <div class="row">
                         <div class="col-12 text-center">
                             <button type="submit" class="btn btn-primary btn-lg me-2">

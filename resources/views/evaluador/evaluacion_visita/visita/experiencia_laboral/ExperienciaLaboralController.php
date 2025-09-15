@@ -218,6 +218,32 @@ class ExperienciaLaboralController {
                     }
                 }
                 
+                // Manejar observaciones laborales
+                $observacion_guardada = false;
+                if (isset($datos['observacion_laboral']) && !empty(trim($datos['observacion_laboral']))) {
+                    // Eliminar observación existente
+                    $sql_delete_obs = "DELETE FROM observaciones_laborales WHERE id_cedula = :id_cedula";
+                    $stmt_delete_obs = $this->db->prepare($sql_delete_obs);
+                    $stmt_delete_obs->bindParam(':id_cedula', $id_cedula);
+                    $stmt_delete_obs->execute();
+                    
+                    // Insertar nueva observación
+                    $sql_obs = "INSERT INTO observaciones_laborales (id_cedula, observacion) VALUES (:id_cedula, :observacion)";
+                    $stmt_obs = $this->db->prepare($sql_obs);
+                    $stmt_obs->bindParam(':id_cedula', $id_cedula);
+                    $stmt_obs->bindParam(':observacion', $datos['observacion_laboral']);
+                    
+                    if ($stmt_obs->execute()) {
+                        $observacion_guardada = true;
+                    }
+                } else {
+                    // Si no hay observación, eliminar la existente
+                    $sql_delete_obs = "DELETE FROM observaciones_laborales WHERE id_cedula = :id_cedula";
+                    $stmt_delete_obs = $this->db->prepare($sql_delete_obs);
+                    $stmt_delete_obs->bindParam(':id_cedula', $id_cedula);
+                    $stmt_delete_obs->execute();
+                }
+                
                 $total_procesadas = $experiencias_guardadas + $experiencias_actualizadas;
                 if ($total_procesadas > 0) {
                     $mensaje = "Se procesaron {$total_procesadas} experiencia(s) laboral(es): ";
@@ -226,6 +252,9 @@ class ExperienciaLaboralController {
                     }
                     if ($experiencias_actualizadas > 0) {
                         $mensaje .= ($experiencias_guardadas > 0 ? ", " : "") . "{$experiencias_actualizadas} actualizada(s)";
+                    }
+                    if ($observacion_guardada) {
+                        $mensaje .= " y la observación laboral";
                     }
                     $mensaje .= ".";
                     
@@ -260,9 +289,41 @@ class ExperienciaLaboralController {
                 $stmt->bindParam(':numero', $numero);
                 
                 if ($stmt->execute()) {
+                    // Manejar observaciones laborales para experiencia única
+                    $observacion_guardada = false;
+                    if (isset($datos['observacion_laboral']) && !empty(trim($datos['observacion_laboral']))) {
+                        // Eliminar observación existente
+                        $sql_delete_obs = "DELETE FROM observaciones_laborales WHERE id_cedula = :id_cedula";
+                        $stmt_delete_obs = $this->db->prepare($sql_delete_obs);
+                        $stmt_delete_obs->bindParam(':id_cedula', $id_cedula);
+                        $stmt_delete_obs->execute();
+                        
+                        // Insertar nueva observación
+                        $sql_obs = "INSERT INTO observaciones_laborales (id_cedula, observacion) VALUES (:id_cedula, :observacion)";
+                        $stmt_obs = $this->db->prepare($sql_obs);
+                        $stmt_obs->bindParam(':id_cedula', $id_cedula);
+                        $stmt_obs->bindParam(':observacion', $datos['observacion_laboral']);
+                        
+                        if ($stmt_obs->execute()) {
+                            $observacion_guardada = true;
+                        }
+                    } else {
+                        // Si no hay observación, eliminar la existente
+                        $sql_delete_obs = "DELETE FROM observaciones_laborales WHERE id_cedula = :id_cedula";
+                        $stmt_delete_obs = $this->db->prepare($sql_delete_obs);
+                        $stmt_delete_obs->bindParam(':id_cedula', $id_cedula);
+                        $stmt_delete_obs->execute();
+                    }
+                    
+                    $mensaje = 'Experiencia laboral guardada exitosamente';
+                    if ($observacion_guardada) {
+                        $mensaje .= ' y la observación laboral';
+                    }
+                    $mensaje .= '.';
+                    
                     return [
                         'success' => true, 
-                        'message' => 'Experiencia laboral guardada exitosamente.'
+                        'message' => $mensaje
                     ];
                 } else {
                     return ['success' => false, 'message' => 'No se pudo guardar la experiencia laboral.'];
@@ -284,9 +345,25 @@ class ExperienciaLaboralController {
             $stmt->execute();
             $resultados = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             
-            // Si no hay resultados, devolver null para compatibilidad
+            // Obtener observación laboral
+            $sql_obs = "SELECT observacion FROM observaciones_laborales WHERE id_cedula = :id_cedula LIMIT 1";
+            $stmt_obs = $this->db->prepare($sql_obs);
+            $stmt_obs->bindParam(':id_cedula', $id_cedula);
+            $stmt_obs->execute();
+            $observacion = $stmt_obs->fetch(\PDO::FETCH_ASSOC);
+            
+            // Si no hay resultados de experiencias, devolver null para compatibilidad
             if (empty($resultados)) {
+                // Si no hay experiencias pero sí hay observación, devolver array con la observación
+                if ($observacion) {
+                    return ['observacion_laboral' => $observacion['observacion']];
+                }
                 return null;
+            }
+            
+            // Agregar la observación al array de resultados si existe
+            if ($observacion) {
+                $resultados['observacion_laboral'] = $observacion['observacion'];
             }
             
             // Si solo hay un resultado, devolverlo como array asociativo para compatibilidad
