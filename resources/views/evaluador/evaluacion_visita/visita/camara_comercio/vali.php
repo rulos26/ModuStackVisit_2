@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
            
         } else {
             
-            header("Location: reportado.php");
+            header("Location: ../data_credito/data_credito.php");
             echo'tiene pareja';
         }
       

@@ -47,61 +47,75 @@ class DataCreditoController {
     public function validarDatos($datos) {
         $errores = [];
         
-        // Verificar que se recibieron los arrays necesarios
-        if (!isset($datos['entidad']) || !is_array($datos['entidad'])) {
-            $errores[] = "Debe proporcionar al menos una entidad.";
+        // Primero validar si está reportado
+        if (!isset($datos['reportado_centrales']) || empty($datos['reportado_centrales'])) {
+            $errores[] = "Debe seleccionar si está reportado en centrales de riesgo.";
             return $errores;
         }
         
-        if (!isset($datos['cuotas']) || !is_array($datos['cuotas'])) {
-            $errores[] = "Debe proporcionar al menos un número de cuotas.";
+        // Si no está reportado, no validar campos detallados
+        if ($datos['reportado_centrales'] == '0') {
             return $errores;
         }
         
-        if (!isset($datos['pago_mensual']) || !is_array($datos['pago_mensual'])) {
-            $errores[] = "Debe proporcionar al menos un valor de pago mensual.";
-            return $errores;
-        }
-        
-        if (!isset($datos['deuda']) || !is_array($datos['deuda'])) {
-            $errores[] = "Debe proporcionar al menos un valor de deuda total.";
-            return $errores;
-        }
-        
-        // Verificar que todos los arrays tengan la misma longitud
-        $longitud = count($datos['entidad']);
-        if (count($datos['cuotas']) !== $longitud || 
-            count($datos['pago_mensual']) !== $longitud || 
-            count($datos['deuda']) !== $longitud) {
-            $errores[] = "Todos los campos deben tener la misma cantidad de registros.";
-            return $errores;
-        }
-        
-        // Validar cada conjunto de datos
-        for ($i = 0; $i < $longitud; $i++) {
-            $numero_registro = $i + 1;
-            
-            // Validar entidad (mínimo 3 caracteres)
-            if (empty($datos['entidad'][$i]) || strlen(trim($datos['entidad'][$i])) < 3) {
-                $errores[] = "Registro $numero_registro: La entidad debe tener al menos 3 caracteres.";
+        // Si está reportado, validar campos detallados
+        if ($datos['reportado_centrales'] == '1') {
+            // Verificar que se recibieron los arrays necesarios
+            if (!isset($datos['entidad']) || !is_array($datos['entidad'])) {
+                $errores[] = "Debe proporcionar al menos una entidad.";
+                return $errores;
             }
             
-            // Validar cuotas (debe ser un número positivo)
-            $cuotas = str_replace(['$', ',', '.'], '', $datos['cuotas'][$i]);
-            if (empty($datos['cuotas'][$i]) || !is_numeric($cuotas) || $cuotas < 0) {
-                $errores[] = "Registro $numero_registro: El número de cuotas debe ser un número válido mayor o igual a 0.";
+            if (!isset($datos['cuotas']) || !is_array($datos['cuotas'])) {
+                $errores[] = "Debe proporcionar al menos un número de cuotas.";
+                return $errores;
             }
             
-            // Validar pago mensual (debe ser un número positivo)
-            $pago_mensual = str_replace(['$', ',', '.'], '', $datos['pago_mensual'][$i]);
-            if (empty($datos['pago_mensual'][$i]) || !is_numeric($pago_mensual) || $pago_mensual < 0) {
-                $errores[] = "Registro $numero_registro: El pago mensual debe ser un número válido mayor o igual a 0.";
+            if (!isset($datos['pago_mensual']) || !is_array($datos['pago_mensual'])) {
+                $errores[] = "Debe proporcionar al menos un valor de pago mensual.";
+                return $errores;
             }
             
-            // Validar deuda total (debe ser un número positivo)
-            $deuda = str_replace(['$', ',', '.'], '', $datos['deuda'][$i]);
-            if (empty($datos['deuda'][$i]) || !is_numeric($deuda) || $deuda < 0) {
-                $errores[] = "Registro $numero_registro: La deuda total debe ser un número válido mayor o igual a 0.";
+            if (!isset($datos['deuda']) || !is_array($datos['deuda'])) {
+                $errores[] = "Debe proporcionar al menos un valor de deuda total.";
+                return $errores;
+            }
+            
+            // Verificar que todos los arrays tengan la misma longitud
+            $longitud = count($datos['entidad']);
+            if (count($datos['cuotas']) !== $longitud || 
+                count($datos['pago_mensual']) !== $longitud || 
+                count($datos['deuda']) !== $longitud) {
+                $errores[] = "Todos los campos deben tener la misma cantidad de registros.";
+                return $errores;
+            }
+            
+            // Validar cada conjunto de datos
+            for ($i = 0; $i < $longitud; $i++) {
+                $numero_registro = $i + 1;
+                
+                // Validar entidad (mínimo 3 caracteres)
+                if (empty($datos['entidad'][$i]) || strlen(trim($datos['entidad'][$i])) < 3) {
+                    $errores[] = "Registro $numero_registro: La entidad debe tener al menos 3 caracteres.";
+                }
+                
+                // Validar cuotas (debe ser un número positivo)
+                $cuotas = str_replace(['$', ',', '.'], '', $datos['cuotas'][$i]);
+                if (empty($datos['cuotas'][$i]) || !is_numeric($cuotas) || $cuotas < 0) {
+                    $errores[] = "Registro $numero_registro: El número de cuotas debe ser un número válido mayor o igual a 0.";
+                }
+                
+                // Validar pago mensual (debe ser un número positivo)
+                $pago_mensual = str_replace(['$', ',', '.'], '', $datos['pago_mensual'][$i]);
+                if (empty($datos['pago_mensual'][$i]) || !is_numeric($pago_mensual) || $pago_mensual < 0) {
+                    $errores[] = "Registro $numero_registro: El pago mensual debe ser un número válido mayor o igual a 0.";
+                }
+                
+                // Validar deuda total (debe ser un número positivo)
+                $deuda = str_replace(['$', ',', '.'], '', $datos['deuda'][$i]);
+                if (empty($datos['deuda'][$i]) || !is_numeric($deuda) || $deuda < 0) {
+                    $errores[] = "Registro $numero_registro: La deuda total debe ser un número válido mayor o igual a 0.";
+                }
             }
         }
         
@@ -111,45 +125,73 @@ class DataCreditoController {
     public function guardar($datos) {
         try {
             $id_cedula = $_SESSION['id_cedula'];
+            $reportado_centrales = $datos['reportado_centrales'];
             
-            // Primero eliminar registros existentes para esta cédula
-            $sql_delete = "DELETE FROM data_credito WHERE id_cedula = :id_cedula";
-            $stmt_delete = $this->db->prepare($sql_delete);
-            $stmt_delete->bindParam(':id_cedula', $id_cedula);
-            $stmt_delete->execute();
-            
-            // Insertar los nuevos registros
-            $sql = "INSERT INTO data_credito (id_cedula, entidad, cuotas, pago_mensual, deuda) VALUES (:id_cedula, :entidad, :cuotas, :pago_mensual, :deuda)";
-            $stmt = $this->db->prepare($sql);
-            
-            $registros_insertados = 0;
-            $longitud = count($datos['entidad']);
-            
-            for ($i = 0; $i < $longitud; $i++) {
-                $entidad = $datos['entidad'][$i];
-                $cuotas = str_replace(['$', ',', '.'], '', $datos['cuotas'][$i]);
-                $pago_mensual = str_replace(['$', ',', '.'], '', $datos['pago_mensual'][$i]);
-                $deuda = str_replace(['$', ',', '.'], '', $datos['deuda'][$i]);
+            // Si el usuario indica que NO está reportado
+            if ($reportado_centrales == '0') {
+                // Eliminar TODOS los registros existentes para esta cédula
+                $sql_delete = "DELETE FROM data_credito WHERE id_cedula = :id_cedula";
+                $stmt_delete = $this->db->prepare($sql_delete);
+                $stmt_delete->bindParam(':id_cedula', $id_cedula);
+                $stmt_delete->execute();
                 
+                // Insertar un solo registro indicando que no está reportado
+                $sql = "INSERT INTO data_credito (id_cedula, entidad, cuotas, pago_mensual, deuda) 
+                        VALUES (:id_cedula, 'N/A', 'N/A', 'N/A', 'N/A')";
+                $stmt = $this->db->prepare($sql);
                 $stmt->bindParam(':id_cedula', $id_cedula);
-                $stmt->bindParam(':entidad', $entidad);
-                $stmt->bindParam(':cuotas', $cuotas);
-                $stmt->bindParam(':pago_mensual', $pago_mensual);
-                $stmt->bindParam(':deuda', $deuda);
+                $ok = $stmt->execute();
                 
-                if ($stmt->execute()) {
-                    $registros_insertados++;
+                if ($ok) {
+                    return ['success' => true, 'message' => 'Se ha registrado que no está reportado en centrales de riesgo.'];
+                } else {
+                    return ['success' => false, 'message' => 'Error al registrar la información.'];
                 }
             }
             
-            if ($registros_insertados > 0) {
-                return [
-                    'success' => true, 
-                    'message' => "Se guardaron exitosamente $registros_insertados reporte(s) de data crédito."
-                ];
-            } else {
-                return ['success' => false, 'message' => 'No se pudo guardar ningún reporte de data crédito.'];
+            // Si el usuario indica que SÍ está reportado
+            if ($reportado_centrales == '1') {
+                // Primero eliminar registros existentes para esta cédula
+                $sql_delete = "DELETE FROM data_credito WHERE id_cedula = :id_cedula";
+                $stmt_delete = $this->db->prepare($sql_delete);
+                $stmt_delete->bindParam(':id_cedula', $id_cedula);
+                $stmt_delete->execute();
+                
+                // Insertar los nuevos registros
+                $sql = "INSERT INTO data_credito (id_cedula, entidad, cuotas, pago_mensual, deuda) VALUES (:id_cedula, :entidad, :cuotas, :pago_mensual, :deuda)";
+                $stmt = $this->db->prepare($sql);
+                
+                $registros_insertados = 0;
+                $longitud = count($datos['entidad']);
+                
+                for ($i = 0; $i < $longitud; $i++) {
+                    $entidad = $datos['entidad'][$i];
+                    $cuotas = str_replace(['$', ',', '.'], '', $datos['cuotas'][$i]);
+                    $pago_mensual = str_replace(['$', ',', '.'], '', $datos['pago_mensual'][$i]);
+                    $deuda = str_replace(['$', ',', '.'], '', $datos['deuda'][$i]);
+                    
+                    $stmt->bindParam(':id_cedula', $id_cedula);
+                    $stmt->bindParam(':entidad', $entidad);
+                    $stmt->bindParam(':cuotas', $cuotas);
+                    $stmt->bindParam(':pago_mensual', $pago_mensual);
+                    $stmt->bindParam(':deuda', $deuda);
+                    
+                    if ($stmt->execute()) {
+                        $registros_insertados++;
+                    }
+                }
+                
+                if ($registros_insertados > 0) {
+                    return [
+                        'success' => true, 
+                        'message' => "Se guardaron exitosamente $registros_insertados reporte(s) de data crédito."
+                    ];
+                } else {
+                    return ['success' => false, 'message' => 'No se pudo guardar ningún reporte de data crédito.'];
+                }
             }
+            
+            return ['success' => false, 'message' => 'Valor de reportado_centrales no válido.'];
             
         } catch (PDOException $e) {
             return ['success' => false, 'message' => 'Error de base de datos: ' . $e->getMessage()];
