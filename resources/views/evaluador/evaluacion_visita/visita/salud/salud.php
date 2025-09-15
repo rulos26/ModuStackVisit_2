@@ -46,6 +46,13 @@ try {
     $id_cedula = $_SESSION['id_cedula'];
     $datos_existentes = $controller->obtenerPorCedula($id_cedula);
     
+    // Debug: Log para verificar si se cargan los datos
+    if ($datos_existentes) {
+        error_log("Datos de salud encontrados para cédula $id_cedula: " . json_encode($datos_existentes));
+    } else {
+        error_log("No se encontraron datos de salud para cédula $id_cedula");
+    }
+    
     // Obtener opciones para los select
     $estados_salud = $controller->obtenerOpciones('estados');
     $opciones_parametro = $controller->obtenerOpciones('parametro');
@@ -259,6 +266,18 @@ try {
                     <i class="bi bi-info-circle me-2"></i>
                     <strong>Información importante:</strong> Los campos marcados con <span class="text-danger">*</span> son obligatorios y deben ser completados antes de continuar.
                 </div>
+
+                <?php if ($datos_existentes): ?>
+                    <div class="alert alert-success mb-4">
+                        <i class="bi bi-check-circle me-2"></i>
+                        <strong>Datos encontrados:</strong> Se encontró información de salud registrada para esta cédula. Puede actualizar los datos existentes.
+                    </div>
+                <?php else: ?>
+                    <div class="alert alert-warning mb-4">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Primera vez:</strong> No se encontró información de salud previa. Complete el formulario para registrar la información.
+                    </div>
+                <?php endif; ?>
             
             <form action="" method="POST" id="formSalud" novalidate autocomplete="off">
                     <!-- Sección 1: Estado General de Salud -->

@@ -106,7 +106,10 @@ class SaludController {
 
             $existe = $this->obtenerPorCedula($id_cedula);
             if ($existe) {
-                $sql = "UPDATE salud SET 
+                // Determinar en qué tabla actualizar basado en dónde se encontró el registro
+                $tabla = isset($existe['id_estado_salud']) ? 'estados_salud' : 'salud';
+                
+                $sql = "UPDATE $tabla SET 
                         id_estado_salud = :id_estado_salud, 
                         tipo_enfermedad = :tipo_enfermedad, 
                         tipo_enfermedad_cual = :tipo_enfermedad_cual, 
@@ -139,7 +142,34 @@ class SaludController {
                     return ['success'=>false, 'message'=>'Error al actualizar la información de salud.'];
                 }
             } else {
-                $sql = "INSERT INTO estados_salud (id_cedula, id_estado_salud, tipo_enfermedad, tipo_enfermedad_cual, limitacion_fisica, limitacion_fisica_cual, tipo_medicamento, tipo_medicamento_cual, ingiere_alcohol, ingiere_alcohol_cual, fuma, observacion) 
+                // Intentar INSERT en estados_salud primero
+                try {
+                    $sql = "INSERT INTO estados_salud (id_cedula, id_estado_salud, tipo_enfermedad, tipo_enfermedad_cual, limitacion_fisica, limitacion_fisica_cual, tipo_medicamento, tipo_medicamento_cual, ingiere_alcohol, ingiere_alcohol_cual, fuma, observacion) 
+                            VALUES (:id_cedula, :id_estado_salud, :tipo_enfermedad, :tipo_enfermedad_cual, :limitacion_fisica, :limitacion_fisica_cual, :tipo_medicamento, :tipo_medicamento_cual, :ingiere_alcohol, :ingiere_alcohol_cual, :fuma, :observacion)";
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->bindParam(':id_cedula', $id_cedula);
+                    $stmt->bindParam(':id_estado_salud', $id_estado_salud);
+                    $stmt->bindParam(':tipo_enfermedad', $tipo_enfermedad);
+                    $stmt->bindParam(':tipo_enfermedad_cual', $tipo_enfermedad_cual);
+                    $stmt->bindParam(':limitacion_fisica', $limitacion_fisica);
+                    $stmt->bindParam(':limitacion_fisica_cual', $limitacion_fisica_cual);
+                    $stmt->bindParam(':tipo_medicamento', $tipo_medicamento);
+                    $stmt->bindParam(':tipo_medicamento_cual', $tipo_medicamento_cual);
+                    $stmt->bindParam(':ingiere_alcohol', $ingiere_alcohol);
+                    $stmt->bindParam(':ingiere_alcohol_cual', $ingiere_alcohol_cual);
+                    $stmt->bindParam(':fuma', $fuma);
+                    $stmt->bindParam(':observacion', $observacion);
+                    $ok = $stmt->execute();
+                    if ($ok) {
+                        return ['success'=>true, 'message'=>'Información de salud guardada exitosamente.'];
+                    }
+                } catch (PDOException $e) {
+                    // Si falla en estados_salud, intentar en salud
+                    error_log("Error en INSERT estados_salud: " . $e->getMessage());
+                }
+                
+                // Intentar INSERT en tabla salud como respaldo
+                $sql = "INSERT INTO salud (id_cedula, id_estado_salud, tipo_enfermedad, tipo_enfermedad_cual, limitacion_fisica, limitacion_fisica_cual, tipo_medicamento, tipo_medicamento_cual, ingiere_alcohol, ingiere_alcohol_cual, fuma, observacion) 
                         VALUES (:id_cedula, :id_estado_salud, :tipo_enfermedad, :tipo_enfermedad_cual, :limitacion_fisica, :limitacion_fisica_cual, :tipo_medicamento, :tipo_medicamento_cual, :ingiere_alcohol, :ingiere_alcohol_cual, :fuma, :observacion)";
                 $stmt = $this->db->prepare($sql);
                 $stmt->bindParam(':id_cedula', $id_cedula);
@@ -170,12 +200,25 @@ class SaludController {
 
     public function obtenerPorCedula($id_cedula) {
         try {
-            $sql = "SELECT * FROM salud WHERE id_cedula = :id_cedula";
+            // Intentar primero en la tabla estados_salud
+            $sql = "SELECT * FROM estados_salud WHERE id_cedula = :id_cedula";
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':id_cedula', $id_cedula);
             $stmt->execute();
-            return $stmt->fetch(\PDO::FETCH_ASSOC);
+            $resultado = $stmt->fetch(\PDO::FETCH_ASSOC);
+            
+            // Si no se encuentra, intentar en la tabla salud
+            if (!$resultado) {
+                $sql = "SELECT * FROM salud WHERE id_cedula = :id_cedula";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindParam(':id_cedula', $id_cedula);
+                $stmt->execute();
+                $resultado = $stmt->fetch(\PDO::FETCH_ASSOC);
+            }
+            
+            return $resultado;
         } catch (PDOException $e) {
+            error_log("Error en obtenerPorCedula: " . $e->getMessage());
             return false;
         }
     }
