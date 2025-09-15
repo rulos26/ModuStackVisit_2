@@ -224,11 +224,6 @@ try {
             <div class="card-body">
                 <!-- Indicador de pasos -->
                 <div class="steps-horizontal mb-4">
-                    <div class="step-horizontal complete">
-                        <div class="step-icon"><i class="fas fa-user"></i></div>
-                        <div class="step-title">Paso 1</div>
-                        <div class="step-description">Datos Básicos</div>
-                    </div>
                     <div class="step-horizontal active">
                         <div class="step-icon"><i class="fas fa-id-card"></i></div>
                         <div class="step-title">Paso 2</div>
@@ -293,9 +288,8 @@ try {
                 <?php endif; ?>
 
                 <div class="row mb-4">
-                    <div class="col-12 d-flex justify-content-between align-items-center">
-                        <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid logo-empresa">
-                        <div class="text-muted text-end">
+                    <div class="col-12 text-end">
+                        <div class="text-muted">
                             <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
                             <small>Cédula: <?php echo htmlspecialchars($id_cedula); ?></small>
                         </div>
