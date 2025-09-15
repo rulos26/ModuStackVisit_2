@@ -821,14 +821,38 @@ error_reporting(E_ALL);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($data_credito as $credito): ?>
+                    <?php 
+                    $total_pago_mensual = 0;
+                    $total_deuda_credito = 0;
+                    foreach ($data_credito as $credito): 
+                        if (is_numeric($credito['pago_mensual'])) $total_pago_mensual += $credito['pago_mensual'];
+                        if (is_numeric($credito['deuda'])) $total_deuda_credito += $credito['deuda'];
+                    ?>
                         <tr>
                             <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($credito['entidad']) ?></td>
                             <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($credito['cuotas']) ?></td>
-                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($credito['pago_mensual']) ?></td>
-                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($credito['deuda']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;">
+                                <?php
+                                    echo is_numeric($credito['pago_mensual']) ? ('$' . number_format($credito['pago_mensual'], 0, ',', '.')) : htmlspecialchars($credito['pago_mensual']);
+                                ?>
+                            </td>
+                            <td style="border: 1px solid black; text-align: center;">
+                                <?php
+                                    echo is_numeric($credito['deuda']) ? ('$' . number_format($credito['deuda'], 0, ',', '.')) : htmlspecialchars($credito['deuda']);
+                                ?>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
+                    <!-- Fila de total para data crédito -->
+                    <tr style="background-color: #f0f0f0; font-weight: bold;">
+                        <td colspan="2" style="border: 1px solid black; text-align: center; font-weight: bold;">TOTAL DATA CRÉDITO</td>
+                        <td style="border: 1px solid black; text-align: center; font-weight: bold;">
+                            $<?= number_format($total_pago_mensual, 0, ',', '.') ?>
+                        </td>
+                        <td style="border: 1px solid black; text-align: center; font-weight: bold;">
+                            $<?= number_format($total_deuda_credito, 0, ',', '.') ?>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         <?php else: ?>
