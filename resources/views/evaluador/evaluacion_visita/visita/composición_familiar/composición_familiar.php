@@ -286,7 +286,7 @@ try {
             content: " *";
             color: #dc3545;
             font-weight: bold;
-        }
+}
 </style>
 </head>
 <body class="bg-light">
@@ -376,7 +376,7 @@ try {
                 <div class="alert alert-info mb-4">
                     <i class="bi bi-info-circle me-2"></i>
                     <strong>Información importante:</strong> Los campos marcados con <span class="text-danger">*</span> son obligatorios y deben ser completados antes de continuar.
-                </div>
+            </div>
             
             <form action="" method="POST" id="formComposicionFamiliar" novalidate autocomplete="off">
                 <div id="miembros-container">
@@ -438,8 +438,8 @@ try {
                                                 <?php echo htmlspecialchars($errores_campos['edad'][$index]); ?>
                                         </div>
                                         <?php endif; ?>
+                                        </div>
                                     </div>
-                                </div>
                                 
                                 <!-- Segunda fila: Ocupación, Teléfono, Conviven -->
                                 <div class="row">
@@ -541,7 +541,7 @@ try {
                                     </label>
                                     <input type="number" class="form-control" id="edad_0" name="edad[]" min="0" max="120" required>
                                 </div>
-                            </div>
+                                </div>
                             
                             <!-- Segunda fila: Ocupación, Teléfono, Conviven -->
                             <div class="row">
@@ -657,7 +657,7 @@ try {
                                 </label>
                                 <input type="number" class="form-control" id="edad_${miembroIndex}" name="edad[]" min="0" max="120" required>
                             </div>
-                        </div>
+                            </div>
                         
                         <!-- Segunda fila: Ocupación, Teléfono, Conviven -->
                         <div class="row">
