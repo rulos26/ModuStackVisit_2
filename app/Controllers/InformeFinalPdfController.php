@@ -152,15 +152,14 @@ class InformeFinalPdfController {
 
         // Procesar los campos de composición familiar
         if ($composicion_familiar) {
-            foreach ($composicion_familiar as &$familiar) {
+            foreach ($composicion_familiar as $index => $familiar) {
                 // Convertir campos vacíos a N/A
                 $campos_texto = ['nombre', 'nombre_parentesco', 'edad', 'nombre_ocupacion', 
                                'telefono', 'nombre_parametro', 'observacion'];
                 foreach ($campos_texto as $campo) {
-                    $familiar[$campo] = empty($familiar[$campo]) ? 'N/A' : $familiar[$campo];
+                    $composicion_familiar[$index][$campo] = empty($familiar[$campo]) ? 'N/A' : $familiar[$campo];
                 }
             }
-            unset($familiar); // Romper la referencia
         }
 
         // Consulta de información de la pareja
@@ -398,7 +397,7 @@ class InformeFinalPdfController {
 
         // Procesar los campos de cuentas bancarias
         if ($cuentas_bancarias) {
-            foreach ($cuentas_bancarias as &$cuenta) {
+            foreach ($cuentas_bancarias as $index => $cuenta) {
                 // Lista de campos a procesar
                 $campos_cuenta = [
                     'id_entidad', 'id_tipo_cuenta', 'ciudad', 'observaciones'
@@ -406,7 +405,7 @@ class InformeFinalPdfController {
 
                 // Convertir campos vacíos a N/A
                 foreach ($campos_cuenta as $campo) {
-                    $cuenta[$campo] = empty($cuenta[$campo]) ? 'N/A' : $cuenta[$campo];
+                    $cuentas_bancarias[$index][$campo] = empty($cuenta[$campo]) ? 'N/A' : $cuenta[$campo];
                 }
             }
         }
@@ -432,7 +431,7 @@ class InformeFinalPdfController {
 
         // Procesar los campos de pasivos
         if ($pasivos) {
-            foreach ($pasivos as &$pasivo) {
+            foreach ($pasivos as $index => $pasivo) {
                 // Lista de campos a procesar
                 $campos_pasivo = [
                     'item', 'id_entidad', 'id_tipo_inversion', 'municipio', 'deuda', 'cuota_mes'
@@ -440,7 +439,7 @@ class InformeFinalPdfController {
 
                 // Convertir campos vacíos a N/A
                 foreach ($campos_pasivo as $campo) {
-                    $pasivo[$campo] = empty($pasivo[$campo]) ? 'N/A' : $pasivo[$campo];
+                    $pasivos[$index][$campo] = empty($pasivo[$campo]) ? 'N/A' : $pasivo[$campo];
                 }
             }
         }
@@ -457,7 +456,7 @@ class InformeFinalPdfController {
 
         // Procesar los campos de aportantes
         if ($aportantes) {
-            foreach ($aportantes as &$aportante) {
+            foreach ($aportantes as $index => $aportante) {
                 // Lista de campos a procesar
                 $campos_aportante = [
                     'nombre', 'valor'
@@ -465,7 +464,7 @@ class InformeFinalPdfController {
 
                 // Convertir campos vacíos a N/A
                 foreach ($campos_aportante as $campo) {
-                    $aportante[$campo] = empty($aportante[$campo]) ? 'N/A' : $aportante[$campo];
+                    $aportantes[$index][$campo] = empty($aportante[$campo]) ? 'N/A' : $aportante[$campo];
                 }
             }
         }
@@ -482,7 +481,7 @@ class InformeFinalPdfController {
 
         // Procesar los campos de data crédito
         if ($data_credito) {
-            foreach ($data_credito as &$credito) {
+            foreach ($data_credito as $index => $credito) {
                 // Lista de campos a procesar
                 $campos_credito = [
                     'entidad', 'cuotas', 'pago_mensual', 'deuda'
@@ -490,7 +489,7 @@ class InformeFinalPdfController {
 
                 // Convertir campos vacíos a N/A
                 foreach ($campos_credito as $campo) {
-                    $credito[$campo] = empty($credito[$campo]) ? 'N/A' : $credito[$campo];
+                    $data_credito[$index][$campo] = empty($credito[$campo]) ? 'N/A' : $credito[$campo];
                 }
             }
         }
@@ -552,7 +551,7 @@ class InformeFinalPdfController {
 
         // Procesar los campos de estudios
         if ($estudios) {
-            foreach ($estudios as &$estudio) {
+            foreach ($estudios as $index => $estudio) {
                 // Lista de campos a procesar
                 $campos_estudio = [
                     'centro_estudios', 'id_jornada', 'municipio', 'anno', 'titulos', 'id_resultado'
@@ -560,7 +559,7 @@ class InformeFinalPdfController {
 
                 // Convertir campos vacíos a N/A
                 foreach ($campos_estudio as $campo) {
-                    $estudio[$campo] = empty($estudio[$campo]) ? 'N/A' : $estudio[$campo];
+                    $estudios[$index][$campo] = empty($estudio[$campo]) ? 'N/A' : $estudio[$campo];
                 }
             }
         }
@@ -626,7 +625,7 @@ class InformeFinalPdfController {
 
         // Procesar los campos de experiencia laboral
         if ($experiencia_laboral) {
-            foreach ($experiencia_laboral as &$experiencia) {
+            foreach ($experiencia_laboral as $index => $experiencia) {
                 // Lista de campos a procesar
                 $campos_experiencia = [
                     'empresa', 'tiempo', 'cargo', 'salario', 'retiro', 'concepto', 'nombre', 'numero'
@@ -634,7 +633,7 @@ class InformeFinalPdfController {
 
                 // Convertir campos vacíos a N/A
                 foreach ($campos_experiencia as $campo) {
-                    $experiencia[$campo] = empty($experiencia[$campo]) ? 'N/A' : $experiencia[$campo];
+                    $experiencia_laboral[$index][$campo] = empty($experiencia[$campo]) ? 'N/A' : $experiencia[$campo];
                 }
             }
         }
