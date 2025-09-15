@@ -212,46 +212,6 @@ try {
     </style>
 </head>
 <body class="bg-light">
-    <!-- Barra superior con tamaño de pantalla -->
-    <nav class="navbar navbar-light bg-primary text-white mb-3">
-        <div class="container-fluid justify-content-between">
-            <span class="navbar-brand mb-0 h1 text-white">Mi Dashboard</span>
-            <span id="screen-size" class="fw-bold"></span>
-        </div>
-    </nav>
-
-    <!-- Menú responsive -->
-    <!-- Menú Desktop Horizontal -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-desktop mb-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Menú</a>
-            <div class="collapse navbar-collapse show">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link active" href="#">Opciones del Evaluador</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Carta de autorización</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Evaluación visita domiciliaria</a></li>
-                </ul>
-                <span class="navbar-text text-white">Usuario: evaluador</span>
-            </div>
-        </div>
-    </nav>
-    <!-- Menú Mobile Hamburguesa -->
-    <nav class="navbar navbar-dark bg-dark navbar-mobile mb-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Menú</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuMobile" aria-controls="menuMobile" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="menuMobile">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link active" href="#">Opciones del Evaluador</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Carta de autorización</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Evaluación visita domiciliaria</a></li>
-                </ul>
-                <span class="navbar-text text-white">Usuario: evaluador</span>
-            </div>
-        </div>
-    </nav>
 
     <div class="container-fluid px-2">
         <div class="card mt-4 w-100" style="max-width:100%; border-radius: 0;">
@@ -722,12 +682,6 @@ try {
     </div>
     <!-- Solo Bootstrap JS, no rutas locales para evitar errores de MIME -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function updateScreenSize() {
-            document.getElementById('screen-size').textContent = 'width: ' + window.innerWidth + 'px';
-        }
-        window.addEventListener('resize', updateScreenSize);
-        window.addEventListener('DOMContentLoaded', updateScreenSize);
         
         // Validación adicional para campos obligatorios
         document.addEventListener('DOMContentLoaded', function() {
@@ -847,31 +801,39 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Información Personal - Sistema de Visitas</title>
+    <title>Información Personal - Dashboard Evaluador</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         }
-        .main-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.9);
+            border-radius: 8px;
+            margin: 2px 0;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
         }
         .card {
             border: none;
             border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
         }
-        .card-header {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
-            border-radius: 15px 15px 0 0 !important;
-            padding: 20px;
+        .card:hover {
+            transform: translateY(-5px);
         }
         .logo-empresa {
             max-width: 200px;
@@ -1004,9 +966,65 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <!-- Contenido del formulario -->
-        <?php echo $contenido; ?>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Verde -->
+            <div class="col-md-3 col-lg-2 px-0 sidebar">
+                <div class="p-3">
+                    <h4 class="text-white text-center mb-4">
+                        <i class="bi bi-clipboard-check"></i>
+                        Evaluador
+                    </h4>
+                    <hr class="text-white">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../../dashboardEvaluador.php">
+                                <i class="bi bi-house-door me-2"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../carta_visita/index_carta.php">
+                                <i class="bi bi-file-earmark-text-fill me-2"></i>
+                                Carta de Autorización
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="../index.php">
+                                <i class="bi bi-house-door-fill me-2"></i>
+                                Evaluación Visita Domiciliaria
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-warning" href="../../../../../logout.php">
+                                <i class="bi bi-box-arrow-right me-2"></i>
+                                Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="p-4">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h1 class="h3 mb-0">Información Personal</h1>
+                            <p class="text-muted mb-0">Formulario de datos personales para evaluación</p>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">Usuario: <?php echo htmlspecialchars($nombreUsuario); ?></small><br>
+                            <small class="text-muted">Cédula: <?php echo htmlspecialchars($cedulaUsuario); ?></small>
+                        </div>
+                    </div>
+
+                    <!-- Contenido del formulario -->
+                    <?php echo $contenido; ?>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
