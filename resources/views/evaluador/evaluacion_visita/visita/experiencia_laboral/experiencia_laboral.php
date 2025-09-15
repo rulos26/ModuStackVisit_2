@@ -687,249 +687,6 @@ try {
     </div>
     
     <!-- Solo Bootstrap JS, no rutas locales para evitar errores de MIME -->
-// Variables para Cleave.js
-let cleaveInstances = {};
-
-// Función para inicializar Cleave.js en un campo
-function inicializarCleave(campoId) {
-    if (cleaveInstances[campoId]) {
-        cleaveInstances[campoId].destroy();
-    }
-    
-    const campo = document.getElementById(campoId);
-    if (campo) {
-        cleaveInstances[campoId] = new Cleave(campo, {
-            numeral: true,
-            numeralThousandsGroupStyle: 'thousand',
-            numeralDecimalMark: ',',
-            delimiter: '.',
-            numeralDecimalScale: 2,
-            prefix: '$ ',
-            onValueChanged: function(e) {
-                const input = e.target;
-                // Remover clases de validación previas
-                input.classList.remove('is-invalid', 'is-valid');
-                
-                // Validar formato monetario
-                if (validarFormatoMonetario(input.value)) {
-                    input.classList.add('is-valid');
-                } else if (input.value.trim() !== '') {
-                    input.classList.add('is-invalid');
-                }
-            }
-        });
-    }
-}
-
-// Función para validar formato monetario colombiano
-function validarFormatoMonetario(valor) {
-    if (!valor || valor.trim() === '') return false;
-    
-    // Remover prefijo $ y espacios
-    let valorLimpio = valor.replace(/^\$\s*/, '').trim();
-    
-    // Patrón para formato colombiano: 1.500.000,50 o 1500000,50
-    const patronColombiano = /^(\d{1,3}(\.\d{3})*|\d+)(,\d{1,2})?$/;
-    
-    return patronColombiano.test(valorLimpio);
-}
-
-// Función para formatear valor para envío
-function formatearValorParaEnvio(valor) {
-    if (!valor || valor.trim() === '') return '';
-    
-    // Remover prefijo $ y espacios
-    let valorLimpio = valor.replace(/^\$\s*/, '').trim();
-    
-    // Reemplazar punto por nada (separador de miles) y coma por punto (decimal)
-    valorLimpio = valorLimpio.replace(/\./g, '').replace(',', '.');
-    
-    return valorLimpio;
-}
-
-// Función para inicializar estado de campos monetarios
-function inicializarEstadoCampos() {
-    const camposMonetarios = document.querySelectorAll('input[name*="[salario]"]');
-    camposMonetarios.forEach(campo => {
-        if (campo.value && campo.value.trim() !== '') {
-            campo.classList.add('is-valid');
-        }
-    });
-}
-
-// Ejecutar al cargar la página
-document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar Cleave.js para campos monetarios existentes
-    setTimeout(function() {
-        const camposMonetarios = document.querySelectorAll('input[name*="[salario]"]');
-        camposMonetarios.forEach(campo => {
-            inicializarCleave(campo.id);
-        });
-        
-        // Inicializar estado de campos monetarios
-        inicializarEstadoCampos();
-    }, 100);
-});
-
-// Validación del formulario
-document.getElementById('formExperiencia').addEventListener('submit', function(event) {
-    // Formatear valores monetarios antes del envío
-    const camposMonetarios = document.querySelectorAll('input[name*="[salario]"]');
-    camposMonetarios.forEach(campo => {
-        if (campo.value && campo.value.trim() !== '') {
-            campo.value = formatearValorParaEnvio(campo.value);
-        }
-    });
-});
-
-    let experienciaCounter = <?php echo !empty($datos_existentes) && is_array($datos_existentes) ? count($datos_existentes) : 1; ?>;
-
-    document.getElementById('btnAgregarExperiencia').addEventListener('click', function() {
-        const container = document.getElementById('experiencias-container');
-        const nuevaExperiencia = document.createElement('div');
-        nuevaExperiencia.className = 'experiencia-item border rounded p-3 mb-3';
-        nuevaExperiencia.setAttribute('data-index', experienciaCounter);
-        
-        nuevaExperiencia.innerHTML = `
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="mb-0 text-primary">
-                    <i class="bi bi-briefcase me-2"></i>Experiencia Laboral #${experienciaCounter + 1}
-                </h6>
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeExperiencia(this)">
-                    <i class="bi bi-trash me-1"></i>Eliminar
-                </button>
-            </div>
-            
-            <div class="row mb-3">
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">
-                        <i class="bi bi-building me-1"></i>Empresa:
-                    </label>
-                    <input type="text" class="form-control" name="experiencias[${experienciaCounter}][empresa]" 
-                           placeholder="Ej: Empresa ABC S.A." minlength="3" required>
-                    <div class="form-text">Mínimo 3 caracteres</div>
-                </div>
-                
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">
-                        <i class="bi bi-clock me-1"></i>Tiempo Laborado:
-                    </label>
-                    <input type="text" class="form-control" name="experiencias[${experienciaCounter}][tiempo]" 
-                           placeholder="Ej: 2 años, 6 meses" minlength="3" required>
-                    <div class="form-text">Mínimo 3 caracteres</div>
-                </div>
-                
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">
-                        <i class="bi bi-person-badge me-1"></i>Cargo Desempeñado:
-                    </label>
-                    <input type="text" class="form-control" name="experiencias[${experienciaCounter}][cargo]" 
-                           placeholder="Ej: Gerente de Ventas" minlength="3" required>
-                    <div class="form-text">Mínimo 3 caracteres</div>
-                </div>
-            </div>
-            
-            <div class="row mb-3">
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">
-                        <i class="bi bi-cash me-1"></i>Salario:
-                    </label>
-                <div class="currency-input currency-tooltip">
-                    <div class="input-group">
-                        <span class="input-group-text">$</span>
-                        <input type="text" class="form-control" id="salario_${experienciaCounter}" name="experiencias[${experienciaCounter}][salario]" 
-                               placeholder="1.500.000" required>
-                    </div>
-                </div>
-                <div class="form-text">Salario mensual en pesos colombianos</div>
-                </div>
-                
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">
-                        <i class="bi bi-box-arrow-right me-1"></i>Motivo de Retiro:
-                    </label>
-                    <input type="text" class="form-control" name="experiencias[${experienciaCounter}][retiro]" 
-                           placeholder="Ej: Renuncia voluntaria" minlength="5" required>
-                    <div class="form-text">Mínimo 5 caracteres</div>
-                </div>
-                
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">
-                        <i class="bi bi-chat-quote me-1"></i>Concepto Emitido:
-                    </label>
-                    <input type="text" class="form-control" name="experiencias[${experienciaCounter}][concepto]" 
-                           placeholder="Ej: Excelente trabajador" minlength="5" required>
-                    <div class="form-text">Mínimo 5 caracteres</div>
-                </div>
-            </div>
-            
-            <div class="row mb-3">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">
-                        <i class="bi bi-person me-1"></i>Nombre del Contacto:
-                    </label>
-                    <input type="text" class="form-control" name="experiencias[${experienciaCounter}][nombre]" 
-                           placeholder="Ej: Juan Pérez" minlength="3" required>
-                    <div class="form-text">Mínimo 3 caracteres</div>
-                </div>
-                
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">
-                        <i class="bi bi-telephone me-1"></i>Número de Contacto:
-                    </label>
-                    <input type="number" class="form-control" name="experiencias[${experienciaCounter}][numero]" 
-                           placeholder="Ej: 3001234567" min="1000000" required>
-                    <div class="form-text">Mínimo 7 dígitos</div>
-                </div>
-            </div>
-        `;
-        
-        container.appendChild(nuevaExperiencia);
-    
-    // Inicializar Cleave.js para el nuevo campo de salario
-    inicializarCleave(`salario_${experienciaCounter}`);
-    
-        experienciaCounter++;
-        
-        // Scroll suave hacia la nueva experiencia
-        nuevaExperiencia.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
-    
-    function removeExperiencia(boton) {
-        const experiencia = boton.closest('.experiencia-item');
-        const container = document.getElementById('experiencias-container');
-        const experiencias = container.querySelectorAll('.experiencia-item');
-        
-        // No permitir eliminar si solo queda una experiencia
-        if (experiencias.length <= 1) {
-            alert('Debe mantener al menos una experiencia laboral.');
-            return;
-        }
-        
-        if (confirm('¿Está seguro de que desea eliminar esta experiencia laboral?')) {
-            experiencia.remove();
-            actualizarNumeracion();
-        }
-    }
-    
-    function actualizarNumeracion() {
-        const experiencias = document.querySelectorAll('.experiencia-item');
-        experiencias.forEach((experiencia, index) => {
-            const titulo = experiencia.querySelector('h6');
-            titulo.innerHTML = `<i class="bi bi-briefcase me-2"></i>Experiencia Laboral #${index + 1}`;
-            
-            // Actualizar los nombres de los campos
-            const inputs = experiencia.querySelectorAll('input');
-            inputs.forEach(input => {
-                const name = input.getAttribute('name');
-                if (name) {
-                    const newName = name.replace(/experiencias\[\d+\]/, `experiencias[${index}]`);
-                    input.setAttribute('name', newName);
-                }
-            });
-        });
-    }
-    </script>
 <?php
 $contenido = ob_get_clean();
 ?>
@@ -1037,5 +794,265 @@ $contenido = ob_get_clean();
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Cleave.js para formato de moneda -->
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+
+    <script>
+    // Variables para Cleave.js
+    let cleaveInstances = {};
+
+    // Función para inicializar Cleave.js en un campo
+    function inicializarCleave(campoId) {
+        if (cleaveInstances[campoId]) {
+            cleaveInstances[campoId].destroy();
+        }
+        
+        const campo = document.getElementById(campoId);
+        if (campo) {
+            cleaveInstances[campoId] = new Cleave(campo, {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralDecimalMark: ',',
+                delimiter: '.',
+                numeralDecimalScale: 2,
+                prefix: '$ ',
+                onValueChanged: function(e) {
+                    const input = e.target;
+                    // Remover clases de validación previas
+                    input.classList.remove('is-invalid', 'is-valid');
+                    
+                    // Validar formato monetario
+                    if (validarFormatoMonetario(input.value)) {
+                        input.classList.add('is-valid');
+                    } else if (input.value.trim() !== '') {
+                        input.classList.add('is-invalid');
+                    }
+                }
+            });
+        }
+    }
+
+    // Función para validar formato monetario colombiano
+    function validarFormatoMonetario(valor) {
+        if (!valor || valor.trim() === '') return false;
+        
+        // Remover prefijo $ y espacios
+        let valorLimpio = valor.replace(/^\$\s*/, '').trim();
+        
+        // Patrón para formato colombiano: 1.500.000,50 o 1500000,50
+        const patronColombiano = /^(\d{1,3}(\.\d{3})*|\d+)(,\d{1,2})?$/;
+        
+        return patronColombiano.test(valorLimpio);
+    }
+
+    // Función para formatear valor para envío
+    function formatearValorParaEnvio(valor) {
+        if (!valor || valor.trim() === '') return '';
+        
+        // Remover prefijo $ y espacios
+        let valorLimpio = valor.replace(/^\$\s*/, '').trim();
+        
+        // Reemplazar punto por nada (separador de miles) y coma por punto (decimal)
+        valorLimpio = valorLimpio.replace(/\./g, '').replace(',', '.');
+        
+        return valorLimpio;
+    }
+
+    // Función para inicializar estado de campos monetarios
+    function inicializarEstadoCampos() {
+        const camposMonetarios = document.querySelectorAll('input[name*="[salario]"]');
+        camposMonetarios.forEach(campo => {
+            if (campo.value && campo.value.trim() !== '') {
+                campo.classList.add('is-valid');
+            }
+        });
+    }
+
+    // Ejecutar al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar Cleave.js para campos monetarios existentes
+        setTimeout(function() {
+            const camposMonetarios = document.querySelectorAll('input[name*="[salario]"]');
+            camposMonetarios.forEach(campo => {
+                inicializarCleave(campo.id);
+            });
+            
+            // Inicializar estado de campos monetarios
+            inicializarEstadoCampos();
+        }, 100);
+    });
+
+    // Validación del formulario
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('formExperiencia');
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                // Formatear valores monetarios antes del envío
+                const camposMonetarios = document.querySelectorAll('input[name*="[salario]"]');
+                camposMonetarios.forEach(campo => {
+                    if (campo.value && campo.value.trim() !== '') {
+                        campo.value = formatearValorParaEnvio(campo.value);
+                    }
+                });
+            });
+        }
+    });
+
+    let experienciaCounter = <?php echo !empty($datos_existentes) && is_array($datos_existentes) ? count($datos_existentes) : 1; ?>;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const btnAgregar = document.getElementById('btnAgregarExperiencia');
+        if (btnAgregar) {
+            btnAgregar.addEventListener('click', function() {
+                const container = document.getElementById('experiencias-container');
+                const nuevaExperiencia = document.createElement('div');
+                nuevaExperiencia.className = 'experiencia-item border rounded p-3 mb-3';
+                nuevaExperiencia.setAttribute('data-index', experienciaCounter);
+                
+                nuevaExperiencia.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0 text-primary">
+                            <i class="bi bi-briefcase me-2"></i>Experiencia Laboral #${experienciaCounter + 1}
+                        </h6>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeExperiencia(this)">
+                            <i class="bi bi-trash me-1"></i>Eliminar
+                        </button>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-building me-1"></i>Empresa:
+                            </label>
+                            <input type="text" class="form-control" name="experiencias[${experienciaCounter}][empresa]" 
+                                   placeholder="Ej: Empresa ABC S.A." minlength="3" required>
+                            <div class="form-text">Mínimo 3 caracteres</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-clock me-1"></i>Tiempo Laborado:
+                            </label>
+                            <input type="text" class="form-control" name="experiencias[${experienciaCounter}][tiempo]" 
+                                   placeholder="Ej: 2 años, 6 meses" minlength="3" required>
+                            <div class="form-text">Mínimo 3 caracteres</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-person-badge me-1"></i>Cargo Desempeñado:
+                            </label>
+                            <input type="text" class="form-control" name="experiencias[${experienciaCounter}][cargo]" 
+                                   placeholder="Ej: Gerente de Ventas" minlength="3" required>
+                            <div class="form-text">Mínimo 3 caracteres</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-cash me-1"></i>Salario:
+                            </label>
+                            <div class="currency-input currency-tooltip">
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="text" class="form-control" id="salario_${experienciaCounter}" name="experiencias[${experienciaCounter}][salario]" 
+                                           placeholder="1.500.000" required>
+                                </div>
+                            </div>
+                            <div class="form-text">Salario mensual en pesos colombianos</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-box-arrow-right me-1"></i>Motivo de Retiro:
+                            </label>
+                            <input type="text" class="form-control" name="experiencias[${experienciaCounter}][retiro]" 
+                                   placeholder="Ej: Renuncia voluntaria" minlength="5" required>
+                            <div class="form-text">Mínimo 5 caracteres</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-chat-quote me-1"></i>Concepto Emitido:
+                            </label>
+                            <input type="text" class="form-control" name="experiencias[${experienciaCounter}][concepto]" 
+                                   placeholder="Ej: Excelente trabajador" minlength="5" required>
+                            <div class="form-text">Mínimo 5 caracteres</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-person me-1"></i>Nombre del Contacto:
+                            </label>
+                            <input type="text" class="form-control" name="experiencias[${experienciaCounter}][nombre]" 
+                                   placeholder="Ej: Juan Pérez" minlength="3" required>
+                            <div class="form-text">Mínimo 3 caracteres</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-telephone me-1"></i>Número de Contacto:
+                            </label>
+                            <input type="number" class="form-control" name="experiencias[${experienciaCounter}][numero]" 
+                                   placeholder="Ej: 3001234567" min="1000000" required>
+                            <div class="form-text">Mínimo 7 dígitos</div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(nuevaExperiencia);
+                
+                // Inicializar Cleave.js para el nuevo campo de salario
+                inicializarCleave(`salario_${experienciaCounter}`);
+                
+                experienciaCounter++;
+                
+                // Scroll suave hacia la nueva experiencia
+                nuevaExperiencia.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        }
+    });
+    
+    function removeExperiencia(boton) {
+        console.log('Función removeExperiencia llamada'); // Debug
+        const experiencia = boton.closest('.experiencia-item');
+        const container = document.getElementById('experiencias-container');
+        const experiencias = container.querySelectorAll('.experiencia-item');
+        
+        console.log('Experiencias encontradas:', experiencias.length); // Debug
+        
+        // No permitir eliminar si solo queda una experiencia
+        if (experiencias.length <= 1) {
+            alert('Debe mantener al menos una experiencia laboral.');
+            return;
+        }
+        
+        if (confirm('¿Está seguro de que desea eliminar esta experiencia laboral?')) {
+            experiencia.remove();
+            actualizarNumeracion();
+        }
+    }
+    
+    function actualizarNumeracion() {
+        const experiencias = document.querySelectorAll('.experiencia-item');
+        experiencias.forEach((experiencia, index) => {
+            const titulo = experiencia.querySelector('h6');
+            titulo.innerHTML = `<i class="bi bi-briefcase me-2"></i>Experiencia Laboral #${index + 1}`;
+            
+            // Actualizar los nombres de los campos
+            const inputs = experiencia.querySelectorAll('input');
+            inputs.forEach(input => {
+                const name = input.getAttribute('name');
+                if (name) {
+                    const newName = name.replace(/experiencias\[\d+\]/, `experiencias[${index}]`);
+                    input.setAttribute('name', newName);
+                }
+            });
+        });
+    }
+    </script>
 </body>
 </html>
