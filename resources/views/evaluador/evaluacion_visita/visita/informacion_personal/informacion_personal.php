@@ -226,27 +226,27 @@ try {
                 <div class="steps-horizontal mb-4">
                     <div class="step-horizontal active">
                         <div class="step-icon"><i class="fas fa-id-card"></i></div>
-                        <div class="step-title">Paso 2</div>
+                        <div class="step-title">Paso 1</div>
                         <div class="step-description">Información Personal</div>
                     </div>
                     <div class="step-horizontal">
                         <div class="step-icon"><i class="fas fa-building"></i></div>
-                        <div class="step-title">Paso 3</div>
+                        <div class="step-title">Paso 2</div>
                         <div class="step-description">Cámara de Comercio</div>
                     </div>
                     <div class="step-horizontal">
                         <div class="step-icon"><i class="fas fa-camera"></i></div>
-                        <div class="step-title">Paso 4</div>
+                        <div class="step-title">Paso 3</div>
                         <div class="step-description">Registro Fotográfico</div>
                     </div>
                     <div class="step-horizontal">
                         <div class="step-icon"><i class="fas fa-map-marker-alt"></i></div>
-                        <div class="step-title">Paso 5</div>
+                        <div class="step-title">Paso 4</div>
                         <div class="step-description">Ubicación</div>
                     </div>
                     <div class="step-horizontal">
                         <div class="step-icon"><i class="fas fa-flag-checkered"></i></div>
-                        <div class="step-title">Paso 6</div>
+                        <div class="step-title">Paso 22</div>
                         <div class="step-description">Finalización</div>
                     </div>
                 </div>
