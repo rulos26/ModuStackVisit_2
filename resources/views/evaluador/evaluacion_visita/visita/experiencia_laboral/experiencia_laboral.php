@@ -15,6 +15,10 @@ if (!isset($_SESSION['id_cedula']) || empty($_SESSION['id_cedula'])) {
     exit();
 }
 
+// Definir variables de usuario
+$nombreUsuario = $_SESSION['nombre'] ?? $_SESSION['username'] ?? 'Evaluador';
+$cedulaUsuario = $_SESSION['cedula'] ?? $_SESSION['id_cedula'] ?? '';
+
 // Incluir el controlador desde la misma carpeta
 require_once __DIR__ . '/ExperienciaLaboralController.php';
 use App\Controllers\ExperienciaLaboralController;
@@ -954,6 +958,9 @@ if ($_SESSION['rol'] != 4) {
 
 $nombreUsuario = $_SESSION['nombre'] ?? 'Evaluador';
 $cedulaUsuario = $_SESSION['cedula'] ?? '';
+?>
+<?php
+$contenido = ob_get_clean();
 ?>
 <!DOCTYPE html>
 <html lang="es">
