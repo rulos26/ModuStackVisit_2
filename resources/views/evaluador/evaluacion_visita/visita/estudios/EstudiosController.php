@@ -152,10 +152,42 @@ class EstudiosController {
                 }
             }
             
+            // Manejar observaciones académicas
+            $observacion_guardada = false;
+            if (isset($datos['observacion_academica']) && !empty(trim($datos['observacion_academica']))) {
+                // Eliminar observación existente
+                $sql_delete_obs = "DELETE FROM observaciones_academicas WHERE id_cedula = :id_cedula";
+                $stmt_delete_obs = $this->db->prepare($sql_delete_obs);
+                $stmt_delete_obs->bindParam(':id_cedula', $id_cedula);
+                $stmt_delete_obs->execute();
+                
+                // Insertar nueva observación
+                $sql_obs = "INSERT INTO observaciones_academicas (id_cedula, observacion) VALUES (:id_cedula, :observacion)";
+                $stmt_obs = $this->db->prepare($sql_obs);
+                $stmt_obs->bindParam(':id_cedula', $id_cedula);
+                $stmt_obs->bindParam(':observacion', $datos['observacion_academica']);
+                
+                if ($stmt_obs->execute()) {
+                    $observacion_guardada = true;
+                }
+            } else {
+                // Si no hay observación, eliminar la existente
+                $sql_delete_obs = "DELETE FROM observaciones_academicas WHERE id_cedula = :id_cedula";
+                $stmt_delete_obs = $this->db->prepare($sql_delete_obs);
+                $stmt_delete_obs->bindParam(':id_cedula', $id_cedula);
+                $stmt_delete_obs->execute();
+            }
+            
             if ($registros_insertados > 0) {
+                $mensaje = "Se guardaron exitosamente $registros_insertados estudio(s)";
+                if ($observacion_guardada) {
+                    $mensaje .= " y la observación académica";
+                }
+                $mensaje .= ".";
+                
                 return [
                     'success' => true, 
-                    'message' => "Se guardaron exitosamente $registros_insertados estudio(s)."
+                    'message' => $mensaje
                 ];
             } else {
                 return ['success' => false, 'message' => 'No se pudo guardar ningún estudio.'];
@@ -174,7 +206,24 @@ class EstudiosController {
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':id_cedula', $id_cedula);
             $stmt->execute();
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $estudios = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            // Obtener observación académica
+            $sql_obs = "SELECT observacion FROM observaciones_academicas WHERE id_cedula = :id_cedula LIMIT 1";
+            $stmt_obs = $this->db->prepare($sql_obs);
+            $stmt_obs->bindParam(':id_cedula', $id_cedula);
+            $stmt_obs->execute();
+            $observacion = $stmt_obs->fetch(\PDO::FETCH_ASSOC);
+            
+            // Agregar la observación al array de estudios si existe
+            if ($observacion && !empty($estudios)) {
+                $estudios['observacion_academica'] = $observacion['observacion'];
+            } elseif ($observacion && empty($estudios)) {
+                // Si no hay estudios pero sí hay observación, crear un array con la observación
+                $estudios = ['observacion_academica' => $observacion['observacion']];
+            }
+            
+            return $estudios;
         } catch (PDOException $e) {
             return [];
         }

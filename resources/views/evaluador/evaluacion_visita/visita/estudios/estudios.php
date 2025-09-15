@@ -553,6 +553,19 @@ try {
                         <?php endif; ?>
                     </div>
                     
+                    <!-- Campo de Observaciones Académicas -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <label for="observacion_academica" class="form-label">
+                                <i class="bi bi-chat-text me-1"></i>Observaciones Académicas:
+                            </label>
+                            <textarea class="form-control" id="observacion_academica" name="observacion_academica" 
+                                      rows="4" maxlength="1000" 
+                                      placeholder="Ingrese observaciones adicionales sobre los estudios académicos..."><?php echo !empty($datos_formulario['observacion_academica']) ? htmlspecialchars($datos_formulario['observacion_academica']) : ''; ?></textarea>
+                            <div class="form-text">Máximo 1000 caracteres</div>
+                        </div>
+                    </div>
+                    
                     <div class="row">
                         <div class="col-12 text-center">
                             <button type="button" class="btn btn-success btn-lg me-2" id="btnAgregarEstudio">
