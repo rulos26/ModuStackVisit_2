@@ -89,17 +89,10 @@ try {
     $id_cedula = $_SESSION['id_cedula'];
     $datos_existentes = $controller->obtenerPorCedula($id_cedula);
     
-    // Debug: Mostrar datos existentes
-    if ($datos_existentes !== false) {
-        error_log('DEBUG tiene_pareja.php: Datos existentes encontrados: ' . print_r($datos_existentes, true));
-    } else {
-        error_log('DEBUG tiene_pareja.php: No se encontraron datos existentes para cédula: ' . $id_cedula);
-    }
     
     // Si no hay datos del formulario (POST), usar datos existentes
     if (empty($datos_formulario) && $datos_existentes !== false) {
         $datos_formulario = $datos_existentes;
-        error_log('DEBUG tiene_pareja.php: Cargando datos existentes en formulario: ' . print_r($datos_formulario, true));
     }
     
     // Determinar si tiene pareja basado en los datos existentes
@@ -133,7 +126,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap 5 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
+<style>
         /* Menú horizontal en desktop */
         @media (min-width: 992px) {
             .navbar-desktop {
@@ -259,90 +252,90 @@ try {
             opacity: 1;
             max-height: 2000px;
         }
-        /* Estilos para errores en campos */
-        .form-control.is-invalid,
-        .form-select.is-invalid {
-            border-color: #dc3545;
-            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-        }
-        .form-control.is-valid,
-        .form-select.is-valid {
-            border-color: #198754;
-            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
-        }
-        .invalid-feedback {
-            display: block;
-            width: 100%;
-            margin-top: 0.25rem;
-            font-size: 0.875em;
-            color: #dc3545;
-        }
-        .valid-feedback {
-            display: block;
-            width: 100%;
-            margin-top: 0.25rem;
-            font-size: 0.875em;
-            color: #198754;
-        }
-        .form-text.error-message {
-            color: #dc3545;
-            font-weight: 500;
-        }
-        .form-text.success-message {
-            color: #198754;
-            font-weight: 500;
-        }
+/* Estilos para errores en campos */
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+.form-control.is-valid,
+.form-select.is-valid {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+}
+.valid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #198754;
+}
+.form-text.error-message {
+    color: #dc3545;
+    font-weight: 500;
+}
+.form-text.success-message {
+    color: #198754;
+    font-weight: 500;
+}
         .required-field::after {
             content: " *";
             color: #dc3545;
             font-weight: bold;
         }
-    </style>
+</style>
 </head>
 <body class="bg-light">
 
     <div class="container-fluid px-2">
         <div class="card mt-4 w-100" style="max-width:100%; border-radius: 0;">
-            <div class="card-header bg-primary text-white">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-heart me-2"></i>
-                    VISITA DOMICILIARÍA - INFORMACIÓN DE LA PAREJA (CÓNYUGE, COMPAÑERA SENTIMENTAL)
-                </h5>
-            </div>
-            <div class="card-body">
-                <!-- Indicador de pasos -->
-                <div class="steps-horizontal mb-4">
-                    <div class="step-horizontal complete">
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-heart me-2"></i>
+                VISITA DOMICILIARÍA - INFORMACIÓN DE LA PAREJA (CÓNYUGE, COMPAÑERA SENTIMENTAL)
+            </h5>
+        </div>
+        <div class="card-body">
+            <!-- Indicador de pasos -->
+            <div class="steps-horizontal mb-4">
+                <div class="step-horizontal complete">
                         <div class="step-icon"><i class="fas fa-id-card"></i></div>
-                        <div class="step-title">Paso 1</div>
-                        <div class="step-description">Información Personal</div>
-                    </div>
-                    <div class="step-horizontal complete">
-                        <div class="step-icon"><i class="fas fa-building"></i></div>
+                    <div class="step-title">Paso 1</div>
+                    <div class="step-description">Información Personal</div>
+                </div>
+                <div class="step-horizontal complete">
+                    <div class="step-icon"><i class="fas fa-building"></i></div>
                         <div class="step-title">Paso 2</div>
-                        <div class="step-description">Cámara de Comercio</div>
-                    </div>
-                    <div class="step-horizontal complete">
-                        <div class="step-icon"><i class="fas fa-heartbeat"></i></div>
+                    <div class="step-description">Cámara de Comercio</div>
+                </div>
+                <div class="step-horizontal complete">
+                    <div class="step-icon"><i class="fas fa-heartbeat"></i></div>
                         <div class="step-title">Paso 3</div>
-                        <div class="step-description">Salud</div>
-                    </div>
-                    <div class="step-horizontal complete">
+                    <div class="step-description">Salud</div>
+                </div>
+                <div class="step-horizontal complete">
                         <div class="step-icon"><i class="fas fa-users"></i></div>
                         <div class="step-title">Paso 4</div>
-                        <div class="step-description">Composición Familiar</div>
-                    </div>
-                    <div class="step-horizontal active">
-                        <div class="step-icon"><i class="fas fa-heart"></i></div>
+                    <div class="step-description">Composición Familiar</div>
+                </div>
+                <div class="step-horizontal active">
+                    <div class="step-icon"><i class="fas fa-heart"></i></div>
                         <div class="step-title">Paso 5</div>
-                        <div class="step-description">Información Pareja</div>
-                    </div>
-                    <div class="step-horizontal">
+                    <div class="step-description">Información Pareja</div>
+                </div>
+                <div class="step-horizontal">
                         <div class="step-icon"><i class="fas fa-camera"></i></div>
                         <div class="step-title">Paso 6</div>
                         <div class="step-description">Registro Fotográfico</div>
                     </div>
-                </div>
+            </div>
 
 
             <!-- Mensajes de sesión -->
@@ -375,7 +368,6 @@ try {
                 <div class="alert alert-success">
                     <i class="bi bi-check-circle me-2"></i>
                     <strong>Datos cargados:</strong> Se encontró información de pareja registrada para esta cédula. Los datos se han cargado automáticamente.
-                    <br><small>Valor tiene_pareja: <?php echo $tiene_pareja_valor; ?> | Cédula: <?php echo !empty($datos_formulario['cedula']) ? $datos_formulario['cedula'] : 'vacía'; ?> | Nombres: <?php echo !empty($datos_formulario['nombres']) ? $datos_formulario['nombres'] : 'vacíos'; ?></small>
                 </div>
             <?php else: ?>
                 <div class="alert alert-warning">
@@ -384,14 +376,14 @@ try {
                 </div>
             <?php endif; ?>
             
-                <div class="row mb-4">
+            <div class="row mb-4">
                     <div class="col-12 text-end">
-                        <div class="text-muted">
-                            <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
-                            <small>Cédula: <?php echo htmlspecialchars($id_cedula); ?></small>
-                        </div>
+                    <div class="text-muted">
+                        <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
+                        <small>Cédula: <?php echo htmlspecialchars($id_cedula); ?></small>
                     </div>
                 </div>
+            </div>
 
                 <!-- Nota informativa sobre campos obligatorios -->
                 <div class="alert alert-info mb-4">
@@ -417,9 +409,9 @@ try {
                             <?php endforeach; ?>
                         </select>
                         <?php if (!empty($errores_campos['tiene_pareja'])): ?>
-                            <div class="invalid-feedback">
+                        <div class="invalid-feedback">
                                 <?php echo htmlspecialchars($errores_campos['tiene_pareja']); ?>
-                            </div>
+                        </div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -440,9 +432,9 @@ try {
                                    id="cedula" name="cedula" 
                                    value="<?php echo !empty($datos_formulario['cedula']) ? htmlspecialchars($datos_formulario['cedula']) : ''; ?>">
                             <?php if (!empty($errores_campos['cedula'])): ?>
-                                <div class="invalid-feedback">
+                            <div class="invalid-feedback">
                                     <?php echo htmlspecialchars($errores_campos['cedula']); ?>
-                                </div>
+                            </div>
                             <?php endif; ?>
                         </div>
                         <div class="col-md-4 mb-3">
@@ -492,9 +484,9 @@ try {
                                    id="nombres" name="nombres" 
                                    value="<?php echo !empty($datos_formulario['nombres']) ? htmlspecialchars($datos_formulario['nombres']) : ''; ?>">
                             <?php if (!empty($errores_campos['nombres'])): ?>
-                                <div class="invalid-feedback">
+                            <div class="invalid-feedback">
                                     <?php echo htmlspecialchars($errores_campos['nombres']); ?>
-                                </div>
+                            </div>
                             <?php endif; ?>
                         </div>
                         <div class="col-md-4 mb-3">
@@ -506,9 +498,9 @@ try {
                                    value="<?php echo !empty($datos_formulario['edad']) ? htmlspecialchars($datos_formulario['edad']) : ''; ?>" 
                                    min="18" max="120">
                             <?php if (!empty($errores_campos['edad'])): ?>
-                                <div class="invalid-feedback">
+                            <div class="invalid-feedback">
                                     <?php echo htmlspecialchars($errores_campos['edad']); ?>
-                                </div>
+                            </div>
                             <?php endif; ?>
                         </div>
                         <div class="col-md-4 mb-3">
@@ -606,9 +598,9 @@ try {
                                    value="<?php echo !empty($datos_formulario['telefono_1']) ? htmlspecialchars($datos_formulario['telefono_1']) : ''; ?>" 
                                    pattern="[0-9]{7,10}">
                             <?php if (!empty($errores_campos['telefono_1'])): ?>
-                                <div class="invalid-feedback">
+                            <div class="invalid-feedback">
                                     <?php echo htmlspecialchars($errores_campos['telefono_1']); ?>
-                                </div>
+                            </div>
                             <?php endif; ?>
                         </div>
                             </div>
@@ -641,9 +633,9 @@ try {
                                 <?php endforeach; ?>
                             </select>
                             <?php if (!empty($errores_campos['vive_candidato'])): ?>
-                                <div class="invalid-feedback">
+                            <div class="invalid-feedback">
                                     <?php echo htmlspecialchars($errores_campos['vive_candidato']); ?>
-                                </div>
+                            </div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -672,18 +664,18 @@ try {
                     </div>
                 </div>
             </form>
-            </div>
-            <div class="card-footer text-body-secondary">
-                <div class="row">
-                    <div class="col-md-6">
-                        <small>© 2024 V0.01 - Sistema de Visitas Domiciliarias</small>
-                    </div>
-                    <div class="col-md-6 text-end">
-                        <small>Usuario: <?php echo htmlspecialchars($_SESSION['username'] ?? 'N/A'); ?></small>
-                    </div>
+                </div>
+                <div class="card-footer text-body-secondary">
+            <div class="row">
+                <div class="col-md-6">
+                    <small>© 2024 V0.01 - Sistema de Visitas Domiciliarias</small>
+                </div>
+                <div class="col-md-6 text-end">
+                    <small>Usuario: <?php echo htmlspecialchars($_SESSION['username'] ?? 'N/A'); ?></small>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <!-- Solo Bootstrap JS, no rutas locales para evitar errores de MIME -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
