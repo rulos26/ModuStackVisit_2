@@ -692,7 +692,7 @@ try {
     <!-- Cleave.js para formato de moneda -->
     <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
 
-<script>
+    <script>
 // Variables para Cleave.js
 let cleaveInstances = {};
 
@@ -788,58 +788,58 @@ document.getElementById('formExperiencia').addEventListener('submit', function(e
     });
 });
 
-let experienciaCounter = <?php echo !empty($datos_existentes) && is_array($datos_existentes) ? count($datos_existentes) : 1; ?>;
+    let experienciaCounter = <?php echo !empty($datos_existentes) && is_array($datos_existentes) ? count($datos_existentes) : 1; ?>;
 
-document.getElementById('btnAgregarExperiencia').addEventListener('click', function() {
-    const container = document.getElementById('experiencias-container');
-    const nuevaExperiencia = document.createElement('div');
-    nuevaExperiencia.className = 'experiencia-item border rounded p-3 mb-3';
-    nuevaExperiencia.setAttribute('data-index', experienciaCounter);
-    
-    nuevaExperiencia.innerHTML = `
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="mb-0 text-primary">
-                <i class="bi bi-briefcase me-2"></i>Experiencia Laboral #${experienciaCounter + 1}
-            </h6>
-            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeExperiencia(this)">
-                <i class="bi bi-trash me-1"></i>Eliminar
-            </button>
-        </div>
+    document.getElementById('btnAgregarExperiencia').addEventListener('click', function() {
+        const container = document.getElementById('experiencias-container');
+        const nuevaExperiencia = document.createElement('div');
+        nuevaExperiencia.className = 'experiencia-item border rounded p-3 mb-3';
+        nuevaExperiencia.setAttribute('data-index', experienciaCounter);
         
-        <div class="row mb-3">
-            <div class="col-md-4 mb-3">
-                <label class="form-label">
-                    <i class="bi bi-building me-1"></i>Empresa:
-                </label>
-                <input type="text" class="form-control" name="experiencias[${experienciaCounter}][empresa]" 
-                       placeholder="Ej: Empresa ABC S.A." minlength="3" required>
-                <div class="form-text">Mínimo 3 caracteres</div>
+        nuevaExperiencia.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0 text-primary">
+                    <i class="bi bi-briefcase me-2"></i>Experiencia Laboral #${experienciaCounter + 1}
+                </h6>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeExperiencia(this)">
+                    <i class="bi bi-trash me-1"></i>Eliminar
+                </button>
             </div>
             
-            <div class="col-md-4 mb-3">
-                <label class="form-label">
-                    <i class="bi bi-clock me-1"></i>Tiempo Laborado:
-                </label>
-                <input type="text" class="form-control" name="experiencias[${experienciaCounter}][tiempo]" 
-                       placeholder="Ej: 2 años, 6 meses" minlength="3" required>
-                <div class="form-text">Mínimo 3 caracteres</div>
+            <div class="row mb-3">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">
+                        <i class="bi bi-building me-1"></i>Empresa:
+                    </label>
+                    <input type="text" class="form-control" name="experiencias[${experienciaCounter}][empresa]" 
+                           placeholder="Ej: Empresa ABC S.A." minlength="3" required>
+                    <div class="form-text">Mínimo 3 caracteres</div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">
+                        <i class="bi bi-clock me-1"></i>Tiempo Laborado:
+                    </label>
+                    <input type="text" class="form-control" name="experiencias[${experienciaCounter}][tiempo]" 
+                           placeholder="Ej: 2 años, 6 meses" minlength="3" required>
+                    <div class="form-text">Mínimo 3 caracteres</div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">
+                        <i class="bi bi-person-badge me-1"></i>Cargo Desempeñado:
+                    </label>
+                    <input type="text" class="form-control" name="experiencias[${experienciaCounter}][cargo]" 
+                           placeholder="Ej: Gerente de Ventas" minlength="3" required>
+                    <div class="form-text">Mínimo 3 caracteres</div>
+                </div>
             </div>
             
-            <div class="col-md-4 mb-3">
-                <label class="form-label">
-                    <i class="bi bi-person-badge me-1"></i>Cargo Desempeñado:
-                </label>
-                <input type="text" class="form-control" name="experiencias[${experienciaCounter}][cargo]" 
-                       placeholder="Ej: Gerente de Ventas" minlength="3" required>
-                <div class="form-text">Mínimo 3 caracteres</div>
-            </div>
-        </div>
-        
-        <div class="row mb-3">
-            <div class="col-md-4 mb-3">
-                <label class="form-label">
-                    <i class="bi bi-cash me-1"></i>Salario:
-                </label>
+            <div class="row mb-3">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">
+                        <i class="bi bi-cash me-1"></i>Salario:
+                    </label>
                 <div class="currency-input currency-tooltip">
                     <div class="input-group">
                         <span class="input-group-text">$</span>
@@ -848,397 +848,93 @@ document.getElementById('btnAgregarExperiencia').addEventListener('click', funct
                     </div>
                 </div>
                 <div class="form-text">Salario mensual en pesos colombianos</div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">
+                        <i class="bi bi-box-arrow-right me-1"></i>Motivo de Retiro:
+                    </label>
+                    <input type="text" class="form-control" name="experiencias[${experienciaCounter}][retiro]" 
+                           placeholder="Ej: Renuncia voluntaria" minlength="5" required>
+                    <div class="form-text">Mínimo 5 caracteres</div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">
+                        <i class="bi bi-chat-quote me-1"></i>Concepto Emitido:
+                    </label>
+                    <input type="text" class="form-control" name="experiencias[${experienciaCounter}][concepto]" 
+                           placeholder="Ej: Excelente trabajador" minlength="5" required>
+                    <div class="form-text">Mínimo 5 caracteres</div>
+                </div>
             </div>
             
-            <div class="col-md-4 mb-3">
-                <label class="form-label">
-                    <i class="bi bi-box-arrow-right me-1"></i>Motivo de Retiro:
-                </label>
-                <input type="text" class="form-control" name="experiencias[${experienciaCounter}][retiro]" 
-                       placeholder="Ej: Renuncia voluntaria" minlength="5" required>
-                <div class="form-text">Mínimo 5 caracteres</div>
+            <div class="row mb-3">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        <i class="bi bi-person me-1"></i>Nombre del Contacto:
+                    </label>
+                    <input type="text" class="form-control" name="experiencias[${experienciaCounter}][nombre]" 
+                           placeholder="Ej: Juan Pérez" minlength="3" required>
+                    <div class="form-text">Mínimo 3 caracteres</div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        <i class="bi bi-telephone me-1"></i>Número de Contacto:
+                    </label>
+                    <input type="number" class="form-control" name="experiencias[${experienciaCounter}][numero]" 
+                           placeholder="Ej: 3001234567" min="1000000" required>
+                    <div class="form-text">Mínimo 7 dígitos</div>
+                </div>
             </div>
-            
-            <div class="col-md-4 mb-3">
-                <label class="form-label">
-                    <i class="bi bi-chat-quote me-1"></i>Concepto Emitido:
-                </label>
-                <input type="text" class="form-control" name="experiencias[${experienciaCounter}][concepto]" 
-                       placeholder="Ej: Excelente trabajador" minlength="5" required>
-                <div class="form-text">Mínimo 5 caracteres</div>
-            </div>
-        </div>
+        `;
         
-        <div class="row mb-3">
-            <div class="col-md-6 mb-3">
-                <label class="form-label">
-                    <i class="bi bi-person me-1"></i>Nombre del Contacto:
-                </label>
-                <input type="text" class="form-control" name="experiencias[${experienciaCounter}][nombre]" 
-                       placeholder="Ej: Juan Pérez" minlength="3" required>
-                <div class="form-text">Mínimo 3 caracteres</div>
-            </div>
-            
-            <div class="col-md-6 mb-3">
-                <label class="form-label">
-                    <i class="bi bi-telephone me-1"></i>Número de Contacto:
-                </label>
-                <input type="number" class="form-control" name="experiencias[${experienciaCounter}][numero]" 
-                       placeholder="Ej: 3001234567" min="1000000" required>
-                <div class="form-text">Mínimo 7 dígitos</div>
-            </div>
-        </div>
-    `;
-    
-    container.appendChild(nuevaExperiencia);
+        container.appendChild(nuevaExperiencia);
     
     // Inicializar Cleave.js para el nuevo campo de salario
     inicializarCleave(`salario_${experienciaCounter}`);
     
-    experienciaCounter++;
-    
-    // Scroll suave hacia la nueva experiencia
-    nuevaExperiencia.scrollIntoView({ behavior: 'smooth', block: 'center' });
-});
-
-function removeExperiencia(boton) {
-    const experiencia = boton.closest('.experiencia-item');
-    const container = document.getElementById('experiencias-container');
-    const experiencias = container.querySelectorAll('.experiencia-item');
-    
-    // No permitir eliminar si solo queda una experiencia
-    if (experiencias.length <= 1) {
-        alert('Debe mantener al menos una experiencia laboral.');
-        return;
-    }
-    
-    if (confirm('¿Está seguro de que desea eliminar esta experiencia laboral?')) {
-        experiencia.remove();
-        actualizarNumeracion();
-    }
-}
-
-function actualizarNumeracion() {
-    const experiencias = document.querySelectorAll('.experiencia-item');
-    experiencias.forEach((experiencia, index) => {
-        const titulo = experiencia.querySelector('h6');
-        titulo.innerHTML = `<i class="bi bi-briefcase me-2"></i>Experiencia Laboral #${index + 1}`;
+        experienciaCounter++;
         
-        // Actualizar los nombres de los campos
-        const inputs = experiencia.querySelectorAll('input');
-        inputs.forEach(input => {
-            const name = input.getAttribute('name');
-            if (name) {
-                const newName = name.replace(/experiencias\[\d+\]/, `experiencias[${index}]`);
-                input.setAttribute('name', newName);
-            }
-        });
+        // Scroll suave hacia la nueva experiencia
+        nuevaExperiencia.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
-}
-</script>
-</body>
-</html>
-
-// Verificar si la sesión ya está iniciada antes de intentar iniciarla
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Verificar si hay sesión activa
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['rol'])) {
-    header('Location: ../../../../../index.php');
-    exit();
-}
-
-// Verificar que el usuario tenga rol de Evaluador (4)
-if ($_SESSION['rol'] != 4) {
-    header('Location: ../../../../../index.php');
-    exit();
-}
-
-$nombreUsuario = $_SESSION['nombre'] ?? 'Evaluador';
-$cedulaUsuario = $_SESSION['cedula'] ?? '';
-?>
-<?php
-$contenido = ob_get_clean();
-?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Experiencia Laboral - Dashboard Evaluador</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    
+    function removeExperiencia(boton) {
+        const experiencia = boton.closest('.experiencia-item');
+        const container = document.getElementById('experiencias-container');
+        const experiencias = container.querySelectorAll('.experiencia-item');
+        
+        // No permitir eliminar si solo queda una experiencia
+        if (experiencias.length <= 1) {
+            alert('Debe mantener al menos una experiencia laboral.');
+            return;
         }
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.9);
-            border-radius: 8px;
-            margin: 2px 0;
-            transition: all 0.3s ease;
+        
+        if (confirm('¿Está seguro de que desea eliminar esta experiencia laboral?')) {
+            experiencia.remove();
+            actualizarNumeracion();
         }
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            color: white;
-            background: rgba(255,255,255,0.2);
-            transform: translateX(5px);
-        }
-        .main-content {
-            background-color: #f8f9fa;
-            min-height: 100vh;
-        }
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        .steps-horizontal {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 2rem;
-            width: 100%;
-            gap: 0.5rem;
-        }
-        .step-horizontal {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-            position: relative;
-        }
-        .step-horizontal:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            top: 24px;
-            left: 50%;
-            width: 100%;
-            height: 4px;
-            background: #e0e0e0;
-            z-index: 0;
-            transform: translateX(50%);
-        }
-        .step-horizontal .step-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #e0e0e0;
-            color: #888;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            border: 2px solid #e0e0e0;
-            z-index: 1;
-            transition: all 0.3s;
-        }
-        .step-horizontal.active .step-icon {
-            background: #4361ee;
-            border-color: #4361ee;
-            color: #fff;
-            box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.2);
-        }
-        .step-horizontal.complete .step-icon {
-            background: #2ecc71;
-            border-color: #2ecc71;
-            color: #fff;
-        }
-        .step-horizontal .step-title {
-            font-weight: bold;
-            font-size: 1rem;
-            margin-bottom: 0.2rem;
-        }
-        .step-horizontal .step-description {
-            font-size: 0.85rem;
-            color: #888;
-            text-align: center;
-        }
-        .step-horizontal.active .step-title,
-        .step-horizontal.active .step-description {
-            color: #4361ee;
-        }
-        .step-horizontal.complete .step-title,
-        .step-horizontal.complete .step-description {
-            color: #2ecc71;
-        }
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        .form-label {
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 0.5rem;
-        }
-        .form-control, .form-select {
-            border-radius: 8px;
-            border: 1px solid #ced4da;
-            padding: 12px 15px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: #11998e;
-            box-shadow: 0 0 0 0.2rem rgba(17, 153, 142, 0.25);
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            border: none;
-            border-radius: 8px;
-            padding: 12px 30px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
-        }
-        .btn-secondary {
-            border-radius: 8px;
-            padding: 12px 30px;
-            font-weight: 600;
-        }
-        .alert {
-            border-radius: 10px;
-            border: none;
-        }
-        .form-text {
-            font-size: 0.875rem;
-            color: #6c757d;
-        }
-        .invalid-feedback {
-            font-size: 0.875rem;
-        }
-        .valid-feedback {
-            font-size: 0.875rem;
-        }
-        .text-danger {
-            color: #dc3545 !important;
-            font-weight: bold;
-        }
-        .required-field::after {
-            content: " *";
-            color: #dc3545;
-            font-weight: bold;
-        }
-        .currency-input {
-            position: relative;
-        }
-        .currency-input .form-control {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border: 2px solid #dee2e6;
-            transition: all 0.3s ease;
-        }
-        .currency-input .form-control:focus {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border-color: #11998e;
-            box-shadow: 0 0 0 0.2rem rgba(17, 153, 142, 0.25);
-        }
-        .currency-input .form-control.is-valid {
-            border-color: #28a745;
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-        }
-        .currency-input .form-control.is-invalid {
-            border-color: #dc3545;
-            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-        }
-        .currency-tooltip {
-            position: relative;
-        }
-        .currency-tooltip::after {
-            content: "Formato: $1.500.000,50";
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-        .currency-tooltip:hover::after {
-            opacity: 1;
-            visibility: visible;
-        }
-    </style>
-</head>
-<body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar Verde -->
-            <div class="col-md-3 col-lg-2 px-0 sidebar">
-                <div class="p-3">
-                    <h4 class="text-white text-center mb-4">
-                        <i class="bi bi-clipboard-check"></i>
-                        Evaluador
-                    </h4>
-                    <hr class="text-white">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="../../../dashboardEvaluador.php">
-                                <i class="bi bi-house-door me-2"></i>
-                                Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../../carta_visita/index_carta.php">
-                                <i class="bi bi-file-earmark-text-fill me-2"></i>
-                                Carta de Autorización
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="../index.php">
-                                <i class="bi bi-house-door-fill me-2"></i>
-                                Evaluación Visita Domiciliaria
-                            </a>
-                        </li>
-                        <li class="nav-item mt-4">
-                            <a class="nav-link text-warning" href="../../../../../logout.php">
-                                <i class="bi bi-box-arrow-right me-2"></i>
-                                Cerrar Sesión
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Main Content -->
-            <div class="col-md-9 col-lg-10 main-content">
-                <div class="p-4">
-                    <!-- Header -->
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div>
-                            <h1 class="h3 mb-0">Experiencia Laboral</h1>
-                            <p class="text-muted mb-0">Formulario de experiencia laboral del núcleo familiar</p>
-                        </div>
-                        <div class="text-end">
-                            <small class="text-muted">Usuario: <?php echo htmlspecialchars($nombreUsuario); ?></small><br>
-                            <small class="text-muted">Cédula: <?php echo htmlspecialchars($cedulaUsuario); ?></small>
-                        </div>
-                    </div>
-
-                    <!-- Contenido del formulario -->
-                    <?php echo $contenido; ?>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    }
+    
+    function actualizarNumeracion() {
+        const experiencias = document.querySelectorAll('.experiencia-item');
+        experiencias.forEach((experiencia, index) => {
+            const titulo = experiencia.querySelector('h6');
+            titulo.innerHTML = `<i class="bi bi-briefcase me-2"></i>Experiencia Laboral #${index + 1}`;
+            
+            // Actualizar los nombres de los campos
+            const inputs = experiencia.querySelectorAll('input');
+            inputs.forEach(input => {
+                const name = input.getAttribute('name');
+                if (name) {
+                    const newName = name.replace(/experiencias\[\d+\]/, `experiencias[${index}]`);
+                    input.setAttribute('name', newName);
+                }
+            });
+        });
+    }
+    </script>
 </body>
 </html>
