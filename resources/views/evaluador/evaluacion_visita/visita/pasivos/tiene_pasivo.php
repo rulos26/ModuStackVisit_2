@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $controller = PasivosController::getInstance();
         $datos = $controller->sanitizarDatos($_POST);
         
-        if (isset($datos['tiene_pasivos']) && $datos['tiene_pasivos'] == '1') {
+        if (isset($datos['tiene_pasivos']) && $datos['tiene_pasivos'] == '0') {
             // No tiene pasivos
             $resultado = $controller->guardarSinPasivos();
             if ($resultado['success']) {
@@ -212,14 +212,9 @@ try {
                         </label>
                         <select class="form-select" id="tiene_pasivos" name="tiene_pasivos" required>
                             <option value="">Seleccione una opción</option>
-                            <option value="1" <?php echo (!empty($datos_existentes) && $datos_existentes[0]['item'] == 'N/A') ? 'selected' : ''; ?>>No</option>
-                            <?php foreach ($parametros as $parametro): ?>
-                                <option value="<?php echo $parametro['id']; ?>" 
-                                    <?php echo (!empty($datos_existentes) && $datos_existentes[0]['item'] != 'N/A' && $datos_existentes[0]['item'] == $parametro['id']) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($parametro['nombre']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                                </select>
+                            <option value="0" <?php echo (!empty($datos_existentes) && $datos_existentes[0]['item'] == 'N/A') ? 'selected' : ''; ?>>No</option>
+                            <option value="1" <?php echo (!empty($datos_existentes) && $datos_existentes[0]['item'] != 'N/A') ? 'selected' : ''; ?>>Sí</option>
+                        </select>
                         <div class="form-text">Seleccione "No" si no posee pasivos, o "Sí" para continuar con el formulario detallado.</div>
                     </div>
                             </div>
