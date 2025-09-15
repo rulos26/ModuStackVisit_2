@@ -356,9 +356,9 @@ try {
                 </div>
 
                 <form action="" method="POST" id="formInformacionPersonal" novalidate autocomplete="off">
-                    <!-- Agrupa cada fila de campos en .form-responsive-row para forzar 4 columnas en pantallas grandes -->
-                    <div class="row form-responsive-row">
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                    <!-- Fila 1: Documento y Tipo -->
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="id_cedula" class="form-label">
                                 <i class="bi bi-card-text me-1"></i>Número de Documento:
                             </label>
@@ -366,7 +366,7 @@ try {
                                 value="<?php echo htmlspecialchars($id_cedula); ?>" readonly>
                             <div class="form-text">Documento de identidad</div>
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="id_tipo_documentos" class="form-label">
                                 <i class="bi bi-card-list me-1"></i>Tipo de Documento:
                             </label>
@@ -381,7 +381,7 @@ try {
                             </select>
                             <div class="invalid-feedback">Por favor seleccione el tipo de documento.</div>
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="cedula_expedida" class="form-label">
                                 <i class="bi bi-geo-alt me-1"></i>Cédula expedida en:
                             </label>
@@ -396,7 +396,7 @@ try {
                             </select>
                             <div class="invalid-feedback">Por favor seleccione el municipio de expedición.</div>
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="nombres" class="form-label">
                                 <i class="bi bi-person me-1"></i>Nombres:
                             </label>
@@ -406,8 +406,9 @@ try {
                             <div class="invalid-feedback">Por favor ingrese nombres válidos (solo letras).</div>
                         </div>
                     </div>
-                    <div class="row form-responsive-row">
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                    <!-- Fila 2: Apellidos, Edad, Fecha y Lugar -->
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="apellidos" class="form-label">
                                 <i class="bi bi-person me-1"></i>Apellidos:
                             </label>
@@ -416,7 +417,7 @@ try {
                                 required pattern="[A-Za-zÁáÉéÍíÓóÚúÑñ\s]+" maxlength="100">
                             <div class="invalid-feedback">Por favor ingrese apellidos válidos (solo letras).</div>
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="edad" class="form-label">
                                 <i class="bi bi-calendar me-1"></i>Edad:
                             </label>
@@ -425,7 +426,7 @@ try {
                                 required min="18" max="120">
                             <div class="invalid-feedback">La edad debe estar entre 18 y 120 años.</div>
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="fecha_expedicion" class="form-label">
                                 <i class="bi bi-calendar-date me-1"></i>Fecha de Expedición:
                             </label>
@@ -434,7 +435,7 @@ try {
                                 required max="<?php echo date('Y-m-d'); ?>">
                             <div class="invalid-feedback">Por favor ingrese una fecha válida.</div>
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="lugar_nacimiento" class="form-label">
                                 <i class="bi bi-geo-alt me-1"></i>Lugar de Nacimiento:
                             </label>
@@ -450,8 +451,9 @@ try {
                             <div class="invalid-feedback">Por favor seleccione el lugar de nacimiento.</div>
                         </div>
                     </div>
-                    <div class="row form-responsive-row">
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                    <!-- Fila 3: Teléfonos y RH -->
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="celular_1" class="form-label">
                                 <i class="bi bi-phone me-1"></i>Celular 1:
                             </label>
@@ -463,7 +465,7 @@ try {
                                 Ingrese un número válido. Ejemplo: +1 (997) 998-9661 o 3001234567
                             </div>
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="celular_2" class="form-label">
                                 <i class="bi bi-phone me-1"></i>Celular 2:
                             </label>
@@ -475,7 +477,7 @@ try {
                                 Ingrese un número válido. Ejemplo: +1 (997) 998-9661 o 3001234567
                             </div>
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="telefono" class="form-label">
                                 <i class="bi bi-telephone me-1"></i>Teléfono:
                             </label>
@@ -487,7 +489,7 @@ try {
                                 Ingrese un número válido. Ejemplo: +1 (436) 685-5062 o 1234567
                             </div>
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="id_rh" class="form-label">
                                 <i class="bi bi-droplet me-1"></i>Tipo de RH:
                             </label>
@@ -503,8 +505,9 @@ try {
                             <div class="invalid-feedback">Por favor seleccione el tipo de sangre.</div>
                         </div>
                     </div>
-                    <div class="row form-responsive-row">
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                    <!-- Fila 4: Estatura, Peso, Estado Civil y Hace Cuánto -->
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="id_estatura" class="form-label">
                                 <i class="bi bi-arrows-vertical me-1"></i>Estatura:
                             </label>
@@ -519,8 +522,7 @@ try {
                             </select>
                             <div class="invalid-feedback">Por favor seleccione la estatura.</div>
                         </div>
-
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="peso_kg" class="form-label">
                                 <i class="bi bi-weight me-1"></i>Peso (kg):
                             </label>
@@ -535,8 +537,7 @@ try {
                             </select>
                             <div class="invalid-feedback">Por favor seleccione el peso.</div>
                         </div>
-
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="id_estado_civil" class="form-label">
                                 <i class="bi bi-heart me-1"></i>Estado Civil:
                             </label>
@@ -551,10 +552,7 @@ try {
                             </select>
                             <div class="invalid-feedback">Por favor seleccione el estado civil.</div>
                         </div>
-                    </div>
-
-                    <div class="row form-responsive-row">
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="hacer_cuanto" class="form-label">
                                 <i class="bi bi-clock me-1"></i>Hace cuánto tiempo:
                             </label>
@@ -563,8 +561,11 @@ try {
                                 min="0" max="50" placeholder="Años">
                             <div class="form-text">Años en el estado civil actual</div>
                         </div>
+                    </div>
 
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                    <!-- Fila 5: Número de Hijos, Dirección, Ciudad y Localidad -->
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="numero_hijos" class="form-label">
                                 <i class="bi bi-people me-1"></i>Número de Hijos:
                             </label>
@@ -573,8 +574,7 @@ try {
                                 min="0" max="20">
                             <div class="invalid-feedback">El número de hijos debe estar entre 0 y 20.</div>
                         </div>
-
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="direccion" class="form-label">
                                 <i class="bi bi-geo-alt me-1"></i>Dirección:
                             </label>
@@ -583,10 +583,7 @@ try {
                                 required maxlength="200">
                             <div class="invalid-feedback">Por favor ingrese la dirección.</div>
                         </div>
-                    </div>
-
-                    <div class="row form-responsive-row">
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="id_ciudad" class="form-label">
                                 <i class="bi bi-building me-1"></i>Ciudad:
                             </label>
@@ -601,8 +598,7 @@ try {
                             </select>
                             <div class="invalid-feedback">Por favor seleccione la ciudad.</div>
                         </div>
-
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="localidad" class="form-label">
                                 <i class="bi bi-geo-alt me-1"></i>Localidad:
                             </label>
@@ -611,8 +607,11 @@ try {
                                 required maxlength="100">
                             <div class="invalid-feedback">Por favor ingrese la localidad.</div>
                         </div>
+                    </div>
 
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                    <!-- Fila 6: Barrio, Estrato, Correo y Cargo -->
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="barrio" class="form-label">
                                 <i class="bi bi-house me-1"></i>Barrio:
                             </label>
@@ -621,10 +620,7 @@ try {
                                 required maxlength="100">
                             <div class="invalid-feedback">Por favor ingrese el barrio.</div>
                         </div>
-                    </div>
-
-                    <div class="row form-responsive-row">
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="id_estrato" class="form-label">
                                 <i class="bi bi-layers me-1"></i>Estrato:
                             </label>
@@ -639,8 +635,7 @@ try {
                             </select>
                             <div class="invalid-feedback">Por favor seleccione el estrato.</div>
                         </div>
-
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="correo" class="form-label">
                                 <i class="bi bi-envelope me-1"></i>Correo Electrónico:
                             </label>
@@ -649,8 +644,7 @@ try {
                                 required maxlength="100">
                             <div class="invalid-feedback">Por favor ingrese un correo electrónico válido.</div>
                         </div>
-
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="cargo" class="form-label">
                                 <i class="bi bi-briefcase me-1"></i>Cargo:
                             </label>
@@ -661,9 +655,9 @@ try {
                         </div>
                     </div>
 
-                    <!-- Nueva fila para los campos booleanos -->
-                    <div class="row form-responsive-row">
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                    <!-- Fila 7: Campos booleanos -->
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="tiene_multa_simit" class="form-label">
                                 <i class="bi bi-exclamation-triangle me-1"></i>Tiene Multa en SIMIT: <span class="text-danger">*</span>
                             </label>
@@ -675,8 +669,7 @@ try {
                             <div class="invalid-feedback">Por favor seleccione si tiene multa en SIMIT.</div>
                             <div class="valid-feedback">Campo completado correctamente.</div>
                         </div>
-
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
                             <label for="tiene_tarjeta_militar" class="form-label">
                                 <i class="bi bi-shield-check me-1"></i>Tiene Tarjeta Militar: <span class="text-danger">*</span>
                             </label>
@@ -691,8 +684,8 @@ try {
                     </div>
 
                     <!-- Observaciones ocupa todo el ancho -->
-                    <div class="row mt-3 obs-row">
-                        <div class="col-12 obs-col">
+                    <div class="row mt-4">
+                        <div class="col-12">
                             <label for="observacion" class="form-label">
                                 <i class="bi bi-chat-text me-1"></i>Observaciones:
                             </label>
@@ -854,44 +847,34 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Información Personal - Dashboard Evaluador</title>
+    <title>Información Personal - Sistema de Visitas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        }
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.9);
-            border-radius: 8px;
-            margin: 2px 0;
-            transition: all 0.3s ease;
-        }
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            color: white;
-            background: rgba(255,255,255,0.2);
-            transform: translateX(5px);
-        }
-        .main-content {
+        body {
             background-color: #f8f9fa;
-            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
         }
         .card {
             border: none;
             border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background: white;
         }
-        .card:hover {
-            transform: translateY(-5px);
+        .card-header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 20px;
         }
-        /* Estilos del formulario original */
         .logo-empresa {
-            max-width: 300px;
-            min-width: 120px;
+            max-width: 200px;
             height: auto;
             object-fit: contain;
             background: #f8f9fa;
@@ -968,78 +951,62 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
         .step-horizontal.complete .step-description {
             color: #2ecc71;
         }
-        .form-responsive-row {
-            display: flex;
-            flex-wrap: wrap;
+        .form-group {
+            margin-bottom: 1.5rem;
         }
-        @media (min-width: 1440px) {
-            .form-responsive-row > [class*="col-"] {
-                flex: 0 0 25%;
-                max-width: 25%;
-            }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 12px 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #11998e;
+            box-shadow: 0 0 0 0.2rem rgba(17, 153, 142, 0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
+        }
+        .btn-secondary {
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+        }
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        .form-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        .invalid-feedback {
+            font-size: 0.875rem;
+        }
+        .valid-feedback {
+            font-size: 0.875rem;
         }
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 px-0 sidebar">
-                <div class="p-3">
-                    <h4 class="text-white text-center mb-4">
-                        <i class="bi bi-clipboard-check"></i>
-                        Evaluador
-                    </h4>
-                    <hr class="text-white">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="../../../dashboardEvaluador.php">
-                                <i class="bi bi-house-door me-2"></i>
-                                Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../../carta_visita/index_carta.php">
-                                <i class="bi bi-file-earmark-text-fill me-2"></i>
-                                Carta de Autorización
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="../index.php">
-                                <i class="bi bi-house-door-fill me-2"></i>
-                                Evaluación Visita Domiciliaria
-                            </a>
-                        </li>
-                        <li class="nav-item mt-4">
-                            <a class="nav-link text-warning" href="../../../../../logout.php">
-                                <i class="bi bi-box-arrow-right me-2"></i>
-                                Cerrar Sesión
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Main Content -->
-            <div class="col-md-9 col-lg-10 main-content">
-                <div class="p-4">
-                    <!-- Header -->
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div>
-                            <h1 class="h3 mb-0">Información Personal</h1>
-                            <p class="text-muted mb-0">Formulario de datos personales para evaluación</p>
-                        </div>
-                        <div class="text-end">
-                            <small class="text-muted">Usuario: <?php echo htmlspecialchars($nombreUsuario); ?></small><br>
-                            <small class="text-muted">Cédula: <?php echo htmlspecialchars($cedulaUsuario); ?></small>
-                        </div>
-                    </div>
-
-                    <!-- Contenido del formulario -->
-                    <?php echo $contenido; ?>
-                </div>
-            </div>
-        </div>
+    <div class="main-container">
+        <!-- Contenido del formulario -->
+        <?php echo $contenido; ?>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
