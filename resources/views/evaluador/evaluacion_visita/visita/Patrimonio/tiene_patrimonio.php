@@ -41,10 +41,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// Función para formatear valores monetarios para mostrar
+function formatearValorMonetario($valor) {
+    if (empty($valor) || $valor === 'N/A') {
+        return '';
+    }
+    
+    // Convertir a número si es string
+    $numero = is_numeric($valor) ? floatval($valor) : 0;
+    
+    // Formatear con separadores de miles y decimales
+    return number_format($numero, 2, '.', ',');
+}
+
 try {
     $controller = PatrimonioController::getInstance();
     $id_cedula = $_SESSION['id_cedula'];
     $datos_existentes = $controller->obtenerPorCedula($id_cedula);
+    
+    // Formatear valores monetarios para mostrar
+    if ($datos_existentes) {
+        $datos_existentes['valor_vivienda_formateado'] = formatearValorMonetario($datos_existentes['valor_vivienda'] ?? '');
+        $datos_existentes['id_ahorro_formateado'] = formatearValorMonetario($datos_existentes['id_ahorro'] ?? '');
+    }
     
     // Obtener opciones para los select
     $parametros = $controller->obtenerOpciones('parametro');
@@ -232,13 +251,22 @@ try {
                             <label for="valor_vivienda" class="form-label">
                                 <i class="bi bi-house-dollar me-1"></i>Valor de la Vivienda:
                             </label>
+                            <div class="currency-input currency-tooltip">
                             <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <input type="text" class="form-control" id="valor_vivienda" name="valor_vivienda" 
-                                       value="<?php echo $datos_existentes && $datos_existentes['valor_vivienda'] != 'N/A' ? htmlspecialchars($datos_existentes['valor_vivienda']) : ''; ?>"
-                                       placeholder="0.00">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-currency-dollar"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="valor_vivienda" name="valor_vivienda" 
+                                           value="<?php echo $datos_existentes && isset($datos_existentes['valor_vivienda_formateado']) ? htmlspecialchars($datos_existentes['valor_vivienda_formateado']) : ''; ?>"
+                                           placeholder="0.00" 
+                                           pattern="^\$?[\d,]+\.?\d{0,2}$"
+                                           title="Ingrese un valor válido (ej: $ 1,500,000.00)">
+                                </div>
                             </div>
-                            <div class="form-text">Ingrese el valor estimado de su vivienda</div>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Ingrese el valor estimado de su vivienda en pesos colombianos
+                            </div>
                         </div>
                         
                         <div class="col-md-4 mb-3">
@@ -287,13 +315,22 @@ try {
                             <label for="id_ahorro" class="form-label">
                                 <i class="bi bi-piggy-bank me-1"></i>Ahorro (CDT, Inversiones):
                             </label>
+                            <div class="currency-input currency-tooltip">
                             <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <input type="text" class="form-control" id="id_ahorro" name="id_ahorro" 
-                                       value="<?php echo $datos_existentes && $datos_existentes['id_ahorro'] != 'N/A' ? htmlspecialchars($datos_existentes['id_ahorro']) : ''; ?>"
-                                       placeholder="0.00">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-currency-dollar"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="id_ahorro" name="id_ahorro" 
+                                           value="<?php echo $datos_existentes && isset($datos_existentes['id_ahorro_formateado']) ? htmlspecialchars($datos_existentes['id_ahorro_formateado']) : ''; ?>"
+                                           placeholder="0.00"
+                                           pattern="^\$?[\d,]+\.?\d{0,2}$"
+                                           title="Ingrese un valor válido (ej: $ 500,000.00)">
+                                </div>
                             </div>
-                            <div class="form-text">Ingrese el valor total de sus ahorros</div>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Ingrese el valor total de sus ahorros e inversiones
+                            </div>
                         </div>
                     </div>
                     
@@ -347,8 +384,14 @@ try {
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/autonumeric@4.1.0/dist/autoNumeric.min.js"></script>
+    <!-- Cleave.js para formateo de valores monetarios -->
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/addons/cleave-phone.co.js"></script>
+    
 <script>
+    // Variables globales para los formateadores
+    let cleaveValorVivienda, cleaveAhorro;
+    
 function toggleFormularioPatrimonio() {
     const tienePatrimonioSelect = document.getElementById('tiene_patrimonio');
     const camposPatrimonioDiv = document.getElementById('camposPatrimonio');
@@ -358,6 +401,10 @@ function toggleFormularioPatrimonio() {
     // Asumiendo que '1' es "No" y cualquier otro valor es "Sí"
     if (tienePatrimonioSelect.value && tienePatrimonioSelect.value !== '1') {
         camposPatrimonioDiv.style.display = 'block';
+            // Reinicializar los formateadores cuando se muestran los campos
+            setTimeout(() => {
+                inicializarFormateadores();
+            }, 100);
     } else {
         camposPatrimonioDiv.style.display = 'none';
         // Limpiar todos los campos cuando se ocultan para no enviar datos antiguos
@@ -368,28 +415,68 @@ function toggleFormularioPatrimonio() {
                 campo.value = ''; // Limpia inputs y textareas
             }
         });
+            // Destruir formateadores cuando se ocultan los campos
+            if (cleaveValorVivienda) cleaveValorVivienda.destroy();
+            if (cleaveAhorro) cleaveAhorro.destroy();
+        }
+    }
+    
+    function inicializarFormateadores() {
+        // Destruir formateadores existentes si los hay
+        if (cleaveValorVivienda) cleaveValorVivienda.destroy();
+        if (cleaveAhorro) cleaveAhorro.destroy();
+        
+        // Inicializar Cleave.js para valor de vivienda
+        const valorViviendaInput = document.getElementById('valor_vivienda');
+        if (valorViviendaInput) {
+            cleaveValorVivienda = new Cleave(valorViviendaInput, {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralDecimalMark: '.',
+                delimiter: ',',
+                numeralDecimalScale: 2,
+                numeralIntegerScale: 10,
+                prefix: '$ ',
+                rawValueTrimPrefix: true
+            });
+        }
+        
+        // Inicializar Cleave.js para ahorro
+        const ahorroInput = document.getElementById('id_ahorro');
+        if (ahorroInput) {
+            cleaveAhorro = new Cleave(ahorroInput, {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralDecimalMark: '.',
+                delimiter: ',',
+                numeralDecimalScale: 2,
+                numeralIntegerScale: 10,
+                prefix: '$ ',
+                rawValueTrimPrefix: true
+        });
     }
 }
 
 // Ejecutar al cargar la página para establecer el estado inicial correcto
 document.addEventListener('DOMContentLoaded', function() {
     toggleFormularioPatrimonio();
-    
-    // Inicializar autoNumeric para campos de dinero
-    new AutoNumeric('#valor_vivienda', {
-        currencySymbol: '$',
-        decimalCharacter: '.',
-        digitGroupSeparator: ',',
-        minimumValue: '0'
-    });
-
-    new AutoNumeric('#id_ahorro', {
-        currencySymbol: '$',
-        decimalCharacter: '.',
-        digitGroupSeparator: ',',
-        minimumValue: '0'
-    });
 });
+
+    // Función para validar formato monetario
+    function validarFormatoMonetario(valor) {
+        // Remover espacios y caracteres no numéricos excepto punto y coma
+        const valorLimpio = valor.replace(/[^\d.,]/g, '');
+        // Verificar que tenga formato válido (números con opcional punto decimal)
+        const regex = /^\d{1,3}(,\d{3})*(\.\d{2})?$/;
+        return regex.test(valorLimpio) && parseFloat(valorLimpio.replace(/,/g, '')) > 0;
+    }
+    
+    // Función para formatear valor monetario para envío
+    function formatearValorParaEnvio(valor) {
+        if (!valor) return '';
+        // Remover símbolo $ y espacios, mantener solo números, comas y punto
+        return valor.replace(/[$\s]/g, '').replace(/,/g, '');
+    }
 
 // Validación del formulario
 document.getElementById('formPatrimonio').addEventListener('submit', function(event) {
@@ -398,7 +485,7 @@ document.getElementById('formPatrimonio').addEventListener('submit', function(ev
     // Validar que se haya seleccionado una opción principal
     if (!tienePatrimonioSelect.value || tienePatrimonioSelect.value === '') {
         event.preventDefault();
-        alert('Por favor, seleccione si posee patrimonio.');
+            mostrarMensajeError('Por favor, seleccione si posee patrimonio.');
         tienePatrimonioSelect.focus();
         return;
     }
@@ -406,23 +493,75 @@ document.getElementById('formPatrimonio').addEventListener('submit', function(ev
     // Validar campos de patrimonio solo si se seleccionó "Sí" (cualquier valor diferente a '1')
     if (tienePatrimonioSelect.value && tienePatrimonioSelect.value !== '1') {
         const camposObligatorios = [
-            'valor_vivienda', 'direccion', 'id_vehiculo', 'id_marca', 'id_modelo', 'id_ahorro'
-        ];
-        
-        for (const idCampo of camposObligatorios) {
-            const elemento = document.getElementById(idCampo);
-            if (!elemento.value || elemento.value.trim() === '') {
+                { id: 'valor_vivienda', nombre: 'Valor de la Vivienda', esMonetario: true },
+                { id: 'direccion', nombre: 'Dirección', esMonetario: false },
+                { id: 'id_vehiculo', nombre: 'Vehículo', esMonetario: false },
+                { id: 'id_marca', nombre: 'Marca', esMonetario: false },
+                { id: 'id_modelo', nombre: 'Modelo', esMonetario: false },
+                { id: 'id_ahorro', nombre: 'Ahorro', esMonetario: true }
+            ];
+            
+            for (const campo of camposObligatorios) {
+                const elemento = document.getElementById(campo.id);
+                const valor = elemento.value.trim();
+                
+                if (!valor) {
+                    event.preventDefault();
+                    mostrarMensajeError(`El campo "${campo.nombre}" es obligatorio.`);
+                    elemento.focus();
+                    return;
+                }
+                
+                // Validación específica para campos monetarios
+                if (campo.esMonetario && !validarFormatoMonetario(valor)) {
                 event.preventDefault();
-                // Obtener el texto de la etiqueta para un mensaje más claro
-                const label = elemento.closest('.mb-3').querySelector('label');
-                const labelText = label ? label.innerText.replace('*', '').trim() : idCampo;
-                alert(`El campo "${labelText}" es obligatorio.`);
+                    mostrarMensajeError(`El campo "${campo.nombre}" debe tener un formato monetario válido (ej: $ 1,500,000.00).`);
                 elemento.focus();
                 return;
+                }
+            }
+            
+            // Formatear valores monetarios antes del envío
+            const valorVivienda = document.getElementById('valor_vivienda');
+            const ahorro = document.getElementById('id_ahorro');
+            
+            if (valorVivienda.value) {
+                valorVivienda.value = formatearValorParaEnvio(valorVivienda.value);
+            }
+            if (ahorro.value) {
+                ahorro.value = formatearValorParaEnvio(ahorro.value);
             }
         }
+    });
+    
+    // Función para mostrar mensajes de error mejorados
+    function mostrarMensajeError(mensaje) {
+        // Remover mensaje anterior si existe
+        const mensajeAnterior = document.querySelector('.alert-error-temporal');
+        if (mensajeAnterior) {
+            mensajeAnterior.remove();
+        }
+        
+        // Crear nuevo mensaje de error
+        const mensajeError = document.createElement('div');
+        mensajeError.className = 'alert alert-danger alert-dismissible fade show alert-error-temporal';
+        mensajeError.innerHTML = `
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        
+        // Insertar el mensaje al inicio del formulario
+        const formulario = document.getElementById('formPatrimonio');
+        formulario.insertBefore(mensajeError, formulario.firstChild);
+        
+        // Auto-remover después de 5 segundos
+        setTimeout(() => {
+            if (mensajeError.parentNode) {
+                mensajeError.remove();
+            }
+        }, 5000);
     }
-});
 </script>
 
 <?php
@@ -623,6 +762,83 @@ $cedulaUsuario = $_SESSION['cedula'] ?? '';
             content: " *";
             color: #dc3545;
             font-weight: bold;
+        }
+        
+        /* Estilos específicos para campos monetarios */
+        .currency-input {
+            position: relative;
+        }
+        
+        .currency-input .form-control {
+            padding-left: 2.5rem;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #2c5530;
+            background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
+            border: 2px solid #d4edda;
+            transition: all 0.3s ease;
+        }
+        
+        .currency-input .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+            background: #ffffff;
+        }
+        
+        .currency-input .input-group-text {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: 2px solid #28a745;
+            font-weight: bold;
+            border-radius: 8px 0 0 8px;
+        }
+        
+        .currency-input .input-group .form-control {
+            border-radius: 0 8px 8px 0;
+            border-left: none;
+        }
+        
+        .currency-input .input-group .form-control:focus {
+            border-left: none;
+        }
+        
+        /* Animación para campos monetarios */
+        .currency-input .form-control:valid {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-color: #28a745;
+        }
+        
+        .currency-input .form-control:invalid {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-color: #dc3545;
+        }
+        
+        /* Tooltip para campos monetarios */
+        .currency-tooltip {
+            position: relative;
+        }
+        
+        .currency-tooltip::after {
+            content: "Formato: $ 1,234,567.89";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .currency-tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
         }
     </style>
 </head>
