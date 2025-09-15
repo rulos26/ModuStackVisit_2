@@ -1031,6 +1031,24 @@ $contenido = ob_get_clean();
         }
         
         if (confirm('¿Está seguro de que desea eliminar esta experiencia laboral?')) {
+            // Obtener el índice de la experiencia
+            const index = experiencia.getAttribute('data-index');
+            
+            // Si es una experiencia existente (no nueva), marcarla para eliminación
+            if (index && index !== 'undefined') {
+                // Crear campo oculto para marcar la eliminación
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'experiencias_eliminadas[]';
+                hiddenInput.value = index;
+                hiddenInput.className = 'experiencia-eliminada';
+                
+                // Agregar al formulario
+                const form = document.getElementById('formExperiencia');
+                form.appendChild(hiddenInput);
+            }
+            
+            // Eliminar visualmente la experiencia
             experiencia.remove();
             actualizarNumeracion();
         }

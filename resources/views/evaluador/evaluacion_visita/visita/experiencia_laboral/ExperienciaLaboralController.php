@@ -144,48 +144,94 @@ class ExperienciaLaboralController {
         try {
             $id_cedula = $_SESSION['id_cedula'];
             
-            // Primero eliminar registros existentes para esta cédula
-            $sql_delete = "DELETE FROM experiencia_laboral WHERE id_cedula = :id_cedula";
-            $stmt_delete = $this->db->prepare($sql_delete);
-            $stmt_delete->bindParam(':id_cedula', $id_cedula);
-            $stmt_delete->execute();
+            // Manejar eliminaciones específicas si se proporcionan
+            if (isset($datos['experiencias_eliminadas']) && is_array($datos['experiencias_eliminadas'])) {
+                $this->eliminarExperienciasEspecificas($id_cedula, $datos['experiencias_eliminadas']);
+            }
+            
+            // Obtener experiencias existentes para comparar
+            $experiencias_existentes = $this->obtenerPorCedula($id_cedula);
+            $indices_existentes = array_keys($experiencias_existentes);
             
             // Verificar si se están enviando múltiples experiencias
             if (isset($datos['experiencias']) && is_array($datos['experiencias'])) {
                 // Guardar múltiples experiencias
                 $experiencias_guardadas = 0;
-                $sql = "INSERT INTO experiencia_laboral (
-                    id_cedula, empresa, tiempo, cargo, salario, retiro, concepto, nombre, numero
-                ) VALUES (
-                    :id_cedula, :empresa, :tiempo, :cargo, :salario, :retiro, :concepto, :nombre, :numero
-                )";
+                $experiencias_actualizadas = 0;
                 
-                $stmt = $this->db->prepare($sql);
-                
-                foreach ($datos['experiencias'] as $experiencia) {
+                foreach ($datos['experiencias'] as $indice => $experiencia) {
                     // Asegurar que el salario sea un número
                     $salario = is_numeric($experiencia['salario']) ? floatval($experiencia['salario']) : 0;
                     $numero = is_numeric($experiencia['numero']) ? intval($experiencia['numero']) : 0;
                     
-                    $stmt->bindParam(':id_cedula', $id_cedula);
-                    $stmt->bindParam(':empresa', $experiencia['empresa']);
-                    $stmt->bindParam(':tiempo', $experiencia['tiempo']);
-                    $stmt->bindParam(':cargo', $experiencia['cargo']);
-                    $stmt->bindParam(':salario', $salario);
-                    $stmt->bindParam(':retiro', $experiencia['retiro']);
-                    $stmt->bindParam(':concepto', $experiencia['concepto']);
-                    $stmt->bindParam(':nombre', $experiencia['nombre']);
-                    $stmt->bindParam(':numero', $numero);
-                    
-                    if ($stmt->execute()) {
-                        $experiencias_guardadas++;
+                    // Verificar si es una experiencia existente o nueva
+                    if (isset($experiencias_existentes[$indice])) {
+                        // Actualizar experiencia existente
+                        $sql = "UPDATE experiencia_laboral SET 
+                                empresa = :empresa, 
+                                tiempo = :tiempo, 
+                                cargo = :cargo, 
+                                salario = :salario, 
+                                retiro = :retiro, 
+                                concepto = :concepto, 
+                                nombre = :nombre, 
+                                numero = :numero 
+                                WHERE id_cedula = :id_cedula AND id = :id";
+                        
+                        $stmt = $this->db->prepare($sql);
+                        $stmt->bindParam(':id', $experiencias_existentes[$indice]['id']);
+                        $stmt->bindParam(':id_cedula', $id_cedula);
+                        $stmt->bindParam(':empresa', $experiencia['empresa']);
+                        $stmt->bindParam(':tiempo', $experiencia['tiempo']);
+                        $stmt->bindParam(':cargo', $experiencia['cargo']);
+                        $stmt->bindParam(':salario', $salario);
+                        $stmt->bindParam(':retiro', $experiencia['retiro']);
+                        $stmt->bindParam(':concepto', $experiencia['concepto']);
+                        $stmt->bindParam(':nombre', $experiencia['nombre']);
+                        $stmt->bindParam(':numero', $numero);
+                        
+                        if ($stmt->execute()) {
+                            $experiencias_actualizadas++;
+                        }
+                    } else {
+                        // Insertar nueva experiencia
+                        $sql = "INSERT INTO experiencia_laboral (
+                            id_cedula, empresa, tiempo, cargo, salario, retiro, concepto, nombre, numero
+                        ) VALUES (
+                            :id_cedula, :empresa, :tiempo, :cargo, :salario, :retiro, :concepto, :nombre, :numero
+                        )";
+                        
+                        $stmt = $this->db->prepare($sql);
+                        $stmt->bindParam(':id_cedula', $id_cedula);
+                        $stmt->bindParam(':empresa', $experiencia['empresa']);
+                        $stmt->bindParam(':tiempo', $experiencia['tiempo']);
+                        $stmt->bindParam(':cargo', $experiencia['cargo']);
+                        $stmt->bindParam(':salario', $salario);
+                        $stmt->bindParam(':retiro', $experiencia['retiro']);
+                        $stmt->bindParam(':concepto', $experiencia['concepto']);
+                        $stmt->bindParam(':nombre', $experiencia['nombre']);
+                        $stmt->bindParam(':numero', $numero);
+                        
+                        if ($stmt->execute()) {
+                            $experiencias_guardadas++;
+                        }
                     }
                 }
                 
-                if ($experiencias_guardadas > 0) {
+                $total_procesadas = $experiencias_guardadas + $experiencias_actualizadas;
+                if ($total_procesadas > 0) {
+                    $mensaje = "Se procesaron {$total_procesadas} experiencia(s) laboral(es): ";
+                    if ($experiencias_guardadas > 0) {
+                        $mensaje .= "{$experiencias_guardadas} nueva(s)";
+                    }
+                    if ($experiencias_actualizadas > 0) {
+                        $mensaje .= ($experiencias_guardadas > 0 ? ", " : "") . "{$experiencias_actualizadas} actualizada(s)";
+                    }
+                    $mensaje .= ".";
+                    
                     return [
                         'success' => true, 
-                        'message' => "Se guardaron {$experiencias_guardadas} experiencia(s) laboral(es) exitosamente."
+                        'message' => $mensaje
                     ];
                 } else {
                     return ['success' => false, 'message' => 'No se pudo guardar ninguna experiencia laboral.'];
@@ -252,6 +298,67 @@ class ExperienciaLaboralController {
             return $resultados;
         } catch (PDOException $e) {
             return null;
+        }
+    }
+
+    /**
+     * Elimina experiencias laborales específicas por índice
+     */
+    public function eliminarExperienciasEspecificas($id_cedula, $indices_eliminar) {
+        try {
+            // Obtener todas las experiencias existentes
+            $experiencias_existentes = $this->obtenerPorCedula($id_cedula);
+            
+            if (empty($experiencias_existentes)) {
+                return true; // No hay nada que eliminar
+            }
+            
+            // Convertir a array indexado si es necesario
+            if (!is_array($experiencias_existentes) || !isset($experiencias_existentes[0])) {
+                $experiencias_existentes = [$experiencias_existentes];
+            }
+            
+            $experiencias_eliminadas = 0;
+            
+            foreach ($indices_eliminar as $indice) {
+                if (isset($experiencias_existentes[$indice])) {
+                    $experiencia = $experiencias_existentes[$indice];
+                    
+                    // Eliminar por ID específico si existe
+                    if (isset($experiencia['id'])) {
+                        $sql = "DELETE FROM experiencia_laboral WHERE id = :id AND id_cedula = :id_cedula";
+                        $stmt = $this->db->prepare($sql);
+                        $stmt->bindParam(':id', $experiencia['id']);
+                        $stmt->bindParam(':id_cedula', $id_cedula);
+                        
+                        if ($stmt->execute()) {
+                            $experiencias_eliminadas++;
+                        }
+                    } else {
+                        // Si no hay ID, eliminar por coincidencia de datos
+                        $sql = "DELETE FROM experiencia_laboral WHERE 
+                                id_cedula = :id_cedula AND 
+                                empresa = :empresa AND 
+                                cargo = :cargo AND 
+                                salario = :salario";
+                        $stmt = $this->db->prepare($sql);
+                        $stmt->bindParam(':id_cedula', $id_cedula);
+                        $stmt->bindParam(':empresa', $experiencia['empresa']);
+                        $stmt->bindParam(':cargo', $experiencia['cargo']);
+                        $stmt->bindParam(':salario', $experiencia['salario']);
+                        
+                        if ($stmt->execute()) {
+                            $experiencias_eliminadas++;
+                        }
+                    }
+                }
+            }
+            
+            return $experiencias_eliminadas > 0;
+            
+        } catch (PDOException $e) {
+            error_log("Error al eliminar experiencias específicas: " . $e->getMessage());
+            return false;
         }
     }
 } 
