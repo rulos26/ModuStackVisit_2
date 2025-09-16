@@ -449,9 +449,7 @@ try {
             <?php endif; ?>
 
             <div class="row mb-4">
-                <div class="col-md-6">
-                    <img src="../../../../../public/images/logo.jpg" alt="Logotipo de la empresa" class="img-fluid logo-empresa">
-                        </div>
+                
                 <div class="col-md-6 text-end">
                     <div class="text-muted">
                         <small>Fecha: <?php echo date('d/m/Y'); ?></small><br>
