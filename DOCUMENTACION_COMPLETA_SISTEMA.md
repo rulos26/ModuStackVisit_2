@@ -1,701 +1,1050 @@
-# 📚 Documentación Completa del Sistema de Evaluación de Visitas Domiciliarias
+# 📚 Documentación Técnica Completa - Sistema de Evaluación de Visitas Domiciliarias
 
-**Versión:** 2.0  
-**Fecha de Actualización:** 16 de septiembre de 2025  
-**Proyecto:** ModuStackVisit_2  
-
----
-
-## 📋 Índice de Contenidos
-
-1. [Resumen Ejecutivo](#resumen-ejecutivo)
-2. [Arquitectura del Sistema](#arquitectura-del-sistema)
-3. [Módulos y Funcionalidades](#módulos-y-funcionalidades)
-4. [Mejoras de Seguridad](#mejoras-de-seguridad)
-5. [Optimizaciones de Rendimiento](#optimizaciones-de-rendimiento)
-6. [Mejoras de Interfaz de Usuario](#mejoras-de-interfaz-de-usuario)
-7. [Validaciones y Formato de Moneda](#validaciones-y-formato-de-moneda)
-8. [Sistema de Roles y Usuarios](#sistema-de-roles-y-usuarios)
-9. [Unificación de Vistas](#unificación-de-vistas)
-10. [Documentación Técnica](#documentación-técnica)
+**Versión:** 3.0 - Optimizada para Implementación Universal  
+**Fecha:** 16 de septiembre de 2025  
+**Propósito:** Guía completa para implementación en cualquier lenguaje de programación
 
 ---
 
-## 🎯 Resumen Ejecutivo
+## 🎯 **RESUMEN EJECUTIVO**
 
-El Sistema de Evaluación de Visitas Domiciliarias es una aplicación web desarrollada en PHP que permite gestionar evaluaciones de visitas domiciliarias de manera eficiente y segura. El sistema ha sido completamente optimizado y modernizado para ofrecer una experiencia de usuario superior y mayor seguridad.
+### **Descripción del Sistema**
+Sistema web para gestión de evaluaciones de visitas domiciliarias con arquitectura modular, sistema de roles, autenticación robusta y generación de reportes PDF.
 
-### **Características Principales:**
-- **Sistema de 4 roles diferenciados** (Administrador, Cliente, Superadministrador, Evaluador)
-- **Dashboard verde moderno** con diseño responsivo
-- **Validación de formato de moneda colombiana** en tiempo real
-- **Sistema de autenticación robusto** con protección contra ataques
-- **Vistas unificadas** para mejor experiencia de usuario
-- **Generación de PDFs** con formato profesional
-- **Sistema de logging completo** para auditoría
+### **Características Técnicas Clave**
+- **Arquitectura:** MVC con separación de responsabilidades
+- **Autenticación:** JWT/Session-based con rate limiting
+- **Base de Datos:** Relacional con optimizaciones de consultas
+- **Frontend:** SPA/MPA con validación en tiempo real
+- **Reportes:** Generación de PDFs con plantillas dinámicas
+- **Seguridad:** Validación de entrada, sanitización, logging
 
 ---
 
-## 🏗️ Arquitectura del Sistema
+## 🏗️ **ARQUITECTURA DEL SISTEMA**
 
-### **Estructura del Proyecto:**
+### **Diagrama de Arquitectura**
 ```
-ModuStackVisit_2/
-├── app/                    # Lógica de aplicación (MVC)
-├── conn/                   # Conexiones de base de datos
-├── librery/               # Librerías (TCPDF)
-├── public/                # Archivos públicos
-├── resources/views/       # Vistas del sistema
-├── src/                   # Código fuente adicional
-├── tests/                 # Pruebas unitarias
-└── vendor/                # Dependencias Composer
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │   Backend       │    │   Database      │
+│   (UI/UX)       │◄──►│   (API/Logic)   │◄──►│   (Data Layer)  │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Validation    │    │   Business      │    │   Persistence   │
+│   Layer         │    │   Logic         │    │   Layer         │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-### **Tecnologías Utilizadas:**
-- **Backend:** PHP 8.2+
-- **Base de Datos:** MySQL con PDO
-- **Frontend:** Bootstrap 5, JavaScript, CSS3
-- **Librerías:** Cleave.js, Dompdf, Font Awesome
-- **Patrón:** MVC (Modelo-Vista-Controlador)
+### **Patrones de Diseño Implementados**
+1. **MVC (Model-View-Controller)**
+2. **Repository Pattern** para acceso a datos
+3. **Service Layer** para lógica de negocio
+4. **Factory Pattern** para creación de objetos
+5. **Observer Pattern** para logging y auditoría
+6. **Singleton Pattern** para conexiones de BD
+
+### **Estructura de Directorios Universal**
+```
+project/
+├── src/
+│   ├── controllers/     # Controladores de API/Web
+│   ├── models/         # Modelos de datos
+│   ├── views/          # Vistas/Templates
+│   ├── services/       # Lógica de negocio
+│   ├── repositories/   # Acceso a datos
+│   ├── middleware/     # Middleware de autenticación
+│   ├── validators/     # Validaciones de entrada
+│   └── utils/          # Utilidades comunes
+├── config/             # Configuraciones
+├── database/           # Migraciones y seeds
+├── tests/              # Pruebas unitarias
+├── docs/               # Documentación
+└── public/             # Archivos públicos
+```
 
 ---
 
-## 📁 Módulos y Funcionalidades
+## 🔐 **SISTEMA DE AUTENTICACIÓN Y AUTORIZACIÓN**
 
-### **1. Módulo de Información Personal**
-- **Archivo:** `informacion_personal.php`
-- **Funcionalidad:** Captura de datos básicos del evaluado
-- **Características:** Dashboard verde, validación en tiempo real, campos obligatorios
+### **Flujo de Autenticación**
+```mermaid
+sequenceDiagram
+    participant U as Usuario
+    participant F as Frontend
+    participant B as Backend
+    participant D as Database
+    
+    U->>F: Credenciales
+    F->>B: POST /auth/login
+    B->>D: Validar usuario
+    D-->>B: Datos usuario
+    B->>B: Generar token
+    B-->>F: Token + datos
+    F->>F: Almacenar sesión
+    F-->>U: Dashboard
+```
 
-### **2. Módulo de Composición Familiar**
-- **Archivo:** `composicion_familiar.php`
-- **Funcionalidad:** Registro de miembros de la familia
-- **Características:** Formulario dinámico, validación de campos, layout optimizado
+### **Especificaciones Técnicas**
 
-### **3. Módulo de Información de Pareja**
-- **Archivo:** `tiene_pareja.php`
-- **Funcionalidad:** Registro de información de pareja (si aplica)
-- **Características:** Campos condicionales, carga automática de datos existentes
+#### **1. Rate Limiting**
+```javascript
+// Pseudocódigo para rate limiting
+const rateLimitConfig = {
+    windowMs: 15 * 60 * 1000,  // 15 minutos
+    maxAttempts: 5,            // 5 intentos máximo
+    blockDuration: 15 * 60 * 1000,  // Bloqueo por 15 min
+    keyGenerator: (req) => req.ip + req.body.username
+};
+```
 
-### **4. Módulo de Tipo de Vivienda**
-- **Archivo:** `tipo_vivienda.php`
-- **Funcionalidad:** Descripción del tipo de vivienda
-- **Características:** Formulario organizado, validación numérica
+#### **2. Validación de Contraseñas**
+```javascript
+const passwordValidation = {
+    minLength: 8,
+    requireUppercase: true,
+    requireLowercase: true,
+    requireNumbers: true,
+    requireSpecialChars: true,
+    forbiddenPatterns: ['password', '123456', 'admin']
+};
+```
 
-### **5. Módulo de Estado de Vivienda**
-- **Archivo:** `estado_vivienda.php`
-- **Funcionalidad:** Evaluación del estado de la vivienda
-- **Características:** Formulario simplificado, campos esenciales
+#### **3. Gestión de Sesiones**
+```javascript
+const sessionConfig = {
+    tokenType: 'JWT',  // o 'Session'
+    expiration: '24h',
+    refreshToken: true,
+    secure: true,      // HTTPS only
+    httpOnly: true,    // No JavaScript access
+    sameSite: 'strict'
+};
+```
 
-### **6. Módulo de Inventario de Enseres**
-- **Archivo:** `inventario_enseres.php`
-- **Funcionalidad:** Registro de bienes del hogar
-- **Características:** Categorías organizadas, campos opcionales
-
-### **7. Módulo de Servicios Públicos**
-- **Archivo:** `servicios_publicos.php`
-- **Funcionalidad:** Registro de servicios públicos
-- **Características:** Servicios agrupados por categoría
-
-### **8. Módulo de Cuentas Bancarias**
-- **Archivo:** `cuentas_bancarias.php`
-- **Funcionalidad:** Registro de cuentas bancarias
-- **Características:** Dashboard verde, formato de moneda
-
-### **9. Módulo de Pasivos (Unificado)**
-- **Archivo:** `pasivos.php`
-- **Funcionalidad:** Registro de pasivos financieros
-- **Características:** Vista unificada, campos dinámicos, formato de moneda
-
-### **10. Módulo de Aportantes**
-- **Archivo:** `aportante.php`
-- **Funcionalidad:** Registro de personas que aportan al hogar
-- **Características:** Dashboard verde, formato de moneda
-
-### **11. Módulo de Data Crédito (Unificado)**
-- **Archivo:** `data_credito.php`
-- **Funcionalidad:** Registro de información crediticia
-- **Características:** Vista unificada, campos dinámicos, formato de moneda
-
-### **12. Módulo de Ingresos Mensuales**
-- **Archivo:** `ingresos_mensuales.php`
-- **Funcionalidad:** Registro de ingresos del hogar
-- **Características:** Dashboard verde, formato de moneda
-
-### **13. Módulo de Gastos**
-- **Archivo:** `gasto.php`
-- **Funcionalidad:** Registro de gastos del hogar
-- **Características:** Dashboard verde, formato de moneda
-
-### **14. Módulo de Estudios**
-- **Archivo:** `estudios.php`
-- **Funcionalidad:** Registro de información académica
-- **Características:** Dashboard verde, campos dinámicos, observaciones
-
-### **15. Módulo de Información Judicial**
-- **Archivo:** `informacion_judicial.php`
-- **Funcionalidad:** Registro de información legal
-- **Características:** Dashboard verde, formulario organizado
-
-### **16. Módulo de Experiencia Laboral**
-- **Archivo:** `experiencia_laboral.php`
-- **Funcionalidad:** Registro de experiencia de trabajo
-- **Características:** Dashboard verde, campos dinámicos, observaciones, eliminación real
-
-### **17. Módulo de Concepto Final del Evaluador**
-- **Archivo:** `concepto_final_evaluador.php`
-- **Funcionalidad:** Evaluación final y recomendaciones
-- **Características:** Dashboard verde, formulario completo
-
-### **18. Módulo de Registro de Fotos**
-- **Archivo:** `registro_fotos.php`
-- **Funcionalidad:** Carga y gestión de fotografías
-- **Características:** Dashboard verde, carga de archivos
+### **Sistema de Roles**
+```javascript
+const roles = {
+    ADMIN: {
+        id: 1,
+        permissions: ['user_management', 'system_config', 'reports'],
+        dashboard: '/admin/dashboard'
+    },
+    CLIENT: {
+        id: 2,
+        permissions: ['visit_management', 'reports'],
+        dashboard: '/client/dashboard'
+    },
+    SUPERADMIN: {
+        id: 3,
+        permissions: ['*'],  // Todos los permisos
+        dashboard: '/superadmin/dashboard'
+    },
+    EVALUATOR: {
+        id: 4,
+        permissions: ['evaluation_management', 'reports'],
+        dashboard: '/evaluator/dashboard'
+    }
+};
+```
 
 ---
 
-## 🔒 Mejoras de Seguridad
+## 🗄️ **DISEÑO DE BASE DE DATOS**
 
-### **1. Sistema de Autenticación Robusto**
-- **LoginController optimizado** con validaciones estrictas
-- **Rate limiting** para prevenir ataques de fuerza bruta
-- **Tokens de sesión únicos** para mayor seguridad
-- **Timeout de sesiones** automático
-- **Logging de seguridad** completo
+### **Diagrama ER Principal**
+```mermaid
+erDiagram
+    USUARIOS ||--o{ EVALUACIONES : tiene
+    USUARIOS {
+        int id PK
+        string username UK
+        string email UK
+        string password_hash
+        int rol_id FK
+        boolean activo
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    ROLES ||--o{ USUARIOS : define
+    ROLES {
+        int id PK
+        string nombre UK
+        string descripcion
+        json permisos
+    }
+    
+    EVALUACIONES ||--o{ MODULOS_EVALUACION : contiene
+    EVALUACIONES {
+        int id PK
+        int usuario_id FK
+        string cedula_evaluado
+        string nombres
+        string direccion
+        timestamp fecha_visita
+        string estado
+    }
+    
+    MODULOS_EVALUACION {
+        int id PK
+        int evaluacion_id FK
+        string tipo_modulo
+        json datos
+        timestamp created_at
+    }
+```
 
-### **2. Protección de Usuarios Predefinidos**
-- **Usuarios maestros protegidos** (root, admin, cliente, evaluador)
-- **Operaciones bloqueadas:** eliminación, edición, desactivación
-- **Códigos de error específicos** para cada tipo de protección
-- **Auditoría completa** de intentos de modificación
+### **Tablas Principales**
 
-### **3. Validaciones de Roles Únicos**
-- **Un solo Administrador** permitido en el sistema
-- **Un solo Superadministrador** permitido en el sistema
-- **Múltiples Clientes/Evaluadores** permitidos
-- **Validaciones estrictas** antes de crear usuarios
+#### **1. Tabla USUARIOS**
+```sql
+CREATE TABLE usuarios (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    rol_id INT NOT NULL,
+    activo BOOLEAN DEFAULT TRUE,
+    intentos_fallidos INT DEFAULT 0,
+    bloqueado_hasta TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (rol_id) REFERENCES roles(id)
+);
+```
 
-### **4. Prevención de Inyección SQL**
-- **Prepared statements** en todas las consultas
-- **Validación de entrada** robusta
-- **Sanitización de datos** automática
-- **Headers de seguridad** configurados
+#### **2. Tabla EVALUACIONES**
+```sql
+CREATE TABLE evaluaciones (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    usuario_id INT NOT NULL,
+    cedula_evaluado VARCHAR(20) NOT NULL,
+    nombres VARCHAR(200) NOT NULL,
+    direccion TEXT,
+    telefono VARCHAR(20),
+    email VARCHAR(100),
+    fecha_visita DATE,
+    estado ENUM('pendiente', 'en_proceso', 'completada') DEFAULT 'pendiente',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+```
 
----
+#### **3. Tablas de Módulos Específicos**
+```sql
+-- Información Personal
+CREATE TABLE informacion_personal (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    evaluacion_id INT NOT NULL,
+    cedula VARCHAR(20) NOT NULL,
+    nombres VARCHAR(200) NOT NULL,
+    apellidos VARCHAR(200) NOT NULL,
+    fecha_nacimiento DATE,
+    telefono VARCHAR(20),
+    email VARCHAR(100),
+    direccion TEXT,
+    FOREIGN KEY (evaluacion_id) REFERENCES evaluaciones(id)
+);
 
-## ⚡ Optimizaciones de Rendimiento
+-- Patrimonio
+CREATE TABLE patrimonio (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    evaluacion_id INT NOT NULL,
+    tipo_patrimonio VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    valor DECIMAL(15,2) NOT NULL,
+    FOREIGN KEY (evaluacion_id) REFERENCES evaluaciones(id)
+);
 
-### **1. Base de Datos**
-- **Índices optimizados** para consultas frecuentes
-- **Consultas N+1 eliminadas** mediante joins eficientes
-- **Paginación implementada** en listados grandes
-- **Cache de consultas** para datos frecuentes
-
-### **2. Generación de PDFs**
-- **Dompdf optimizado** para mejor rendimiento
-- **Cache de PDFs** generados
-- **Procesamiento asíncrono** para documentos grandes
-- **Formato de moneda** correcto en PDFs
-
-### **3. Frontend**
-- **CSS minificado** para carga más rápida
-- **JavaScript optimizado** con funciones eficientes
-- **Imágenes optimizadas** para web
-- **Cache del navegador** configurado
-
----
-
-## 🎨 Mejoras de Interfaz de Usuario
-
-### **1. Dashboard Verde de Evaluador**
-- **Sidebar con gradiente verde** (`linear-gradient(135deg, #11998e 0%, #38ef7d 100%)`)
-- **Navegación consistente** en todas las vistas
-- **Indicadores de pasos** horizontales
-- **Diseño responsivo** para móviles
-
-### **2. Formularios Mejorados**
-- **Validación en tiempo real** con feedback visual
-- **Campos obligatorios** claramente marcados
-- **Mensajes de error** específicos y útiles
-- **Transiciones suaves** para mejor experiencia
-
-### **3. Campos Dinámicos**
-- **JavaScript para mostrar/ocultar** campos según selección
-- **Animaciones CSS** para transiciones suaves
-- **Validación condicional** según el contexto
-- **Persistencia de datos** al navegar
-
----
-
-## 💰 Validaciones y Formato de Moneda
-
-### **1. Formato de Moneda Colombiana**
-- **Cleave.js integrado** para formateo automático
-- **Formato estándar:** `$1.500.000,50`
-- **Validación en tiempo real** con feedback visual
-- **Tooltips informativos** para guiar al usuario
-
-### **2. Campos con Formato Monetario**
-- **Valor de vivienda** en patrimonio
-- **Deudas y cuotas** en pasivos
-- **Ingresos y gastos** mensuales
-- **Valores de inversiones** y ahorros
-
-### **3. Validación Robusta**
-- **Patrón colombiano** estricto
-- **Prevención de envío** con errores de formato
-- **Conversión automática** para base de datos
-- **Estados visuales** (válido/inválido)
-
----
-
-## 👥 Sistema de Roles y Usuarios
-
-### **1. Arquitectura de 4 Roles**
-- **Rol 1 - Administrador:** Gestión de usuarios y evaluaciones
-- **Rol 2 - Cliente:** Gestión de visitas y reportes
-- **Rol 3 - Superadministrador:** Control total del sistema
-- **Rol 4 - Evaluador:** Evaluaciones técnicas y reportes
-
-### **2. Dashboards Específicos**
-- **Dashboard del Cliente:** Gestión de visitas, calendario, reportes
-- **Dashboard del Evaluador:** Tareas pendientes, agenda, evaluaciones
-- **Dashboard del Administrador:** Gestión de usuarios carta/evaluación
-- **Dashboard del Superadministrador:** Control total del sistema
-
-### **3. Usuarios Predefinidos**
-- **root/root:** Superadministrador (Rol 3)
-- **admin/admin:** Administrador (Rol 1)
-- **cliente/cliente:** Cliente (Rol 2)
-- **evaluador/evaluador:** Evaluador (Rol 4)
-
-### **4. Protección de Usuarios Maestros**
-- **Nunca se pueden eliminar** usuarios predefinidos
-- **Nunca se pueden editar** datos de usuarios maestros
-- **Nunca se pueden desactivar** cuentas protegidas
-- **Auditoría completa** de intentos de modificación
-
----
-
-## 🔄 Unificación de Vistas
-
-### **1. Patrón de Unificación Implementado**
-- **Vista inicial** con pregunta Sí/No
-- **Campos dinámicos** que se muestran/ocultan
-- **JavaScript para control** de visibilidad
-- **Controlador unificado** para ambos casos
-
-### **2. Vistas Unificadas**
-- **`pasivos.php`:** Unifica `tiene_pasivo.php` + `pasivos.php`
-- **`data_credito.php`:** Unifica `data_credito.php` + `reportado.php`
-- **`tiene_pareja.php`:** Patrón base para unificaciones
-
-### **3. Beneficios de la Unificación**
-- **Experiencia fluida** en una sola página
-- **Navegación simplificada** sin redirecciones
-- **Código más limpio** y mantenible
-- **Consistencia** con el resto del sistema
+-- Pasivos
+CREATE TABLE pasivos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    evaluacion_id INT NOT NULL,
+    tipo_pasivo VARCHAR(100) NOT NULL,
+    entidad VARCHAR(200),
+    valor_total DECIMAL(15,2) NOT NULL,
+    cuota_mensual DECIMAL(15,2) NOT NULL,
+    FOREIGN KEY (evaluacion_id) REFERENCES evaluaciones(id)
+);
+```
 
 ---
 
-## 📊 Documentación Técnica
+## 🔧 **API ENDPOINTS Y CONTRATOS**
 
-### **1. Controladores Principales**
+### **Autenticación**
+```javascript
+// POST /api/auth/login
+{
+    "username": "string",
+    "password": "string"
+}
+// Response
+{
+    "success": true,
+    "token": "jwt_token_here",
+    "user": {
+        "id": 1,
+        "username": "admin",
+        "rol": "ADMIN",
+        "permissions": ["user_management", "reports"]
+    }
+}
 
-#### **Controladores de Autenticación y Sesión:**
-- **`LoginController.php`:** Autenticación robusta, rate limiting, tokens de sesión únicos, timeout automático
-- **`CerrarSesionController.php`:** Gestión de cierre de sesión seguro
-- **`SessionManager.php`:** Manejo centralizado de sesiones
+// POST /api/auth/logout
+// Headers: Authorization: Bearer {token}
+// Response: { "success": true, "message": "Logged out successfully" }
+```
 
-#### **Controladores de Gestión de Usuarios:**
-- **`SuperAdminController.php`:** CRUD completo de usuarios, validaciones de roles únicos, protección de usuarios maestros
-- **`HomeController.php`:** Controlador principal de inicio
+### **Gestión de Evaluaciones**
+```javascript
+// GET /api/evaluaciones
+// Headers: Authorization: Bearer {token}
+// Query: ?page=1&limit=10&estado=pendiente
+// Response
+{
+    "success": true,
+    "data": [
+        {
+            "id": 1,
+            "cedula_evaluado": "12345678",
+            "nombres": "Juan Pérez",
+            "estado": "pendiente",
+            "fecha_visita": "2025-09-20"
+        }
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 50,
+        "pages": 5
+    }
+}
 
-#### **Controladores de Evaluación de Visitas:**
-- **`PatrimonioController.php`:** Gestión de patrimonio con formato de moneda
-- **`PasivosController.php`:** Gestión de pasivos financieros unificados
-- **`DataCreditoController.php`:** Gestión de información crediticia unificada
-- **`AportanteController.php`:** Gestión de personas que aportan al hogar
-- **`CuentasBancariasController.php`:** Gestión de cuentas bancarias
-- **`IngresosMensualesController.php`:** Gestión de ingresos mensuales
-- **`GastoController.php`:** Gestión de gastos del hogar
-- **`EstudiosController.php`:** Gestión de información académica con observaciones
-- **`InformacionJudicialController.php`:** Gestión de información legal
-- **`ExperienciaLaboralController.php`:** Gestión de experiencia laboral con eliminación real
-- **`ConceptoFinalEvaluadorController.php`:** Evaluación final y recomendaciones
-- **`ComposicionFamiliarController.php`:** Gestión de composición familiar
-- **`EstadoViviendaController.php`:** Gestión del estado de vivienda
-- **`CamaraComercioController.php`:** Gestión de información de cámara de comercio
+// POST /api/evaluaciones
+{
+    "cedula_evaluado": "string",
+    "nombres": "string",
+    "direccion": "string",
+    "telefono": "string",
+    "email": "string",
+    "fecha_visita": "YYYY-MM-DD"
+}
 
-#### **Controladores de Documentos y Archivos:**
-- **`CartaAutorizacionController.php`:** Gestión de cartas de autorización
-- **`FirmaController.php`:** Gestión de firmas digitales con almacenamiento seguro
-- **`RegistroFotograficoController.php`:** Gestión de registro fotográfico con validaciones
-- **`UbicacionController.php`:** Gestión de ubicaciones con generación de mapas
-- **`InformeFinalPdfController.php`:** Generación de informes PDF finales
-- **`PdfGenerator.php`:** Generador de PDFs con formato profesional
-- **`DemoPdfController.php`:** Controlador de demostración de PDFs
+// PUT /api/evaluaciones/{id}
+// PATCH /api/evaluaciones/{id}/estado
+// DELETE /api/evaluaciones/{id}
+```
 
-#### **Controladores de Administración:**
-- **`OpcionesController.php`:** Gestión de opciones del sistema
-- **`TablasPrincipalesController.php`:** Gestión de tablas principales
-- **`ExploradorImagenesController.php`:** Explorador de imágenes con validación de permisos
-- **`DocumentoValidatorController.php`:** Validación de documentos
+### **Módulos de Evaluación**
+```javascript
+// GET /api/evaluaciones/{id}/modulos/{tipo}
+// POST /api/evaluaciones/{id}/modulos/{tipo}
+// PUT /api/evaluaciones/{id}/modulos/{tipo}
+// DELETE /api/evaluaciones/{id}/modulos/{tipo}
 
-### **2. Servicios y Utilidades**
-
-#### **Sistema de Logging:**
-- **`LoggerService.php`:** Sistema de logging profesional con múltiples niveles (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-- **`Logger.php`:** Logger básico para manejo de errores del sistema de informes
-
-#### **Gestión de Base de Datos:**
-- **`Database.php`:** Clase singleton para conexiones PDO con configuración optimizada
-- **Conexión legacy:** `conn/conexion.php` para compatibilidad con código existente
-
-### **3. Configuración del Sistema**
-
-#### **Archivos de Configuración:**
-- **`app/Config/config.php`:** Configuración principal de la aplicación
-- **`composer.json`:** Dependencias y autoloading PSR-4
-- **`conn/conexion.php`:** Configuración de conexión MySQL legacy
-
-#### **Configuración de Base de Datos:**
-- **Host:** 127.0.0.1 (localhost)
-- **Base de datos:** u130454517_modulo_vista
-- **Usuario:** u130454517_root
-- **Charset:** utf8mb4
-- **Conexión:** PDO con prepared statements
-
-### **4. Estructura de Vistas**
-
-#### **Vistas de Administración:**
-- **`admin/dashboardAdmin.php`:** Dashboard del administrador
-- **`admin/usuario_carta/`:** Gestión de usuarios de carta
-- **`admin/usuario_evaluacion/`:** Gestión de usuarios de evaluación
-
-#### **Vistas de Cliente:**
-- **`cliente/dashboardCliente.php`:** Dashboard específico para clientes
-
-#### **Vistas de Superadministrador:**
-- **`superadmin/dashboardSuperAdmin.php`:** Dashboard del superadministrador
-- **`superadmin/gestion_usuarios.php`:** Gestión completa de usuarios
-- **`superadmin/gestion_opciones.php`:** Gestión de opciones del sistema
-- **`superadmin/gestion_tablas_principales.php`:** Gestión de tablas principales
-
-#### **Vistas de Evaluador:**
-- **`evaluador/dashboardEvaluador.php`:** Dashboard del evaluador
-- **`evaluador/evaluacion_visita/`:** Módulos de evaluación de visitas
-- **`evaluador/carta_visita/`:** Módulos de carta de visita
-
-#### **Vistas de Layout:**
-- **`layout/dashboard.php`:** Layout principal del dashboard
-- **`layout/menu.php`:** Menú de navegación del sistema
-
-#### **Vistas de PDF:**
-- **`pdf/informe_final/plantilla_pdf.php`:** Plantilla para generación de PDFs
-- **`pdf/demo_pdf.php`:** Demostración de generación de PDFs
-
-### **5. Sistema de Pruebas**
-
-#### **Scripts de Prueba Implementados (49 archivos):**
-- **Pruebas de Autenticación:** `TestLoginControllerOptimizado.php`, `TestLoginDespuesCorreccion.php`
-- **Pruebas de Usuarios:** `TestValidacionesUsuarios.php`, `TestUsuariosPredefinidos.php`
-- **Pruebas de Roles:** `TestRolesUnicos.php`, `DiagnosticoRolesCompleto.php`
-- **Pruebas de Sistema:** `TestSistemaCompleto.php`, `TestSistemaRedireccion.php`
-- **Pruebas de Base de Datos:** `TestConexionDB.php`, `TestCRUDUsuarios.php`
-- **Pruebas de Migración:** `MigracionRol4.php`, `ActualizarTablaUsuarios.php`
-- **Pruebas de Seguridad:** `TestProteccionUsuariosUI.php`, `TestPasswordVerification.php`
-
-### **6. Dependencias y Librerías**
-
-#### **Dependencias Principales:**
-- **PHP:** ^8.2 (requerimiento mínimo)
-- **PDO:** Extensión nativa para base de datos
-- **Dompdf:** ^3.1 para generación de PDFs
-
-#### **Librerías Legacy:**
-- **TCPDF:** Librería completa incluida en `librery/` para generación de PDFs
-- **Fonts:** 191 archivos de fuentes para TCPDF
-- **Examples:** 65 ejemplos de uso de TCPDF
-
-### **7. Estructura de Archivos Públicos**
-
-#### **Directorio `public/`:**
-- **`css/styles.css`:** Estilos principales del sistema
-- **`js/`:** 5 archivos JavaScript para funcionalidades del frontend
-- **`images/`:** Imágenes del sistema organizadas por categorías:
-  - `evidencia_fotografica/`: Evidencias fotográficas
-  - `firma/`: Firmas digitales
-  - `registro_fotografico/`: Registro fotográfico
-  - `ubicacion_autorizacion/`: Imágenes de ubicación
-  - `productos/`: Imágenes de productos
-  - `eventos/`: Imágenes de eventos
-
-### **8. Base de Datos**
-
-#### **Características:**
-- **Motor:** MySQL
-- **Charset:** utf8mb4 para soporte completo de Unicode
-- **Conexión:** PDO con prepared statements para seguridad
-- **Patrón:** Singleton para conexiones optimizadas
-- **Índices:** Optimizados para consultas frecuentes
-- **Relaciones:** Bien definidas entre tablas principales
-
-#### **Tablas Principales Identificadas:**
-- `usuarios`: Gestión de usuarios del sistema
-- `autorizaciones`: Cartas de autorización
-- `firmas`: Firmas digitales
-- `registro_fotografico`: Registro fotográfico
-- `ubicacion_autorizacion`: Ubicaciones de autorización
-- `evaluados`: Datos de personas evaluadas
-- Múltiples tablas para módulos específicos (patrimonio, pasivos, data_credito, etc.)
+// Ejemplo: Patrimonio
+// POST /api/evaluaciones/1/modulos/patrimonio
+{
+    "tipo_patrimonio": "vivienda",
+    "descripcion": "Casa propia",
+    "valor": 150000000.50
+}
+```
 
 ---
 
-## 🧪 Pruebas y Validación
+## 💰 **VALIDACIÓN Y FORMATO DE MONEDA**
 
-### **1. Scripts de Prueba Implementados (49 archivos)**
+### **Especificaciones de Formato**
+```javascript
+const currencyConfig = {
+    locale: 'es-CO',           // Colombia
+    currency: 'COP',           // Peso colombiano
+    format: {
+        symbol: '$',
+        decimal: ',',
+        thousands: '.',
+        precision: 2
+    },
+    validation: {
+        min: 0,
+        max: 999999999999.99,
+        pattern: /^\$?[\d]{1,3}(\.[\d]{3})*,[\d]{2}$/
+    }
+};
+```
 
-#### **Pruebas de Autenticación:**
-- **`TestLoginControllerOptimizado.php`:** Pruebas completas del sistema de login optimizado
-- **`TestLoginDespuesCorreccion.php`:** Pruebas post-corrección del sistema de login
-- **`TestLoginConDebug.php`:** Pruebas con debug habilitado
-- **`TestLoginControllerCorregido.php`:** Pruebas del controlador corregido
-- **`TestLoginControllerDebugConsole.php`:** Pruebas con debug en consola
-- **`TestLoginSuperAdmin.php`:** Pruebas específicas de login de superadministrador
+### **Algoritmo de Validación**
+```javascript
+function validateCurrency(value) {
+    // 1. Remover símbolos y espacios
+    const cleanValue = value.replace(/[\s$]/g, '');
+    
+    // 2. Validar formato colombiano
+    const pattern = /^[\d]{1,3}(\.[\d]{3})*,[\d]{2}$/;
+    if (!pattern.test(cleanValue)) {
+        return { valid: false, error: 'Formato inválido' };
+    }
+    
+    // 3. Convertir a número
+    const numericValue = parseFloat(cleanValue.replace(/\./g, '').replace(',', '.'));
+    
+    // 4. Validar rango
+    if (numericValue < 0 || numericValue > 999999999999.99) {
+        return { valid: false, error: 'Valor fuera de rango' };
+    }
+    
+    return { valid: true, value: numericValue };
+}
+```
 
-#### **Pruebas de Usuarios:**
-- **`TestValidacionesUsuarios.php`:** Validaciones completas de creación de usuarios
-- **`TestUsuariosPredefinidos.php`:** Pruebas de usuarios predefinidos del sistema
-- **`TestWebUsuariosPredefinidos.php`:** Pruebas web de usuarios predefinidos
-- **`TestWebUsuariosPredefinidosAPI.php`:** Pruebas API de usuarios predefinidos
-- **`CrearUsuariosPredeterminados.php`:** Creación automática de usuarios predeterminados
-- **`TestCRUDUsuarios.php`:** Pruebas CRUD completas de usuarios
-- **`TestProteccionUsuariosUI.php`:** Pruebas de protección de usuarios en interfaz
-
-#### **Pruebas de Roles:**
-- **`TestRolesUnicos.php`:** Verificación de roles únicos del sistema
-- **`DiagnosticoRolesCompleto.php`:** Diagnóstico completo del sistema de roles
-- **`MigracionRol4.php`:** Migración a sistema de 4 roles
-
-#### **Pruebas de Sistema:**
-- **`TestSistemaCompleto.php`:** Pruebas completas del sistema
-- **`TestSistemaRedireccion.php`:** Pruebas de redirección del sistema
-- **`TestSistemaFuncionalidad.php`:** Pruebas de funcionalidad del sistema
-- **`TestSistemaFuncionamiento.php`:** Pruebas de funcionamiento del sistema
-- **`TestSistemaRedireccion.php`:** Pruebas de redirección del sistema
-
-#### **Pruebas de Base de Datos:**
-- **`TestConexionDB.php`:** Pruebas de conexión a base de datos
-- **`TestConexionIndexLogin.php`:** Pruebas de conexión desde index y login
-- **`TestCRUDUsuarios.php`:** Pruebas CRUD de usuarios
-- **`TestCorreccionBindParam.php`:** Pruebas de corrección de bindParam
-
-#### **Pruebas de Migración:**
-- **`MigracionRol4.php`:** Migración a sistema de 4 roles
-- **`ActualizarTablaUsuarios.php`:** Actualización de tabla de usuarios
-- **`ActualizarTablaUsuariosV2.php`:** Actualización v2 de tabla de usuarios
-- **`AgregarColumnaFechaCreacion.php`:** Agregar columna de fecha de creación
-
-#### **Pruebas de Seguridad:**
-- **`TestProteccionUsuariosUI.php`:** Pruebas de protección de usuarios en UI
-- **`TestPasswordVerification.php`:** Pruebas de verificación de contraseñas
-- **`TestHeadersCompletamenteCorregidos.php`:** Pruebas de headers corregidos
-- **`TestHeadersCorregidos.php`:** Pruebas de headers corregidos
-
-#### **Pruebas de Diagnóstico:**
-- **`DiagnosticoCompleto.php`:** Diagnóstico completo del sistema
-- **`DiagnosticoError500.php`:** Diagnóstico de errores 500
-- **`DiagnosticoServidor.php`:** Diagnóstico del servidor
-- **`DiagnosticoEstructuraReal.php`:** Diagnóstico de estructura real
-- **`DiagnosticoEstructuraServidor.php`:** Diagnóstico de estructura del servidor
-
-#### **Pruebas de Módulos:**
-- **`TestModuloOpciones.php`:** Pruebas del módulo de opciones
-- **`TestModuloTablasPrincipales.php`:** Pruebas del módulo de tablas principales
-- **`TestDashboardSuperAdmin.php`:** Pruebas del dashboard de superadministrador
-
-#### **Pruebas de Utilidades:**
-- **`TestBasico.php`:** Pruebas básicas del sistema
-- **`TestSimple.php`:** Pruebas simples
-- **`TestRapidoWeb.php`:** Pruebas rápidas web
-- **`VerLogsDebug.php`:** Verificación de logs de debug
-
-### **2. Casos de Prueba Cubiertos**
-
-#### **Autenticación:**
-- **Login exitoso** con credenciales válidas
-- **Login fallido** con credenciales incorrectas
-- **Login bloqueado** después de intentos fallidos
-- **Timeout de sesión** automático
-- **Regeneración de tokens** de sesión
-
-#### **Validación:**
-- **Entrada vacía** en campos obligatorios
-- **Caracteres especiales** no permitidos
-- **Longitud de campos** según especificaciones
-- **Formato de email** válido
-- **Formato de cédula** numérico
-
-#### **Rate Limiting:**
-- **Bloqueo automático** después de 5 intentos fallidos
-- **Desbloqueo automático** después de 15 minutos
-- **Contador de intentos** fallidos
-- **Registro de bloqueos** en logs
-
-#### **Sesiones:**
-- **Creación de sesión** segura
-- **Verificación de sesión** válida
-- **Timeout de sesión** configurado
-- **Logout completo** con limpieza
-
-#### **Roles y Permisos:**
-- **Validación de roles** únicos (Administrador, Superadministrador)
-- **Protección de usuarios** maestros
-- **Redirección por rol** correcta
-- **Acceso denegado** para roles no autorizados
-
-### **3. Métricas de Mejora**
-
-#### **Seguridad:**
-- **100% de vulnerabilidades críticas** eliminadas
-- **Rate limiting** implementado
-- **Prepared statements** en todas las consultas
-- **Validación de entrada** robusta
-- **Headers de seguridad** configurados
-
-#### **Rendimiento:**
-- **25% de mejora** en tiempo de respuesta
-- **Índices optimizados** en base de datos
-- **Cache de consultas** implementado
-- **Consultas N+1** eliminadas
-
-#### **Mantenibilidad:**
-- **Código modular** y bien documentado
-- **Patrón MVC** implementado
-- **Separación de responsabilidades** clara
-- **Logging profesional** implementado
-
-#### **Escalabilidad:**
-- **Arquitectura preparada** para crecimiento
-- **Sistema de roles** escalable
-- **Base de datos optimizada** para grandes volúmenes
-- **Código reutilizable** y extensible
+### **Formateo en Frontend**
+```javascript
+// Usando Cleave.js o similar
+const cleaveConfig = {
+    numeral: true,
+    numeralThousandsGroupStyle: 'thousand',
+    numeralDecimalMark: ',',
+    delimiter: '.',
+    numeralDecimalScale: 2,
+    prefix: '$'
+};
+```
 
 ---
 
-## 🚀 Próximos Pasos Recomendados
+## 📊 **LÓGICA DE NEGOCIO**
 
-### **Corto Plazo (1-2 semanas)**
-1. **Implementar autenticación de dos factores (2FA)**
-2. **Agregar captcha para intentos fallidos**
-3. **Migrar completamente de MD5 a bcrypt**
-4. **Implementar auditoría de cambios de contraseña**
+### **Flujo de Evaluación**
+```mermaid
+flowchart TD
+    A[Iniciar Evaluación] --> B[Información Personal]
+    B --> C[Composición Familiar]
+    C --> D[Información de Pareja]
+    D --> E[Patrimonio]
+    E --> F[Pasivos]
+    F --> G[Data Crédito]
+    G --> H[Ingresos/Gastos]
+    H --> I[Estudios/Experiencia]
+    I --> J[Concepto Final]
+    J --> K[Generar PDF]
+    K --> L[Finalizar]
+```
 
-### **Mediano Plazo (1-2 meses)**
-1. **Implementar OAuth2 para integración externa**
-2. **Agregar notificaciones por email para intentos sospechosos**
-3. **Implementar dashboard de seguridad**
-4. **Crear API REST para autenticación**
+### **Reglas de Validación**
+```javascript
+const businessRules = {
+    evaluacion: {
+        cedula: {
+            required: true,
+            pattern: /^[\d]{6,12}$/,
+            unique: true
+        },
+        fecha_visita: {
+            required: true,
+            min: new Date(),
+            max: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 días
+        }
+    },
+    patrimonio: {
+        valor: {
+            required: true,
+            min: 0,
+            max: 999999999999.99
+        }
+    },
+    pasivos: {
+        cuota_mensual: {
+            required: true,
+            min: 0,
+            max: 999999999.99
+        }
+    }
+};
+```
 
-### **Largo Plazo (3-6 meses)**
-1. **Migrar a framework moderno (Laravel/Symfony)**
-2. **Implementar microservicios de autenticación**
-3. **Agregar análisis de comportamiento (AI/ML)**
-4. **Implementar SSO empresarial**
+### **Cálculos Automáticos**
+```javascript
+function calculateFinancialSummary(evaluacion) {
+    const patrimonio = evaluacion.patrimonio.reduce((sum, item) => sum + item.valor, 0);
+    const pasivos = evaluacion.pasivos.reduce((sum, item) => sum + item.valor_total, 0);
+    const ingresos = evaluacion.ingresos.reduce((sum, item) => sum + item.valor, 0);
+    const gastos = evaluacion.gastos.reduce((sum, item) => sum + item.valor, 0);
+    
+    return {
+        patrimonio_neto: patrimonio - pasivos,
+        capacidad_pago: ingresos - gastos,
+        ratio_endeudamiento: pasivos / patrimonio,
+        recomendacion: generateRecommendation(patrimonio, pasivos, ingresos, gastos)
+    };
+}
+```
 
 ---
 
-## 📞 Soporte y Mantenimiento
+## 🎨 **ESPECIFICACIONES DE UI/UX**
 
-### **Monitoreo Recomendado**
-1. **Revisar logs** del sistema regularmente
-2. **Verificar auditoría** de operaciones críticas
-3. **Monitorear intentos** de violación de seguridad
-4. **Validar integridad** de la base de datos
+### **Sistema de Diseño**
+```css
+:root {
+    /* Colores principales */
+    --primary-color: #11998e;
+    --primary-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --secondary-color: #f8f9fa;
+    --accent-color: #007bff;
+    
+    /* Colores de estado */
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --error-color: #dc3545;
+    --info-color: #17a2b8;
+    
+    /* Tipografía */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-size-base: 16px;
+    --line-height-base: 1.5;
+    
+    /* Espaciado */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 3rem;
+    
+    /* Bordes */
+    --border-radius: 0.375rem;
+    --border-width: 1px;
+    --border-color: #dee2e6;
+}
+```
 
-### **Troubleshooting Común**
-1. **Error de redirección:** Verificar existencia de archivos de dashboard
-2. **Acceso denegado:** Confirmar rol del usuario en sesión
-3. **Error de base de datos:** Verificar conexión y permisos
-4. **Problemas de sesión:** Limpiar cookies y cache del navegador
+### **Componentes Reutilizables**
+```javascript
+// Componente de Formulario
+const FormComponent = {
+    props: ['fields', 'validation', 'onSubmit'],
+    template: `
+        <form @submit.prevent="handleSubmit">
+            <div v-for="field in fields" :key="field.name" class="form-group">
+                <label :for="field.name">{{ field.label }}</label>
+                <input 
+                    :type="field.type"
+                    :id="field.name"
+                    v-model="formData[field.name]"
+                    :class="getFieldClass(field.name)"
+                    :required="field.required"
+                />
+                <div v-if="errors[field.name]" class="error-message">
+                    {{ errors[field.name] }}
+                </div>
+            </div>
+            <button type="submit" :disabled="!isValid">Guardar</button>
+        </form>
+    `
+};
+
+// Componente de Dashboard
+const DashboardComponent = {
+    props: ['user', 'stats', 'recentActivity'],
+    template: `
+        <div class="dashboard">
+            <header class="dashboard-header">
+                <h1>Bienvenido, {{ user.name }}</h1>
+                <div class="user-info">
+                    <span class="role-badge">{{ user.role }}</span>
+                </div>
+            </header>
+            <div class="dashboard-content">
+                <div class="stats-grid">
+                    <div v-for="stat in stats" :key="stat.key" class="stat-card">
+                        <h3>{{ stat.value }}</h3>
+                        <p>{{ stat.label }}</p>
+                    </div>
+                </div>
+                <div class="recent-activity">
+                    <h2>Actividad Reciente</h2>
+                    <ul>
+                        <li v-for="activity in recentActivity" :key="activity.id">
+                            {{ activity.description }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `
+};
+```
+
+### **Responsive Design**
+```css
+/* Mobile First Approach */
+.container {
+    width: 100%;
+    padding: var(--spacing-md);
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+    .container {
+        max-width: 750px;
+        margin: 0 auto;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1200px;
+    }
+    
+    .dashboard {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: var(--spacing-lg);
+    }
+}
+```
 
 ---
 
-## 📋 Resumen de Cambios Implementados
+## 📄 **GENERACIÓN DE REPORTES PDF**
 
-### **Archivos del Sistema:**
-- **17 controladores principales** documentados y optimizados
-- **304 archivos de vistas** organizados por módulos
-- **49 scripts de prueba** implementados
-- **2 sistemas de logging** (LoggerService y Logger)
-- **1 clase de base de datos** singleton optimizada
-- **0 errores** de sintaxis introducidos
-- **100% funcionalidad** mantenida
+### **Especificaciones de Plantilla**
+```javascript
+const pdfConfig = {
+    pageSize: 'A4',
+    orientation: 'portrait',
+    margins: {
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+    },
+    header: {
+        height: 50,
+        content: 'Sistema de Evaluación de Visitas Domiciliarias'
+    },
+    footer: {
+        height: 30,
+        content: 'Página {page} de {total}'
+    }
+};
+```
 
-### **Estructura Completa Documentada:**
-- **Controladores:** 17 controladores principales con funcionalidades específicas
-- **Vistas:** 304 archivos organizados en 4 roles principales
-- **Servicios:** Sistema de logging profesional y gestión de base de datos
-- **Configuración:** Archivos de configuración y dependencias
-- **Pruebas:** 49 scripts de prueba cubriendo todos los aspectos
-- **Base de Datos:** Estructura optimizada con múltiples tablas
+### **Estructura de Datos para PDF**
+```javascript
+const pdfDataStructure = {
+    evaluacion: {
+        id: 1,
+        fecha: '2025-09-16',
+        evaluador: 'Juan Pérez',
+        evaluado: {
+            cedula: '12345678',
+            nombres: 'María García',
+            direccion: 'Calle 123 #45-67'
+        }
+    },
+    modulos: {
+        informacion_personal: { /* datos */ },
+        patrimonio: { /* datos */ },
+        pasivos: { /* datos */ },
+        ingresos: { /* datos */ },
+        gastos: { /* datos */ }
+    },
+    resumen: {
+        patrimonio_total: 150000000,
+        pasivos_total: 50000000,
+        patrimonio_neto: 100000000,
+        capacidad_pago: 2000000
+    }
+};
+```
 
-### **Mejoras Logradas:**
-- **Consistencia Visual:** 95% (antes 60%)
-- **Carga de Datos:** 100% (antes 40%)
-- **Validación Correcta:** 100% (antes 30%)
-- **UX en Formularios:** 90% (antes 50%)
-- **Responsividad:** 95% (antes 70%)
-- **Seguridad:** 100% de vulnerabilidades críticas eliminadas
-- **Rendimiento:** 25% de mejora en tiempo de respuesta
-- **Mantenibilidad:** Código modular y bien documentado
+### **Algoritmo de Generación**
+```javascript
+function generatePDF(evaluacionData) {
+    const sections = [
+        'header',
+        'informacion_personal',
+        'patrimonio',
+        'pasivos',
+        'ingresos_gastos',
+        'resumen_financiero',
+        'concepto_final',
+        'firma'
+    ];
+    
+    const pdfContent = sections.map(section => {
+        return renderSection(section, evaluacionData);
+    }).join('');
+    
+    return compilePDF(pdfContent, pdfConfig);
+}
+```
 
 ---
 
-## ✅ Conclusión
+## 🧪 **ESTRATEGIA DE PRUEBAS**
 
-El Sistema de Evaluación de Visitas Domiciliarias ha sido completamente analizado, documentado y optimizado, logrando:
+### **Tipos de Pruebas**
+```javascript
+// Pruebas Unitarias
+describe('Currency Validation', () => {
+    test('should validate correct Colombian format', () => {
+        expect(validateCurrency('$1.500.000,50')).toBe(true);
+    });
+    
+    test('should reject invalid format', () => {
+        expect(validateCurrency('1500000.50')).toBe(false);
+    });
+});
 
-### **Documentación Completa:**
-- **17 controladores principales** completamente documentados
-- **304 archivos de vistas** organizados y catalogados
-- **49 scripts de prueba** documentados y categorizados
-- **2 sistemas de logging** implementados y documentados
-- **Estructura de base de datos** completamente mapeada
-- **Configuración del sistema** detallada y documentada
+// Pruebas de Integración
+describe('Authentication Flow', () => {
+    test('should login with valid credentials', async () => {
+        const response = await request(app)
+            .post('/api/auth/login')
+            .send({ username: 'admin', password: 'admin' });
+        
+        expect(response.status).toBe(200);
+        expect(response.body.token).toBeDefined();
+    });
+});
 
-### **Funcionalidades del Sistema:**
-- **100% de funcionalidad** mantenida y documentada
-- **0 errores** introducidos durante la documentación
-- **Mejora sustancial** en UX/UI documentada
-- **Código más limpio** y mantenible documentado
-- **Sistema más robusto** y confiable
+// Pruebas E2E
+describe('Evaluation Process', () => {
+    test('should complete full evaluation', async () => {
+        await page.goto('/evaluador/dashboard');
+        await page.click('[data-test="new-evaluation"]');
+        // ... completar flujo completo
+        await expect(page.locator('[data-test="pdf-generated"]')).toBeVisible();
+    });
+});
+```
 
-### **Para Desarrolladores y IAs:**
-Este documento proporciona una **guía completa y detallada** que permite a cualquier desarrollador o IA:
+### **Casos de Prueba Críticos**
+```javascript
+const testCases = {
+    authentication: [
+        'login_with_valid_credentials',
+        'login_with_invalid_credentials',
+        'rate_limiting_after_failed_attempts',
+        'session_timeout',
+        'logout_functionality'
+    ],
+    authorization: [
+        'role_based_access_control',
+        'protected_route_access',
+        'permission_validation'
+    ],
+    data_validation: [
+        'currency_format_validation',
+        'required_field_validation',
+        'data_type_validation',
+        'business_rule_validation'
+    ],
+    pdf_generation: [
+        'pdf_creation_with_valid_data',
+        'pdf_creation_with_missing_data',
+        'pdf_format_validation',
+        'pdf_download_functionality'
+    ]
+};
+```
 
+---
+
+## 🚀 **GUÍA DE IMPLEMENTACIÓN**
+
+### **Requisitos del Sistema**
+```yaml
+# Backend Requirements
+backend:
+  language: "PHP 8.2+ | Node.js 18+ | Python 3.9+ | Java 17+"
+  framework: "Laravel | Express.js | Django | Spring Boot"
+  database: "MySQL 8.0+ | PostgreSQL 13+"
+  cache: "Redis | Memcached"
+  queue: "Redis | RabbitMQ | AWS SQS"
+
+# Frontend Requirements
+frontend:
+  framework: "Vue.js 3+ | React 18+ | Angular 15+"
+  build_tool: "Vite | Webpack | Angular CLI"
+  ui_library: "Bootstrap 5 | Tailwind CSS | Material UI"
+  validation: "VeeValidate | Formik | Angular Forms"
+
+# Infrastructure
+infrastructure:
+  web_server: "Nginx | Apache"
+  application_server: "PHP-FPM | Node.js | Gunicorn | Tomcat"
+  database_server: "MySQL | PostgreSQL"
+  file_storage: "Local | AWS S3 | Google Cloud Storage"
+```
+
+### **Pasos de Implementación**
+
+#### **1. Configuración Inicial**
+```bash
+# 1. Crear estructura de proyecto
+mkdir sistema-evaluacion-visitas
+cd sistema-evaluacion-visitas
+
+# 2. Inicializar repositorio
+git init
+git remote add origin <repository-url>
+
+# 3. Configurar entorno de desarrollo
+cp .env.example .env
+# Configurar variables de entorno
+
+# 4. Instalar dependencias
+npm install  # o composer install, pip install, etc.
+```
+
+#### **2. Configuración de Base de Datos**
+```sql
+-- 1. Crear base de datos
+CREATE DATABASE evaluacion_visitas CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- 2. Ejecutar migraciones
+-- (Ejecutar scripts de creación de tablas)
+
+-- 3. Insertar datos iniciales
+INSERT INTO roles (nombre, descripcion, permisos) VALUES
+('ADMIN', 'Administrador', '["user_management", "reports"]'),
+('CLIENT', 'Cliente', '["visit_management", "reports"]'),
+('SUPERADMIN', 'Superadministrador', '["*"]'),
+('EVALUATOR', 'Evaluador', '["evaluation_management", "reports"]');
+
+-- 4. Crear usuarios predeterminados
+INSERT INTO usuarios (username, email, password_hash, rol_id) VALUES
+('admin', 'admin@sistema.com', '$2y$10$...', 1),
+('cliente', 'cliente@sistema.com', '$2y$10$...', 2),
+('superadmin', 'superadmin@sistema.com', '$2y$10$...', 3),
+('evaluador', 'evaluador@sistema.com', '$2y$10$...', 4);
+```
+
+#### **3. Implementación de Módulos**
+```javascript
+// Estructura de módulo estándar
+class ModuleController {
+    constructor(service, validator) {
+        this.service = service;
+        this.validator = validator;
+    }
+    
+    async create(req, res) {
+        try {
+            // 1. Validar entrada
+            const validation = await this.validator.validate(req.body);
+            if (!validation.isValid) {
+                return res.status(400).json({
+                    success: false,
+                    errors: validation.errors
+                });
+            }
+            
+            // 2. Procesar datos
+            const result = await this.service.create(req.body);
+            
+            // 3. Responder
+            res.status(201).json({
+                success: true,
+                data: result
+            });
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: 'Error interno del servidor'
+            });
+        }
+    }
+}
+```
+
+### **Configuración de Despliegue**
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "80:80"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=evaluacion_visitas
+      - DB_USER=app_user
+      - DB_PASSWORD=secure_password
+    depends_on:
+      - db
+      - redis
+  
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=evaluacion_visitas
+      - MYSQL_USER=app_user
+      - MYSQL_PASSWORD=secure_password
+    volumes:
+      - db_data:/var/lib/mysql
+  
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  db_data:
+```
+
+---
+
+## 📊 **MONITOREO Y MÉTRICAS**
+
+### **Métricas Clave**
+```javascript
+const metrics = {
+    performance: {
+        response_time: '< 200ms',
+        throughput: '> 1000 req/min',
+        error_rate: '< 1%',
+        uptime: '> 99.9%'
+    },
+    business: {
+        evaluations_per_day: 'target: 50',
+        user_satisfaction: '> 4.5/5',
+        pdf_generation_time: '< 5s',
+        data_accuracy: '> 99%'
+    },
+    security: {
+        failed_login_attempts: 'monitor',
+        suspicious_activity: 'alert',
+        data_breaches: 'zero_tolerance',
+        access_violations: 'log_all'
+    }
+};
+```
+
+### **Logging Strategy**
+```javascript
+const loggingConfig = {
+    levels: ['ERROR', 'WARN', 'INFO', 'DEBUG'],
+    format: 'JSON',
+    destinations: ['file', 'console', 'external_service'],
+    retention: '30 days',
+    sensitive_data: {
+        mask: ['password', 'token', 'credit_card'],
+        exclude: ['email', 'username']
+    }
+};
+```
+
+---
+
+## 🔧 **MANTENIMIENTO Y ACTUALIZACIONES**
+
+### **Estrategia de Versionado**
+```javascript
+const versioning = {
+    api: 'semantic_versioning',  // v1.0.0, v1.1.0, v2.0.0
+    database: 'migration_based',
+    frontend: 'feature_based',
+    documentation: 'date_based'
+};
+```
+
+### **Procedimientos de Actualización**
+```bash
+# 1. Backup de datos
+mysqldump -u username -p evaluacion_visitas > backup_$(date +%Y%m%d).sql
+
+# 2. Actualizar código
+git pull origin main
+composer install --no-dev --optimize-autoloader
+
+# 3. Ejecutar migraciones
+php artisan migrate
+
+# 4. Limpiar cache
+php artisan cache:clear
+php artisan config:clear
+
+# 5. Verificar funcionamiento
+php artisan test
+```
+
+---
+
+## 📋 **CHECKLIST DE IMPLEMENTACIÓN**
+
+### **Fase 1: Configuración Base**
+- [ ] Configurar entorno de desarrollo
+- [ ] Crear estructura de base de datos
+- [ ] Implementar sistema de autenticación
+- [ ] Configurar logging y monitoreo
+- [ ] Implementar validaciones básicas
+
+### **Fase 2: Módulos Core**
+- [ ] Módulo de información personal
+- [ ] Módulo de patrimonio
+- [ ] Módulo de pasivos
+- [ ] Módulo de ingresos/gastos
+- [ ] Sistema de roles y permisos
+
+### **Fase 3: Funcionalidades Avanzadas**
+- [ ] Generación de PDFs
+- [ ] Dashboard interactivo
+- [ ] Validación de moneda
+- [ ] Sistema de notificaciones
+- [ ] Reportes y estadísticas
+
+### **Fase 4: Optimización**
+- [ ] Optimización de consultas
+- [ ] Cache de datos
+- [ ] Compresión de assets
+- [ ] CDN para archivos estáticos
+- [ ] Monitoreo de rendimiento
+
+### **Fase 5: Despliegue**
+- [ ] Configuración de producción
+- [ ] SSL/TLS
+- [ ] Backup automático
+- [ ] Monitoreo de errores
+- [ ] Documentación de usuario
+
+---
+
+## ✅ **CONCLUSIÓN**
+
+Esta documentación proporciona una **guía completa y detallada** para implementar el Sistema de Evaluación de Visitas Domiciliarias en **cualquier lenguaje de programación moderno**.
+
+### **Características de la Documentación:**
+- **✅ Arquitectura clara** con diagramas y patrones
+- **✅ Especificaciones técnicas detalladas** para cada componente
+- **✅ Contratos de API** bien definidos
+- **✅ Diseño de base de datos** completo
+- **✅ Algoritmos y lógica de negocio** especificados
+- **✅ Guías de implementación** paso a paso
+- **✅ Estrategias de prueba** comprehensivas
+- **✅ Configuración de despliegue** lista para producción
+
+### **Para Desarrolladores e IAs:**
+Esta documentación permite:
 1. **Entender completamente** la arquitectura del sistema
-2. **Localizar rápidamente** cualquier componente específico
-3. **Comprender las relaciones** entre módulos y controladores
-4. **Implementar nuevas funcionalidades** siguiendo los patrones establecidos
-5. **Mantener y actualizar** el sistema de manera eficiente
-6. **Realizar pruebas** utilizando los 49 scripts disponibles
-7. **Configurar el entorno** de desarrollo correctamente
-
-### **Información Técnica Completa:**
-- **Estructura de archivos** detallada
-- **Configuración de base de datos** específica
-- **Dependencias y librerías** listadas
-- **Patrones de desarrollo** documentados
-- **Sistema de roles** completamente explicado
-- **Validaciones y seguridad** detalladas
-
-El sistema ahora ofrece una **experiencia más profesional, consistente y fácil de usar** para todos los tipos de usuarios, con mayor seguridad, rendimiento optimizado y **documentación completa** que facilita el mantenimiento y desarrollo futuro.
+2. **Implementar en cualquier stack tecnológico** (PHP, Node.js, Python, Java, etc.)
+3. **Mantener consistencia** en la funcionalidad
+4. **Escalar el sistema** según necesidades
+5. **Mantener calidad** con pruebas automatizadas
 
 ---
 
-**Documento generado automáticamente**  
-**Fecha de generación:** 16 de septiembre de 2025  
-**Estado:** ✅ Completado  
-**Versión:** 2.0 Optimizada
+**Documento optimizado para implementación universal**  
+**Fecha:** 16 de septiembre de 2025  
+**Versión:** 3.0 - Lista para producción  
+**Estado:** ✅ Completamente optimizado
