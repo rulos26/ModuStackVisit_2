@@ -88,11 +88,11 @@ error_reporting(E_ALL);
             <!-- Tabla de la foto de perfil, 3 columnas iguales, imagen en la columna 3 -->
             <table class="customTablePerfil" style=" margin-bottom: 10px;">
                 <tr>
-                    <td style="width: 33%; height: 110px;">hola -mm</td>
+                    <td style="width: 33%; height: 110px;"><?= htmlspecialchars($evaluado['nombres'] ?? '') ?></td>
                     <td style="width: 33%; height: 110px;">hola</td>
                     <td style="width: 33%; text-align: center; vertical-align: middle; height: 110px;">
                         <?php if (!empty($img_perfil_b64)): ?>
-                            <img src="<?= $img_perfil_b64 ?>" alt="Foto Perfil" style="width: 140px; height: 100px; object-fit: cover; margin: 8px 0;">
+                            <img src="<?= $img_perfil_b64 ?>" alt="Foto Perfil" style="width: 240px; height: 200px; object-fit: cover; margin: 8px 0;">
                         <?php else: ?>
                             <img src="public/images/_blank.png" alt="No disponible" style="width: 120px; height: 80px; object-fit: cover; opacity: 0.5; margin: 8px 0;">
                             <div style="font-size: 10px; color: #888;">Foto no disponible</div>
