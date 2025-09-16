@@ -58,6 +58,20 @@ error_reporting(E_ALL);
             font-size: 9px;
             max-width: 80px;
         }
+        .customTablePerfil {
+            width: 100%;
+            border: 0px solid transparent;
+        }
+        .customTablePerfil th,
+        .customTablePerfil td {
+            border: 0px solid transparent;
+            padding: 8px;
+        }
+        .customTablePerfil th {
+            background: #ABABAB;
+            font-weight: bold;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -72,7 +86,7 @@ error_reporting(E_ALL);
         
         <?php if ($evaluado): ?>
             <!-- Tabla de la foto de perfil, 3 columnas iguales, imagen en la columna 3 -->
-            <table class="customTable" style=" margin-bottom: 10px;">
+            <table class="customTablePerfil" style=" margin-bottom: 10px;">
                 <tr>
                     <td style="width: 33%; height: 110px;">hola -mm</td>
                     <td style="width: 33%; height: 110px;">hola</td>
