@@ -72,7 +72,7 @@ error_reporting(E_ALL);
         
         <?php if ($evaluado): ?>
             <!-- Tabla de la foto de perfil, 3 columnas iguales, imagen en la columna 3 -->
-            <table class="customTable" style="border: 0px solid transparent; margin-bottom: 10px;">
+            <table class="customTable" style=" margin-bottom: 10px;">
                 <tr>
                     <td style="width: 33%; height: 110px;">hola</td>
                     <td style="width: 33%; height: 110px;">hola</td>
