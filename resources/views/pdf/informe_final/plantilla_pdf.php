@@ -74,7 +74,7 @@ error_reporting(E_ALL);
             <!-- Tabla de la foto de perfil, 3 columnas iguales, imagen en la columna 3 -->
             <table class="customTable" style=" margin-bottom: 10px;">
                 <tr>
-                    <td style="width: 33%; height: 110px;">hola</td>
+                    <td style="width: 33%; height: 110px;">hola -mm</td>
                     <td style="width: 33%; height: 110px;">hola</td>
                     <td style="width: 33%; text-align: center; vertical-align: middle; height: 110px;">
                         <?php if (!empty($img_perfil_b64)): ?>
