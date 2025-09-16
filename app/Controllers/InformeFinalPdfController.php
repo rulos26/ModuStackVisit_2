@@ -666,6 +666,38 @@ class InformeFinalPdfController {
             }
         }
 
+        // Consulta de observaciones académicas
+        $sql_observaciones_academicas = "SELECT id_cedula, observacion 
+        FROM observaciones_academicas 
+        WHERE id_cedula = :cedula";
+        
+        $stmt_observaciones_academicas = $db->prepare($sql_observaciones_academicas);
+        $stmt_observaciones_academicas->bindParam(':cedula', $cedula);
+        $stmt_observaciones_academicas->execute();
+        $observaciones_academicas = $stmt_observaciones_academicas->fetch(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de observaciones académicas
+        if ($observaciones_academicas) {
+            // Convertir campos vacíos a N/A
+            $observaciones_academicas['observacion'] = empty($observaciones_academicas['observacion']) ? 'N/A' : $observaciones_academicas['observacion'];
+        }
+
+        // Consulta de observaciones laborales
+        $sql_observaciones_laborales = "SELECT id_cedula, observacion 
+        FROM observaciones_laborales 
+        WHERE id_cedula = :cedula";
+        
+        $stmt_observaciones_laborales = $db->prepare($sql_observaciones_laborales);
+        $stmt_observaciones_laborales->bindParam(':cedula', $cedula);
+        $stmt_observaciones_laborales->execute();
+        $observaciones_laborales = $stmt_observaciones_laborales->fetch(\PDO::FETCH_ASSOC);
+
+        // Procesar los campos de observaciones laborales
+        if ($observaciones_laborales) {
+            // Convertir campos vacíos a N/A
+            $observaciones_laborales['observacion'] = empty($observaciones_laborales['observacion']) ? 'N/A' : $observaciones_laborales['observacion'];
+        }
+
         // Consulta de ubicación foto
         $sql_ubicacion = "SELECT nombre 
         FROM ubicacion_autorizacion
@@ -875,6 +907,8 @@ class InformeFinalPdfController {
             'informacion_judicial' => $informacion_judicial,
             'experiencia_laboral' => $experiencia_laboral,
             'concepto_final' => $concepto_final,
+            'observaciones_academicas' => $observaciones_academicas,
+            'observaciones_laborales' => $observaciones_laborales,
             'fotoo_ubicacion_b64' => $fotoo_ubicacion_b64,
             'evidencia_fotografia_b64' => $evidencia_fotografia_b64,
             'evidencia_fotografia_2_b64' => $evidencia_fotografia_2_b64,

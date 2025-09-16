@@ -1124,6 +1124,132 @@ error_reporting(E_ALL);
             </table>
         <?php endif; ?>
 
+        <?php if ($observaciones_academicas): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            OBSERVACIONES ACADÉMICAS
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($observaciones_academicas['observacion']) ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            OBSERVACIONES ACADÉMICAS
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre observaciones académicas
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
+
+
+        <?php if ($experiencia_laboral && count($experiencia_laboral) > 0): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="8" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            EXPERIENCIA LABORAL
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">EMPRESA</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">TIEMPO LABORADO</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">CARGO DESEMPEÑADO</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">SALARIO</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">RETIRO</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">CONCEPTO EMITIDO</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">NOMBRE CONTACTO</th>
+                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">NÚMERO CONTACTO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($experiencia_laboral as $experiencia): ?>
+                        <tr>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['empresa']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['tiempo']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['cargo']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;">
+                                <?php
+                                    echo is_numeric($experiencia['salario']) ? ('$' . number_format($experiencia['salario'], 0, ',', '.')) : htmlspecialchars($experiencia['salario']);
+                                ?>
+                            </td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['retiro']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['concepto']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['nombre']) ?></td>
+                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['numero']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="8" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            EXPERIENCIA LABORAL
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="8" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre experiencia laboral
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
+
+        <?php if ($observaciones_laborales): ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            OBSERVACIONES LABORALES
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($observaciones_laborales['observacion']) ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <table class="customTable" style="border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th colspan="6" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
+                            OBSERVACIONES LABORALES
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6" style="border: 1px solid black; text-align: center;">
+                            No se encontró información sobre observaciones laborales
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
+
         <?php if ($informacion_judicial): ?>
             <table class="customTable" style="border: 1px solid black;">
                 <thead>
@@ -1190,63 +1316,6 @@ error_reporting(E_ALL);
                     <tr>
                         <td colspan="6" style="border: 1px solid black; text-align: center;">
                             No se encontró información judicial
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        <?php endif; ?>
-
-        <?php if ($experiencia_laboral && count($experiencia_laboral) > 0): ?>
-            <table class="customTable" style="border: 1px solid black;">
-                <thead>
-                    <tr>
-                        <th colspan="8" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
-                            EXPERIENCIA LABORAL
-                        </th>
-                    </tr>
-                    <tr>
-                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">EMPRESA</th>
-                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">TIEMPO LABORADO</th>
-                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">CARGO DESEMPEÑADO</th>
-                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">SALARIO</th>
-                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">RETIRO</th>
-                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">CONCEPTO EMITIDO</th>
-                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">NOMBRE CONTACTO</th>
-                        <th style="border: 1px solid black; text-align: center; font-weight: bold;">NÚMERO CONTACTO</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($experiencia_laboral as $experiencia): ?>
-                        <tr>
-                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['empresa']) ?></td>
-                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['tiempo']) ?></td>
-                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['cargo']) ?></td>
-                            <td style="border: 1px solid black; text-align: center;">
-                                <?php
-                                    echo is_numeric($experiencia['salario']) ? ('$' . number_format($experiencia['salario'], 0, ',', '.')) : htmlspecialchars($experiencia['salario']);
-                                ?>
-                            </td>
-                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['retiro']) ?></td>
-                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['concepto']) ?></td>
-                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['nombre']) ?></td>
-                            <td style="border: 1px solid black; text-align: center;"><?= htmlspecialchars($experiencia['numero']) ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php else: ?>
-            <table class="customTable" style="border: 1px solid black;">
-                <thead>
-                    <tr>
-                        <th colspan="8" style="font-weight: bold; background-color: #ABABAB; border: 1px solid black; text-align: center;">
-                            EXPERIENCIA LABORAL
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="8" style="border: 1px solid black; text-align: center;">
-                            No se encontró información sobre experiencia laboral
                         </td>
                     </tr>
                 </tbody>
