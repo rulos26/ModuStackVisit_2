@@ -88,8 +88,8 @@ error_reporting(E_ALL);
             <!-- Tabla de la foto de perfil, 3 columnas iguales, imagen en la columna 3 -->
             <table class="customTablePerfil" style=" margin-bottom: 10px;">
                 <tr>
-                    <td style="width: 33%; height: 110px;"><?= htmlspecialchars($evaluado['nombres'] ?? '') ?></td>
-                    <td style="width: 33%; height: 110px;">hola</td>
+                    <td style="width: 33%; height: 110px;"><?= htmlspecialchars($evaluado['nombres'] ?? '') ?>  <br> <?= htmlspecialchars($evaluado['apellidos'] ?? '') ?>  <br> <?= htmlspecialchars($evaluado['tipo_documento_nombre'] ?? '') ?>  <br> <?= htmlspecialchars($evaluado['id_cedula'] ?? '') ?>   </td>
+                    <td style="width: 33%; height: 110px;"></td>
                     <td style="width: 33%; text-align: center; vertical-align: middle; height: 110px;">
                         <?php if (!empty($img_perfil_b64)): ?>
                             <img src="<?= $img_perfil_b64 ?>" alt="Foto Perfil" style="width: 240px; height: 200px; object-fit: cover; margin: 8px 0;">
